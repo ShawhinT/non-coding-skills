@@ -3,7 +3,7 @@
 Claude Code skills for personal (non-coding) workflows.
 
 Resources
-- [Video Explainer]
+- [Video Explainer](https://youtu.be/XLilQNKy7mk)
 
 ## Skills
 
