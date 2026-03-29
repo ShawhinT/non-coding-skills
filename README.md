@@ -7,8 +7,12 @@ Resources
 
 ## Skills
 
-- **3-way-intro** — Draft three-way email introductions between leads and consultants
-- **keynote** — Read, create, and modify Apple Keynote presentations
+| Skill | Description |
+|-------|-------------|
+| **3-way-intro** | Draft three-way email introductions between leads and consultants |
+| **keynote** | Read, create, and modify Apple Keynote presentations |
+| **skill-updater** | Update and improve existing skills based on conversation feedback |
+| **validate-saas-idea** | Validate startup or product ideas through systematic market research |
 
 ## Install
 
