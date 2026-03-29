@@ -91,7 +91,7 @@ For a subtitle line without a bullet (on Title Only), use the `subtitle` field, 
 
 ```json
 [
-  {"master": "Title", "title": "Deck Title", "subtitle": "A subtitle", "body": "", "author": "Shaw Talebi"},
+  {"master": "Title", "title": "Deck Title", "subtitle": "A subtitle", "body": "", "author": "Your Name"},
   {"master": "Title Only", "title": "Slide Title", "subtitle": "Lead-in line", "body": "Bullet 1\nBullet 2\nBullet 3"},
   {"master": "Section", "title": "Section Name"},
   {"master": "Blank"}
@@ -126,7 +126,7 @@ Save all outputs to `./.claude/keynote/` in the current working directory. Befor
 
 ## Style Guide
 
-When creating new presentations, first read `.claude/skills/keynote/shaw-style-guide.md`. Follow the visual design, narrative structure, and content patterns described there to match Shaw's established presentation style.
+When creating new presentations, first read `.claude/skills/keynote/style-guide.md`. Follow the visual design, narrative structure, and content patterns described there to match your established presentation style.
 
 ## Common pitfalls
 

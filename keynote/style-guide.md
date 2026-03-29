@@ -1,10 +1,10 @@
-## Shaw Talebi — Presentation Style Guide
+## Presentation Style Guide
 
 ### Visual Design
 - **White background, black text, always.** No gradients, no colored backgrounds, no dark themes.
 - Heavy-weight sans-serif font. Titles are huge and bold.
 - Monochrome by default — color only enters via emojis, screenshots, logos, or occasional accent text (red/green for pros/cons).
-- "Shaw Talebi" in small bold at bottom-left of title slides, centered footer on content slides. Bracketed references `[1-3]` in bottom-left.
+- Author name in small bold at bottom-left of title slides, centered footer on content slides. Bracketed references `[1-3]` in bottom-left.
 
 ### Title Slide Formula
 Big bold title + lighter subtitle + name at bottom-left + optional thematic graphic (emojis, logos) at bottom-right.

@@ -6,7 +6,7 @@
 --
 -- JSON format:
 -- [
---   {"master": "Title", "title": "...", "subtitle": "...", "body": "", "author": "Shaw Talebi"},
+--   {"master": "Title", "title": "...", "subtitle": "...", "body": "", "author": "Your Name"},
 --   {"master": "Title Only", "title": "...", "subtitle": "...", "body": "bullet 1\nbullet 2"},
 --   {"master": "Section", "title": "Section Name"},
 --   ...
