@@ -1,0 +1,65 @@
+---
+name: email-writer
+description: >
+  Draft emails in Shaw's voice and style. Use this skill whenever Shaw asks to write, draft,
+  compose, or reply to an email, including phrases like "draft a reply", "write an email to",
+  "respond to this", "send them a message", "follow up with", or any reference to composing
+  email. Also trigger when Shaw shares an email thread and asks what to say, or when creating
+  Gmail drafts as part of a workflow. Even casual requests like "shoot them an email" or
+  "write back to X" should trigger this skill. This skill covers all email types: outreach,
+  replies, follow-ups, declines, introductions, and scheduling. For three-way introductions
+  specifically, defer to the 3-way-intro skill.
+---
+
+# Email Writer
+
+Draft emails that match Shaw's voice. Before drafting, check whether the email falls into a known category (see `references/` directory) and read the relevant reference file.
+
+## Reference Files
+
+- `references/expert-network-replies.md` — Replies to ABA expert network newsletter respondents
+- `references/call-follow-ups.md` — Post-call follow-up emails
+
+---
+
+## Voice
+
+Shaw writes email like he talks — casual, direct, and warm. He sounds like a peer, not a brand. The energy is friendly efficiency: get to the point, be human about it, move things forward.
+
+**Greeting.** "Hey [First Name]," for peers and warm contacts. "Hi [First Name]," for first-time contacts and more formal contexts. Never "Dear" or "Hello there."
+
+**Opening line.** "Thanks for reaching out!" (inbound) or "Thanks for your reply!" (responding). This is a consistent pattern — don't vary it for variety's sake.
+
+**Paragraphs.** One idea per paragraph. 1-2 sentences each. Lots of white space. Emails should feel light on mobile.
+
+**Sign-off.** "Thanks again, Shaw" for more formal contexts. "Cheers, Shaw" for peer-level. "-Shaw" for quick replies. No sign-off in active back-and-forth threads.
+
+**Tone markers.** `:)` not emoji. One per email max, usually near the end. No bold, no headers, no visible formatting — the email should look plain even though it's sent as HTML.
+
+---
+
+## Principles
+
+### Every email has a purpose and ends with a clear next step.
+
+This is the single most important principle. Every email Shaw sends moves the conversation somewhere — a question, a link, a redirect, a booking. Even a decline points to an alternate path. If an email just acknowledges without moving forward, it's not done yet.
+
+This means: one CTA per email, not two. If someone's message is vague, ask one clarifying question rather than guessing. If the answer is "no" or "not now," redirect them somewhere useful. Follow-ups get shorter and more direct each time — never re-pitch, just nudge.
+
+### Shaw never pads for length.
+
+If an email can be 3 lines, it's 3 lines. The length should match what the situation actually requires, not what feels "complete." Personalization is earned — react to what someone said or did, not who they are. Skip filler like "Hope you're doing well!" and go straight to the substance.
+
+---
+
+## Gmail Technical Notes
+
+**Always use `contentType: "text/html"` when calling `gmail_create_draft`.** Gmail's plain text mode auto-wraps lines at ~78 characters, inserting hard line breaks mid-sentence. Use `<div>` tags for paragraphs, `<div><br></div>` for blank lines between them, and `<ul><li>` for bullet points (text dashes render as plain text, not actual bullets).
+
+**Gmail emoji reactions break thread replies.** When Shaw reacts to an email with an emoji, Gmail creates a new message in the thread. If you then create a draft reply using that `threadId`, Gmail points the `In-Reply-To` header at the reaction instead of the actual email. Before creating a thread reply, check if the last message is an emoji reaction. If so, create a fresh thread with a descriptive subject line instead.
+
+---
+
+## Batch Outreach Workflow
+
+When drafting the same template for multiple recipients, create one draft first and let Shaw review and edit it. Analyze the diff (subject line, formatting, link placement, etc.) and apply those changes to the remaining drafts. This avoids multiplying mistakes across a batch.

@@ -1,0 +1,10 @@
+[project]
+name = "training-proposal"
+version = "0.1.0"
+description = "AI training proposal PDF generator"
+requires-python = ">=3.13"
+dependencies = [
+    "markdown>=3.10.1",
+    "weasyprint>=68.0",
+    "pypdf>=5.0.0",
+]
