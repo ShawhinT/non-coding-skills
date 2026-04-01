@@ -1,6 +1,6 @@
 # Non-Coding Skills
 
-Claude Code skills for personal (non-coding) workflows.
+Claude skills for personal (non-coding) workflows.
 
 Resources
 - [How I Automated My Work with Claude Code](https://youtu.be/XLilQNKy7mk)
