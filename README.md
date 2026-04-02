@@ -6,6 +6,8 @@ Resources
 - [How I Automated My Work with Claude Code](https://youtu.be/XLilQNKy7mk)
 - [How to Automate Anything with Claude]
 
+> **Want help building (AI) skills for your team?** [AI Builder Academy](https://aibuilder.academy/) helps small teams do big things with AI.
+
 ## How to Use
 
 These are personal skills built for my specific workflows. Using them as-is probably won't be as helpful to you as they are to me. However, the value is in the patterns and ideas. 
