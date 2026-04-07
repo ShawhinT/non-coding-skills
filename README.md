@@ -4,7 +4,7 @@ Claude skills for personal (non-coding) workflows.
 
 Resources
 - [How I Automated My Work with Claude Code](https://youtu.be/XLilQNKy7mk)
-- [How to Automate Anything with Claude]
+- [How to Automate Anything with Claude](https://youtu.be/FSOvLgS4xvc0)
 
 > **Want help building (AI) skills for your team?** [AI Builder Academy](https://aibuilder.academy/) helps small teams do big things with AI.
 
@@ -34,6 +34,7 @@ Two ways I'd recommend using this repo:
 | **training-proposal** | Draft training proposals and outlines from unstructured notes | Claude Code | Python, PDF tooling |
 | **linkedin-lead-gatherer** | Gather leads from LinkedIn via browser automation | Claude Code | Chrome tool |
 | **keynote** | Read, create, and modify Apple Keynote presentations | Claude Code | macOS, Keynote app |
+| **video-editor** | Analyze raw recordings, propose cuts, and generate FCPXML for Final Cut Pro | Claude Code | Python, ffmpeg, AssemblyAI API |
 
 
 
