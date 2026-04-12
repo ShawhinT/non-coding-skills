@@ -4,7 +4,7 @@ Agent skills for personal (non-coding) workflows.
 
 Resources
 - [How I Automated My Work with Claude Code](https://youtu.be/XLilQNKy7mk)
-- [How to Automate Anything with Claude](https://youtu.be/FSOvLgS4xvc0)
+- [How to Automate Anything with Claude (4-Step Framework)](https://youtu.be/FSOvLgS4xvc0)
 - [How I Taught Claude To Edit My YouTube Videos](https://youtu.be/wmIO2rs-AIs)
 
 > **Want help building (AI) skills for your team?** [AI Builder Academy](https://aibuilder.academy/) helps small teams do big things with AI.
