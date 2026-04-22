@@ -1,6 +1,6 @@
 # Non-Coding Skills
 
-Agent skills for personal (non-coding) workflows.
+Agent skills for (non-coding) business workflows.
 
 Resources
 - [How I Automated My Work with Claude Code](https://youtu.be/XLilQNKy7mk)
