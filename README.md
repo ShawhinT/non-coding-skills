@@ -41,7 +41,7 @@ Two ways I'd recommend using this repo:
 
 ## Install
 
-The simplest option is to just paste a skill's GitHub URL into any Claude conversation. Since this is a public repo, Claude can fetch the content and adapt it for you (no installation needed).
+The simplest option is to just paste a skill's GitHub URL into any Claude/AI conversation. Since this is a public repo, Claude can fetch the content and adapt it for you (no installation needed).
 
 ```
 https://github.com/ShawhinT/non-coding-skills/tree/main/3-way-intro
