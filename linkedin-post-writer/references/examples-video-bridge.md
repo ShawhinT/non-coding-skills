@@ -117,3 +117,32 @@ In a recent YouTube video, I walk through the full framework with concrete examp
 👉 Check it out here: https://www.youtube.com/watch?v=XLilQNKy7mk
 
 What's one task you wish you could teach Claude once and never have to do again?
+
+---
+
+## Example: Free AI Engineering Course (Retired Offer → Free Resource — ~5K+ impressions on day 1, tracking to top of 28-day window)
+
+Free AI engineering course 👇
+
+I took everything I taught in my (sunsetted) AI Builders Bootcamp and turned it into a YouTube course.
+
+It's a roadmap where each video builds on the last:
+
+1) Fundamentals - LLM basics and how to use them
+2) AI coding - how to use LLMs to build more, better, faster
+3) Prompt Engineering - getting more out of any model
+4) RAG - grounding models in reality
+5) Agents - giving LLMs tools so they get things done
+6) Evals - measuring if your AI system actually does what you want
+7) Fine-tuning - adapting models to specific use cases via more training
+8) Deploying AI Applications - shipping it to real users
+
+👉 Check it out here: https://lnkd.in/gsqM9GAB
+
+### Why this works
+
+- **Hook opens with the deliverable**, not the story. "Free AI engineering course 👇" is specific, concrete, and immediately tells the reader what they'll get. No setup paragraph before the value.
+- **The "(sunsetted) bootcamp" aside does double duty** — it's a milestone reveal tucked inside a resource share, which gives readers two reasons to engage (the resource + the story).
+- **Roadmap framing signals a curriculum, not a playlist** — "each video builds on the last" tells the reader this is structured, not random. Each step has a one-line payoff explaining *what* it teaches, not just the topic name.
+- **No setup, no closer, no justification** — the post goes hook → body → link. Nothing is added that could be inferred.
+- **The post type is a video/resource bridge disguised as a builder's log** — it shows the roadmap as a list, but the real CTA is the playlist. This "list post that links to a video" shape outperforms either a pure list or a pure bridge on its own.

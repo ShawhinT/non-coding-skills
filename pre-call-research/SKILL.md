@@ -1,27 +1,42 @@
 ---
 name: pre-call-research
-description: Do pre-sales call research for an upcoming call. Use this skill whenever Shaw asks to prep for a call, do pre-call research, or gather context before a sales conversation — including phrases like "do pre-call research for X", "prep for my call with X", "I have a call with X today", or any reference to preparing for an upcoming sales call. Also trigger when Shaw mentions a specific person's name alongside a scheduled call. Even casual mentions like "call with X later" or "meeting with X, what should I know?" should trigger this skill.
+description: Do pre-call research for an upcoming call — whether it's a sales discovery call, a post-engagement follow-up, or a long-term client check-in. Use this skill whenever Shaw asks to prep for a call, do pre-call research, or gather context before any conversation — including phrases like "do pre-call research for X", "prep for my call with X", "I have a call with X today", "what should I do to prepare for X's call", or any reference to preparing for an upcoming call. Also trigger when Shaw mentions a specific person's name alongside a scheduled call. Even casual mentions like "call with X later" or "meeting with X, what should I know?" should trigger this skill. Covers prospects, active clients, and past clients alike.
 ---
 
 # Pre-Call Research
 
-Gather the "overhead" context for an upcoming sales call so Shaw can spend call time on the things only the other person can share — their world, their pain points, their personal experience. Web research and CRM data handle the factual background; the call handles everything else.
+Gather the "overhead" context for an upcoming call so Shaw can spend call time on the things only the other person can share — their world, their pain points, their personal experience. Web research, CRM data, and past session notes handle the factual background; the call handles everything else.
+
+This skill handles three call types, each with a different question bank and tone:
+
+- **Prospect/sales call** — first-time or early-stage conversation with a lead. Discovery-focused.
+- **Post-engagement follow-up** — days or weeks after a paid session (workshop, coaching, training). Homework review + the 4Rs (Results, Reviews, Referrals, Resells). The experience is fresh, so this is the best time to collect concrete outcomes and testimonials.
+- **Long-term nurture check-in** — 6-12+ weeks since the last engagement. Genuine relationship check-in: hear their problems, see what's changed, surface expansion signals naturally. The 4Rs are not the focus here — the conversation should feel relational, not transactional.
 
 ## Key Locations
 
-This skill relies on the same data sources as the CRM skill. See `mnt/.claude/skills/crm/SKILL.md` for the canonical Notion IDs and Gmail account. The key resources are:
+Canonical Notion IDs live in `notion-helper/SKILL.md` → "Main Databases." CRM-specific sub-databases (Active Leads, Clients Nurture) and the Gmail account are documented in `crm/SKILL.md`. The key resources are:
 
 - **Active Leads database** — CRM entries with status, notes, email, source
+- **Clients (Nurture) database** — past clients with engagement history, check-in cadence, and expansion signals
 - **ABA Calls database** — call pages where pre-call briefs and notes live
-- **Gmail** — you@yourdomain.com, where all email threads with leads live
+- **ABA Trainings database** — delivery sessions (1:1 workshops, trainings, ongoing engagements) with session content and notes
+- **Gmail** — [email], where all email threads with leads and clients live
 
 ## Workflow
 
-### 1. Find the person in the CRM
+### 1. Find the person and determine call type
 
-Search the Active Leads database for the person's name. Pull their email, status, source, and notes. The notes are a chronological log of pipeline activity — they tell you what's happened so far (outreach dates, call history, proposals sent, etc.).
+Search both the Active Leads database and the Clients (Nurture) database for the person's name. Pull their email, status, source, and notes.
 
-If the person isn't in the CRM, Shaw may point you to a different data source. Ask rather than assuming.
+Based on where you find them, determine the call type:
+- **Found in Active Leads** → this is a **prospect/sales call**. Use the Sales Discovery Question Bank.
+- **Found in Clients (Nurture)** → check recency. If the last engagement ended within the past few weeks, this is a **post-engagement follow-up** (use the Post-Engagement Question Bank + 4Rs). If it's been 6+ weeks, this is a **long-term nurture check-in** (use the Nurture Check-In Question Bank).
+- **Found in both** → the Clients entry takes precedence. They're a past client, not a prospect.
+
+Also search the ABA Trainings database for delivery pages (1:1 workshops, trainings, ongoing engagements) with this person's name. These give you the content of what Shaw actually covered with them — essential context for any client call.
+
+If the person isn't in either database, Shaw may point you to a different data source. Ask rather than assuming.
 
 ### 2. Find or create the call page
 
@@ -48,10 +63,11 @@ Don't try to draw deep conclusions from web research. The goal is factual backgr
 
 Write the pre-call brief directly to the person's call page in Notion. The brief has two sections:
 
-**Pre-Call Research** — three short blocks:
-- **Company**: 1-2 sentences on what the company does, size, and anything notable
+**Pre-Call Research** — short blocks, glanceable before a call:
 - **Person**: 1-2 sentences on who they are, their role, and background
+- **Company**: 1-2 sentences on what the company does, size, and anything notable
 - **From emails**: 1-2 sentences on what the email exchange revealed — what they asked for, how they described their situation, any signals worth noting
+- **Context from previous sessions** (client calls only): summary of what Shaw covered with them, what homework was assigned, and where things left off. Pull this from the ABA Trainings pages.
 
 Less is more. If something can be said in one sentence, don't use two. The brief exists to be glanced at before a call, not studied.
 
@@ -59,13 +75,19 @@ Less is more. If something can be said in one sentence, don't use two. The brief
 
 After writing to Notion, let Shaw know it's ready. He'll review it there and follow up with questions in chat — for example, if the brief mentions an unfamiliar industry term, he'll ask about it and you can discuss. The brief is a starting point for conversation, not a finished deliverable.
 
-### 7. Add follow-up section
+### 7. Add Call Notes section
 
-Add a `Follow-up` section at the bottom of the call page with a blank space for Shaw to fill in during/after the call. This is where next steps, action items, and proposals go.
+Add a `Call Notes` section immediately after `Prioritized Questions`. Leave it blank — this is where Shaw will capture live notes during the call.
 
-## Question Bank
+### 8. Add follow-up section
 
-These are Shaw's standard discovery questions for sales calls. Don't use all of them — pick the ones that fill the most gaps given what the pre-call research already uncovered.
+Add a `Follow-up` section at the bottom of the call page (after `Call Notes`) with a blank space for Shaw to fill in during/after the call. This is where next steps, action items, and proposals go.
+
+## Question Banks
+
+Use the question bank that matches the call type identified in Step 1. Don't use all questions from any bank — pick the ones that fill the most gaps given what the research already uncovered. Each question should get a brief tailored note explaining why it's relevant for this specific person.
+
+### Sales Discovery (prospect/sales calls)
 
 1. Why are you looking for AI training?
 2. What have you tried so far?
@@ -76,6 +98,30 @@ These are Shaw's standard discovery questions for sales calls. Don't use all of 
 7. What's been the hardest part?
 8. Why do you even bother? Why is this important?
 9. If this were working really well, what would be different?
+
+### Post-Engagement Follow-Up (days/weeks after a paid session)
+
+The goal is to review what they've done since the engagement and collect the 4Rs while the experience is fresh.
+
+**Homework / progress review:**
+- Walk me through what you built since last time.
+- What tripped you up?
+
+**4Rs** (collect at the end of every post-engagement call):
+- **Results** — concrete "before → after" metrics. "What can you do now that you couldn't before, or what takes way less time?"
+- **Reviews** — testimonial around time saved / clarity. "Would you share a quick testimonial — even a few sentences on what changed?"
+- **Referrals** — tap their network. "Who else in your world would this help?"
+- **Resells** — upsell to ongoing advisory or team rollout. "Would it make sense to keep going, or bring in other people from your team?"
+
+### Long-Term Nurture Check-In (6-12+ weeks since last engagement)
+
+The goal is a genuine relationship check-in — hear their problems, see what's changed, surface expansion signals naturally. This should feel relational, not transactional. The 4Rs are not the focus here.
+
+1. How's it going? What have you been working on?
+2. What's been the hardest part lately?
+3. What problems are eating up your time right now?
+4. Has anything changed since we last talked — new projects, new team members, new challenges?
+5. Is there anything I can help with?
 
 ## Principles
 

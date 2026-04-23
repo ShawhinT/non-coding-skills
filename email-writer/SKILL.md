@@ -7,8 +7,7 @@ description: >
   email. Also trigger when Shaw shares an email thread and asks what to say, or when creating
   Gmail drafts as part of a workflow. Even casual requests like "shoot them an email" or
   "write back to X" should trigger this skill. This skill covers all email types: outreach,
-  replies, follow-ups, declines, introductions, and scheduling. For three-way introductions
-  specifically, defer to the 3-way-intro skill.
+  replies, follow-ups, declines, introductions, three-way intros, and scheduling.
 ---
 
 # Email Writer
@@ -19,6 +18,13 @@ Draft emails that match Shaw's voice. Before drafting, check whether the email f
 
 - `references/expert-network-replies.md` — Replies to ABA expert network newsletter respondents
 - `references/call-follow-ups.md` — Post-call follow-up emails
+- `references/three-way-intros.md` — Three-way intro emails connecting leads with Shaw's AI consultants
+
+---
+
+## Handoff to conversion-copy
+
+For emails whose job is conversion — closing a warm lead, reviving a ghost, post-call follow-ups that need a yes — use conversion-copy's `channel-emails.md`. This skill owns general voice, introductions, declines, scheduling, and ABA replies.
 
 ---
 
@@ -50,11 +56,17 @@ This means: one CTA per email, not two. If someone's message is vague, ask one c
 
 If an email can be 3 lines, it's 3 lines. The length should match what the situation actually requires, not what feels "complete." Personalization is earned — react to what someone said or did, not who they are. Skip filler like "Hope you're doing well!" and go straight to the substance.
 
+### Infer templates from sent mail, don't just use reference files.
+
+Not every recurring email pattern lives in `references/`. Shaw often runs ad hoc campaigns — like emailing multiple speakers for an event series — where he's sending the same structure to each person but it's not worth codifying as a permanent template. When Shaw asks to draft an email and points to examples or the email is clearly part of a batch (same subject pattern, same recipients list, same stage of a workflow), search his sent mail for similar recent emails and use those as the template. Match structure, formatting, tone, links, and CTAs exactly. The reference files cover stable, long-lived patterns; sent mail covers everything else.
+
 ---
 
 ## Gmail Technical Notes
 
 **Always use `contentType: "text/html"` when calling `gmail_create_draft`.** Gmail's plain text mode auto-wraps lines at ~78 characters, inserting hard line breaks mid-sentence. Use `<div>` tags for paragraphs, `<div><br></div>` for blank lines between them, and `<ul><li>` for bullet points (text dashes render as plain text, not actual bullets).
+
+**Plain text `*word*` means bold, not italic.** When reading sent emails via the Gmail API, the plain text body renders bold text as `*word*`. When reproducing this formatting in HTML drafts, use `<b>` tags, not `<i>`.
 
 **Gmail emoji reactions break thread replies.** When Shaw reacts to an email with an emoji, Gmail creates a new message in the thread. If you then create a draft reply using that `threadId`, Gmail points the `In-Reply-To` header at the reaction instead of the actual email. Before creating a thread reply, check if the last message is an emoji reaction. If so, create a fresh thread with a descriptive subject line instead.
 

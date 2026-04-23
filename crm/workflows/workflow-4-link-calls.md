@@ -1,38 +1,58 @@
-# Workflow 4: Link Call Notes to CRM Lead Page
+# Workflow 4: Link Call & Session Notes to CRM Lead Page
 
-Use when Shaw asks to connect a lead's CRM page to their call notes, or proactively when adding
-call history to a lead's page for easy reference.
+Use when connecting a lead's or client's CRM page to their sales call notes and/or delivery
+session pages — either directly on request, or as part of Workflow 1's sync pass.
 
 The goal is to embed `<mention-page>` links in the body of the lead's CRM page so Shaw can
-click through to the full call notes without having to search for them.
+click through to the full notes without having to search for them. A single lead may have
+sales calls (ABA Calls) and delivery sessions (ABA Trainings) — both belong linked on the
+CRM page. See SKILL.md's "Three Databases Show Up During CRM Work" section for the
+distinction, and `notion-helper/SKILL.md` for database IDs.
 
-## Step 1 — Search ABA Calls for the lead
+## Principle: full rewrite, not append
 
-Search the ABA Calls database (page ID: `1f25f2e2-6be9-804f-847b-d26f36563dd0`) for the lead's
-name. Also search by company name or email domain — calls are sometimes filed under the company
-name rather than the individual (e.g., "LeadsOnline" instead of "Travis White").
+Always rewrite the **full ordered list** of call links using `replace_content`. Never append
+just the newest call. Appending means older calls that were never linked stay invisible
+forever — which is how entire threads of context get dropped (e.g., an AI at Work Calls entry
+from January that predates the lead entering the main pipeline).
 
-## Step 2 — Fetch each matching call page
+Rewriting the full list every time is cheap and guarantees multi-call leads stay in sync.
 
-Fetch each result to confirm it's the right person and get the call date from the `Date` property.
+## Step 1 — Gather all call pages for the person
 
-## Step 3 — Update the CRM lead page content
+Search broadly across every database that might hold relevant pages:
 
-Use `replace_content` to add one line per call, formatted as:
+1. **ABA Calls** — sales calls (discovery, follow-ups, proposal reviews)
+2. **ABA Trainings** — delivery sessions: 1:1 workshops, trainings, ongoing engagements
+3. **Related call databases** — e.g., AI at Work Calls. Older research calls often belong
+   linked too, because they're the earliest context Shaw has on the person.
+4. **Search variations** — name, email, company name, and email domain. Pages are sometimes
+   filed under company name ("[Company]" instead of "[Person]"), and stakeholders get cc'd
+   from the same domain.
+
+Database IDs live in `notion-helper/SKILL.md` → "Main Databases."
+
+## Step 2 — Fetch and confirm
+
+Fetch each candidate page to confirm it's the right person and to pull the call date from
+the `Date` property.
+
+## Step 3 — Rewrite the CRM page content
+
+Use `replace_content` to write the full ordered list. One line per call, formatted as:
 
 ```
 Date: <mention-page url="https://www.notion.so/{page-id}"/>
 ```
 
-Each call should be its own paragraph (a separate line in the content string). For example, a
-lead with two calls would look like:
+Each call is its own paragraph (separate line). Use short month + day format (e.g., "Jan 9",
+"Feb 17") and order calls chronologically. Example for a lead with three calls:
 
 ```
-Feb 12: <mention-page url="https://www.notion.so/3055f2e26be980f590dff39d567a8c75"/>
-Feb 17: <mention-page url="https://www.notion.so/30a5f2e26be9809ca9a6c76a32d8a1e7"/>
+Jan 29: <mention-page url="https://www.notion.so/[page-id]"/>
+Mar 27: <mention-page url="https://www.notion.so/[page-id]"/>
+Apr 15: <mention-page url="https://www.notion.so/[page-id]"/>
 ```
 
-Use the short month + day format (e.g., "Jan 9", "Feb 17") to match how dates appear elsewhere
-in the CRM. Order calls chronologically.
-
-If the lead's CRM page already has content, preserve it and append the new call links.
+If the CRM page has other body content beyond call links (notes, scratchwork), preserve it
+by including it in the `replace_content` payload alongside the refreshed call list.

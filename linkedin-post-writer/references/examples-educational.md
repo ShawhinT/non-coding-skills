@@ -123,3 +123,56 @@ I don't share this as a flex (wouldn't be that impressive anyway 😅) but rathe
 It took me 15 months of failure and volatility to match my full-time income.
 
 With that said, however, these past couple of years have been the most fulfilling ones of my life, which is worth more to me than any salary.
+
+---
+
+## Example: 10 YouTube Channels (Listicle Roundup — ~52K impressions)
+
+10 YouTube channels that keep me ahead of 99% of AI Entrepreneurs.
+
+Technical skills are necessary but not sufficient for founders trying to build with AI.
+
+Non-technical skills are also required to be successful.
+
+Here are my go-to channels for up-skilling in both directions:
+
+1) Andrej Karpathy
+One of the best channels to learn foundational ML concepts and get an insightful perspective on LLMs from one of the most prolific ML researchers.
+
+2) Anthropic
+They often drop podcasts where you can hear how the people closest to the frontier of AI are thinking about it and using it.
+
+3) Y Combinator
+Mostly non-technical content, but YC is mainly funding AI startups right now, so they usually drop pearls of wisdom on what's working and what's not.
+
+4) All-In Podcast
+While this isn't really an AI channel, they often interview top tech and AI leaders, which helps give a sense of where the field is and where it's going.
+
+5) No Priors
+Probably the most underrated AI podcast I've come across. Their guests include the biggest names in AI e.g. Jensen, Andrej, Ilya, and many others.
+
+6) Latent Space Podcast
+Another underrated podcast. Usually more technical than No Priors, but still a nice way to learn something new about the space that doesn't involve watching a lecture.
+
+7) Greg Isenberg
+While this is (also) not an AI channel, Greg is always sharing the latest AI tools and inspiring stories of solo founders building in the space.
+
+8) Hamel Husain
+Shares some of the best technical lectures from engineers building real-world AI systems.
+
+9) Marc Lou
+Not an AI guy, but Marc's the real deal when it comes to shipping SaaS products. I've learned a lot about web development from his content.
+
+10) Shaw Talebi
+Other than being a shameful self-promotion, one of the best ways I've found to keep up with the AI space is by teaching what I learn on YouTube. You don't need to be a top AI researcher, engineer, or investor to provide value. Just being 1-2 steps ahead of your audience is enough :)
+
+I've surely missed a ton of great channels....
+
+👉 Who would you add to this list?
+
+### Why this works
+
+- **Hook promises a specific number and a bold claim** ("ahead of 99%") — listicle + contrarian framing. Readers click to see if their favorites are on the list.
+- **Each entry earns its place** with a one-line reason, not a generic description. The reasons reveal Shaw's actual taste, which is the real value.
+- **Shaw puts himself last with self-deprecation** ("shameful self-promotion", ":)"). This is the move that lets him include himself without the list reading as vain.
+- **The CTA is reciprocal** — "Who would you add?" invites readers to contribute their own channels, which drives comments and reposts.

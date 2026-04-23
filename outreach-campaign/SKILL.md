@@ -185,12 +185,15 @@ next one — his feedback on the first template shapes the rest.
 Save finalized templates to the campaign page in code blocks so they're easy to copy-paste.
 
 For voice, tone, and email-specific details (HTML formatting, Gmail threading, etc.), defer to
-the **email-writer skill** — it's the source of truth for how Shaw sounds in writing.
+**email-writer**. For message craft — hooks, CTAs, personalization lines, reducing reply friction
+— defer to conversion-copy's `channel-outreach.md`. This skill owns the operational side
+(trackers, segments, status); conversion-copy owns the message itself.
 
 ## Relationship to other skills
 
 - **Notes format:** Defer to the **CRM skill** — it's the single source of truth for how Shaw writes notes.
 - **Email drafting and voice:** Defer to the **email-writer skill** for Shaw's writing style and Gmail mechanics.
+- **Message craft (hooks, CTAs, personalization):** Defer to the **conversion-copy skill** — specifically `channel-outreach.md` for cold outreach message construction.
 - **Lead management:** If a contact becomes a sales lead (books a call, asks about pricing), they
   should also be added to the CRM. The outreach tracker is campaign-level; the CRM is pipeline-level.
   A person can exist in both.
