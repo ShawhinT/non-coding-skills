@@ -1,0 +1,163 @@
+---
+name: sync-desktop-skills
+description: Import or update skills in this public repo from Shaw's local Claude Desktop skills-plugin cache. Use whenever Shaw says "sync skills", "import from desktop", "update the repo from my desktop skills", "pull <skill> from desktop", "add these skills to the repo", or otherwise references moving his private Claude Desktop skills into this public repo. Handles PII scrubbing via parallel sub-agents, README table maintenance, and produces a clean commit. Do NOT use for creating skills from scratch (→ skill-creator) or one-off edits to a single already-imported skill.
+---
+
+# Sync Desktop Skills
+
+Workflow for bringing skills from Shaw's local Claude Desktop skills-plugin cache into this public GitHub repo. The hard parts are (1) scrubbing PII without over-scrubbing brand references, and (2) keeping the README table sorted and accurate.
+
+## When to use
+
+- Shaw names specific skills to import ("add conversion-copy and sales-letter-writer from desktop")
+- Shaw wants a refresh of already-imported skills after desktop-side edits
+- Shaw asks for a bulk sync / comparison between desktop cache and repo
+
+## When NOT to use
+
+- Creating a skill from scratch → skill-creator
+- Editing one file inside a single already-imported skill → just edit it directly
+- Anything touching skills that live only in Claude Code or Cowork (different source path)
+
+## Source location
+
+The Claude Desktop cache lives under:
+
+```
+~/Library/Application Support/Claude/local-agent-mode-sessions/skills-plugin/<session-id>/<instance-id>/skills/
+```
+
+Session and instance IDs rotate. Find the current one with:
+
+```bash
+ls -t "$HOME/Library/Application Support/Claude/local-agent-mode-sessions/skills-plugin/"
+```
+
+Pick the most recently modified session dir, then the most recent instance dir inside it. Confirm with Shaw if multiple look fresh.
+
+Target is always this repo's root: `/Users/shaw/Documents/_code/_stv/_repos/non-coding-skills/`.
+
+## Workflow
+
+### 1. Intake
+
+- List source skills: `ls <source>/skills/`
+- List target repo skills: `ls <repo-root>`
+- For each skill Shaw requested, classify: **NEW** (not in repo), **OVERWRITE** (exists, refresh), or **SKIP**.
+- Diff overlapping skills to confirm the source is actually newer before overwriting.
+
+Present the plan to Shaw **before** writing anything. Include:
+- List of NEW vs OVERWRITE skills
+- Stale files in target that don't exist in source (candidates for deletion — ask before deleting)
+- Confirmation of the scrub ruleset (see below)
+
+### 2. PII scrub ruleset
+
+**KEEP AS-IS (public brand / load-bearing):**
+- "Shaw", "Shawhin", "@ShawhinTalebi"
+- "AI Builder Academy", "ABA", "ABB", "Bootcamp"
+- `shaw@aibuilder.academy` (public business email — load-bearing in CRM workflow files)
+- YouTube channel references, public positioning language
+- Generic / illustrative dollar amounts (e.g., "$5K workshop" as example pricing)
+- Generic Notion database *names* (e.g., "ABA Calls", "CRM", "Tasks", "SOPs") — useful for structure, not sensitive
+- `notifications@calendly.com` and similar system addresses
+- Generic LinkedIn URLs, DOM selectors, public analytics paths (in scripts)
+
+**SCRUB → bracketed placeholder:**
+- Email addresses like `name@domain.com` → `[email]`
+- Real third-party person names → `[Person]` / `[Lead Name]` / `[Client Name]` / `[Consultant Name]` (pick the most fitting)
+- Real third-party company names → `[Company]`
+- **Notion page and database IDs (32-char hex or UUID form, anywhere they appear — URLs, `<mention-page>` tags, code blocks)** → `[page-id]` / `[database-id]`
+- Phone numbers → `[phone]`
+- Personal booking links with tokens → `[calendar-link]`
+- URLs to private Google Docs / Notion pages → strip the identifier portion
+- LinkedIn profile URLs of non-public-figure leads → `[linkedin-url]`
+- Auth tokens, cookies, session IDs, hardcoded usernames in scripts → `[token]`
+- Dollar figures tied to a real named engagement (e.g., "$40K deal with AcmeCo") → `$[amount]`
+
+**Rule of thumb:** if uncertain whether something is real-person PII vs. illustrative, SCRUB. Err on the side of scrubbing.
+
+**Per-skill carve-outs:**
+- `linkedin-post-writer/references/examples-*.md` — **keep verbatim**. These are Shaw's public LinkedIn posts; public-figure names (Karpathy, Hamel Husain, etc.) and real metrics stay.
+- `email-writer/references/three-way-intros.md` — the consultant roster must become a template + stubbed placeholder entries (`[Consultant 1]`, `[Consultant 2]`, …). Never commit real contact details.
+- `linkedin-post-analytics/scripts/*.js` — keep scraping logic, generic selectors, and public LinkedIn URL paths intact. Scrub only Shaw-specific identifiers (his LinkedIn user ID, cookies, auth tokens, hardcoded profile URLs).
+- `crm/workflows/*.md` — historically the densest source of Notion page/database IDs. Scrub aggressively.
+
+### 3. Parallel sub-agents
+
+For runs touching 4+ skills, spawn ~4 `general-purpose` sub-agents in parallel, each with a scoped batch. Don't do it serially — it's much slower and burns context.
+
+Batch strategy: group by size so each agent has roughly equal work. Typical split:
+- **Batch A — copy-heavy:** conversion-copy, sales-letter-writer (content-heavy, often need no scrubs)
+- **Batch B — voice skills:** linkedin-post-writer, email-writer (carve-outs apply)
+- **Batch C — Notion-heavy:** crm, notion-helper, sop-helper, executive-briefing, outreach-campaign (most Notion IDs live here)
+- **Batch D — single-files + scripts:** business-strategy, four-rs-framework, pre-call-research, workshop-use-case-researcher, linkedin-lead-gatherer, linkedin-post-analytics
+
+Each sub-agent prompt must include:
+1. Source base path, target base path
+2. Exact list of skills in its batch (with expected file counts when known)
+3. The full scrub ruleset above
+4. Per-skill carve-outs relevant to its batch
+5. Procedure: list → read → scrub → write to mirrored target path → log every replacement → self-grep for leftover PII
+6. Required self-grep patterns: `@[a-z0-9.-]+\.(com|net|org|io|ai|academy)`, `[a-f0-9]{32}`, `[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}`
+7. Report format: files written per skill, replacements by category with counts + examples, grep hits, judgment calls
+8. Hard boundary: do NOT commit to git, do NOT touch anything outside the assigned skill dirs
+
+### 4. Consolidation audit
+
+After all agents return:
+- Run the same PII greps across the whole repo (not just touched skills) to catch cross-skill inconsistencies
+- Surface **disagreements** between agents — one agent may keep a pattern another scrubbed. Get Shaw's call on the inconsistent item and apply uniformly.
+- Flag any stale files in target that don't exist in source (likely renamed upstream). Ask Shaw before deleting.
+
+### 5. README maintenance
+
+The Skills table is ordered **simplest/most portable at top, heaviest deps at bottom**. Tier order:
+
+1. `Any` surface + `None` deps
+2. `Any` + `Web search`
+3. `Any` + single MCP (Gmail or Notion)
+4. `Any` + multiple MCPs / mixed deps
+5. `Claude.ai or Desktop`
+6. `Claude Code or Cowork` + `Chrome tool`
+7. `Claude Code or Cowork` + native/Python deps (ffmpeg, Keynote, AssemblyAI, etc.)
+
+Alphabetize within each tier. Within tier 4, order by number of deps ascending, then alphabetical.
+
+**Surface labels (use exactly these strings):**
+- `Any`
+- `Claude.ai or Desktop`
+- `Claude Code or Cowork`
+
+For each new skill, add a row. For deleted skills, remove the row. Update install-example URLs at the bottom if they point to a skill that no longer exists.
+
+### 6. Pre-commit checklist
+
+- `git diff --stat` — sanity check file counts
+- No `.DS_Store`, no `.env`, no files outside intended skill dirs
+- Repo-wide grep: `grep -rnE "[a-f0-9]{32}" --include="*.md"` → should be empty
+- Repo-wide grep: `grep -rnE "[a-z0-9._-]+@[a-z0-9.-]+\.(com|net|org|io|ai)"` → should only show `shaw@aibuilder.academy`-adjacent hits and known system addresses
+- Confirm stale files were handled (deleted or preserved per Shaw's call)
+
+### 7. Commit + push
+
+Commit with a summary of what changed. Example:
+
+```
+Sync desktop skills: add X, update Y, remove Z
+
+- Added: conversion-copy, sales-letter-writer, ...
+- Updated: crm, email-writer, ...
+- Removed: 3-way-intro (folded into email-writer)
+- README table resorted by complexity
+
+Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>
+```
+
+**Never push without explicit approval from Shaw.**
+
+## Notes / precedent
+
+- Past session established that most content-heavy skills (`conversion-copy`, `sales-letter-writer`, most single-file skills) need **zero scrubs** — the PII concentrates in Notion-integrated skills and email examples.
+- Typical scrub volumes to expect per full sync: ~50–60 Notion IDs, ~15–20 person names, ~5–10 emails, ~5–10 company names.
+- `workflow-1-review.md` was an example of upstream rename (→ `workflow-1-sync.md`) that left a stale file in target. Watch for similar renames.
