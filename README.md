@@ -27,8 +27,7 @@ Two ways I'd recommend using this repo:
 | **sales-letter-writer** | Draft long-form sales letters and one-pagers using Hormozi's $100M Offers principles | Any | None |
 | **validate-saas-idea** | Validate startup or product ideas through systematic market research | Any | Web search |
 | **workshop-use-case-researcher** | Research practical use cases for custom AI workshops and training proposals | Any | Web search |
-| **3-way-intro** | Draft three-way email introductions between leads and consultants | Any | Gmail MCP |
-| **email-writer** | Draft emails in a consistent voice and style | Any | Gmail MCP |
+| **email-writer** | Draft emails in a consistent voice and style (including three-way intros, follow-ups, etc.) | Any | Gmail MCP |
 | **executive-briefing** | Generate a daily briefing by pulling tasks from Notion databases | Any | Notion MCP |
 | **notion-helper** | Create ad hoc tasks, follow-ups, and reminders across Notion databases | Any | Notion MCP |
 | **notion-research-documentation** | Search Notion, synthesize findings, and create research documentation | Any | Notion MCP |
@@ -51,16 +50,16 @@ Two ways I'd recommend using this repo:
 The simplest option is to just paste a skill's GitHub URL into any Claude/AI conversation. Since this is a public repo, Claude can fetch the content and adapt it for you (no installation needed).
 
 ```
-https://github.com/ShawhinT/non-coding-skills/tree/main/3-way-intro
+https://github.com/ShawhinT/non-coding-skills/tree/main/email-writer
 ```
 
 If you're using Claude Code and want a skill installed permanently:
 
 ```bash
 # From GitHub
-claude skill add https://github.com/ShawhinT/non-coding-skills/tree/main/3-way-intro
+claude skill add https://github.com/ShawhinT/non-coding-skills/tree/main/email-writer
 
 # Or clone and add locally
 git clone https://github.com/ShawhinT/non-coding-skills.git
-claude skill add /path/to/non-coding-skills/3-way-intro
+claude skill add /path/to/non-coding-skills/email-writer
 ```
