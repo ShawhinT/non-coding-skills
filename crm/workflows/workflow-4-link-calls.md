@@ -27,8 +27,8 @@ Search broadly across every database that might hold relevant pages:
 3. **Related call databases** — e.g., AI at Work Calls. Older research calls often belong
    linked too, because they're the earliest context Shaw has on the person.
 4. **Search variations** — name, email, company name, and email domain. Pages are sometimes
-   filed under company name ("[Company]" instead of "[Person]"), and stakeholders get cc'd
-   from the same domain.
+   filed under company name ("[Company]" instead of "[Person]", "[Company]" instead of
+   "[Person]"), and stakeholders get cc'd from the same domain.
 
 Database IDs live in `notion-helper/SKILL.md` → "Main Databases."
 

@@ -64,7 +64,7 @@ These are Lindy-tested — they won't change anytime soon.
 - Founded AI Builder Academy (ABA)
 - Named to Dallas Innovates AI 75 (class of 2025)
 - Built real AI products (y2b, Ghst) — practices what he teaches
-- Gmail: [email]
+- Gmail: shaw@aibuilder.academy
 
 ### Mission & Values
 - **Mission:** Unleash human potential through education and technology

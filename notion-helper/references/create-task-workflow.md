@@ -13,7 +13,7 @@ Extract:
 - **Database** — default to **ABA** unless Shaw explicitly names another or it's clearly a
   newsletter/video/social/call item
 - **Related people or pages** — names mentioned in the request (e.g., "FU with [Person]" → auto-link
-  their CRM entry and most recent call page)
+  [Person]'s CRM entry and most recent call page)
 
 ## Step 2: Match Shaw's naming conventions
 
@@ -21,16 +21,16 @@ Shaw's task titles are short, action-first, and follow recurring patterns:
 
 | Pattern | Example |
 |---|---|
-| `FU - <Name>` | `FU - [Name]` |
-| `Send <Name> <thing>` | `Send [Name] agenda + Call Prep`, `Send [Name] FU email` |
-| `Follow up with <Name>` | `Follow up with [Name]`, `Follow up with speakers` |
+| `FU - <Name>` | `FU - [Person]`, `FU - [Person]` |
+| `Send <Name> <thing>` | `Send [Person] agenda + Call Prep`, `Send [Person] FU email` |
+| `Follow up with <Name>` | `Follow up with [Person]`, `Follow up with speakers` |
 | `Prep for <thing>` | `Prep for 1:1 Training (PM)` |
-| `<Name> - <session type>` | `[Name] - Check-in`, `[Name] - 1:1 Claude Workshop` |
-| `Reply <Name>` | `Reply [name]` |
+| `<Name> - <session type>` | `[Person] - Check-in`, `[Person] - 1:1 Claude Workshop` |
+| `Reply <Name>` | `Reply [Person]` |
 | `<verb> <object>` | `Update website messaging`, `Test new ABA copy` |
 
-Prefer these patterns over verbose titles. If Shaw says "remind me to follow up with [Name]
-tomorrow," the title is `FU - [Name]`, not "Reminder: Follow up with [Name] tomorrow."
+Prefer these patterns over verbose titles. If Shaw says "remind me to follow up with [Person]
+tomorrow," the title is `FU - [Person]`, not "Reminder: Follow up with [Person] tomorrow."
 
 ## Step 3: Find related pages to link
 
@@ -52,7 +52,7 @@ database's view URL (see SKILL.md → "Default View URLs").
 Then:
 
 - **Duplicate check**: If a page with the same (or very similar) title and date already exists,
-  stop and tell Shaw — don't auto-create. Example: if `FU - [Name]` already exists for `2026-04-17`,
+  stop and tell Shaw — don't auto-create. Example: if `FU - [Person]` already exists for `2026-04-17`,
   surface that and ask if he wants to update it, create anyway, or skip.
 - **Formatting check**: Look at 2-3 recent pages of the same type (e.g. other `FU -` pages, or
   other `Send X Y` pages) and match their conventions — title capitalization, hyphen vs em dash,
@@ -92,7 +92,7 @@ new page. For all other tasks, omit the icon. Example for ABA:
   "pages": [{
     "icon": "⭕",
     "properties": {
-      "Name": "FU - [Name]",
+      "Name": "FU - [Person]",
       "date:Date:start": "2026-04-17",
       "date:Date:is_datetime": 0
     },

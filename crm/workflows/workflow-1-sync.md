@@ -35,11 +35,12 @@ Fire these four sub-agents in parallel (single message, multiple Task calls):
 
 Purpose: find every new signal in Gmail since the last sync.
 
-For each non-LinkedIn lead/client, run three searches since their `Last Contact?` watermark:
+For each non-LinkedIn lead, client, **and active-campaign contact**, run three searches since
+their `Last Contact?` watermark (campaign-contact emails come from the trackers Sub-agent C pulls):
 
 1. `from:<email> OR to:<email>` — direct thread activity
-2. `<company domain>` — catches cc'd stakeholders from the same org (e.g., a second contact cc'd
-   on an existing thread)
+2. `<company domain>` — catches cc'd stakeholders from the same org (e.g., [Person] at [Company]
+   cc'd on the [Person] thread)
 3. Name-based fallback for Calendly: `from:notifications@calendly.com "<first> <last>"` —
    catches bookings where the invitee email differs from the CRM email on file
 
@@ -70,7 +71,7 @@ section for the distinction.
 
 ### Sub-agent C — CRM State Reader
 
-Purpose: surface every lead and client that's due for attention.
+Purpose: surface every lead, client, and active-campaign contact that's due for attention.
 
 1. Pull **all** Active Leads (including `Lost`) and **all** Clients (Nurture). Lost leads are
    included because re-engagement dates live on `Next Contact`; excluding them silently kills
@@ -85,6 +86,11 @@ Purpose: surface every lead and client that's due for attention.
    from Notes.
 4. For clients specifically, also flag `Last Contact?` >4 months ago regardless of `Next Check-in`
    — catches cases where a check-in got pushed out repeatedly and the relationship went cold.
+5. **Active campaigns sweep.** Fetch the CRM page and read the Active Campaigns section. For
+   each linked campaign page, locate its outreach tracker (inline database) and apply the same
+   filter logic as Active Leads: flag contacts where `Next Contact <= today` or blank on a
+   non-terminal status. Group results by campaign in the report so the main agent can act on
+   them without re-querying. See SKILL.md → "Active Campaigns" for context on why this matters.
 
 ### Sub-agent D — Pre-Call Context Gatherer (conditional)
 
@@ -177,6 +183,10 @@ budget-cycle references, new hires, positive sentiment about past work. Flag can
 
 **Check-ins overdue / due soon (clients):**
 - [Name] — next check-in [date] → [action]
+
+**Active campaign follow-ups due:**
+- [Campaign Name]
+  - [Name] — [reason / Next Contact date] → [action: draft created / LinkedIn DM needed / replied]
 
 **Expansion signals (clients):**
 - [Name] — [what was detected] → [recommended next step]

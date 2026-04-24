@@ -26,5 +26,5 @@ This workflow creates three things and connects them:
 
 ## Reference: existing participants to match
 
-Look at how prior participants are set up — their CRM entries, ABA Trainings pages, and links
-on the workshop parent page are the pattern to follow.
+Look at how [Person] and [Person] are set up — their CRM entries, ABA Trainings
+pages, and links on the workshop parent page are the pattern to follow.

@@ -2,14 +2,15 @@
 name: crm
 description: >
   Use this skill whenever Shaw mentions leads, contacts, sales pipeline activity, or anything
-  CRM-related — even casually. Triggers include: "check my CRM", "update the CRM", "any updates
-  on leads?", "add this person to the CRM", "review my pipeline", "follow up with X", "cross-reference
-  Gmail", "did anyone respond?", "ABA contact form", or any mention of a specific lead's name in a
-  sales context. Also triggers when Shaw shares new contact form submissions or inbound emails that
-  look like potential leads. Use this skill proactively — if a conversation touches leads or sales
-  activity, consult this skill before responding. Also triggers for client/nurture activity:
-  "check on my clients", "any clients due for check-ins", "move this lead to clients",
-  "nurture review", or any mention of existing clients and expansion opportunities.
+  CRM-related — even casually. Triggers include: "check my CRM", "update the CRM", "any
+  updates on leads?", "add this person to the CRM", "review my pipeline", "follow up with X",
+  "anyone worth following up with", "check active campaigns", "did anyone respond?",
+  "cross-reference Gmail", "ABA contact form", or any mention of a specific lead's name in a
+  sales context. Also triggers when Shaw shares new contact form submissions or inbound emails
+  that look like potential leads. Also triggers for client/nurture activity: "check on my
+  clients", "any clients due for check-ins", "move this lead to clients", "nurture review", or
+  any mention of existing clients and expansion opportunities. Follow-up reviews cover Active
+  Leads, Clients (Nurture), AND any active campaign trackers linked from the CRM page.
 ---
 
 # CRM Skill
@@ -206,6 +207,34 @@ name, email, company name, and email domain — pages are sometimes filed under 
 and stakeholders get cc'd from the same domain.
 
 To reconcile ABA Calls against the CRM in both directions during a sync, see **Workflow 1**.
+
+## Active Campaigns
+
+The CRM page has an **Active Campaigns** section that links to currently-running outreach
+campaigns (e.g., "Sell 1:1 Claude Workshops"). Each linked campaign page contains its own
+**outreach tracker** — an inline Notion database with `Name`, `Contact`, `Status`, `Last Contact`,
+`Next Contact`, `Notes`, and `Segment` columns. These trackers are created and structurally
+owned by the **outreach** skill; the CRM skill only reads them.
+
+**Why this matters:** active campaign contacts are not in Active Leads. They're prospects in
+the middle of a structured outreach push. If you only check Active Leads + Clients during a
+follow-up review, you'll miss everyone Shaw is currently working on a campaign.
+
+**Behavior during follow-up reviews:** any time Shaw asks "anyone worth following up with",
+"check the CRM", "review my pipeline", or any equivalent — fetch the Active Campaigns list
+off the CRM page first, then for each linked campaign:
+
+1. Open the campaign page and find its outreach tracker (inline database).
+2. Query the tracker for contacts where `Next Contact <= today` or `Next Contact` is blank
+   on a non-terminal status (i.e., not `Passed` or `Workshop Booked`). Same filter logic as
+   Active Leads.
+3. Cross-reference Gmail (or LinkedIn for LinkedIn-only contacts) for replies since
+   `Last Contact`, exactly as you would for an Active Lead.
+4. Surface contacts that are due, replied, or have stale `Next Contact` dates in the summary.
+
+**Keep tracker updates light.** When a reply or status change comes in, append a dated note
+and bump `Last Contact` / `Next Contact` — same conventions as Active Leads notes. Don't
+restructure the tracker; that's the outreach skill's job.
 
 ## Gmail & Calendly Signals
 

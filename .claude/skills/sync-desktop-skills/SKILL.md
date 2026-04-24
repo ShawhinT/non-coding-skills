@@ -1,39 +1,39 @@
 ---
 name: sync-desktop-skills
-description: Import or update skills in this public repo from Shaw's local Claude Desktop skills-plugin cache. Use whenever Shaw says "sync skills", "import from desktop", "update the repo from my desktop skills", "pull <skill> from desktop", "add these skills to the repo", or otherwise references moving his private Claude Desktop skills into this public repo. Handles PII scrubbing via parallel sub-agents, README table maintenance, and produces a clean commit. Do NOT use for creating skills from scratch (→ skill-creator) or one-off edits to a single already-imported skill.
+description: Import or update skills in this public repo from Shaw's canonical skills repo at ~/agents/skills. Use whenever Shaw says "sync skills", "update the non-coding skills", "pull <skill> from canonical", "add these skills to the repo", or otherwise references moving his private canonical skills into this public repo. Handles PII scrubbing via parallel sub-agents, README table maintenance, and produces a clean commit. Do NOT use for creating skills from scratch (→ skill-creator) or one-off edits to a single already-imported skill.
 ---
 
 # Sync Desktop Skills
 
-Workflow for bringing skills from Shaw's local Claude Desktop skills-plugin cache into this public GitHub repo. The hard parts are (1) scrubbing PII without over-scrubbing brand references, and (2) keeping the README table sorted and accurate.
+Workflow for bringing skills from Shaw's canonical skills repo into this public GitHub repo. The hard parts are (1) scrubbing PII without over-scrubbing brand references, and (2) keeping the README table sorted and accurate.
+
+> **Naming note:** This skill is named `sync-desktop-skills` for historical reasons — the canonical source was originally the Claude Desktop skills-plugin cache. It has since moved to a dedicated git repo at `~/agents/skills/`. The skill name is preserved; the workflow below reflects the current source.
 
 ## When to use
 
-- Shaw names specific skills to import ("add conversion-copy and sales-letter-writer from desktop")
-- Shaw wants a refresh of already-imported skills after desktop-side edits
-- Shaw asks for a bulk sync / comparison between desktop cache and repo
+- Shaw names specific skills to import ("add conversion-copy and sales-letter-writer from canonical")
+- Shaw wants a refresh of already-imported skills after canonical-side edits
+- Shaw asks for a bulk sync / comparison between canonical and repo
 
 ## When NOT to use
 
 - Creating a skill from scratch → skill-creator
 - Editing one file inside a single already-imported skill → just edit it directly
-- Anything touching skills that live only in Claude Code or Cowork (different source path)
+- Anything touching skills that live only in Claude Code or Cowork (those already live in this repo and aren't in the canonical source)
 
 ## Source location
 
-The Claude Desktop cache lives under:
+The canonical skills repo lives at:
 
 ```
-~/Library/Application Support/Claude/local-agent-mode-sessions/skills-plugin/<session-id>/<instance-id>/skills/
+/Users/shaw/agents/skills/
 ```
 
-Session and instance IDs rotate. Find the current one with:
+It's a regular git repo — one directory per skill, no session/instance hunting needed. List contents with:
 
 ```bash
-ls -t "$HOME/Library/Application Support/Claude/local-agent-mode-sessions/skills-plugin/"
+ls /Users/shaw/agents/skills/
 ```
-
-Pick the most recently modified session dir, then the most recent instance dir inside it. Confirm with Shaw if multiple look fresh.
 
 Target is always this repo's root: `/Users/shaw/Documents/_code/_stv/_repos/non-coding-skills/`.
 
@@ -88,10 +88,10 @@ Present the plan to Shaw **before** writing anything. Include:
 For runs touching 4+ skills, spawn ~4 `general-purpose` sub-agents in parallel, each with a scoped batch. Don't do it serially — it's much slower and burns context.
 
 Batch strategy: group by size so each agent has roughly equal work. Typical split:
-- **Batch A — copy-heavy:** conversion-copy, sales-letter-writer (content-heavy, often need no scrubs)
+- **Batch A — copy-heavy:** conversion-copy, sales-letter-writer, hormozi-content-framework (content-heavy, often need no scrubs)
 - **Batch B — voice skills:** linkedin-post-writer, email-writer (carve-outs apply)
-- **Batch C — Notion-heavy:** crm, notion-helper, sop-helper, executive-briefing, outreach-campaign (most Notion IDs live here)
-- **Batch D — single-files + scripts:** business-strategy, four-rs-framework, pre-call-research, workshop-use-case-researcher, linkedin-lead-gatherer, linkedin-post-analytics
+- **Batch C — Notion-heavy:** crm, notion-helper, sop-helper, executive-briefing, outreach (most Notion IDs live here)
+- **Batch D — single-files + scripts:** business-strategy, four-rs-framework, pre-call-research, workshop-use-case-researcher, linkedin-post-analytics, skill-sync
 
 Each sub-agent prompt must include:
 1. Source base path, target base path
@@ -144,7 +144,7 @@ For each new skill, add a row. For deleted skills, remove the row. Update instal
 Commit with a summary of what changed. Example:
 
 ```
-Sync desktop skills: add X, update Y, remove Z
+Sync canonical skills: add X, update Y, remove Z
 
 - Added: conversion-copy, sales-letter-writer, ...
 - Updated: crm, email-writer, ...

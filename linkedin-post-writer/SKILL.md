@@ -95,13 +95,9 @@ These are loose shapes, not rigid templates. The examples show how they actually
 
 ## Writing Process
 
-### Step 0: Direction check
-
-Before drafting, present Shaw with 2-3 possible directions using AskUserQuestion. Each direction: one-line angle, who it speaks to, likely post type. Directions should vary meaningfully — not three versions of the same angle.
-
 ### Step 1: Read examples
 
-After Shaw picks a direction, read the matching example file(s) from `references/`. Pick 2-3 specific examples as reference points for this draft.
+Read the matching example file(s) from `references/` based on the post type that best fits Shaw's content. Pick 2-3 specific examples as reference points for this draft.
 
 ### Step 2: Clarify purpose
 

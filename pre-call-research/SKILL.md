@@ -21,7 +21,7 @@ Canonical Notion IDs live in `notion-helper/SKILL.md` → "Main Databases." CRM-
 - **Clients (Nurture) database** — past clients with engagement history, check-in cadence, and expansion signals
 - **ABA Calls database** — call pages where pre-call briefs and notes live
 - **ABA Trainings database** — delivery sessions (1:1 workshops, trainings, ongoing engagements) with session content and notes
-- **Gmail** — [email], where all email threads with leads and clients live
+- **Gmail** — shaw@aibuilder.academy, where all email threads with leads and clients live
 
 ## Workflow
 
