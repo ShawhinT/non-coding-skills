@@ -37,9 +37,9 @@ Two ways I'd recommend using this repo:
 | **crm** | Read, update, and manage a CRM in Notion; cross-reference Gmail for activity | Any | Notion MCP, Gmail MCP |
 | **outreach** | Run 1:1 outreach campaigns end-to-end — sourcing, enriching, tracking, and drafting messages | Any | Notion MCP, Gmail MCP, Chrome tool |
 | **pre-call-research** | Research prospects before sales calls | Any | Notion MCP, Gmail MCP, web search |
-| **skill-updater** | Update and repackage existing skills on Claude.ai | Claude.ai or Desktop | None |
+| **skill-updater** | Update and repackage existing skills on Claude.ai | Claude Chat or Cowork | None |
 | **linkedin-post-analytics** | Pull and analyze LinkedIn post performance from the creator analytics dashboard | Claude Code or Cowork | Chrome tool |
-| **skill-sync** | Run a local skills-sync CLI to publish skills across Desktop, Codex, and Claude Code | Claude Code or Cowork | Python, skills-sync CLI |
+| **skill-sync** | Run a local skills-sync CLI to publish skills across Desktop, Codex, and Claude Code | Claude Code | Python, skills-sync CLI |
 | **keynote** | Read, create, and modify Apple Keynote presentations | Claude Code | macOS, Keynote app |
 | **training-proposal** | Draft training proposals and outlines from unstructured notes | Claude Code | Python, PDF tooling |
 | **video-editor** | Analyze raw recordings, propose cuts, and generate FCPXML for Final Cut Pro | Claude Code | Python, ffmpeg, AssemblyAI API |

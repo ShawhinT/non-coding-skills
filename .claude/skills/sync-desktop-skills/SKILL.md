@@ -134,16 +134,18 @@ The Skills table is ordered **simplest/most portable at top, heaviest deps at bo
 2. `Any` + `Web search`
 3. `Any` + single MCP (Gmail or Notion)
 4. `Any` + multiple MCPs / mixed deps
-5. `Claude.ai or Desktop`
+5. `Claude Chat or Cowork`
 6. `Claude Code or Cowork` + `Chrome tool`
-7. `Claude Code or Cowork` + native/Python deps (ffmpeg, Keynote, AssemblyAI, etc.)
+7. `Claude Code or Cowork` + native/Python deps (skills-sync CLI, etc.)
+8. `Claude Code` only — runtime-specific deps that break in Cowork (macOS-only apps like Keynote, ffmpeg-based pipelines, PDF tooling, etc.)
 
 Alphabetize within each tier. Within tier 4, order by number of deps ascending, then alphabetical.
 
 **Surface labels (use exactly these strings):**
 - `Any`
-- `Claude.ai or Desktop`
-- `Claude Code or Cowork`
+- `Claude Chat or Cowork` — runs anywhere with the chat UI but not the CLI
+- `Claude Code or Cowork` — needs CLI tooling but works in either
+- `Claude Code` — CLI only; Cowork environment can't satisfy the deps
 
 For each new skill, add a row. For deleted skills, remove the row. Update install-example URLs at the bottom if they point to a skill that no longer exists.
 
