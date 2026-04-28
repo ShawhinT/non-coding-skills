@@ -58,17 +58,41 @@ If an email can be 3 lines, it's 3 lines. The length should match what the situa
 
 ### Infer templates from sent mail, don't just use reference files.
 
-Not every recurring email pattern lives in `references/`. Shaw often runs ad hoc campaigns — like emailing multiple speakers for an event series — where he's sending the same structure to each person but it's not worth codifying as a permanent template. When Shaw asks to draft an email and points to examples or the email is clearly part of a batch (same subject pattern, same recipients list, same stage of a workflow), search his sent mail for similar recent emails and use those as the template. Match structure, formatting, tone, links, and CTAs exactly. The reference files cover stable, long-lived patterns; sent mail covers everything else.
+Not every recurring email pattern lives in `references/`. Shaw often runs ad hoc campaigns — like emailing multiple speakers for an event series — where he's sending the same structure to each person but it's not worth codifying as a permanent template. When Shaw asks to draft an email and points to examples or the email is clearly part of a batch (same subject pattern, same recipients list, same stage of a workflow), search his sent mail for similar recent emails and use those as the template. Match structure, formatting, tone, links, and CTAs exactly.
+
+**When there are multiple candidates, the newest one wins.** Shaw actively refines templates over time — step names get shortened, framings get tightened, links move around. An email from two weeks ago may already be stale. Sort candidates by date and anchor on the most recent instance; only fall back to older examples to fill in structure the newest one happens to be missing.
+
+The reference files cover stable, long-lived patterns; sent mail covers everything else.
 
 ---
 
 ## Gmail Technical Notes
 
-**Always use `contentType: "text/html"` when calling `gmail_create_draft`.** Gmail's plain text mode auto-wraps lines at ~78 characters, inserting hard line breaks mid-sentence. Use `<div>` tags for paragraphs, `<div><br></div>` for blank lines between them, and `<ul><li>` for bullet points (text dashes render as plain text, not actual bullets).
+### Drafting with `create_draft`
+
+The Gmail MCP tool `create_draft` accepts `to`, `subject`, `body` (plain text), and `htmlBody` (HTML). It does NOT currently accept a `threadId` or `contentType` parameter, so every draft created this way starts a fresh thread. Use `htmlBody` whenever the message has paragraphs, links, or any structure — Gmail's plain text mode auto-wraps lines at ~78 characters, inserting hard line breaks mid-sentence. In HTML, use `<div>` tags for paragraphs, `<div><br></div>` for blank lines between them, and `<ul><li>` for bullet points (text dashes render as plain text, not actual bullets).
 
 **Plain text `*word*` means bold, not italic.** When reading sent emails via the Gmail API, the plain text body renders bold text as `*word*`. When reproducing this formatting in HTML drafts, use `<b>` tags, not `<i>`.
 
-**Gmail emoji reactions break thread replies.** When Shaw reacts to an email with an emoji, Gmail creates a new message in the thread. If you then create a draft reply using that `threadId`, Gmail points the `In-Reply-To` header at the reaction instead of the actual email. Before creating a thread reply, check if the last message is an emoji reaction. If so, create a fresh thread with a descriptive subject line instead.
+### Replying on an existing thread (Chrome workaround)
+
+`create_draft` cannot attach a draft to an existing thread, so any reply that needs to land on the original thread (most follow-ups, all CRM nudges, post-call replies) must be authored through the Gmail UI via Claude in Chrome. This is a workaround until the connector restores `threadId` support — when it returns, prefer the API path.
+
+The recipe:
+
+1. **Use the right Gmail account.** `shaw@aibuilder.academy` lives at `https://mail.google.com/mail/u/2/#inbox`. Other indices belong to personal accounts.
+2. **Find the thread.** In the Gmail search bar, run `to:<email> subject:"<original subject>"`. Click the result to open it.
+3. **Click Reply.** Then click into the body area below the recipient line to place the cursor.
+4. **Type the body.** Match the voice and structure you'd produce for an API draft.
+5. **Hyperlinks.** Type the anchor text inline (e.g., `here`), select it with `shift+Left` N times, press `cmd+K`, paste the URL, and press Return — Return commits the link reliably.
+6. **After the link applies, click back into the body to advance the cursor.** Do NOT press Right or Tab — those move focus to the "..." trimmed-content toggle below the body, and the next keystrokes get silently swallowed instead of appearing in the email.
+7. **Verify before handing back.** Zoom into the relevant lines (`computer.zoom`) to confirm punctuation, spacing, and that the link is hyperlinked rather than pasted as raw URL.
+
+Gmail auto-saves the draft as you type. Leave it in Drafts for Shaw to send unless told otherwise.
+
+### Gmail emoji reactions break thread replies
+
+When Shaw reacts to an email with an emoji, Gmail creates a new message in the thread. If you reply via `threadId` (when that path is available again) or scroll past the reaction in Chrome and reply on the original message, the rendering breaks. When the last message in a thread is a reaction, create a fresh thread with a descriptive subject line instead of replying to the existing one.
 
 ---
 

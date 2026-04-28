@@ -59,6 +59,17 @@ Re-engagement tone is a low-pressure check-in, not a hard sell. Acknowledge time
 ask if circumstances have changed. If no response to the re-engagement, leave them as Lost
 permanently (clear `Next Contact` or set far in the future).
 
+### Disqualified leads
+
+Some inbound leads aren't a fit at all — wrong audience, wrong ask, low-quality contact form.
+Use the `Disqualified` Status instead of `Lost` for these. Leave `Next Contact` blank; there's
+no re-engagement cadence. If you also want them to show up in a "Lost" view for CRM tidiness,
+it's fine to dual-tag with `Lost` — Workflow 1 filters on `Next Contact <= today`, so a blank
+field keeps them out of the sync regardless of the Lost tag.
+
+Use `Lost` for leads who didn't convert *this round* but might later. Use `Disqualified` for
+leads you'd never want to work with in the first place.
+
 ## Closed lead nurture
 
 When a lead reaches `Closed` (deal won), move them to the Clients (Nurture) database using

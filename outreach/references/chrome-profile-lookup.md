@@ -51,10 +51,10 @@ Example:
 ```
 [Full Name]
 Sr. Manager, Cyber Analytics Platform
-[Company Name] · [School]
+[Company] · [School]
 Dallas-Fort Worth Metroplex
 ```
-→ employer = **[Company Name]**
+→ employer = **[Company]**
 
 ### 4. Look up company size
 

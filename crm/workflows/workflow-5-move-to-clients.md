@@ -10,7 +10,7 @@ current properties (Name, Email, Source, Notes, Last Contact?) and any page body
 
 ## Step 2 — Create the client record
 
-Create a new page in the Clients (Nurture) data source (`collection://[database-id]`)
+Create a new page in the Clients (Nurture) data source (`collection://[page-id]`)
 with these fields:
 
 - **Name** — carry over from lead

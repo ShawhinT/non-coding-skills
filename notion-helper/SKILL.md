@@ -40,29 +40,44 @@ duplicating IDs, so updates only need to happen in one place.
 
 | DB | Icon | Database Page ID | Data Source ID | What Lives Here |
 |---|---|---|---|---|
-| ABA | 🎓 | `[page-id]` | `[database-id]` | Main business tasks — launches, outreach, partnerships, events, follow-ups |
-| ABA Trainings | 🏫 | `[page-id]` | `[database-id]` | Delivery sessions — 1:1 workshops, trainings, ongoing engagements |
-| ABA Calls | 👨‍🏫 | `[page-id]` | `[database-id]` | Sales calls — notes, prep, scheduling |
-| ABN | 🗞️ | `[page-id]` | (fetch to resolve) | Newsletter editions, email blasts, list management |
-| LFC | 📹 | `[page-id]` | (fetch to resolve) | YouTube videos — scripting, filming, editing, uploads |
-| SFC | 📅 | `[page-id]` | (fetch to resolve) | LinkedIn posts, YT community posts, social shares |
+| ABA | 🎓 | `[page-id]` | `[page-id]` | Main business tasks — launches, outreach, partnerships, events, follow-ups |
+| ABA Trainings | 🏫 | `[page-id]` | `[page-id]` | Delivery sessions — 1:1 workshops, trainings, ongoing engagements |
+| ABA Calls | 👨‍🏫 | `[page-id]` | `[page-id]` | Sales calls — notes, prep, scheduling |
+| ABN | 🗞️ | `[page-id]` | `[page-id]` | Newsletter editions, email blasts, list management |
+| LFC | 📹 | `[page-id]` | `[page-id]` | YouTube videos — scripting, filming, editing, uploads |
+| SFC | 📅 | `[page-id]` | `[page-id]` | LinkedIn posts, YT community posts, social shares |
 
 All databases use a `Date` property. For task pages, the expanded property is
 `date:Date:start` (ISO format, e.g. `2026-04-17`) and `date:Date:is_datetime` (0 for date-only).
 
 ### Default View URLs
 
-Used by `notion-query-database-view` to pull all items from a database (e.g. the executive
-briefing filters these by today's date):
+Used by `notion-query-database-view` to pull every item in a database — useful when you
+need to scan the whole database or apply your own filters in code:
 
 | DB | View URL |
 |---|---|
-| ABA | `https://www.notion.so/[page-id]?v=[view-id]` |
-| ABA Trainings | `https://www.notion.so/[page-id]?v=[view-id]` |
-| ABA Calls | `https://www.notion.so/[page-id]?v=[view-id]` |
-| ABN | `https://www.notion.so/[page-id]?v=[view-id]` |
-| LFC | `https://www.notion.so/[page-id]?v=[view-id]` |
-| SFC | `https://www.notion.so/[page-id]?v=[view-id]` |
+| ABA | `https://www.notion.so/[page-id]?v=[page-id]` |
+| ABA Trainings | `https://www.notion.so/[page-id]?v=[page-id]` |
+| ABA Calls | `https://www.notion.so/[page-id]?v=[page-id]` |
+| ABN | `https://www.notion.so/[page-id]?v=[page-id]` |
+| LFC | `https://www.notion.so/[page-id]?v=[page-id]` |
+| SFC | `https://www.notion.so/[page-id]?v=[page-id]` |
+
+### Today Views (executive-briefing)
+
+Filtered server-side to `Date is Today`. Used by the `executive-briefing` skill so each
+query returns only items scheduled for the current day — no client-side date filtering
+needed. The "today" filter is relative and updates automatically each day.
+
+| DB | View URL |
+|---|---|
+| ABA | `https://www.notion.so/[page-id]?v=[page-id]` |
+| ABA Trainings | `https://www.notion.so/[page-id]?v=[page-id]` |
+| ABA Calls | `https://www.notion.so/[page-id]?v=[page-id]` |
+| LFC | `https://www.notion.so/[page-id]?v=[page-id]` |
+| SFC | `https://www.notion.so/[page-id]?v=[page-id]` |
+| ABN | `https://www.notion.so/[page-id]?v=[page-id]` |
 
 ### Other Key Pages
 

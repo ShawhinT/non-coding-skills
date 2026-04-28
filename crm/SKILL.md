@@ -49,7 +49,7 @@ catalog in `notion-helper/SKILL.md` → "Main Databases."
 | Name | Title | Full name |
 | Email | Text | Email address |
 | Source | Multi-select | `LinkedIn`, `YouTube`, `Personal`, `ABB`, `ABA Contact` |
-| Status | Multi-select | `Pending Call`, `Booked Call`, `Outline Sent`, `Closed`, `Lost` |
+| Status | Multi-select | `Pending Call`, `Booked Call`, `Outline Sent`, `Closed`, `Lost`, `Disqualified` |
 | Last Contact? | Date | Date of most recent touchpoint |
 | Next Contact | Date | Date of next planned touchpoint. Structured replacement for "FU in April"-style notes. Workflow 1 uses this to surface what's due. See `references/follow-up-guidance.md` for cadence defaults by situation. |
 | Notes | Text | Short chronological log (see format below) |
@@ -65,10 +65,10 @@ need to be duplicated here.
 - `Warm outreach (3/4). FU (3/11). Asked about individual training (3/12). Replied about ABA (3/13).`
 - `ABA contact form (3/16). Replied, offered call (3/16).`
 - `Call on 3/13. Not right now.`
-- `Call w/ [Person] & [Person] (3/27). Sending proposal (3/28).`
+- `Call w/ [Person 1] & [Person 2] (3/27). Sending proposal (3/28).`
 
 **Bad example (too much context):**
-- `Call w/ [Person] & [Person] (3/27). [Company] growth analytics, small team, already using MCP + agents. $[amount] L&D budget/person. Sending proposal (3/28).`
+- `Call w/ [Person 1] & [Person 2] (3/27). [Company] growth analytics, small team, already using MCP + agents. $2k L&D budget/person. Sending proposal (3/28).`
 
 **Rules:**
 - Always append new entries; never overwrite existing notes
@@ -95,7 +95,8 @@ Status should reflect the furthest confirmed stage reached:
 - **Booked Call** — call confirmed on calendar
 - **Outline Sent** — proposal/outline sent after call
 - **Closed** — deal won
-- **Lost** — explicitly not moving forward
+- **Lost** — explicitly not moving forward (but may circle back later — set `Next Contact` to the re-engagement date)
+- **Disqualified** — not a fit at all (wrong audience, wrong ask, low-quality inbound). No re-engagement — leave `Next Contact` blank. Can be dual-tagged with `Lost` for view tidiness; the sync ignores them either way because their `Next Contact` is blank.
 
 ---
 

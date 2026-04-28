@@ -168,7 +168,7 @@ When drafting replies to multiple expert network respondents at once:
 
 - **Use a consistent template.** Don't force variation across recipients for the sake of it. The same clean template sent to 6 people is better than 6 slightly different versions.
 - **Group by response category first.** Sort people into the categories above before drafting.
-- **Create as Gmail draft replies in the original thread** using the threadId from the incoming message.
+- **Reply on the original thread.** See SKILL.md's "Replying on an existing thread (Chrome workaround)" — `create_draft` can't attach to existing threads, so this goes through Gmail in Chrome.
 - **Only personalize where earned.** Most people in a batch will get the clean template. That's fine.
 
 ---

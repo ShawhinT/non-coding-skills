@@ -33,14 +33,16 @@ Two ways I'd recommend using this repo:
 | **notion-helper** | Create ad hoc tasks, follow-ups, and reminders across Notion databases | Any | Notion MCP |
 | **sop-helper** | Create, update, and reference standard operating procedures in Notion | Any | Notion MCP |
 | **business-strategy** | Strategic thinking partner for business decisions | Any | Notion MCP, web search |
+| **calendar-helper** | Create, reschedule, and delete Google Calendar events; sync paired Notion pages when applicable | Any | Google Calendar MCP, Notion MCP |
 | **crm** | Read, update, and manage a CRM in Notion; cross-reference Gmail for activity | Any | Notion MCP, Gmail MCP |
 | **outreach** | Run 1:1 outreach campaigns end-to-end — sourcing, enriching, tracking, and drafting messages | Any | Notion MCP, Gmail MCP, Chrome tool |
 | **pre-call-research** | Research prospects before sales calls | Any | Notion MCP, Gmail MCP, web search |
 | **skill-updater** | Update and repackage existing skills on Claude.ai | Claude.ai or Desktop | None |
 | **linkedin-post-analytics** | Pull and analyze LinkedIn post performance from the creator analytics dashboard | Claude Code or Cowork | Chrome tool |
-| **keynote** | Read, create, and modify Apple Keynote presentations | Claude Code or Cowork | macOS, Keynote app |
-| **training-proposal** | Draft training proposals and outlines from unstructured notes | Claude Code or Cowork | Python, PDF tooling |
-| **video-editor** | Analyze raw recordings, propose cuts, and generate FCPXML for Final Cut Pro | Claude Code or Cowork | Python, ffmpeg, AssemblyAI API |
+| **skill-sync** | Run a local skills-sync CLI to publish skills across Desktop, Codex, and Claude Code | Claude Code or Cowork | Python, skills-sync CLI |
+| **keynote** | Read, create, and modify Apple Keynote presentations | Claude Code | macOS, Keynote app |
+| **training-proposal** | Draft training proposals and outlines from unstructured notes | Claude Code | Python, PDF tooling |
+| **video-editor** | Analyze raw recordings, propose cuts, and generate FCPXML for Final Cut Pro | Claude Code | Python, ffmpeg, AssemblyAI API |
 
 
 

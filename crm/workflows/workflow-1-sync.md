@@ -39,8 +39,8 @@ For each non-LinkedIn lead, client, **and active-campaign contact**, run three s
 their `Last Contact?` watermark (campaign-contact emails come from the trackers Sub-agent C pulls):
 
 1. `from:<email> OR to:<email>` — direct thread activity
-2. `<company domain>` — catches cc'd stakeholders from the same org (e.g., [Person] at [Company]
-   cc'd on the [Person] thread)
+2. `<company domain>` — catches cc'd stakeholders from the same org (e.g., a second contact
+   at [Company] cc'd on a lead's thread)
 3. Name-based fallback for Calendly: `from:notifications@calendly.com "<first> <last>"` —
    catches bookings where the invitee email differs from the CRM email on file
 
@@ -159,40 +159,48 @@ budget-cycle references, new hires, positive sentiment about past work. Flag can
 
 ## Summary report format
 
+Report back in three sections, in this order. Drop sections that are empty — don't show an
+empty bucket. Do not include a "quiet / waiting on others" / "looks up to date" section.
+
+### 1. Follow-ups due today
+
+Bulleted list of leads/clients/campaign contacts who are *due right now*. For each bullet where
+you created a Gmail draft, link the draft inline using
+`https://mail.google.com/mail/u/0/#drafts/<draftId>` (the `<draftId>` is the `id` returned by
+`create_draft`, including the `r` or `r-` prefix). LinkedIn-only DM follow-ups go here too —
+flag the channel inline instead of linking.
+
 ```
-**New ABA Calls created:**
-- [Name] — [date] call → ABA Calls page created ✓
+- [Name] ([source/segment] — [reason]) → [Gmail draft](<link>)
+- [Name] ([source/segment] — [reason]) → Needs LinkedIn DM
+```
 
-**New leads added:**
-- [Name] — orphan from ABA Calls / Calendly booking → Active Lead created ✓
+### 2. Updates made to CRM
 
-**Updates found:**
-- [Name] — [what changed] → [action taken]
+Flat list of every change you actually made during this sync: new leads added, status
+transitions, Notes/date updates, call-link refreshes, graduations to Clients, schema changes,
+expansion signals flagged on clients, etc. One bullet per change, terse.
 
-**Call links refreshed:**
-- [Name] — [N calls linked]
+```
+- [Name] — [what changed]
+- Schema: [change]
+```
 
-**Graduations:**
-- [Name] — Closed → Clients (Nurture) ✓
+### 3. Coming up
 
-**Follow-ups due:**
-- [Name] — [reason] → Draft created in Gmail ✓
+Everything on the near horizon. Split into two sub-lists so Shaw can triage at a glance:
 
-**Follow-ups due (via LinkedIn DM):**
-- [Name] — [reason] → Needs LinkedIn DM
+- **Calls / sessions** — scheduled meetings, 1:1 workshops, training sessions (things on the
+  calendar). Include the date/time and who it's with.
+- **Messages to send** — follow-ups, check-ins, campaign pings Shaw needs to author or approve
+  (including in-flight threads where the ball is in his court, like a testimonial chase).
 
-**Check-ins overdue / due soon (clients):**
-- [Name] — next check-in [date] → [action]
+```
+**Calls / sessions:**
+- [Name] — [date/time], [context]
 
-**Active campaign follow-ups due:**
-- [Campaign Name]
-  - [Name] — [reason / Next Contact date] → [action: draft created / LinkedIn DM needed / replied]
-
-**Expansion signals (clients):**
-- [Name] — [what was detected] → [recommended next step]
-
-**Looks up to date:**
-- [Name], [Name], [Name]...
+**Messages to send:**
+- [Name] ([source/segment]) — [reason, due date if applicable]
 ```
 
 ## Principles

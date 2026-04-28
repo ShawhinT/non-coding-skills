@@ -76,7 +76,7 @@ Here's what I'm thinking for the [training/engagement] geared directly toward yo
 
 - *[Format: e.g. Two-part Session: Primer + Done-With-You Workshop]* ([total hours] total)
 - Virtual live session via *[platform]*
-- *Total investment*: $[amount]
+- *Total investment*: $[price]
 
 More details are provided in the attached PDF.
 
@@ -145,16 +145,16 @@ Shaw
 - No "What do you think?" — the check-in is already on the calendar, so use an open door instead of forcing a reply.
 
 **Examples of what suggestion bullets might look like:**
-- "Keep improving the [tool] skill" (continue something started in session)
-- "Build a similar skill for [adjacent tool]" (extend to adjacent use case)
-- "Build a [tool] skill so you don't need to manually [tedious task] anymore!" (tackle a pain point, framed with the relief it brings)
+- "Keep improving the OANDA skill" (continue something started in session)
+- "Build a similar skill for FTMO" (extend to adjacent use case)
+- "Build a Plaud skill so you don't need to manually generate transcripts and annotate speakers anymore!" (tackle a pain point, framed with the relief it brings)
 
 ---
 
 ## Threading Rules
 
-- **Default:** Create as a reply in the existing email thread using `threadId`.
-- **Exception:** If the last message in the thread is a Gmail emoji reaction (e.g., a heart or thumbs up), create the follow-up as a **fresh new thread** with no `threadId`. Gmail treats emoji reactions as messages, and replying to them causes rendering issues.
+- **Default:** Reply on the existing email thread. See SKILL.md's "Replying on an existing thread (Chrome workaround)" — `create_draft` cannot currently attach to a thread, so this goes through Gmail in Chrome.
+- **Exception:** If the last message in the thread is a Gmail emoji reaction (e.g., a heart or thumbs up), start a fresh thread instead. Gmail treats emoji reactions as messages, and replying after one breaks rendering.
 - **Subject line:** Always "Call follow-up" for post-call emails, whether threaded or fresh.
 
 ---

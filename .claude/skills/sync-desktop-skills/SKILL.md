@@ -83,25 +83,41 @@ Present the plan to Shaw **before** writing anything. Include:
 - `linkedin-post-analytics/scripts/*.js` — keep scraping logic, generic selectors, and public LinkedIn URL paths intact. Scrub only Shaw-specific identifiers (his LinkedIn user ID, cookies, auth tokens, hardcoded profile URLs).
 - `crm/workflows/*.md` — historically the densest source of Notion page/database IDs. Scrub aggressively.
 
-### 3. Parallel sub-agents
+### 3. Deterministic scrub pass (script)
 
-For runs touching 4+ skills, spawn ~4 `general-purpose` sub-agents in parallel, each with a scoped batch. Don't do it serially — it's much slower and burns context.
+Before spawning agents, run the regex scrubber at `scripts/scrub.py`. It copies source → target while replacing the deterministic categories: Notion IDs (32-char hex + UUID), emails (with allowlist for `shaw@aibuilder.academy`, `notifications@calendly.com`, system addresses), phone numbers, and Calendly URLs. This handles the bulk of replacements (~70+ per full sync) with no agent tokens.
 
-Batch strategy: group by size so each agent has roughly equal work. Typical split:
-- **Batch A — copy-heavy:** conversion-copy, sales-letter-writer, hormozi-content-framework (content-heavy, often need no scrubs)
-- **Batch B — voice skills:** linkedin-post-writer, email-writer (carve-outs apply)
-- **Batch C — Notion-heavy:** crm, notion-helper, sop-helper, executive-briefing, outreach (most Notion IDs live here)
-- **Batch D — single-files + scripts:** business-strategy, four-rs-framework, pre-call-research, workshop-use-case-researcher, linkedin-post-analytics, skill-sync
+```bash
+# Copy + scrub
+python3 .claude/skills/sync-desktop-skills/scripts/scrub.py scrub \
+  --source ~/agents/skills \
+  --target . \
+  --skills crm,outreach,notion-helper,...  \
+  --overwrite \
+  --log /tmp/sync-scrub.tsv
+
+# Audit (should be clean except for gitignored .claude/settings.local.json)
+python3 .claude/skills/sync-desktop-skills/scripts/scrub.py verify --target .
+```
+
+Notion-ID replacement uses a small left-context heuristic: `[database-id]` if the word "database"/"data_source" appears within 60 chars to the left, else `[page-id]`. Spot-check the log; agents can fix mis-classifications during their pass.
+
+### 4. Parallel sub-agents (judgment-only)
+
+After the script runs, spawn ~3 `general-purpose` sub-agents in parallel for judgment-only categories: real person names, company names, dollar amounts tied to real engagements, LinkedIn profile URLs of non-public-figures, and the carve-out files. The script has already handled deterministic patterns — agents must NOT re-do that work.
+
+Typical batches (rough volume balance):
+- **Batch A — Notion-heavy:** crm, outreach, notion-helper, executive-briefing, sop-helper (most names live here)
+- **Batch B — voice + people-heavy:** email-writer (three-way-intros template carve-out), calendar-helper, pre-call-research
+- **Batch C — copy-heavy:** business-strategy, conversion-copy, four-rs-framework, hormozi-content-framework, linkedin-post-writer, linkedin-post-analytics, sales-letter-writer, workshop-use-case-researcher, skill-sync (historically zero edits)
 
 Each sub-agent prompt must include:
-1. Source base path, target base path
-2. Exact list of skills in its batch (with expected file counts when known)
-3. The full scrub ruleset above
-4. Per-skill carve-outs relevant to its batch
-5. Procedure: list → read → scrub → write to mirrored target path → log every replacement → self-grep for leftover PII
-6. Required self-grep patterns: `@[a-z0-9.-]+\.(com|net|org|io|ai|academy)`, `[a-f0-9]{32}`, `[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}`
-7. Report format: files written per skill, replacements by category with counts + examples, grep hits, judgment calls
-8. Hard boundary: do NOT commit to git, do NOT touch anything outside the assigned skill dirs
+1. Repo root (target only — script already did the copy)
+2. Exact skill list for the batch
+3. The judgment-only scrub categories + KEEP-AS-IS list
+4. Per-skill carve-outs relevant to the batch (esp. linkedin-post-writer/examples-*.md keep-verbatim and email-writer/three-way-intros.md template-stub)
+5. Report format: per-skill replacement counts by category (zero is valid), examples, judgment calls flagged
+6. Hard boundary: do NOT commit, do NOT touch files outside assigned skill dirs, do NOT re-scrub deterministic patterns
 
 ### 4. Consolidation audit
 

@@ -15,6 +15,6 @@ Use when Shaw shares a new contact form submission, inbound email, or new lead f
 - `Notes` — first entry, e.g. `ABA contact form (3/16). Replied, offered call (3/16).`
 - `Status` — only set if the lead has clearly reached a pipeline stage (e.g. a call link was sent → `Pending Call`, a call was booked → `Booked Call`). If the lead just submitted a contact form and received a reply with info or pricing, leave Status **blank** — do not default to `Pending Call`
 
-**Create the page under:** data source `[database-id]`
+**Create the page under:** data source `[page-id]`
 
 After creating, confirm the Notion page was created and summarize the fields set.

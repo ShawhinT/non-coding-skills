@@ -13,7 +13,7 @@ Extract:
 - **Database** — default to **ABA** unless Shaw explicitly names another or it's clearly a
   newsletter/video/social/call item
 - **Related people or pages** — names mentioned in the request (e.g., "FU with [Person]" → auto-link
-  [Person]'s CRM entry and most recent call page)
+  that person's CRM entry and most recent call page)
 
 ## Step 2: Match Shaw's naming conventions
 
@@ -21,12 +21,12 @@ Shaw's task titles are short, action-first, and follow recurring patterns:
 
 | Pattern | Example |
 |---|---|
-| `FU - <Name>` | `FU - [Person]`, `FU - [Person]` |
+| `FU - <Name>` | `FU - [Person]` |
 | `Send <Name> <thing>` | `Send [Person] agenda + Call Prep`, `Send [Person] FU email` |
 | `Follow up with <Name>` | `Follow up with [Person]`, `Follow up with speakers` |
 | `Prep for <thing>` | `Prep for 1:1 Training (PM)` |
 | `<Name> - <session type>` | `[Person] - Check-in`, `[Person] - 1:1 Claude Workshop` |
-| `Reply <Name>` | `Reply [Person]` |
+| `Reply <Name>` | `Reply [person]` |
 | `<verb> <object>` | `Update website messaging`, `Test new ABA copy` |
 
 Prefer these patterns over verbose titles. If Shaw says "remind me to follow up with [Person]
@@ -36,8 +36,8 @@ tomorrow," the title is `FU - [Person]`, not "Reminder: Follow up with [Person] 
 
 If the request mentions a person's name, search Notion for:
 
-- Their CRM entry (Active Leads data source: `collection://[database-id]`
-  or Clients: `collection://[database-id]`)
+- Their CRM entry (Active Leads data source: `collection://[page-id]`
+  or Clients: `collection://[page-id]`)
 - Their most recent call page (ABA Calls) or delivery page (ABA Trainings)
 
 Use `notion-search` with the person's name. Pick the most relevant hits — typically the CRM

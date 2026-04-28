@@ -11,7 +11,7 @@ This workflow creates three things and connects them:
    and `Date` to the session date. Link it on the workshop parent page's Sessions section as a
    `<mention-page>`, matching the format of existing entries.
 
-2. **CRM entry** — an Active Lead in `collection://[database-id]`.
+2. **CRM entry** — an Active Lead in `collection://[page-id]`.
    Pull the participant's name, email, and timeline from Gmail threads and the workshop parent
    page. Use Source: `ABB`, Status: `Booked Call`. Notes should log the timeline in short
    `(M/D)` format (e.g., `Applied to 1:1 Claude Workshop (4/4). Accepted (4/4). Booked Thu
@@ -26,5 +26,5 @@ This workflow creates three things and connects them:
 
 ## Reference: existing participants to match
 
-Look at how [Person] and [Person] are set up — their CRM entries, ABA Trainings
-pages, and links on the workshop parent page are the pattern to follow.
+Look at how prior participants are set up — their CRM entries, ABA Trainings pages, and links
+on the workshop parent page are the pattern to follow.
