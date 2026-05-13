@@ -29,7 +29,7 @@ This skill is the still-image sibling to `animation-builder` (MP4 B-roll for You
 **Every infographic gets its own folder. Create it first, before writing any HTML.** No loose HTMLs or PNGs in shared directories.
 
 - **Folder name:** kebab-case slug matching the topic — `connectors-vs-skills/`, not `infographic-2026-05/`.
-- **Folder location:** `/Users/shaw/Documents/_stv/_content/_SFC/linkedin/<year>/<category>/<slug>/`. `<category>` is typically `AI-education`, `misc`, or a similar topical group. If the category isn't obvious from the brief, ask.
+- **Folder location:** under your content directory, organized as `<year>/<category>/<slug>/`. `<category>` is typically `AI-education`, `misc`, or a similar topical group. If the category isn't obvious from the brief, ask.
 - **Folder contents (default — no external assets):**
   ```
   <slug>/

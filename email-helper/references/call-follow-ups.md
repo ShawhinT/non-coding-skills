@@ -140,7 +140,7 @@ Let me know if any questions or blockers come up :)
 Cheers,
 Shaw
 
-P.S. If you ever get stuck on *what* skill to build next, I created a skill for that [here](https://drive.google.com/file/d/1Tul4pJmPKJ2WXiuwqIMrFvhf7A9Uhtqs/view?usp=sharing).
+P.S. If you ever get stuck on *what* skill to build next, I created a skill for that [here]([drive-link]).
 ```
 
 **Key principles:**
