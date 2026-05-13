@@ -25,42 +25,42 @@ Shaw will specify which consultants to include. If he says "all consultants" or 
 
 ## Consultant Roster
 
-> **Note:** This roster is a template. Replace each placeholder with the real consultant's information when using this skill.
+> **Template — fill in with real consultant details locally.** Do NOT commit real names, companies, or emails to this public repo.
 
-### [Consultant 1 Name]
-- **Title:** [Title, e.g. CEO]
-- **Company:** [Company Name]
-- **Description:** [1-sentence description of what their firm does, e.g. "An organization specializing in building AI and LLM projects for clients"]
+### [Consultant 1]
+- **Title:** [Title]
+- **Company:** [Company]
+- **Description:** [One-line description of what they do]
 - **Email:** [email]
 
-### [Consultant 2 Name]
+### [Consultant 2]
 - **Title:** [Title]
-- **Company:** [Company Name]
-- **Description:** [1-sentence description]
+- **Company:** [Company]
+- **Description:** [One-line description of what they do]
 - **Email:** [email]
 
-### [Consultant 3 Name]
+### [Consultant 3]
 - **Title:** [Title]
-- **Company:** [Company Name]
-- **Description:** [1-sentence description]
+- **Company:** [Company]
+- **Description:** [One-line description of what they do]
 - **Email:** [email]
 
-### [Consultant 4 Name]
+### [Consultant 4]
 - **Title:** [Title]
-- **Company:** [Company Name]
-- **Description:** [1-sentence description]
+- **Company:** [Company]
+- **Description:** [One-line description of what they do]
 - **Email:** [email]
 
-### [Consultant 5 Name]
+### [Consultant 5]
 - **Title:** [Title]
-- **Company:** [Company Name]
-- **Description:** [1-sentence description]
+- **Company:** [Company]
+- **Description:** [One-line description of what they do]
 - **Email:** [email]
 
-### [Consultant 6 Name]
+### [Consultant 6]
 - **Title:** [Title]
-- **Company:** [Company Name]
-- **Description:** [1-sentence description]
+- **Company:** [Company]
+- **Description:** [One-line description of what they do]
 - **Email:** [email]
 
 ---
@@ -91,7 +91,7 @@ Shaw
 - "Hope you two get a chance to connect :)" — always exactly this, never change it
 - Keep each person's blurb to 1–2 sentences max
 - Frame the lead's blurb as their specific need/opportunity (from the consultant's perspective)
-- Use `<>` in the subject line (e.g. `[Lead First Name] <> [Consultant First Name]`)
+- Use `<>` in the subject line (e.g. `[Lead First] <> [Consultant First]`)
 
 ---
 
@@ -110,19 +110,19 @@ Confirm to Shaw once all drafts are saved, and flag if any consultant email was 
 
 ## Example
 
-**Lead:** [Lead Name] ([email]) — building an AI-driven [domain] platform, looking for a technical AI consultant.
+**Lead:** [Lead Name] ([email]) — building an AI-driven equity and derivatives investment platform, looking for a technical AI consultant.
 
-**Output draft for [Consultant First Name]:**
+**Output draft for [Consultant]:**
 
-> Subject: [Lead First Name] <> [Consultant First Name]
+> Subject: [Lead First] <> [Consultant First]
 >
 > Hey folks,
 >
 > I wanted to connect you two because I see the potential for a fruitful collaboration.
 >
-> [Lead First Name], meet [Consultant First Name]. He's the [Title] of [Company], [description of what they do].
+> [Lead First], meet [Consultant First]. He's the [Title] of [Company], [one-line description of what they do].
 >
-> [Consultant First Name], meet [Lead First Name]. He's building an AI-driven [domain] platform and is looking for a technical AI consultant to bring it to life.
+> [Consultant First], meet [Lead First]. He's building an AI-driven equity and derivatives investment platform and is looking for a technical AI consultant to bring it to life.
 >
 > Hope you two get a chance to connect :)
 >

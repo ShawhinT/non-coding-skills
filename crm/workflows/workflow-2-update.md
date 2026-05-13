@@ -22,7 +22,7 @@ Use when Shaw shares new info about a lead (reply received, call happened, propo
    - Update `Status` if the pipeline stage has advanced
 5. Prompt for follow-up email — If the update includes a call or meeting that happened today
    (or yesterday), ask Shaw whether he'd like a follow-up email drafted. If yes, use the
-   email-writer skill's call follow-up reference (`references/call-follow-ups.md`) to draft it.
+   email-helper skill's call follow-up reference (`references/call-follow-ups.md`) to draft it.
    If Shaw already requested a follow-up email as part of the same message, skip the prompt and
    draft it directly.
 6. Confirm the update to Shaw with a brief summary

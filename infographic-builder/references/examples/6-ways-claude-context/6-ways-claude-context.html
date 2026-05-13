@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>6 ways to give Claude context</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Libre+Franklin:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #087CA7;
+    --bg: #FAFAF7;
+    --surface: #FFFFFF;
+    --ink: #0A0A0A;
+    --ink-muted: rgba(0,0,0,0.55);
+    --ink-soft: rgba(0,0,0,0.42);
+    --border: rgba(0,0,0,0.12);
+    --hair: rgba(0,0,0,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 1080px;
+    height: 1350px;
+    background: var(--bg);
+    font-family: 'Libre Franklin', system-ui, sans-serif;
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    position: relative;
+  }
+
+  .canvas {
+    width: 1080px;
+    height: 1350px;
+    padding: 80px 90px 80px 90px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .title {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: 84px;
+    line-height: 1;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+  }
+
+  .list {
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .item {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    padding: 28px 32px;
+    display: grid;
+    grid-template-columns: 70px 64px 1fr;
+    align-items: center;
+    gap: 24px;
+    min-width: 0;
+  }
+
+  .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--primary);
+    letter-spacing: 0;
+  }
+
+  .icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    background: rgba(8,124,167,0.10);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .icon svg { width: 36px; height: 36px; stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+  .text { min-width: 0; }
+
+  .heading {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: 32px;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  .desc {
+    font-family: 'Libre Franklin', sans-serif;
+    font-size: 20px;
+    line-height: 1.35;
+    color: var(--ink-muted);
+    margin-top: 6px;
+  }
+
+  .footer {
+    position: absolute;
+    bottom: 26px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--ink-muted);
+    letter-spacing: 0.06em;
+    opacity: 0.6;
+  }
+</style>
+</head>
+<body>
+<div class="canvas">
+
+  <div class="title">6 ways to give<br/>Claude context.</div>
+
+  <div class="list">
+
+    <div class="item">
+      <div class="num">01</div>
+      <div class="icon">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      </div>
+      <div class="text">
+        <div class="heading">Let it search the web</div>
+        <div class="desc">Point Claude at the open internet for fresh facts and sources.</div>
+      </div>
+    </div>
+
+    <div class="item">
+      <div class="num">02</div>
+      <div class="icon">
+        <svg viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-1.2 4.3 8.5 8.5 0 0 1-7.3 4.2 8.4 8.4 0 0 1-4.3-1.2L3 20l1.2-5.2A8.5 8.5 0 1 1 21 11.5z"/><path d="M9 11h.01M12 11h.01M15 11h.01"/></svg>
+      </div>
+      <div class="text">
+        <div class="heading">Have it interview you</div>
+        <div class="desc">Give a sparse prompt, ask it to interview you before answering.</div>
+      </div>
+    </div>
+
+    <div class="item">
+      <div class="num">03</div>
+      <div class="icon">
+        <svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+      </div>
+      <div class="text">
+        <div class="heading">Give it folder access</div>
+        <div class="desc">Drop files into a Project so Claude can read them on demand.</div>
+      </div>
+    </div>
+
+    <div class="item">
+      <div class="num">04</div>
+      <div class="icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.2"/><circle cx="4.5" cy="6" r="1.8"/><circle cx="4.5" cy="18" r="1.8"/><circle cx="19.5" cy="6" r="1.8"/><circle cx="19.5" cy="18" r="1.8"/><path d="M6.2 7l4 4M6.2 17l4-4M17.8 7l-4 4M17.8 17l-4-4"/></svg>
+      </div>
+      <div class="text">
+        <div class="heading">Plug in connectors</div>
+        <div class="desc">Let Claude pull context from Gmail, Notion, Drive, and Stripe itself.</div>
+      </div>
+    </div>
+
+    <div class="item">
+      <div class="num">05</div>
+      <div class="icon">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      </div>
+      <div class="text">
+        <div class="heading">Use Chrome or computer use</div>
+        <div class="desc">When no connector exists, let Claude drive the browser.</div>
+      </div>
+    </div>
+
+    <div class="item">
+      <div class="num">06</div>
+      <div class="icon">
+        <svg viewBox="0 0 24 24"><path d="M4 17l5-5-5-5"/><path d="M12 19h8"/></svg>
+      </div>
+      <div class="text">
+        <div class="heading">Build custom CLI tools</div>
+        <div class="desc">For APIs and edge cases where reliability and cost matter most.</div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<div class="footer">@shawhintalebi</div>
+
+</body>
+</html>

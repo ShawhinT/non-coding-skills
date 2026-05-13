@@ -145,7 +145,7 @@ Each campaign needs templates — typically one per segment, sometimes per chann
 Save finalized templates to the campaign page in code blocks for easy copy-paste.
 
 For writing craft specifically:
-- **Voice, tone, email mechanics (HTML, Gmail threading)** → defer to **email-writer**
+- **Voice, tone, email mechanics (HTML, Gmail threading)** → defer to **email-helper**
 - **Message craft — hooks, CTAs, personalization, reply friction** → defer to **conversion-copy** (specifically `channel-outreach.md`)
 
 This skill owns the operational side (who, when, which segment); message skills own the words.
@@ -189,6 +189,6 @@ Cross-reference Gmail when Shaw asks for updates — search each contact's email
 ## Relationship to other skills
 
 - **CRM skill** — owns Notes format. Also owns pipeline-level lead management. If an outreach contact graduates (books a call, asks about pricing), add them to the CRM. Outreach tracker is campaign-level; CRM is pipeline-level. A person can exist in both.
-- **email-writer** — owns Shaw's voice, Gmail mechanics, reply/intro/decline templates.
+- **email-helper** — owns Shaw's voice, Gmail mechanics, reply/intro/decline templates.
 - **conversion-copy** — owns message craft for conversion-focused copy. `channel-outreach.md` specifically covers cold-outreach DMs.
 - **notion-helper** — adjacent; owns ad-hoc Notion creation outside structured campaigns.

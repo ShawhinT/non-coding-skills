@@ -1,0 +1,8 @@
+[project]
+name = "animation-builder-workspace"
+version = "0.1.0"
+description = "Working environment for animation-builder skill. Copy this file into your animations folder and run `uv sync`."
+requires-python = ">=3.10"
+dependencies = [
+    "playwright>=1.50",
+]

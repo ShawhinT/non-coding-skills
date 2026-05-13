@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Section card</title>
+<!-- Load brand fonts here if a brand-system skill is loaded.
+     Default below uses system-ui — override per brand. -->
+<style>
+  :root {
+    /* Override these from the brand-system skill (aba-brand-system, etc.).
+       Default is a neutral dark palette. */
+    --bg: oklch(0.13 0.022 252);
+    --accent: oklch(0.65 0.13 230);     /* eyebrow + progress fill */
+    --bone: rgba(255, 255, 255, 1);     /* title color */
+    --faint: rgba(255, 255, 255, 0.08); /* unfilled progress track */
+
+    /* Set the progress fill percentage per card.
+       Series of N steps → card 1 = (1/N)*100%, card 2 = (2/N)*100%, …
+       Intro/framework cards: remove the progress block entirely or set 0%. */
+    --progress: 20%;
+  }
+
+  html, body { margin: 0; padding: 0; background: var(--bg); }
+  body {
+    width: 100vw; height: 100vh;
+    display: grid; place-items: center;
+    color: var(--bone);
+    overflow: hidden;
+    font-family: system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* 1920x1080 stage — scales to viewport, preserves aspect ratio. */
+  .stage {
+    width: min(1920px, 100vw);
+    aspect-ratio: 16 / 9;
+    position: relative;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    background:
+      /* Optional faint accent glow — delete if not wanted */
+      radial-gradient(ellipse 60% 50% at 50% 40%,
+        color-mix(in srgb, var(--accent) 14%, transparent) 0%,
+        transparent 70%),
+      var(--bg);
+  }
+
+  .scene {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    z-index: 2;
+  }
+
+  .eyebrow {
+    font-weight: 600;
+    font-size: 28px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .title {
+    font-weight: 800;
+    font-size: 156px;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    color: var(--bone);
+    margin: 0;
+  }
+  /* If the title has a structural visual (arrow, divider, etc.),
+     keep it the title color, not the accent. */
+  .title .glyph { color: var(--bone); }
+
+  .progress-track {
+    position: absolute;
+    left: 12.5%; right: 12.5%;
+    bottom: 56px;
+    height: 2px;
+    background: var(--faint);
+    z-index: 2;
+  }
+  .progress-fill {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: var(--progress);
+    background: var(--accent);
+  }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="scene">
+      <!-- Eyebrow: single-digit step numbers (STEP 0, PART 1), tracked, accent-colored. -->
+      <div class="eyebrow">Step 1</div>
+
+      <!-- Title: Title Case, the section name as written in the script.
+           If the title has a structural visual (e.g. arrow between two words),
+           wrap that mark in <span class="glyph"> so it stays title-colored, not accent-colored. -->
+      <h1 class="title">Section Title</h1>
+    </div>
+
+    <!-- Progress rail: include only if part of a numbered series of ≥3 cards.
+         Set the fill percentage via --progress on :root.
+         Intro/framework cards: delete this block entirely. -->
+    <div class="progress-track">
+      <div class="progress-fill"></div>
+    </div>
+  </div>
+</body>
+</html>

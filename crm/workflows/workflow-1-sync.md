@@ -148,7 +148,7 @@ calls found in ABA Calls, ABA Trainings, and Google Calendar (`gcal_list_events`
 Gmail sent mail (`from:shaw@aibuilder.academy to:<email> subject:"Call follow-up"
 after:<call-date>`). Batch all missing follow-ups into a single prompt at the end of the
 sync summary under a **"Calls missing follow-up emails:"** section. For each, ask Shaw
-whether to draft one — and if yes, use the email-writer skill's call follow-up reference
+whether to draft one — and if yes, use the email-helper skill's call follow-up reference
 (`references/call-follow-ups.md`).
 
 ### 7. Expansion signal check (clients only)

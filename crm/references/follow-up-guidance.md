@@ -158,7 +158,7 @@ copy-paste into a DM.
 3. **Self-check before finalizing:** verify the last sentence is a question, not a statement.
    If it ends with "let me know," "happy to help," or any passive closer, rewrite it as a question.
 4. Create the draft using `gmail_create_draft` with the `threadId` of the existing thread.
-   For Gmail formatting details (HTML structure, emoji reaction handling), see the **email-writer** skill's Gmail Technical Notes.
+   For Gmail formatting details (HTML structure, emoji reaction handling), see the **email-helper** skill's Gmail Technical Notes.
 5. Update the lead's CRM Notes to reflect the follow-up: e.g. `FU (3/18).`
 6. Call it out clearly in the summary report under **"Follow-ups due"**
 

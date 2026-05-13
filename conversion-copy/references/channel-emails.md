@@ -2,7 +2,7 @@
 
 Use this framework when writing a 1:1 sales email to someone who already knows Shaw — a past client following up on their engagement, a warm lead after a discovery call, a referral whose context is clear, or someone who booked-then-ghosted.
 
-This is **not** the framework for cold outreach to strangers (→ `channel-outreach.md`) or general email drafts without a conversion intent (→ `email-writer`).
+This is **not** the framework for cold outreach to strangers (→ `channel-outreach.md`) or general email drafts without a conversion intent (→ `email-helper`).
 
 ## Before you draft
 

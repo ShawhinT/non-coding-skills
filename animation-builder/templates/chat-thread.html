@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Chat thread template</title>
+<!--
+  CHAT THREAD TEMPLATE
+  ====================
+  Scaffold for any "Claude in a back-and-forth with the user" scene.
+
+  Conventions:
+    - Bot messages on the LEFT, user messages on the RIGHT (modern chat UI).
+    - Bubbles never overlap the opposite column — max-width ~62%.
+    - Continuity markers (".ellipsis") are NOT styled as bubbles. They're plain
+      muted text signaling "conversation continues."
+    - Claude logo (if used) sits at the top-left of the thread, above the
+      first bot message. Use as an "avatar header" not a separate column.
+
+  Patterns included below:
+    - .row.user           plain user message
+    - .row.bot            plain bot message
+    - .row.bot.thinking   bot "thinking…" with animated dot pulse
+    - .row.bot.tools      bot tool-call chips (read_file, web_fetch, …)
+    - .row.bot.draft      bot mini-doc draft (skeleton lines in a card)
+    - .row.user.edit      user edit annotation (mono font, strike + add)
+    - .row.bot.continues  plain "…" indicator (not a bubble)
+
+  Build order:
+    Each .row has an animation-delay set via .r1, .r2, … selectors that
+    match the .row class specificity (NOT plain .rN — see the SKILL.md
+    "Rendering pitfalls" section on CSS shorthand for why).
+
+  Source of truth for this scaffold:
+    The "painful chaos" clip from the 15-hr/wk video. Adapt content,
+    keep the structure.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #010413;
+    --primary: #087CA7;            /* override per brand */
+    --bone: rgba(255, 255, 255, 0.94);
+    --muted: rgba(255, 255, 255, 0.62);
+    --faint: rgba(255, 255, 255, 0.10);
+    --user-bg: rgba(8, 124, 167, 0.16);
+    --user-edge: rgba(8, 124, 167, 0.45);
+    --bot-bg: rgba(255, 255, 255, 0.045);
+    --bot-edge: rgba(255, 255, 255, 0.13);
+    --red: #E26D5C;
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  html, body { margin: 0; padding: 0; background: var(--bg); }
+  body {
+    width: 100vw; height: 100vh;
+    display: grid; place-items: center;
+    color: var(--bone);
+    overflow: hidden;
+    font-family: 'Manrope', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .stage {
+    width: min(1920px, 100vw);
+    aspect-ratio: 16 / 9;
+    position: relative;
+    background:
+      radial-gradient(ellipse 55% 65% at 50% 50%, rgba(218, 119, 86, 0.08) 0%, transparent 60%),
+      var(--bg);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Claude avatar header — sits at the top of the thread, above bot bubbles.
+     Delete if your scene doesn't need an explicit Claude identity. */
+  .claude-mark {
+    display: inline-flex;
+    align-items: center;
+    gap: 18px;
+    align-self: flex-start;
+    margin-bottom: 8px;
+    opacity: 0;
+    animation: fade-in 0.6s var(--ease-out) forwards;
+    animation-delay: 0.5s;
+  }
+  .claude-mark .avatar {
+    position: relative;
+    width: 110px; height: 110px;
+    display: grid; place-items: center;
+    flex-shrink: 0;
+  }
+  .claude-mark .halo {
+    position: absolute; inset: -18px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(218, 119, 86, 0.20) 0%, transparent 65%);
+    animation: pulse 3.2s ease-in-out infinite;
+  }
+  .claude-mark img {
+    width: 96px; height: 96px;
+    object-fit: contain;
+    position: relative; z-index: 1;
+    animation: breathe 3.6s ease-in-out infinite;
+  }
+  .claude-mark .name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    opacity: 0.75;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.78; transform: scale(1); }
+    50%      { opacity: 1;    transform: scale(1.07); }
+  }
+  @keyframes breathe {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.03); }
+  }
+  @keyframes fade-in {
+    from { opacity: 0; } to { opacity: 1; }
+  }
+
+  /* Chat thread — width sets the conversation's horizontal span. */
+  .thread {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    width: 860px;
+    max-width: 860px;
+  }
+
+  .row { display: flex; width: 100%; opacity: 0; }
+  .row.bot  { justify-content: flex-start; }
+  .row.user { justify-content: flex-end; }
+
+  .bubble {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 26px;
+    border-radius: 18px;
+    border: 1px solid var(--bot-edge);
+    background: var(--bot-bg);
+    color: var(--bone);
+    font-size: 29px;
+    font-weight: 500;
+    max-width: 62%;             /* keeps left/right columns from overlapping */
+    line-height: 1.25;
+  }
+  .row.user .bubble {
+    background: var(--user-bg);
+    border-color: var(--user-edge);
+  }
+  .bubble svg { width: 26px; height: 26px; color: var(--primary); flex-shrink: 0; }
+
+  /* Continuity marker — NOT a bubble. Plain muted text. */
+  .ellipsis {
+    background: transparent;
+    border: none;
+    padding: 4px 12px 0;
+    font-size: 38px;
+    line-height: 0.6;
+    letter-spacing: 6px;
+    color: var(--muted);
+    opacity: 0.7;
+  }
+
+  /* Sub-styles for richer message types */
+  .row.thinking .bubble { color: var(--muted); }
+  .row.thinking .dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--primary); opacity: 0.6;
+    animation: dot-pulse 1.3s ease-in-out infinite;
+  }
+  .row.thinking .dot:nth-child(2) { animation-delay: 0.18s; }
+  .row.thinking .dot:nth-child(3) { animation-delay: 0.36s; }
+  @keyframes dot-pulse {
+    0%, 100% { opacity: 0.32; transform: scale(0.85); }
+    50%      { opacity: 1;    transform: scale(1.18); }
+  }
+
+  .row.tools .stack { display: inline-flex; gap: 12px; flex-wrap: wrap; }
+  .bubble.code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    padding: 12px 18px;
+    gap: 10px;
+  }
+  .bubble.code svg { width: 20px; height: 20px; }
+
+  .row.draft .doc {
+    width: 380px;
+    background: var(--bot-bg);
+    border: 1px solid var(--bot-edge);
+    border-radius: 14px;
+    padding: 18px 22px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .row.draft .doc .line {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 4px;
+  }
+  .row.draft .doc .line.w1 { width: 92%; }
+  .row.draft .doc .line.w2 { width: 76%; }
+  .row.draft .doc .line.w3 { width: 84%; }
+  .row.draft .doc .line.w4 { width: 60%; }
+
+  .row.edit .bubble {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 23px;
+    color: var(--muted);
+  }
+  .row.edit .strike { position: relative; }
+  .row.edit .strike::after {
+    content: '';
+    position: absolute;
+    left: -2px; right: -2px; top: 52%;
+    height: 2px;
+    background: var(--red);
+    border-radius: 2px;
+    transform: rotate(-2deg);
+  }
+  .row.edit .add { color: var(--primary); font-weight: 600; }
+
+  /* Direction-aware build-in. Selectors are TWO-class to match the specificity
+     of .row.user / .row.bot above — otherwise the animation shorthand on those
+     rules silently resets animation-delay to 0 (see SKILL.md "Rendering pitfalls"). */
+  .row.user { animation: slide-in-r 0.55s var(--ease-out) forwards; }
+  .row.bot  { animation: slide-in-l 0.55s var(--ease-out) forwards; }
+
+  .row.r1 { animation-delay: 0.00s; }
+  .row.r2 { animation-delay: 0.50s; }
+  .row.r3 { animation-delay: 1.00s; }
+  .row.r4 { animation-delay: 1.50s; }
+  .row.r5 { animation-delay: 2.00s; }
+  .row.r6 { animation-delay: 2.50s; }
+  .row.r7 { animation-delay: 3.00s; }
+  .row.r8 { animation-delay: 3.50s; }
+
+  @keyframes slide-in-r {
+    from { opacity: 0; transform: translate(8px, 4px); }
+    to   { opacity: 1; transform: translate(0, 0); }
+  }
+  @keyframes slide-in-l {
+    from { opacity: 0; transform: translate(-8px, 4px); }
+    to   { opacity: 1; transform: translate(0, 0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.001s !important; animation-delay: 0s !important; }
+  }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="thread">
+
+      <!-- Optional Claude avatar header. Copy logos/claude-color.png into this
+           clip's subfolder if you keep it. -->
+      <div class="claude-mark">
+        <div class="avatar">
+          <div class="halo"></div>
+          <img src="./claude-color.png" alt="Claude" />
+        </div>
+        <div class="name">Claude</div>
+      </div>
+
+      <!-- 1. User message -->
+      <div class="row user r1">
+        <div class="bubble">Write a launch announcement.</div>
+      </div>
+
+      <!-- 2. Bot thinking -->
+      <div class="row bot r2 thinking">
+        <div class="bubble">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          <span>thinking…</span>
+        </div>
+      </div>
+
+      <!-- 3. Bot question -->
+      <div class="row bot r3">
+        <div class="bubble">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z"/>
+          </svg>
+          <span>What tone, formal or casual?</span>
+        </div>
+      </div>
+
+      <!-- 4. User clarifies -->
+      <div class="row user r4">
+        <div class="bubble">Casual, with one stat.</div>
+      </div>
+
+      <!-- 5. Bot tool calls -->
+      <div class="row bot r5 tools">
+        <div class="stack">
+          <div class="bubble code">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5A3.375 3.375 0 0 0 10.125 2.25H8.25M9 16.5l1.5 1.5M14 14a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+            </svg>
+            <span>read_file</span>
+          </div>
+          <div class="bubble code">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0a8.97 8.97 0 0 0 3.46-7.5A8.97 8.97 0 0 0 12 3m0 18a8.97 8.97 0 0 1-3.46-7.5A8.97 8.97 0 0 1 12 3M3.6 9h16.8M3.6 15h16.8"/>
+            </svg>
+            <span>web_fetch</span>
+          </div>
+          <div class="bubble code">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11.42 15.17 17.25 21A2.65 2.65 0 0 0 21 17.25l-5.83-5.83m-3.75 3.75a6 6 0 0 1-7.78-7.78l3 3 3-3-3-3a6 6 0 0 1 7.78 7.78"/>
+            </svg>
+            <span>grep</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. Bot draft -->
+      <div class="row bot r6 draft">
+        <div class="doc">
+          <div class="line w1"></div>
+          <div class="line w2"></div>
+          <div class="line w3"></div>
+          <div class="line w4"></div>
+          <div class="line w2"></div>
+        </div>
+      </div>
+
+      <!-- 7. User edit -->
+      <div class="row user r7 edit">
+        <div class="bubble">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m16.86 4.49 2.65 2.65m-2.65-2.65a2.5 2.5 0 1 1 3.54 3.54L7.5 20.91l-4.5 1 1-4.5L16.86 4.49Z"/>
+          </svg>
+          <span class="strike">huge launch</span>
+          <span class="add">→ first big release</span>
+        </div>
+      </div>
+
+      <!-- 8. Continuity marker (NOT a bubble) -->
+      <div class="row bot r8">
+        <div class="ellipsis">…</div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>
+</content>
+</invoke>

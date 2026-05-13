@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Math curve template</title>
+<!--
+  MATH CURVE TEMPLATE
+  ===================
+  Scaffold for any chart of an ANALYTICAL relationship — effort/onboarding
+  curves, learning curves, decay, growth, distributions, anything where the
+  shape is defined by a function.
+
+  How it works:
+    The SVG <path id="curve"> starts empty. An inline <script> samples y(x)
+    over [xStart, xEnd] at 400 points, builds the "d" attribute, and sets
+    stroke-dasharray to the path's actual length for the draw-on animation.
+    Labels and tick marks are also positioned from the function so they
+    snap to the curve regardless of how you reshape it.
+
+  Why procedural:
+    Hand-drawn cubic-beziers look lumpy because every control point is an
+    approximation. For a trend line that should look mathematical, sample
+    the function. To change the shape, just edit the function parameters
+    at the top of the script — labels and ticks follow automatically.
+
+  Default shape: Gaussian bump above baseline, then tanh descent below it.
+  Reads as "short-term cost / long-term payoff."
+
+  Swap-in functions:
+    Sigmoid (S-curve adoption):  y = baseline - amp * (1 / (1 + exp(-k * (x - x0))))
+    Exponential decay:           y = baseline + amp * exp(-k * (x - x0))
+    Inverse U:                   y = baseline - amp * exp(-((x - mu)^2) / (2 * sigma^2))
+    Linear:                      y = baseline + slope * (x - x0)
+
+  Source of truth:
+    The "effort curve" clip from the 15-hr/wk video.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #010413;
+    --accent: #087CA7;             /* override per brand */
+    --bone: rgba(255, 255, 255, 0.92);
+    --muted: rgba(255, 255, 255, 0.55);
+    --faint: rgba(255, 255, 255, 0.10);
+  }
+
+  html, body { margin: 0; padding: 0; background: var(--bg); overflow: hidden; }
+  body {
+    width: 100vw; height: 100vh;
+    display: grid; place-items: center;
+    color: var(--bone);
+    font-family: 'Manrope', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .stage {
+    position: relative;
+    width: 1920px; height: 1080px;
+    background:
+      radial-gradient(ellipse 55% 45% at 55% 55%,
+        rgba(8, 124, 167, 0.13) 0%, transparent 70%),
+      var(--bg);
+    overflow: hidden;
+  }
+
+  .chart { position: absolute; inset: 0; }
+
+  .axis { stroke: var(--faint); stroke-width: 2; fill: none; }
+
+  .baseline {
+    stroke: var(--muted);
+    stroke-width: 2;
+    stroke-dasharray: 14 10;
+    fill: none;
+    opacity: 0;
+    animation: fadeIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: 0.0s;
+  }
+
+  .axis-label {
+    font-family: 'Manrope', system-ui, sans-serif;
+    font-weight: 500;
+    font-size: 20px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    fill: var(--muted);
+    opacity: 0;
+    animation: fadeIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: 0.15s;
+  }
+
+  /* The curve. Inline JS below sets the path's "d" and the stroke-dasharray
+     length, so the draw-on animation works for any function. */
+  .curve {
+    stroke: var(--accent);
+    stroke-width: 5;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 0 8px rgba(8, 124, 167, 0.35));
+    animation: drawCurve 2.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    animation-delay: 0.4s;
+  }
+
+  .label {
+    font-family: 'Manrope', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 30px;
+    letter-spacing: 0.01em;
+    fill: var(--bone);
+    opacity: 0;
+    animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  .label-peak { animation-delay: 1.2s; }
+  .label-tail { animation-delay: 2.4s; }
+
+  .tick {
+    stroke: var(--muted);
+    stroke-width: 1.5;
+    fill: none;
+    opacity: 0;
+    animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  .tick-peak { animation-delay: 1.2s; }
+  .tick-tail { animation-delay: 2.4s; }
+
+  @keyframes drawCurve { to { stroke-dashoffset: 0; } }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.001s !important; animation-delay: 0s !important; }
+  }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <svg class="chart" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+      <!-- Y-axis label (rotated) and X-axis label -->
+      <text class="axis-label" x="120" y="540"
+            transform="rotate(-90, 120, 540)" text-anchor="middle">Effort</text>
+      <text class="axis-label" x="1700" y="940" text-anchor="end">Time</text>
+
+      <!-- Faint axes -->
+      <path class="axis" d="M 200 240 L 200 900 L 1720 900" />
+
+      <!-- Baseline (dashed horizontal) -->
+      <line class="baseline" x1="220" y1="600" x2="1700" y2="600" />
+
+      <!-- The curve — populated by JS below -->
+      <path class="curve" id="curve" fill="none" />
+
+      <!-- Peak label + tick -->
+      <line class="tick tick-peak" id="tick-peak" />
+      <text class="label label-peak" id="label-peak" text-anchor="middle">onboarding</text>
+
+      <!-- Tail label + tick -->
+      <line class="tick tick-tail" id="tick-tail" />
+      <text class="label label-tail" id="label-tail" text-anchor="middle">compounded payoff</text>
+    </svg>
+  </div>
+
+  <script>
+    /* === Function parameters ====================================
+       Change ONLY these to reshape the curve. Labels follow.
+       =========================================================== */
+    const xStart = 240, xEnd = 1700;       // x range in SVG coordinates
+    const baseline = 600;                   // y-value of baseline in SVG (lower y = visually higher)
+    const bumpHeight = 220, bumpCenter = 540, bumpWidth = 150;   // Gaussian peak (above baseline)
+    const dropDepth  = 220, dropCenter  = 920, dropWidth  = 180; // tanh descent (below baseline)
+
+    function y(x) {
+      const bump = bumpHeight * Math.exp(-Math.pow(x - bumpCenter, 2) / (2 * bumpWidth * bumpWidth));
+      const drop = dropDepth * 0.5 * (1 + Math.tanh((x - dropCenter) / dropWidth));
+      return baseline - bump + drop;        // subtract bump (move up), add drop (move down)
+    }
+
+    /* === Build the path ====================================== */
+    const steps = 400;
+    const pts = [];
+    for (let i = 0; i <= steps; i++) {
+      const x = xStart + (xEnd - xStart) * i / steps;
+      pts.push([x, y(x)]);
+    }
+    const d = pts.map((p, i) =>
+      (i === 0 ? 'M' : 'L') + ' ' + p[0].toFixed(2) + ' ' + p[1].toFixed(2)
+    ).join(' ');
+
+    const path = document.getElementById('curve');
+    path.setAttribute('d', d);
+
+    // Use the exact path length so the draw-on animation is accurate.
+    const len = path.getTotalLength();
+    path.style.strokeDasharray = len;
+    path.style.strokeDashoffset = len;
+
+    /* === Place labels & ticks from the function ============== */
+    function placeLabel(x, dy, tickId, labelId) {
+      const yCurve = y(x);
+      const tick = document.getElementById(tickId);
+      const label = document.getElementById(labelId);
+      if (dy < 0) {  // label ABOVE the curve
+        tick.setAttribute('x1', x); tick.setAttribute('y1', yCurve - 30);
+        tick.setAttribute('x2', x); tick.setAttribute('y2', yCurve + dy);
+        label.setAttribute('x', x);
+        label.setAttribute('y', yCurve + dy - 22);
+      } else {       // label BELOW the curve
+        tick.setAttribute('x1', x); tick.setAttribute('y1', yCurve + 30);
+        tick.setAttribute('x2', x); tick.setAttribute('y2', yCurve + dy);
+        label.setAttribute('x', x);
+        label.setAttribute('y', yCurve + dy + 42);
+      }
+    }
+    placeLabel(bumpCenter, -90, 'tick-peak', 'label-peak');
+    placeLabel(1380, 80, 'tick-tail', 'label-tail');
+  </script>
+</body>
+</html>
+</content>
+</invoke>

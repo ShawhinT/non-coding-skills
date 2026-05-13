@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Infographic</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Libre+Franklin:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAFAF7;
+    --surface: #FFFFFF;
+    --ink: #0A0A0A;
+    --ink-muted: rgba(0,0,0,0.55);
+    --border: rgba(0,0,0,0.14);
+    --accent: #087CA7;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 1080px;
+    height: 820px;
+    background: var(--bg);
+    font-family: 'Libre Franklin', system-ui, sans-serif;
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    position: relative;
+  }
+
+  .canvas {
+    width: 1080px;
+    height: 820px;
+    padding: 60px 90px 70px 90px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .display {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: 70px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    text-align: left;
+  }
+
+  .body {
+    font-family: 'Libre Franklin', sans-serif;
+    font-size: 24px;
+    line-height: 1.4;
+    color: var(--ink-muted);
+    margin-top: 18px;
+    text-align: left;
+  }
+
+  .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+  }
+
+  .footer {
+    position: absolute;
+    bottom: 22px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--ink-muted);
+    letter-spacing: 0.04em;
+    opacity: 0.6;
+  }
+</style>
+</head>
+<body>
+<div class="canvas">
+  <!-- Replace with the actual composition. The one rule: one visual idea,
+       three elements max per panel (heading word + supporting line + graphic). -->
+  <div class="display">Replace this</div>
+  <div class="body">One sentence. Sentence case. No em dashes in display type.</div>
+</div>
+<div class="footer">@shawhintalebi</div>
+</body>
+</html>

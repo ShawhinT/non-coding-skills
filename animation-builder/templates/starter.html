@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Animation</title>
+<!-- Optional: load fonts here. If the animation is for a specific brand,
+     use the brand's font stack. Default is system-ui. -->
+<style>
+  :root {
+    /* Override these for brand work. Default is a neutral dark theme. */
+    --bg: #0b0d12;
+    --primary: #4f8df7;
+    --accent: #7ad17a;
+    --card: #15181f;
+    --border: rgba(255,255,255,0.08);
+    --fg-1: #ffffff;
+    --fg-3: rgba(255,255,255,0.6);
+    --fg-5: rgba(255,255,255,0.4);
+  }
+
+  html, body { margin: 0; padding: 0; background: var(--bg); }
+  body {
+    width: 100vw;
+    height: 100vh;
+    display: grid;
+    place-items: center;
+    font-family: system-ui, -apple-system, sans-serif;
+    color: var(--fg-1);
+    overflow: hidden;
+  }
+
+  /* 1920x1080 stage — scales to viewport, preserves aspect ratio. */
+  .stage {
+    width: min(1920px, 100vw);
+    aspect-ratio: 16 / 9;
+    position: relative;
+    display: grid;
+    place-items: center;
+  }
+
+  /* Optional radial glow. Delete if you don't want it. */
+  .stage::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 50% at 50% 50%,
+      color-mix(in srgb, var(--primary) 18%, transparent) 0%,
+      transparent 70%);
+    pointer-events: none;
+  }
+
+  .scene {
+    position: relative;
+    width: 560px;
+    height: 560px;
+    display: grid;
+    place-items: center;
+  }
+
+  /* Each "state" is absolutely-positioned and stacked.
+     Keyframes drive their visibility/transform. */
+  .layer {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+  }
+
+  /* === Canonical morph timing ===
+     Total: 3.6s. State A held ~22%, transition ~14%, state B held ~58%, loop reset ~6%.
+     Loops cleanly. */
+  .state-a {
+    animation: stateOut 3.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+  .state-b {
+    animation: stateIn 3.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    opacity: 0;
+  }
+
+  @keyframes stateOut {
+    0%   { opacity: 1; transform: scale(1); }
+    22%  { opacity: 1; transform: scale(1); }
+    33%  { opacity: 0; transform: scale(0.85); }
+    94%  { opacity: 0; transform: scale(0.85); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  @keyframes stateIn {
+    0%   { opacity: 0; transform: scale(0.85) translateY(8px); }
+    22%  { opacity: 0; transform: scale(0.85) translateY(8px); }
+    36%  { opacity: 1; transform: scale(1) translateY(0); }
+    94%  { opacity: 1; transform: scale(1) translateY(0); }
+    100% { opacity: 0; transform: scale(0.85) translateY(8px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .state-a, .state-b { animation: none; }
+    .state-a { opacity: 0; }
+    .state-b { opacity: 1; }
+  }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="scene">
+
+      <!-- STATE A — replace with your starting element (icon, label, etc.) -->
+      <div class="layer state-a">
+        <!-- e.g. a Heroicons outline icon at 200–260px -->
+        <svg viewBox="0 0 24 24" width="200" height="200"
+             fill="none" stroke="currentColor" stroke-width="1.5"
+             stroke-linecap="round" stroke-linejoin="round">
+          <!-- paste Heroicon path here -->
+          <path d="M12 4.5v15m7.5-7.5h-15" />
+        </svg>
+      </div>
+
+      <!-- STATE B — replace with your ending element -->
+      <div class="layer state-b">
+        <div style="font-family: system-ui; font-weight: 800; font-size: 64px;">
+          State B
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

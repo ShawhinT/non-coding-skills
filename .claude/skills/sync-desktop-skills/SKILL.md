@@ -79,7 +79,7 @@ Present the plan to Shaw **before** writing anything. Include:
 
 **Per-skill carve-outs:**
 - `linkedin-post-writer/references/examples-*.md` — **keep verbatim**. These are Shaw's public LinkedIn posts; public-figure names (Karpathy, Hamel Husain, etc.) and real metrics stay.
-- `email-writer/references/three-way-intros.md` — the consultant roster must become a template + stubbed placeholder entries (`[Consultant 1]`, `[Consultant 2]`, …). Never commit real contact details.
+- `email-helper/references/three-way-intros.md` — the consultant roster must become a template + stubbed placeholder entries (`[Consultant 1]`, `[Consultant 2]`, …). Never commit real contact details.
 - `linkedin-post-analytics/scripts/*.js` — keep scraping logic, generic selectors, and public LinkedIn URL paths intact. Scrub only Shaw-specific identifiers (his LinkedIn user ID, cookies, auth tokens, hardcoded profile URLs).
 - `crm/workflows/*.md` — historically the densest source of Notion page/database IDs. Scrub aggressively.
 
@@ -108,14 +108,14 @@ After the script runs, spawn ~3 `general-purpose` sub-agents in parallel for jud
 
 Typical batches (rough volume balance):
 - **Batch A — Notion-heavy:** crm, outreach, notion-helper, executive-briefing, sop-helper (most names live here)
-- **Batch B — voice + people-heavy:** email-writer (three-way-intros template carve-out), calendar-helper, pre-call-research
+- **Batch B — voice + people-heavy:** email-helper (three-way-intros template carve-out), calendar-helper, pre-call-research
 - **Batch C — copy-heavy:** business-strategy, conversion-copy, four-rs-framework, hormozi-content-framework, linkedin-post-writer, linkedin-post-analytics, sales-letter-writer, workshop-use-case-researcher, skill-sync (historically zero edits)
 
 Each sub-agent prompt must include:
 1. Repo root (target only — script already did the copy)
 2. Exact skill list for the batch
 3. The judgment-only scrub categories + KEEP-AS-IS list
-4. Per-skill carve-outs relevant to the batch (esp. linkedin-post-writer/examples-*.md keep-verbatim and email-writer/three-way-intros.md template-stub)
+4. Per-skill carve-outs relevant to the batch (esp. linkedin-post-writer/examples-*.md keep-verbatim and email-helper/three-way-intros.md template-stub)
 5. Report format: per-skill replacement counts by category (zero is valid), examples, judgment calls flagged
 6. Hard boundary: do NOT commit, do NOT touch files outside assigned skill dirs, do NOT re-scrub deterministic patterns
 
@@ -165,8 +165,8 @@ Commit with a summary of what changed. Example:
 Sync canonical skills: add X, update Y, remove Z
 
 - Added: conversion-copy, sales-letter-writer, ...
-- Updated: crm, email-writer, ...
-- Removed: 3-way-intro (folded into email-writer)
+- Updated: crm, email-helper, ...
+- Removed: 3-way-intro (folded into email-helper)
 - README table resorted by complexity
 
 Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>

@@ -1,7 +1,7 @@
 ---
 name: conversion-copy
 description: >-
-  Draft, sharpen, or diagnose copy whose job is conversion — landing pages, one-pagers, LinkedIn posts meant to sell, newsletters meant to sell, sales emails, and cold outreach DMs. Use whenever Shaw asks to write, rewrite, review, tighten, or critique conversion-focused copy. Triggers include "write the landing page", "draft the one-pager", "sharpen this headline", "tighten this newsletter", "rewrite this CTA", "write me a cold email", "outreach DM", "review this copy", "make this hit harder", "sounds like a brand wrote it". Also trigger when Shaw shares a copy draft and asks for review or rewrite, or casual phrasing like "help me write the promo". Applies Harry Dry's 3-question filter plus universal and channel-specific frameworks. Do NOT use for general LinkedIn posts (→ linkedin-post-writer), top-of-funnel essays (→ hormozi-content-framework), full sales letter structure (→ sales-letter-writer), or emails without conversion intent (→ email-writer).
+  Draft, sharpen, or diagnose copy whose job is conversion — landing pages, one-pagers, LinkedIn posts meant to sell, newsletters meant to sell, sales emails, and cold outreach DMs. Use whenever Shaw asks to write, rewrite, review, tighten, or critique conversion-focused copy. Triggers include "write the landing page", "draft the one-pager", "sharpen this headline", "tighten this newsletter", "rewrite this CTA", "write me a cold email", "outreach DM", "review this copy", "make this hit harder", "sounds like a brand wrote it". Also trigger when Shaw shares a copy draft and asks for review or rewrite, or casual phrasing like "help me write the promo". Applies Harry Dry's 3-question filter plus universal and channel-specific frameworks. Do NOT use for general LinkedIn posts (→ linkedin-post-writer), top-of-funnel essays (→ hormozi-content-framework), full sales letter structure (→ sales-letter-writer), or emails without conversion intent (→ email-helper).
 ---
 
 # Conversion Copy
@@ -128,7 +128,7 @@ This skill complements others. Clear lanes:
 - **Full sales-letter structure** → `sales-letter-writer` owns the 7-section skeleton (header, qualifier, promise, deliverables+bonuses, process, guarantee, investment+CTA). This skill gets invoked *inside* that workflow to sharpen individual sections at the sentence level.
 - **General LinkedIn posts without a selling goal** → `linkedin-post-writer`.
 - **Top-of-funnel essays/newsletters that aren't selling an offer** → `hormozi-content-framework`.
-- **General email drafts without a conversion goal** → `email-writer`.
+- **General email drafts without a conversion goal** → `email-helper`.
 
 If Shaw is clearly in the wrong skill, say so and suggest the right one. Don't try to do a neighboring skill's job.
 

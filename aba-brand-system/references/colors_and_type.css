@@ -1,0 +1,197 @@
+/* ============================================================
+   AI Builder Academy — Colors & Typography
+   Drop-in CSS variables + semantic element styles.
+   This file is self-contained; it can be pasted into any HTML
+   deliverable without external dependencies (fonts are pulled
+   from Google Fonts CDN).
+   ============================================================ */
+
+/* Fonts — Google Fonts CDN */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Libre+Franklin:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  /* --- Brand colors (raw tokens) ----------------------------- */
+  --aba-primary:   #087CA7;                      /* Cerulean blue — CTAs, links, accents */
+  --aba-secondary: #B80C09;                      /* Cardinal red — wordmark, rare accents */
+  --aba-accent:    #8FC93A;                      /* Lime green — success, "ready to go" */
+  --aba-warning:   #D19C1D;                      /* Goldenrod — pricing, badges */
+  --aba-error:     #EE6352;                      /* Coral red — pain points, errors */
+  --aba-success:   #519872;                      /* Forest green — completion */
+  --aba-info:      #2573A4;                      /* Steel blue — info */
+
+  /* --- Surfaces (dark theme) --------------------------------- */
+  --aba-base-100: #010413;                       /* near-black blue page bg */
+  --aba-base-200: oklch(20% 0.042 265.755);      /* card bg */
+  --aba-base-300: oklch(27% 0.041 260.031);      /* borders / neutral */
+  --aba-base-content: oklch(100% 0 0);           /* white text */
+  --aba-neutral:  oklch(27% 0.041 260.031);
+
+  /* --- Foreground/text scale (alpha-based on white) ---------- */
+  --fg-1: oklch(100% 0 0);                                  /* primary text (titles) */
+  --fg-2: color-mix(in srgb, white 80%, transparent);       /* strong body */
+  --fg-3: color-mix(in srgb, white 60%, transparent);       /* body copy default */
+  --fg-4: color-mix(in srgb, white 50%, transparent);       /* subdued */
+  --fg-5: color-mix(in srgb, white 40%, transparent);       /* meta / labels */
+  --fg-6: color-mix(in srgb, white 30%, transparent);       /* very subtle */
+  --fg-7: color-mix(in srgb, white 8%,  transparent);       /* dividers */
+
+  /* --- Type families ---------------------------------------- */
+  --font-display: 'Manrope', system-ui, sans-serif;             /* headings, badges, button labels */
+  --font-body:    'Libre Franklin', system-ui, sans-serif;      /* body, links, nav */
+  --font-mono:    'JetBrains Mono', ui-monospace, monospace;    /* code, meta, durations */
+
+  /* --- Type scale ------------------------------------------- */
+  --fs-display-xl: clamp(2.5rem, 5vw + 1rem, 3.75rem);  /* hero h1   */
+  --fs-display-lg: clamp(2rem, 3vw + 1rem, 2.5rem);     /* section h2 */
+  --fs-h2: 1.875rem;     /* 30px */
+  --fs-h3: 1.5rem;       /* 24px */
+  --fs-h4: 1.125rem;     /* 18px */
+  --fs-body-lg: 1.125rem;
+  --fs-body: 1rem;
+  --fs-sm: 0.875rem;
+  --fs-xs: 0.75rem;
+  --fs-eyebrow: 0.875rem; /* uppercase eyebrow with 0.2em tracking */
+
+  /* --- Radii ------------------------------------------------ */
+  --radius-box: 0.25rem;        /* code blocks */
+  --radius-lg: 0.5rem;          /* small chips */
+  --radius-xl: 0.75rem;         /* status badges, FAQ items */
+  --radius-card: 1rem;          /* rounded-2xl on cards */
+  --radius-selector: 1rem;      /* checkbox/radio container */
+  --radius-field: 2rem;         /* full-pill buttons & inputs */
+
+  /* --- Spacing rhythm (Tailwind defaults; documented for reference) --- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* --- Elevation -------------------------------------------- */
+  --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-card-hover: 0 10px 25px -5px color-mix(in srgb, var(--aba-primary) 8%, transparent);
+
+  /* --- Motion ----------------------------------------------- */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast: 150ms;
+  --dur-base: 200ms;
+}
+
+/* ============================================================
+   Semantic element styles
+   ============================================================ */
+
+body {
+  font-family: var(--font-body);
+  background: var(--aba-base-100);
+  color: var(--fg-1);
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+h1 { font-size: var(--fs-display-xl); letter-spacing: -0.02em; }
+h2 { font-size: var(--fs-display-lg); }
+h3 { font-size: var(--fs-h3); }
+h4 { font-size: var(--fs-h4); font-weight: 700; }
+
+p { color: var(--fg-3); text-wrap: pretty; }
+
+a {
+  color: var(--aba-primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color var(--dur-base) var(--ease-standard);
+}
+a:hover { color: color-mix(in srgb, var(--aba-primary) 80%, white); }
+
+code, pre, kbd, samp {
+  font-family: var(--font-mono);
+  font-size: 0.95em;
+}
+pre {
+  background: var(--aba-base-200);
+  padding: 1rem;
+  border-radius: var(--radius-box);
+  overflow-x: auto;
+}
+
+/* ============================================================
+   Reusable utilities (paste-ready)
+   ============================================================ */
+
+/* Eyebrow label — cap-tracked Manrope, used above hero/section titles */
+.eyebrow {
+  font-family: var(--font-display);
+  color: var(--aba-primary);
+  font-size: var(--fs-eyebrow);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+/* Mono meta text — used for tiny labels, "free", durations, version stamps */
+.meta-mono {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--fg-5);
+  letter-spacing: 0.02em;
+}
+
+/* Highlight underline — used in hero "Big Things" treatment */
+.highlight {
+  position: relative;
+  display: inline-block;
+  padding: 0 0.06em;
+}
+.highlight::before {
+  content: "";
+  position: absolute;
+  inset: auto 0 0.03em 0;
+  height: 0.25em;
+  background: color-mix(in srgb, var(--aba-primary) 90%, transparent);
+  z-index: -1;
+}
+
+/* Hero radial glow — the one and only gradient on marketing surfaces */
+.hero-glow {
+  background: radial-gradient(ellipse 60% 50% at 50% 40%, rgba(8,124,167,0.12) 0%, transparent 70%);
+}
+
+/* Card base — every card on the marketing site inherits from this */
+.aba-card {
+  background: var(--aba-base-200);
+  border: 1px solid var(--aba-base-300);
+  border-radius: var(--radius-card);
+  transition: border-color var(--dur-base), box-shadow var(--dur-base);
+}
+.aba-card:hover {
+  border-color: color-mix(in srgb, var(--aba-primary) 50%, transparent);
+  box-shadow: var(--shadow-card-hover);
+}
+
+/* Primary CTA pill */
+.btn-primary {
+  background: var(--aba-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-field);
+  padding: 14px 28px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  transition: background var(--dur-base);
+}
+.btn-primary:hover { background: color-mix(in srgb, var(--aba-primary) 88%, white); }

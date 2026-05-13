@@ -69,7 +69,7 @@ Cheers,
 Shaw
 ```
 
-**Example ([Person] — asked for 2 weeks to decide):**
+**Example ([Lead Name] — asked for 2 weeks to decide):**
 
 ```
 Hey [First Name],
@@ -125,7 +125,7 @@ Shaw
 - Don't assume what they meant
 - Use "-Shaw" sign-off (it's a quick reply, not a formal email)
 
-**Example ([Person] — wanted to join a cohort, not lead a workshop):**
+**Example ([Lead Name] — wanted to join a cohort, not lead a workshop):**
 
 ```
 Hi [First Name],
@@ -150,7 +150,7 @@ Then once clarified, redirect appropriately (e.g., waitlist link for self-paced 
 - Keep it very short (2-4 lines)
 - Use "-Shaw" sign-off
 
-**Example ([Person] — passed because background isn't in pure analytics):**
+**Example ([Lead Name] — passed because background isn't in pure analytics):**
 
 ```
 Thanks for your reply [First Name]!
@@ -168,7 +168,7 @@ When drafting replies to multiple expert network respondents at once:
 
 - **Use a consistent template.** Don't force variation across recipients for the sake of it. The same clean template sent to 6 people is better than 6 slightly different versions.
 - **Group by response category first.** Sort people into the categories above before drafting.
-- **Reply on the original thread.** See SKILL.md's "Replying on an existing thread (Chrome workaround)" — `create_draft` can't attach to existing threads, so this goes through Gmail in Chrome.
+- **Reply on the original thread.** See SKILL.md "Drafting with `create_draft`" for the `replyToMessageId` mechanics.
 - **Only personalize where earned.** Most people in a batch will get the clean template. That's fine.
 
 ---
