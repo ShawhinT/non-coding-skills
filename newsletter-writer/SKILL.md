@@ -5,7 +5,7 @@ description: Draft newsletters for Shaw's Kit list (The Data Entrepreneurs) in h
 
 # Newsletter Writer
 
-Shaw's canonical skill for drafting newsletters to his Kit list (The Data Entrepreneurs, ~5,000 subscribers, mostly founders, operators, and AI-curious professionals).
+Shaw's canonical skill for drafting newsletters to his Kit list (The Data Entrepreneurs), an audience of founders, operators, and AI-curious professionals.
 
 The skill is built on patterns extracted from his sent archive — the moves that show up in nearly every email he ships, in the rhythm and length that consistently performs.
 
@@ -205,7 +205,7 @@ First-pass copy is rarely the best. When drafting:
 This skill is the canonical newsletter skill. Lanes:
 
 - **Deep diagnosis on a sell newsletter** → after drafting, hand off to `conversion-copy` (newsletter channel) for line-by-line filter checks (visualize / falsify / unsignable).
-- **Top-of-funnel essays / Hormozi-style content** → `hormozi-content-framework` if Shaw explicitly wants the Mozi Minute structure (one idea + stories + reasons + soft CTA). Most of Shaw's newsletters are not Mozi-style — they're frameworks or observations.
+- **Hormozi-style / Mozi Minute newsletters** → still this skill. If Shaw explicitly wants the Mozi Minute structure (one idea + stories + reasons + soft CTA), pull the framework from the Hormozi Content Framework resource in Notion (https://www.notion.so/[page-id]) and apply it here. Most of Shaw's newsletters are not Mozi-style — they're frameworks or observations.
 - **LinkedIn posts (not newsletters)** → `linkedin-post-writer`.
 - **General email drafts (not list broadcasts)** → `email-helper`.
 - **Long-form sales letter for a paid offer** → `sales-letter-writer`.

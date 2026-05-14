@@ -23,8 +23,6 @@ Two ways I'd recommend using this repo:
 |-------|-------------|---------|--------------|
 | **aba-brand-system** | Reference for AI Builder Academy's brand — colors, typography, voice/tone, components, icons, and copy patterns | Any | None |
 | **conversion-copy** | Draft/sharpen conversion copy (landing pages, DMs, sales emails) via Harry Dry's 3-question filter | Any | None |
-| **four-rs-framework** | Advisor for Results/Re-up/Referrals/Reviews decisions on client engagements | Any | None |
-| **hormozi-content-framework** | Draft long-form content using Hormozi's "Mozi Minute" framework (one idea + stories + reasons + soft CTA) | Any | None |
 | **linkedin-post-writer** | Draft LinkedIn posts in a consistent writing style | Any | None |
 | **newsletter-writer** | Draft newsletters for a Kit-style email list in a consistent voice and structure | Any | None |
 | **sales-letter-writer** | Draft long-form sales letters and one-pagers using Hormozi's $100M Offers principles | Any | None |

@@ -2,7 +2,7 @@
 
 Use this framework when writing a newsletter whose job is to drive conversion — a launch announcement, a promotion email to Shaw's list, a re-engagement sequence, or the sell-side portion of a mixed newsletter.
 
-This is **not** the framework for top-of-funnel content or teaching-focused essays. Those belong in `hormozi-content-framework`. Use this one only when the newsletter is selling a specific offer.
+This is **not** the framework for top-of-funnel content or teaching-focused essays. Those belong in `newsletter-writer` (or `linkedin-post-writer`) — and for the Mozi Minute structure specifically, see the Hormozi Content Framework resource in Notion: https://www.notion.so/[page-id]. Use this one only when the newsletter is selling a specific offer.
 
 ## Before you draft
 
