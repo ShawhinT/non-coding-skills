@@ -49,10 +49,10 @@ The employer appears in the first ~5 lines of page text, immediately after the p
 
 Example:
 ```
-[Full Name]
+[Person]
 Sr. Manager, Cyber Analytics Platform
-[Company] · [School]
-Dallas-Fort Worth Metroplex
+[Company] · [University]
+[Location]
 ```
 → employer = **[Company]**
 

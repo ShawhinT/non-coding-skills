@@ -46,6 +46,16 @@ Every parameter is in the URL, so you can navigate directly to any date range an
 
 To compare periods, navigate to each URL in sequence and scrape each.
 
+## What the two views actually give you
+
+This is the most important thing to understand before scraping. The two views look similar but report different metrics in their "third column," and the difference matters.
+
+**Impressions view** — third column is **impressions** (the count of times the post was shown). The standalone numbers in each post card are `[reactions, impressions]`.
+
+**Engagements view** — third column is **LinkedIn's total engagements metric**: reactions + comments + reposts + clicks + saves + other interactions. The standalone numbers are `[reactions, totalEngagements]`. This third number is *not* the repost count, even though earlier versions of this skill assumed it was. Treating it as reposts inflates "shares" dramatically (e.g., a post with 1 actual repost can show 167 in this column because it had 166 clicks/saves/other interactions on top of reactions and comments).
+
+**Repost counts are not reliable from either view.** The dashboard sometimes surfaces a "X reposts" text span and sometimes doesn't. If you need a true repost count for a specific post, navigate to that post's URL (`https://www.linkedin.com/feed/update/urn:li:activity:<id>/`) and read the count from the post page itself.
+
 ## Scraping Strategy
 
 **Always use `javascript_tool`, never `read_page` or `get_page_text`.** The analytics page is too large — both return full page content that exceeds tool output limits. The JS approach targets exactly the data you need and returns compact structured output.
@@ -54,11 +64,11 @@ To compare periods, navigate to each URL in sequence and scrape each.
 
 | Goal | Script | URL metricType |
 |------|--------|---------------|
-| Impressions + engagement rate | `scrape-impressions.js` | `IMPRESSIONS` |
-| Engagement breakdown (reactions/comments/reposts) | `scrape-engagements.js` | `ENGAGEMENTS` |
+| Impressions + per-post reaction/comment counts | `scrape-impressions.js` | `IMPRESSIONS` |
+| LinkedIn's totalEngagements per post | `scrape-engagements.js` | `ENGAGEMENTS` |
 | Content strategy analysis by post type | `scrape-with-types.js` | `IMPRESSIONS` |
 
-The metric interpretation differs between views — this is the #1 source of bad data. In the impressions view, standalone numbers are `[reactions, impressions]`. In the engagements view, they're `[reactions, reposts]`. The scripts handle this automatically, but you must match the right script to the right `metricType`.
+The metric interpretation differs between views — this is the #1 source of bad data. Match the right script to the right `metricType` and pay attention to what each "third column" number actually means (see the section above).
 
 ### How to Run a Scraper
 
@@ -69,9 +79,11 @@ The metric interpretation differs between views — this is the #1 source of bad
 
 Each script includes a 3-second page-load delay, so there's no need to manually wait or retry. If a scraper still returns 0 posts, the page may have changed structure — see `references/troubleshooting.md`.
 
-**Always scrape both views.** The impressions view does not surface repost counts, and reposts account for ~44% of Shaw's engagement. For any analysis, navigate to both `IMPRESSIONS` and `ENGAGEMENTS` URLs for the same date range and run the matching scraper on each. Impressions-only analysis will significantly undercount engagement.
+**Always scrape both views for engagement-rate analysis.** Impressions view gives you the denominator (impressions). Engagements view gives you the correct numerator (LinkedIn's totalEngagements, which includes clicks/saves and is what you want — using just reactions + comments would undercount). Match posts across views by activity ID extracted from the post link, or by a normalized preview-text key.
 
 **LinkedIn caps results at ~50 posts** per page load (the top 50 by the selected metric). Note this limitation in your analysis. For comprehensive data across long periods, break into monthly chunks.
+
+**Lifetime vs window metrics.** Reaction and comment counts on the dashboard reflect lifetime totals for each post, but impressions are window-specific. For posts created before the analytics window opened, this distorts engagement-rate calculations (lifetime engagement / window impressions). When the goal is "engagement rate for the period," filter to posts published *within* the window — read each post card's age span (e.g., "2w", "3d") and exclude anything older than the window.
 
 ## Workflow
 
@@ -83,7 +95,7 @@ Before scraping, understand what Shaw wants. Common patterns:
 - **Period comparison** → scrape multiple ranges, compute deltas
 - **Top performers** → scrape a wide range, sort and filter
 - **Post type analysis** → use `scrape-with-types.js`, aggregate by type
-- **Engagement breakdown** → scrape engagements view, analyze reaction/comment/repost ratios
+- **Engagement-rate ranking** → scrape both views, merge on activity ID, filter to posts created in the window
 
 ### Step 2: Navigate and scrape
 
@@ -95,4 +107,4 @@ Read `references/analysis-playbook.md` for detailed guidance on how to turn raw 
 
 ### If something breaks
 
-Read `references/troubleshooting.md`. The most common issues are: page not loaded yet (retry after 2-3s), wrong scraper for the current view (check metricType in URL), and tab ID mismatch (re-run tabs_context_mcp).
+Read `references/troubleshooting.md`. The most common issues are: page not loaded yet (retry after 2-3s), wrong scraper for the current view (check metricType in URL), tab ID mismatch (re-run tabs_context_mcp), and misinterpreting the engagements-view third column as reposts (it's totalEngagements).

@@ -69,7 +69,7 @@ Cheers,
 Shaw
 ```
 
-**Example ([Lead Name] — asked for 2 weeks to decide):**
+**Example ([Person] — asked for 2 weeks to decide):**
 
 ```
 Hey [First Name],
@@ -125,7 +125,7 @@ Shaw
 - Don't assume what they meant
 - Use "-Shaw" sign-off (it's a quick reply, not a formal email)
 
-**Example ([Lead Name] — wanted to join a cohort, not lead a workshop):**
+**Example ([Person] — wanted to join a cohort, not lead a workshop):**
 
 ```
 Hi [First Name],
@@ -150,7 +150,7 @@ Then once clarified, redirect appropriately (e.g., waitlist link for self-paced 
 - Keep it very short (2-4 lines)
 - Use "-Shaw" sign-off
 
-**Example ([Lead Name] — passed because background isn't in pure analytics):**
+**Example ([Person] — passed because background isn't in pure analytics):**
 
 ```
 Thanks for your reply [First Name]!

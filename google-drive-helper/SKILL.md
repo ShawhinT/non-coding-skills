@@ -19,8 +19,8 @@ Hardcoded folder IDs Shaw uses regularly. When asked about content in any of the
 
 | Folder | ID | What's inside |
 |---|---|---|
-| `forms` | `[drive-folder-id]` | Google Forms (intake, testimonial, feedback, etc.). Some entries are shortcuts to Forms shared in from elsewhere. |
-| `sheets` | `[drive-folder-id]` | Linked response sheets for the forms above. |
+| `forms` | `1nExDY6bLRQWq73TfX1ihZpQsPDqsbRrD` | Google Forms (intake, testimonial, feedback, etc.). Some entries are shortcuts to Forms shared in from elsewhere. |
+| `sheets` | `1hMTTUsNov7u3gfrP6Y1N50IplfpxFZpC` | Linked response sheets for the forms above. |
 
 When Shaw says "the forms folder" or "my response sheets," use the IDs above directly.
 

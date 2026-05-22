@@ -60,7 +60,7 @@ Place checkpoints **after automated filters have narrowed the list but before ex
 
 ## Disqualification tracking (`disqualified.md`)
 
-A living document created at campaign start and updated throughout the run. Its primary job is **intra-campaign efficiency**: when Shaw gives feedback mid-pipeline ("[Person]'s off the table"), it goes into `disqualified.md` immediately and applies to all remaining candidates — preventing wasted enrichment on people already cut.
+A living document created at campaign start and updated throughout the run. Its primary job is **intra-campaign efficiency**: when Shaw gives feedback mid-pipeline ("Scott's off the table"), it goes into `disqualified.md` immediately and applies to all remaining candidates — preventing wasted enrichment on people already cut.
 
 Two sections:
 
@@ -82,7 +82,7 @@ Checked before any enrichment step. If a principle disqualifies someone, skip th
 
 When Shaw gives feedback like "no, X is off the table because Y":
 1. Add them to `disqualified.md` immediately
-2. Check if the reason implies a new principle ("already have someone at [Company]" → "one contact per company")
+2. Check if the reason implies a new principle ("already have someone at TFS" → "one contact per company")
 3. If so, add the principle and retroactively apply it before continuing
 
 ---
@@ -188,7 +188,7 @@ Cross-reference Gmail when Shaw asks for updates — search each contact's email
 
 ## Relationship to other skills
 
-- **CRM skill** — owns Notes format. Also owns pipeline-level lead management. If an outreach contact graduates (books a call, asks about pricing), add them to the CRM. Outreach tracker is campaign-level; CRM is pipeline-level. A person can exist in both.
+- **CRM skill** — owns Notes format and pipeline-level lead management, including the promotion process. When an outreach contact graduates (books a call, asks about pricing), add them to the CRM and follow the CRM skill's "Promotion to main CRM" rule — the tracker entry becomes a historical breadcrumb (`Added to CRM` status, `Next Contact` cleared) while the main CRM owns ongoing touchpoints.
 - **email-helper** — owns Shaw's voice, Gmail mechanics, reply/intro/decline templates.
 - **conversion-copy** — owns message craft for conversion-focused copy. `channel-outreach.md` specifically covers cold-outreach DMs.
 - **notion-helper** — adjacent; owns ad-hoc Notion creation outside structured campaigns.

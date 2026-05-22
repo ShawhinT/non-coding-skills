@@ -3,7 +3,7 @@ name: engagements
 description: >
   Use this skill whenever Shaw mentions creating, updating, querying, or wrapping a paid client
   engagement. Triggers include: "create an engagement for X", "X just paid the invoice", "log
-  the engagement", "what's the engagement ID for Y", "wrap up [Client]'s intensive", "mark X as
+  the engagement", "what's the engagement ID for Y", "wrap up [Name]'s intensive", "mark X as
   delivered", "X's session moved", "fill in Stripe data for E####", "update engagement status",
   "look up the engagement for X", "did X pay yet". Also fires when a CRM workflow signals "deal
   closed" — that's the kickoff for a new engagement row. Also fires when a new ABA Trainings or
@@ -15,7 +15,7 @@ description: >
 
 # Engagements Skill
 
-The Engagements database is Shaw's project ledger. One row = one won, invoiced project. A single
+The Engagements database is Shaw's project ledger. One row = one won, invoiced project. A given
 client's 1:1 Workshop and 30-Day Intensive are two separate rows. Re-ups become new rows. Past and
 active engagements live here together.
 
@@ -113,6 +113,14 @@ Every engagement page body has these sections, in this order:
 
 _Optional one-line context (e.g., team workshop attendee list, payer info)._
 
+## Program Scope
+**Deliverables:**
+- <bullet per deliverable, with count × duration when relevant>
+
+**Bonus:** <if any; omit the line entirely if none>
+
+**Guarantee:** <if any, with specifics on what triggers it; omit if none>
+
 ## Sessions
 
 - <mention-page url="..."/> (M/D — name)
@@ -127,6 +135,8 @@ _Optional one-line context (e.g., team workshop attendee list, payer info)._
 - Short chronological log of what happened. Same style as CRM notes — date-stamped, comma-separated, no business context.
 
 ## 4Rs
+
+_Framework reference: see "The 4Rs Framework" resource in Notion (https://www.notion.so/[page-id]) for the full operating system behind these four sub-headings._
 
 ### Results
 
@@ -146,6 +156,7 @@ _TBD at wrap_ — testimonial captured (yes/no/declined), with quote or page lin
 ```
 
 **Section rules:**
+- **Program Scope** captures what was promised **at sale** — not what's actually being delivered. Pull defaults from `references/offer-scopes.md`. If a deal diverges from the canonical scope, write what Shaw confirms was sold.
 - **Stripe link** stays at top, one line. If no Stripe invoice exists (paid via vendor portal, Venmo, etc.), italicize a one-line note explaining how it was paid.
 - **Sessions** lists ABA Trainings mention-pages chronologically with `(M/D — name)` annotation
 - **Calls** lists ABA Calls mention-pages chronologically with `(M/D — type)` annotation
@@ -197,6 +208,7 @@ This is the load-bearing rule that determines what goes where.
 | Reference | Contents | File |
 |---|---|---|
 | Offer Pricing | Canonical offer names + default prices | `references/offer-pricing.md` |
+| Offer Scopes | Canonical default program scope per offer (deliverables, bonuses, guarantees) | `references/offer-scopes.md` |
 
 ---
 
@@ -209,7 +221,7 @@ This is the load-bearing rule that determines what goes where.
 - **Leave Price/Paid Status blank if unsure.** Better to flag for Shaw than guess. The Stripe
   workflow can fill these in later.
 - **Check for proxy-email payers before declaring "no invoice found."** Some clients pay via
-  vendor portals (some enterprise clients) where the billing email differs from the
+  vendor portals where the billing email differs from the
   client's contact email. The actual payer may be a procurement contact at the company. Search
   by company domain or company name before giving up. See `workflows/workflow-4-stripe-fill.md`.
 - **Voided + replaced invoices are common.** Don't assume a voided invoice means no payment —
@@ -226,3 +238,8 @@ This is the load-bearing rule that determines what goes where.
 - **Sessions and Calls in body are mention-pages, not properties.** The relation to Clients
   (Nurture) is the only relation property. ABA Trainings and ABA Calls links live in body
   sections so the narrative ordering is preserved.
+- **Scope reflects what was sold, not what was delivered.** The `## Program Scope` section
+  captures the promise at sale. If actual delivery diverges materially (different sessions,
+  different format, different deliverables, materially different price), that's almost always a
+  new engagement — split into a second row rather than editing the original scope. Record the
+  re-up in the prior engagement's Notes.

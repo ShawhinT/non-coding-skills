@@ -21,7 +21,7 @@ Shaw's task titles are short, action-first, and follow recurring patterns:
 
 | Pattern | Example |
 |---|---|
-| `FU - <Name>` | `FU - [Person]` |
+| `FU - <Name>` | `FU - [Person]`, `FU - [Person]` |
 | `Send <Name> <thing>` | `Send [Person] agenda + Call Prep`, `Send [Person] FU email` |
 | `Follow up with <Name>` | `Follow up with [Person]`, `Follow up with speakers` |
 | `Prep for <thing>` | `Prep for 1:1 Training (PM)` |
@@ -83,8 +83,13 @@ for them. The call/session page already has that detail — linking is enough.
 
 ## Step 6: Create via `notion-create-pages`
 
-Use the data source ID for the target database. For FU-prefixed tasks, set `icon: "⭕"` on the
-new page. For all other tasks, omit the icon. Example for ABA:
+Use the data source ID for the target database. Set the icon based on page type:
+
+- **ABA task pages** → `icon: "⭕"`
+- **Event/training pages** (ABA Calls, ABA Trainings) → `icon: "⭐"`
+- **ABN, LFC, SFC** → omit the icon unless Shaw asks for one
+
+Example for an ABA task:
 
 ```json
 {
@@ -101,8 +106,9 @@ new page. For all other tasks, omit the icon. Example for ABA:
 }
 ```
 
-**Icon note**: Use the bare emoji `⭕` (code point U+2B55). Do NOT append a variation selector
-(U+FE0F) — Notion's API rejects that as an invalid icon URL.
+**Icon note**: Use the bare emoji codepoint — `⭕` (U+2B55), `⭐` (U+2B50), `✅` (U+2705).
+Do NOT append a variation selector (U+FE0F) to any of them — Notion's API rejects that as an
+invalid icon URL.
 
 ## Step 7: Confirm back to Shaw
 

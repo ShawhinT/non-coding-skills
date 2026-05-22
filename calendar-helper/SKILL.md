@@ -8,7 +8,7 @@ description: >
   "another session with X next Saturday", "follow-up call with X", "reschedule the X meeting",
   "move my X call to Friday", "cancel the X event", "delete that meeting", or any casual
   phrasing that implies adding/changing a calendar block (e.g., "let's do another one with
-  Justin", "block off Wednesday morning for the workshop"). Even when Shaw doesn't say
+  [Name]", "block off Wednesday morning for the workshop"). Even when Shaw doesn't say
   "calendar" explicitly, this skill should fire if the request is about scheduling. This skill
   also creates a paired Notion page in ABA Calls or ABA Trainings when the event is a sales
   call or a delivery session and a paired page is part of the existing pattern.
@@ -33,6 +33,9 @@ created next.
 - Create new calendar events with smart defaults pulled from past similar events
 - Detect title patterns ("Session 1" → "Session 2", "Episode 4" → "Episode 5") and increment
 - Auto-pair sales calls and trainings with Notion pages in `ABA Calls` and `ABA Trainings`
+- **Execute the matching event-type SOP's Setup step in full** when one applies — not just the
+  paired page, but the FU task, bidirectional CRM linking, and engagement linking that the SOP
+  prescribes (the gap that previously left check-ins half-set-up)
 - Reschedule and delete events, then hand the corresponding Notion page off to `notion-helper`
 
 **Doesn't:**
@@ -40,6 +43,8 @@ created next.
   for now, just copy the reference event's description verbatim if it has one)
 - Create Notion pages for events outside the sales-call / training pattern (personal events,
   internal blocks, dentist appointments, etc. stay calendar-only)
+- Run discovery-call intake — a Calendly-sourced discovery call is CRM Workflow 7's job (see
+  "Discovery calls are Workflow 7's territory" under Step 3)
 - Manage Notion pages for non-create operations directly — those hand off to `notion-helper`
 - Take over for `crm`, `pre-call-research`, `executive-briefing`, or `notion-helper` when the
   request is really about one of those
@@ -68,8 +73,8 @@ ambiguity to surface in Step 5.
 Use `list_events` to search Shaw's calendar for past events that match the request. The right
 search depends on what's available:
 
-- **Attendee + topic** is the strongest signal. E.g., for "another session with Justin", search
-  for past events with Justin's email on the attendee list.
+- **Attendee + topic** is the strongest signal. E.g., for "another session with [Name]", search
+  for past events with that person's email on the attendee list.
 - **Topic alone** if no attendee is named (e.g., "schedule the next podcast recording" →
   search for "podcast" in past event titles).
 - **Pure recurrence** (e.g., a weekly standup) may have no attendee and no topic keyword —
@@ -102,8 +107,8 @@ Search the most likely database first based on event type:
 | Sales call (discovery, intro, qualifier) | `ABA Calls` | `[page-id]` |
 | Training / delivery / workshop / 1:1 session | `ABA Trainings` | `[page-id]` |
 
-Search query: combine attendee name + topic keywords (e.g., "[Person] skill building"
-or "[Person] training session"). Look at the top 1-3 matches and pick the one whose title most
+Search query: combine attendee name + topic keywords (e.g., "[First Last] skill building"
+or "[First Name] training session"). Look at the top 1-3 matches and pick the one whose title most
 closely mirrors the calendar event's title pattern.
 
 **Decision rule:**
@@ -115,18 +120,78 @@ closely mirrors the calendar event's title pattern.
   → default to creating a paired page in the matching database. (Surface this in Step 5
   if you're not sure of the type.)
 
-### Step 4 — Build the event (and the page, if needed)
+Discovery calls have a carve-out — see Step 3.5 — but otherwise, follow the decision rule
+above to decide whether a paired page is needed.
+
+### Step 3.5 — Consult the matching event-type SOP
+
+For sales-call and training events, fetch the matching event-type SOP from `notion-helper`'s
+catalog → "Event-Type SOPs" (Discovery Call, 1:1 Claude Workshop, Check-in Call, Wrap-up Call,
+Group Claude Workshop). Read its **Setup** section — it's the authoritative recipe for
+everything that happens around the calendar event in Notion. The SOP defines:
+
+- What the paired page's body should contain (usually a one-liner with the CRM link — not
+  empty)
+- Whether a `FU - [First Name]` task gets created in ABA, and on what date
+- Which CRM database the bidirectional link goes on (Active Leads for a lead, Clients (Nurture)
+  for a client) and where to append the `## Calls` entry
+- Whether the page links to an Engagements row (when the call sits inside a paid engagement)
+
+In Step 4 you'll execute this Setup in full — not just the paired page.
+
+**Discovery calls are the carve-out.** The Discovery Call SOP's execution layer is **CRM
+Workflow 7** (it orchestrates `pre-call-research`, `notion-helper`, and `email-helper` together
+— too involved to inline here). For a Calendly-sourced discovery call, create the calendar
+event and hand the Notion side off to Workflow 7 — don't run the SOP yourself. Every other
+call-type SOP (Check-in, Wrap-up, 1:1 Workshop, Group Workshop) gets executed by
+calendar-helper directly.
+
+**No SOP applies?** Then the event isn't paired with Notion at all — just create the calendar
+event and skip the Notion side. (Personal blocks, dentist appointments, internal focus time,
+podcast recordings without a paired ABA page, etc.)
+
+### Step 4 — Build the event and execute the SOP's Setup
 
 Compose the calendar event using the defaults from Step 2, with the request overriding
 where it explicitly differs (e.g., user said "noon" → use noon, not the reference time).
 
-If a Notion page is needed (per Step 3), construct a page with:
-- **Title** matching the calendar event's title pattern (or a slightly trimmed version that
-  matches the database's existing naming convention — sample 2-3 recent pages in that
-  database to confirm)
-- **Date** property set to the calendar event's date
-- **Empty body** — no content, no template fill, no imagined notes
-- **Same database** as the reference page
+If a Notion page is needed (per Step 3 — and not pre-empted by the discovery-call carve-out
+in Step 3.5), execute the SOP's Setup section in full. That typically means:
+
+- **Create the paired page** — title matching the calendar event's pattern (or a slightly
+  trimmed version matching the destination DB's naming convention; sample 2-3 recent pages to
+  confirm). Date = the calendar event's date. **Body** = per the SOP's Setup — typically a
+  one-line `CRM: <mention-page>` link plus a single short time-of-day line; not empty.
+- **Create the FU task** if the SOP calls for one (it usually does — `FU - [First Name]` in
+  ABA, dated call date + 1).
+- **Append the bidirectional link** on the CRM record — `## Calls` line pointing at the new
+  page, on the matching CRM record (Active Leads for a lead, Clients (Nurture) for a client).
+- **Link to an Engagements row** if the SOP calls for it (see Step 4.5 below for the trainings
+  case; for check-ins or follow-up calls, only when the client has an active engagement).
+
+If you only create the page and skip the rest, you've half-executed the SOP — that's the bug
+this section exists to prevent.
+
+### Step 4.5 — Link new Notion page to its engagement (trainings only)
+
+When the page you just created is in **ABA Trainings** (a delivery session), the matching
+engagement row in the Engagements DB needs a backlink to the new session. Without this, the
+session exists in ABA Trainings but the engagement page stays out of sync — anyone looking at
+the engagement won't see the new session in its `## Sessions` body section.
+
+Steps:
+1. Fetch the client's Clients (Nurture) page (search by name/email)
+2. Read the synced "Engagements" backlink property — pick the engagement whose `Status` is
+   `Active` or `Sold` and whose date range brackets the new session
+3. Append the new mention-page line to the engagement's `## Sessions` section in chronological
+   order
+
+This is the `engagements` skill's `workflow-3-link-session.md` — hand off there for the exact
+body update pattern (chronological insertion, exact-string `update_content` calls).
+
+When the page is in **ABA Calls** (a sales call), only link if an engagement *already exists*
+for this client (e.g., mid-engagement check-in or follow-up call). Most discovery calls predate
+the engagement and don't need linking.
 
 ### Step 5 — Confirm or create
 
@@ -137,7 +202,7 @@ clear date, clear reference event, clear Notion pairing), just do it. Then repor
 - One sentence noting which reference event/page was used
 
 **Surface ambiguity via `AskUserQuestion`** when:
-- Multiple attendees match the name (which Justin?)
+- Multiple attendees match the name (which [Name]?)
 - Multiple reference events have conflicting patterns and no recent winner
 - Duration is undefined and no reference exists
 - Event type is unclear (sales call vs. training) and a Notion page might be needed
@@ -153,10 +218,10 @@ have safe defaults.
 Many of Shaw's recurring events use numbered patterns. Detect these and auto-increment.
 
 **Examples:**
-- `[Person] / Shaw - 1:1 Skill Building (Session 1)` → `(Session 2)`
-- `LFC Recording — Episode 12` → `Episode 13`
+- `[Name] / Shaw - 1:1 Skill Building (Session 1)` → `(Session 2)`
+- `[Series] Recording — Episode 12` → `Episode 13`
 - `Cohort 3 Workshop, Week 4` → `Week 5`
-- `ABN Issue #47` → `#48`
+- `[Series Name] Issue #47` → `#48`
 
 If the pattern increments, use the incremented title. If the pattern doesn't increment (a
 generic recurring meeting like "Weekly Sync"), reuse the same title.
@@ -165,10 +230,40 @@ When you can't tell whether the user wants the next number in a sequence vs. a o
 default to incrementing — that's almost always what Shaw means when he says "another one"
 or "next session".
 
+**Separator semantics — `/` vs `x`.** `/` means working together (1:1 sessions, group
+sessions, check-ins, wrap-ups — any event with a closed or active client). `x` means
+exploring a collab (intro calls, discovery calls, exploratory chats with cold/warm leads
+we haven't worked with yet). Never `:`, `+`, `&`, `and`. When a lead converts to paid,
+the next event flips from `x` → `/`. Decide by relationship status (per CRM), not by
+what the reference event used — a stale `x` on a paid client's reference is the bug
+to avoid.
+
+**Name vs company in the title.** Use the attendee's first name when they're the only
+person on the other side (`[Name] / Shaw - 1:1 Claude Workshop`). Use the company
+name when multiple people from their side are attending (`[Company] / Shaw - Wrap-Up Call`,
+`[Company] / Shaw - Check-in`). This applies to any event type.
+
 **Spaces around `/` and `x` separators.** When a title joins two names with `/` or `x`,
-always include surrounding spaces: `[Person] / Shaw – Catch-up`, never `[Person]/Shaw`. Same for
-`x` collabs: `[Person] x Shaw`, never `[Person]xShaw`. This applies to any new title composition;
+always include surrounding spaces: `[Name] / Shaw – Catch-up`, never `[Name]/Shaw`. Same for
+`x` collabs: `[Name] x Shaw`, never `[Name]xShaw`. This applies to any new title composition;
 when mirroring an existing reference event, preserve its exact format.
+
+**Suffix the event type after the names.** Coffee chats, check-ins, workshops, and 1:1s
+all take an explicit suffix: `[Name] / Shaw - Coffee Chat`, `[Name] / Shaw - Check-in`,
+`[Name] / Shaw - 1:1 Claude Workshop`. A bare `Name / Shaw` (no suffix) is rare — only
+use it when the reference event also has none AND the type is genuinely ambiguous. When
+in doubt, infer the type from context (CRM status, email thread, prior call notes) and
+add the suffix. Older Calendly auto-imports often dropped suffixes — don't take that as
+license to drop them on manually scheduled events.
+
+**Holds and tentative events.** When Shaw asks for a "hold" or a tentative placeholder,
+prefix the title with `[HOLD] ` — brackets, trailing space — e.g. `[HOLD] [Company] / Shaw -
+Check-in`. A hold is still a real invite, just with unlocked timing: keep the attendees,
+Google Meet, and `ALL` notifications exactly as a normal event. Skip the paired Notion page
+until the timing firms up — create it later, once the slot is confirmed. The type suffix
+still has to fit *this* event, not the reference: when the relationship has moved on, the
+suffix moves with it (a wrap-up call's next touchpoint is a `Check-in`, not another
+`Wrap-Up Call`).
 
 ---
 
@@ -181,11 +276,22 @@ next week", "reschedule X for 3pm"):
    If multiple match, ask via `AskUserQuestion`.
 2. **Update the event** with `update_event` — change `startTime` / `endTime`, keep everything
    else (attendees, Meet URL, description).
-3. **Hand off to `notion-helper`** to update the corresponding Notion page's `Date` property.
-   Pass `notion-helper` the page ID (you found it in Step 3 of the create flow, or search
-   for it now using the same logic) and the new date.
-4. **Report back** with the updated event + a note that the Notion page was updated (or
-   that no paired page exists).
+3. **Consult the matching event-type SOP** — same hand-off as Step 3.5. A reschedule is
+   rarely just a calendar move: each event type has date-anchored infrastructure described
+   in the SOP's Setup section that breaks when the date changes. Typical cascades include
+   the `Precall - {First Name}` task (date − 1, only if not yet completed), the
+   `FU - {First Name}` task (date + 1 — create if missing, that's a common Setup gap), the
+   engagement body's `## Sessions` chronological order, and any day-of communication the SOP
+   prescribes. Read the SOP, identify what the new date breaks, and execute the cascade.
+   Discovery calls follow the same Workflow 7 carve-out as Step 3.5 — hand the Notion-side
+   cascade off there.
+4. **Execute the cascade.** Route through the right specialist for each piece: paired-page
+   `Date` and dated-task shifts through `notion-helper`; engagement-body session-line updates
+   through `engagements` workflow-3-link-session's "Handle reschedules"; reschedule emails
+   (usually unnecessary — the calendar invite handles it; send only when the SOP calls for
+   it or the new time is within 24h) through `email-helper`, on the live thread.
+5. **Report back** with the updated event and every artifact that moved (or note that no
+   paired page exists / no SOP applies).
 
 ---
 
@@ -216,10 +322,31 @@ If Step 2 finds nothing, the skill is operating without a template. Use these de
 - **Description** — empty
 - **Notion pairing** — only create a page if the user explicitly asks ("schedule a sales
   call with X and add it to ABA Calls"), or if the topic is unambiguously a sales call or
-  training and the user hasn't said otherwise
+  training and the user hasn't said otherwise. When you do pair, run the matching event-type
+  SOP's Setup (see Step 3.5). Discovery calls hand off to Workflow 7 instead.
 
 When using defaults, mention it in the report: "no reference event found — used defaults".
 That tells Shaw to double-check.
+
+---
+
+## Picking times to propose
+
+Before picking times, decide whether to propose specific times at all. **The default is to send the appropriate Calendly link** — see email-helper's "Calendly Links and When to Use Them." Only fall back to manually proposed times when the recipient is a senior leader, exec, or busy person who'd treat a Calendly click as friction.
+
+When manual proposal is the right call, don't just offer a generic afternoon window. Pull up the relevant days, look at what's already booked, and cluster proposed times around those anchors. Scattered meetings across an empty day cost more focus than a tight 3-call block.
+
+**Principles:**
+
+- **Cluster, don't scatter.** Pick times adjacent to existing meetings on that day. If an anchor exists at 12–1:30 PM, propose 2 PM next — not 4 PM with empty space between them.
+
+- **Back-to-back is fine up to ~90 minutes.** Short stacks are efficient. Once the existing block hits or exceeds 90 minutes, leave a 30-min buffer before adding another call so Shaw isn't stuck on calls for hours straight.
+
+- **Buffer by call type, not duration.** Sales calls, check-ins, wrap-ups, and other higher-stakes conversations get a 30-min buffer after them — they often run long, and Shaw usually needs immediate post-call work time. Coffee chats, casual catch-ups, and low-priority calls can stack back-to-back with no buffer.
+
+- **Empty days get a default spread.** When a day has no anchor meetings, fall back to a compact mid-afternoon window (e.g., 2/3/4 PM) rather than offering the entire 12–5 block.
+
+Once times are picked, invoke the `email-helper` skill to draft the email — don't reach for `create_draft` directly. This applies to *any* email that comes out of a calendar-helper workflow (time proposals, reschedule notices, post-create follow-ups), not just time-proposal emails. email-helper owns voice, HTML formatting, threading, and Gmail mechanics; calendar-helper stays in charge of the scheduling decision.
 
 ---
 
@@ -232,6 +359,7 @@ Pulled from `notion-helper` for convenience. If these IDs need updating, update 
 |---|---|---|---|
 | ABA Calls | `[page-id]` | `[page-id]` | Sales call pages — discovery, intro, qualifier |
 | ABA Trainings | `[page-id]` | `[page-id]` | Delivery sessions — 1:1s, workshops, ongoing engagements |
+| Engagements | `[page-id]` | `[page-id]` | Won-deal project ledger — one row per invoice. Linked from ABA Trainings sessions via Step 4.5. |
 
 Use the data source ID when calling `notion-create-pages`.
 
@@ -239,8 +367,8 @@ Use the data source ID when calling `notion-create-pages`.
 
 ## Edge Cases
 
-**Ambiguous attendee name** — "Justin" could be multiple people. Search calendar for past
-events with anyone named Justin; if there's exactly one frequent match, use it. If there
+**Ambiguous attendee name** — a single first name could match multiple people. Search calendar for past
+events with anyone matching that name; if there's exactly one frequent match, use it. If there
 are multiple, ask via `AskUserQuestion` and offer the top 2-3 by recency.
 
 **Multiple reference events with conflicting patterns** — last 3 sessions were 60 / 90 / 60
@@ -300,10 +428,18 @@ rather than calling `notion-update-page` directly — `notion-helper` owns that 
   explicitly didn't have one
 - **Never create a Notion page for an event that isn't a sales call or training** — even if
   Shaw seems excited about the meeting, the rule holds
-- **Title-only Notion pages by default** — the body stays empty; Shaw fills it in himself
-  when he preps for the session
+- **Don't create ABA Calls pages for discovery calls** — Calendly-sourced discovery-call
+  intake is owned by CRM Workflow 7, which creates the ABA Calls page (via `pre-call-research`)
+  along with the CRM record, FU task, and confirmation email. calendar-helper creates the
+  calendar event and hands the Notion side off. Non-discovery sales calls still get a paired
+  ABA Calls page.
+- **Let the matching event-type SOP define the paired page and the rest of Setup** — body
+  contents (typically a CRM link line), FU task, bidirectional CRM linking, engagement linking.
+  Half-executing the SOP (creating only the page) is the bug Step 3.5 exists to prevent.
 - **Mirror the reference, don't reinvent** — if the reference event has a quirk (specific
   color, weird notification setting, custom description), preserve it
 - **Hand off, don't duplicate** — for Notion updates on reschedule/delete, route through
   `notion-helper`. For prep notes, route through `pre-call-research`. For lead pipeline
-  updates, route through `crm`.
+  updates and discovery-call intake, route through `crm` (Workflow 7 for discovery calls).
+  For linking sessions/calls into active engagement bodies, route through `engagements`
+  (workflow-3-link-session).

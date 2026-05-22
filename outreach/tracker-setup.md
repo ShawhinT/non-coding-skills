@@ -41,6 +41,8 @@ Campaign-specific examples:
 - **Event outreach:** Booked Call, Pending Call
 - **Research calls:** Replied, Scheduled, Completed
 
+**Universal terminal status — always include:** `Added to CRM`. When a campaign contact graduates to Active Leads / Clients, this status moves the tracker entry out of the active sweep and the main CRM takes over. See CRM skill → "Promotion to main CRM" for what happens next.
+
 ## Add a segment legend
 
 After the database, add a simple reference table so Shaw (and future Claude sessions) can decode the numbers:

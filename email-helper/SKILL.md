@@ -113,6 +113,8 @@ This means: one CTA per email, not two. If someone's message is vague, ask one c
 
 If an email can be 3 lines, it's 3 lines. The length should match what the situation actually requires, not what feels "complete." Personalization is earned — react to what someone said or did, not who they are. Skip filler like "Hope you're doing well!" and go straight to the substance.
 
+**Name the specific reason to meet, not a generic one.** When you state why you want to talk or what you'll bring, pull the concrete thing from their context rather than a placeholder. "I'd love to continue the conversation on rolling out Claude across your portfolio companies" beats "I'd love to continue the conversation and share a few insights." The specific material is almost always already sitting in the thread or the CRM notes, so use it. This is conversion-copy's "specific beats vague" applied to everyday email; see that skill for the deeper treatment.
+
 **Default to 3 sections in the body, never more than 5.** Body sections = the distinct ideas or asks between the opener and the wrap-up. When an email starts feeling heavy, reach for compression: fuse the opener and the reaction into one sentence, drop a forced compliment, trim parentheticals the reader doesn't need. These are tools to pull when the email is dense, not rules to apply every time.
 
 ### Read the full thread before drafting a follow-up.
@@ -129,13 +131,17 @@ The reference files cover stable, long-lived patterns; sent mail covers everythi
 
 ### Check Notion SOPs for templated workflows.
 
-Some recurring email patterns are codified as part of larger operational SOPs in Notion (e.g., delivery sessions, post-event sends, kickoffs, structured follow-ups, testimonial asks). When the email Shaw is asking for fits one of these workflows, check the SOPs page first before drafting from scratch.
+Most recurring email patterns are codified as canonical templates inside the Notion SOPs — that's the single source of truth. When the email Shaw is asking for fits one of these workflows, draft from the SOP template rather than from scratch or from a reference file.
 
-SOPs parent page: `[page-id]`. SOP-backed email types currently include:
+SOPs parent page: `[page-id]`. Each SOP carries its email templates below a `---` divider; page IDs are catalogued in `notion-helper/SKILL.md` → "Event-Type SOPs". Which SOP carries which email templates:
 
-- Post Event (slides + recording, recording link)
-- 1:1 Claude Workshop (pre-session agenda, follow-up, testimonial asks)
-- Group Claude Workshop
+- **Discovery Call** — confirmation email; post-call FU (Variant A: with proposal/options, Variant B: resources). Also see `references/discovery-call-confirmations.md` for threading mechanics.
+- **1:1 Claude Workshop** — pre-session agenda, day-of nudge, call follow-up
+- **Check-in Call** — check-in outreach; post-call FU (Variant A: post-session, Variant B: nurture recap)
+- **Wrap-up Call** — scheduling email, wrap-up follow-up, testimonial asks (Variants A and B)
+- **Group Claude Workshop** — group kickoff, group feedback form, champion check-in invite
+- **Event Series** — speaker hand-off, talk follow-up
+- **Post Event** — slides + resources, recording link
 
 When both an SOP template and recent sent mail exist, prefer sent mail — Shaw refines templates by editing on the way out, so the most recent send is the most current source. Flag the divergence so `sop-helper` can update the SOP to match.
 

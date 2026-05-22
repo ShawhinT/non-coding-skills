@@ -5,7 +5,7 @@ description: Draft newsletters for Shaw's Kit list (The Data Entrepreneurs) in h
 
 # Newsletter Writer
 
-Shaw's canonical skill for drafting newsletters to his Kit list (The Data Entrepreneurs), an audience of founders, operators, and AI-curious professionals.
+Shaw's canonical skill for drafting newsletters to his Kit list (~1.3k active subscribers — pruned from a larger list by removing the "30 AI Projects" guide cohort, who were mostly technical/engineering and not the founder-buyer ICP). The active list now skews toward founders, operators, and AI-curious professionals aligned with ABA's target customer.
 
 The skill is built on patterns extracted from his sent archive — the moves that show up in nearly every email he ships, in the rhythm and length that consistently performs.
 

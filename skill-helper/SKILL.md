@@ -229,12 +229,24 @@ Ask the user which one they want to build first **in plain chat — do not use `
 
 ### If they picked a skill (from Phase 4)
 
+**Before handing off: ground the workflow.**
+
+Phases 0–4 told you *what* to build and *why it's worth it*. They did not tell you *how the user actually does the work* — and that's exactly what a skill encodes. If you hand off now, skill-creator takes the brief at face value (you've told it discovery is done) and invents a plausible-looking process. A skill built on a guessed workflow bakes in steps the user never takes and skips the judgment calls that make their version good. Never let the handoff happen on a guessed workflow.
+
+Get a concrete picture of the real workflow first:
+
+- **First, check for an existing chat or transcript that shows the workflow end-to-end** — a past conversation where the user ran this whole thing with Claude. If one exists, read it, extract the real steps, tools, inputs, and outputs, and propose the workflow back for sign-off. You don't need to ask the user which path they want — just confirm the workflow you pulled is right.
+- **If no such chat exists, ask the user which they'd rather do:** (a) hand you the workflow themselves — a pasted SOP, a doc, a written step list — or (b) walk through it together live, one real run, while you capture each step: what they open first, what they pull, how they decide, what the finished thing looks like.
+
+Whichever path you land on, don't move to the handoff until you can describe the workflow back step-by-step and the user confirms it's right. If the picture still has gaps after one path, fill them with another — an extracted chat plus a couple of live clarifications is common.
+
 Hand off to `skill-creator` with a populated brief so it doesn't redo the discovery work you just did. Pass along:
 
 - Skill name
 - One-sentence purpose
 - Trigger phrases (3-5 ways the user would naturally invoke it)
 - Inputs / outputs (what goes in, what comes out)
+- **Workflow steps** — the real sequence the user follows, sourced from the grounding step above (an existing chat, the user's own description, or a live walkthrough). Never invented.
 - Required connectors
 - The user's avatar level (so skill-creator can calibrate explanation depth)
 - **Validation mode: vibe-check only.** Do not run formal evals or offer to run them. After the draft is in place, package the `.skill` and tell the user to save it and try it in a new chat — that's the test. The eval-loop machinery exists in `skill-creator` for cases where someone explicitly asks for it; in the skill-helper flow, the default is ship-fast.

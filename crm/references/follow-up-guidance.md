@@ -1,14 +1,17 @@
-# Follow-Up Rules & Drafting Guidance
+# Follow-Up Cadence Rules
 
-Apply these rules during CRM review or whenever Shaw mentions a lead's status.
+This file governs CRM-specific cadence: *who* needs a follow-up, *when* they're due, and *what*
+the message should say at each step. For email drafting mechanics — voice, threading, draft
+management — defer to the **email-helper** skill.
 
 ---
 
 ## How to read this file
 
-The `Next Contact` field on Active Leads is the **primary structured signal** for when a lead
-is due. Workflow 1 sorts on it directly — any lead with `Next Contact <= today` is up for
-review. This file tells you what date to *set* on `Next Contact` in different situations.
+The `Next Contact` field is the **primary structured signal** for when a lead or client is due.
+Workflow 1 sorts on it directly — any record with `Next Contact <= today` is up for review.
+This file tells you what date to *set* on `Next Contact` in different situations, and what
+specific message to send at each cadence step.
 
 Think of each section below as "default windows for setting `Next Contact`" — not as math to
 re-derive each time a sync runs.
@@ -79,21 +82,23 @@ When a lead reaches `Closed` (deal won), move them to the Clients (Nurture) data
 
 | Rhythm | Details |
 |---|---|
-| Quarterly check-ins | Free, casual calls or emails every ~3 months, for clients in `Nurturing`. The `Next Check-in` field tracks when each is due. |
+| Quarterly check-ins | Free, casual calls or emails every ~3 months, for clients in `Nurturing`. `Next Contact` tracks when each is due. |
 | Ad hoc touchpoints | When a client reaches out, or when Shaw has something relevant to share. Log these in Notes and update `Last Contact?`. |
 
-**`Next Check-in` semantics by status:**
+**`Next Contact` semantics by client status:**
 
-- **`Active`** — set to the date of the next scheduled training/session. Update it whenever the next session moves.
+- **`Active`** — set to the date of the next scheduled session. The session also has its own
+  page in ABA Trainings, linked from the CRM page body — that's how the touchpoint is legible
+  as a session rather than a message.
 - **`Nurturing`** — set to a forward-looking outreach date, ~3 months out by default.
 - **`Expansion`** — same as Nurturing; reset to ~3 months out if the opportunity doesn't close.
 - **`Churned`** — leave alone or clear.
 
 **Status transitions in the Clients table:**
 
-- **Active → Nurturing** — when the current engagement wraps up. Reset Next Check-in from "next session" to a forward-looking outreach date ~3 months out.
+- **Active → Nurturing** — when the current engagement wraps up. Reset `Next Contact` from "next session" to a forward-looking outreach date ~3 months out.
 - **Nurturing → Expansion** — when a check-in or ad hoc conversation surfaces a new buying opportunity.
-- **Expansion → Nurturing** — if the expansion opportunity doesn't materialize. Reset Next Check-in.
+- **Expansion → Nurturing** — if the expansion opportunity doesn't materialize. Reset `Next Contact`.
 - **Nurturing → Churned** — after 2+ check-ins with no response, or client explicitly disengages.
 
 **Purpose of nurture check-ins:**
@@ -101,14 +106,8 @@ The goal isn't to sell — it's to stay close and hear their problems. What clie
 with directly informs Shaw's marketing content and new offers. Expansion opportunities emerge
 naturally from these conversations when the timing is right.
 
-**Check-in timing buckets (used by Workflow 1's client sync):**
-
-- **Overdue** — `Next Check-in` is in the past
-- **Due soon** — `Next Check-in` is within the next 7 days
-- **On track** — `Next Check-in` is more than 7 days away
-
 Also flag any client whose `Last Contact?` is more than 4 months ago, regardless of
-`Next Check-in` — this catches clients where a check-in may have been missed.
+`Next Contact` — this catches clients where a check-in may have been missed.
 
 **Expansion signals to watch for during nurture review:**
 
@@ -119,18 +118,8 @@ Also flag any client whose `Last Contact?` is more than 4 months ago, regardless
 When expansion signals appear, flag them in the summary and recommend moving the client's
 status to `Expansion` — don't auto-change the status without Shaw's confirmation.
 
-**Check-in email tone:**
-
-These are relationship-maintenance emails, not sales pitches. Casual, curious, genuinely
-interested in what they're working on.
-
-Good check-in openers:
-- *"Hey [Name], been a few months — how's the [thing they were working on] going?"*
-- *"Hey [Name], wanted to check in. Any new AI challenges on your plate?"*
-- *"Hey [Name], hope things are going well. Anything I can help with?"*
-
-After drafting, update the client's Notes and Last Contact? in the CRM, and set Next Check-in
-~3 months out.
+After a check-in is sent, update the client's Notes and Last Contact? in the CRM, and set
+`Next Contact` ~3 months out.
 
 ## When NOT to draft a follow-up
 
@@ -139,52 +128,12 @@ After drafting, update the client's Notes and Last Contact? in the CRM, and set 
 - Status is `Lost` and re-engagement was already sent with no response (permanently done — `Next Contact` should be cleared)
 - Lead responded recently and conversation is active — the ball is in Shaw's court but the timing isn't stale
 
----
+**LinkedIn-only leads:** Don't auto-create email drafts — there's no email to draft to. Flag
+them in the summary under "Follow-ups due (via LinkedIn DM)" so Shaw knows to ping them on
+LinkedIn.
 
-## How to draft follow-ups
-
-**Default behavior: create Gmail drafts directly.** Do not present draft options to Shaw for
-review unless the situation is genuinely ambiguous (e.g., unclear whether to follow up at all,
-or unclear tone for a sensitive deal). For routine follow-ups, just draft them in Gmail and
-report what was drafted in the summary.
-
-**LinkedIn-only leads:** Don't auto-create Gmail drafts — there's no email to draft to. Instead,
-flag them in the summary under "Follow-ups due (via LinkedIn DM)" so Shaw knows to ping them on
-LinkedIn. If Shaw explicitly asks for a draft message to a LinkedIn lead, write one for him to
-copy-paste into a DM.
-
-1. Read the full Gmail thread to understand tone and context
-2. Draft a short, casual reply in the existing thread — match Shaw's voice (direct, friendly, low-pressure)
-3. **Self-check before finalizing:** verify the last sentence is a question, not a statement.
-   If it ends with "let me know," "happy to help," or any passive closer, rewrite it as a question.
-4. Create the draft using `gmail_create_draft` with the `threadId` of the existing thread.
-   For Gmail formatting details (HTML structure, emoji reaction handling), see the **email-helper** skill's Gmail Technical Notes.
-5. Update the lead's CRM Notes to reflect the follow-up: e.g. `FU (3/18).`
-6. Call it out clearly in the summary report under **"Follow-ups due"**
-
-**Never create a replacement draft without deleting the old one first.** If a draft needs to be
-redone (e.g., wrong formatting, wrong template), ask Shaw to delete the old draft before creating
-a new one. Creating two drafts in the same thread causes a real problem: when the email is sent,
-Gmail sees the unsent draft as a "duplicate" message in the thread and hides the actually-sent
-email by default. The recipient gets it fine, but Shaw can't see it in his sent view without
-expanding hidden messages — which looks broken and is confusing.
-
-**Always end follow-ups with a question, not a statement.** Questions create a response obligation;
-statements and commands ("let me know", "happy to help") are easy to ignore. Examples:
-- Good: *"Did you get a chance to look at this?"*
-- Good: *"Is this still something you're interested in?"*
-- Bad: *"Let me know if you have any questions."*
-- Bad: *"Happy to help if you need anything."*
-
----
-
-## Tone guidance from observed examples
-
-- Contact form FU #1: *"Did you get a chance to look at this?"*
-- Contact form FU #2: *"Have you given up on this?"* (no greeting, no sign-off — just this one line)
-- Scheduling: *"Would [day] at [time] work?"* or *"Is [tomorrow] a bad time?"*
-- Casual re-engagement: *"Is [tomorrow] a bad time? Happy to work around your schedule if you think this is worth pursuing :)"*
-- Never pushy; always leave the door open
+For *how* to draft and send the follow-up email itself once you've decided to send one — defer
+to the **email-helper** skill.
 
 ---
 

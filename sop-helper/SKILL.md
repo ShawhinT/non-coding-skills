@@ -38,13 +38,14 @@ All SOPs are child pages under the **SOPs** parent page in Shaw's ABA (Master) w
 
 The parent page is organized by category headers. As of this writing:
 
-- **Acquisition** — course launch (free), course launch (paid), course validation (paid), event
-  promo, research calls
-- **Delivery** — new course, new event
+- **Acquisition** — Discovery Call, Event Series, Post Event
+- **Delivery** — 1:1 Claude Workshop, Group Claude Workshop, Check-in Call, Wrap-up Call
+- **Resources** — reference pages rather than process SOPs (e.g. The 4Rs Framework, The
+  Hormozi Content Framework); SOPs link to these instead of restating them
 
-Some categories are just header bullets without child pages yet (placeholders for SOPs Shaw
-hasn't written). A few are real child pages — currently **Post Event** and **Event Series** sit
-under Delivery.
+All the entries above are real child pages. A category may also carry placeholder header
+bullets for SOPs Shaw hasn't written yet — promote those to real pages rather than
+duplicating them.
 
 When creating a new SOP, add it under the right category heading. If there's no obvious
 category fit, surface that to Shaw and suggest either extending an existing category or adding
@@ -59,52 +60,127 @@ template unless Shaw asks for one.
 
 ### Structure of a typical SOP
 
-A bare SOP has two sections:
+An SOP opens with a one-line **`**Context**:`** statement, then a **chronological spine of
+process steps**, followed by templates. Read top to bottom, it's the workflow in order.
 
-1. **A checklist of steps** (no header, just bullets). Nesting is fine for sub-steps. Language
-   is short and action-first — "ID target audience", not "Identify the target audience for the
-   campaign."
-2. **Email/message templates** at the bottom, separated from the steps by a `---` divider.
-   Multiple templates are stacked with `---` between each one. Use fenced code blocks
-   (```plain text``` or similar) for templates that need to be copied verbatim.
+- **A `**Context**:` line comes first** — one sentence defining what the thing is and when it
+  happens (e.g. "a discovery call is any (free) initial call with a lead to discuss whether
+  ABA's offerings would be a good fit"). It sits above the first step, as its own line, not as
+  a bullet.
+- **Top-level bullets are the steps**, in the order they happen — bold the step name. For a
+  call or engagement SOP the established shape is **Trigger → Setup → Pre-call research →
+  Call → Post-call**; other processes follow whatever their natural workflow order is.
+- **Detail nests under the step it belongs to.** Reference material — question banks, "what
+  the brief should cover" lists, policy notes — are sub-bullets of the step that uses them,
+  not standalone top-level sections. A question bank used in the call lives under the Call
+  step.
+- **Edge cases are handled inline**, as a sub-bullet of the step where they come up — not
+  collected into a dangling "Edge cases" section at the end.
+- **A `**Helpful Links**` section** sits near the bottom, before the templates: the related
+  Notion databases/pages and external tools this SOP touches.
+- **Email/message templates last**, below a `---` divider, stacked with `---` between each.
+  Each template is: a `Subject:` line carrying an italic `*(annotation)*` that says what the
+  email is and when it's sent; a fenced ```plain text``` block with the verbatim body; and a
+  closing `*Drafting note:*` inside the fence — grounded in a real send Shaw has actually
+  made, and (for emails) ending with "Always draft via email-helper."
+- **When one step needs more than one template** (e.g. a follow-up that differs by
+  situation), stack them as **Variant A / Variant B**. Each variant gets its own one-line
+  `**Context**:` statement above its `Subject:` line saying when to use that variant, then the
+  usual Subject / annotation / fence / drafting note.
 
-That's it. No Purpose, Scope, Owner, Last Updated, Version, Revision History — unless Shaw
-specifically asks. The existing SOPs don't have them and Shaw has made clear he wants tight
-reference docs, not compliance artifacts.
+Keep bullets short and action-first — "ID target audience", not "Identify the target audience
+for the campaign." No Purpose, Scope, Owner, Last Updated, Version, or Revision History
+sections — unless Shaw specifically asks. He wants tight reference docs, not compliance
+artifacts.
 
 ### Example skeleton
 
-```
-- Step 1
-- Step 2
-  - Sub-step
-  - Sub-step
-- Step 3
-<mention-page url="https://www.notion.so/<related-page-id>"/>
+````
+**Context**: one sentence — what this is and when it happens
+
+- **Trigger** — what kicks this process off
+- **Setup**
+	- Sub-step (e.g. create the page in <mention-page url="..."/>, link the record)
+	- Sub-step
+- **Step in the middle**
+	- Detail / reference material used at this step
+	- Edge case: handled inline, where it comes up
+- **Final step**
+**Helpful Links**
+- <mention-page url="https://www.notion.so/<related-database-or-page-id>"/>
+- [External tool](https://example.com)
 
 ---
-
-Subject: <email subject>
-
+Subject: <email subject> *(what it is — when it's sent)*
+```plain text
 <email body>
 
----
-
-Subject: <second email subject>
-
-<second email body>
+*Drafting note: grounded in a real send; email templates end with "Always draft via email-helper."*
 ```
+---
+**Context**: when to use this variant
+Subject: <subject> *(... — Variant A, <short label>)*
+```plain text
+<email body>
+
+*Drafting note: ...*
+```
+---
+**Context**: when to use this variant
+Subject: <subject> *(... — Variant B, <short label>)*
+```plain text
+<email body>
+
+*Drafting note: ...*
+```
+````
 
 ### Style notes
 
 - **Short, imperative bullets.** "Export slides as PDF", not "The slides should be exported to
   PDF format."
-- **Link to other Notion pages with `<mention-page url="..."/>`** — not Markdown `[text](url)`.
-  This creates a proper live reference.
-- **Inline links to external tools** (Canva, Calendly, Drive, etc.) use Markdown links.
+- **Link Notion pages *and databases* with `<mention-page url="..."/>`** — not Markdown
+  `[text](url)`. Link them inline at the step that touches them (the database a page gets
+  created in, the record it links to), and also collect them under **Helpful Links**.
+  External tools (Canva, Calendly, Drive) use Markdown links.
 - **Preserve Shaw's shorthand.** He uses "FU" for follow-up, "ID" as a verb for identify, etc.
   Don't expand these.
 - **Keep nesting shallow** — two levels deep is usually enough. Three is a code smell.
+
+---
+
+## What belongs in an SOP
+
+### SOP vs. skill — the dividing line
+
+An SOP and its companion skill split the work. The **SOP owns intent, policy, and content** —
+the *what* and *why*, written so a human with no Claude access could follow it: the process
+steps, the policy decisions (Shaw's business rules), canonical email templates, question
+banks, edge cases, helpful links. The **skill owns execution** — the *how*: tool calls,
+database IDs, payload shapes, the orchestration wiring between skills.
+
+Single source of truth: if a fact lives in the SOP, the skill references it ("do step 3 per
+the Discovery Call SOP") rather than restating it. Hard mechanics — IDs, payloads, codepoints
+— live in exactly one place: the skill. When drafting or editing an SOP, keep mechanics out of
+it; if you notice mechanics that have crept in, propose moving them to the owning skill.
+
+### Codify only what's real
+
+SOP content — edge cases, templates, question banks — must come from things Shaw has actually
+experienced or sent. Don't invent edge cases to look thorough, and don't write a template from
+imagination. Ground templates in real sent emails; ground edge cases in cases that actually
+came up. If there's nothing real to codify for a section yet, leave it out rather than padding
+it — an empty space is honest, an invented one is misleading.
+
+### Cross-reference: email-helper
+
+SOP-stored email templates are consumed by `email-helper` when drafting standard emails
+(pre-call, post-event, kickoff, follow-up, testimonial asks). Keep templates in plain text
+with `-` dashes — `email-helper` handles HTML conversion (bullets, links) when generating the
+draft. Don't encode HTML in the SOP template itself.
+
+**Maintenance loop.** When Shaw sends an edited version of a templated email, propose updating
+the SOP template to match — otherwise future drafts start from a stale base.
 
 ---
 
@@ -240,10 +316,16 @@ business; changes should be intentional.
 
 - **SOPs are for repeatable processes, not one-off tasks.** If it's going to happen once, it's
   a `notion-helper` task. If Shaw will do it again and wants a reference, it's an SOP.
-- **Match the existing minimal format** — checklist + templates at the bottom. No Purpose /
-  Scope / Owner / Version sections unless explicitly requested.
+- **Match the structure** — a chronological spine of steps, edge cases and reference material
+  nested inline, Helpful Links, then templates (see Format Conventions). No Purpose / Scope /
+  Owner / Version sections unless explicitly requested.
+- **Keep mechanics in the skill, not the SOP** — the SOP owns process, policy, and content;
+  IDs and payloads live in the companion skill (see What belongs in an SOP).
+- **Codify only what's real** — never invent edge cases, templates, or question banks; ground
+  them in things Shaw has actually experienced or sent.
 - **Always search first** to avoid creating duplicates.
-- **Use `<mention-page url="..."/>` for internal Notion links**, Markdown for external ones.
+- **Use `<mention-page url="..."/>` for internal Notion links** (pages and databases),
+  Markdown for external ones.
 - **Preserve Shaw's shorthand** ("FU", "ID") — don't expand it.
 - **Keep nesting shallow** (two levels max unless the structure really needs more).
 - **Categorize under existing headers** (Acquisition, Delivery) or ask before adding a new

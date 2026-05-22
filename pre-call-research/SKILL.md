@@ -1,50 +1,61 @@
 ---
 name: pre-call-research
-description: Do pre-call research for an upcoming call — whether it's a sales discovery call, a post-engagement follow-up, or a long-term client check-in. Use this skill whenever Shaw asks to prep for a call, do pre-call research, or gather context before any conversation — including phrases like "do pre-call research for X", "prep for my call with X", "I have a call with X today", "what should I do to prepare for X's call", or any reference to preparing for an upcoming call. Also trigger when Shaw mentions a specific person's name alongside a scheduled call. Even casual mentions like "call with X later" or "meeting with X, what should I know?" should trigger this skill. Covers prospects, active clients, and past clients alike.
+description: Do pre-call research for an upcoming call — a discovery call, a paid 1:1 Claude Workshop, a post-session or nurture check-in call, or a multi-session engagement wrap-up call. Use this skill whenever Shaw asks to prep for a call, do pre-call research, or gather context before any conversation — including phrases like "do pre-call research for X", "prep for my call with X", "I have a call with X today", "what should I do to prepare for X's call", or any reference to preparing for an upcoming call. Also trigger when Shaw mentions a specific person's name alongside a scheduled call. Even casual mentions like "call with X later" or "meeting with X, what should I know?" should trigger this skill. Also invoked by CRM Workflow 7 (Discovery Call Intake) to create and populate the ABA Calls page for a freshly-booked discovery call. Covers prospects, active clients, and past clients alike.
 ---
 
 # Pre-Call Research
 
 Gather the "overhead" context for an upcoming call so Shaw can spend call time on the things only the other person can share — their world, their pain points, their personal experience. Web research, CRM data, and past session notes handle the factual background; the call handles everything else.
 
-This skill handles three call types, each with a different question bank and tone:
+This skill is a **router**, not a content store. It owns the *mechanics* of prep — finding the person, determining the call type, pulling the CRM record, reading Gmail, web research, and writing the brief to the call page. The *content* of each call type — its question bank, its tone, what the brief should emphasize — lives in that call type's event-type SOP. This skill points at the SOP; it does not restate it.
 
-- **Prospect/sales call** — first-time or early-stage conversation with a lead. Discovery-focused.
-- **Post-engagement follow-up** — days or weeks after a paid session (workshop, coaching, training). Homework review + the 4Rs (Results, Reviews, Referrals, Resells). The experience is fresh, so this is the best time to collect concrete outcomes and testimonials.
-- **Long-term nurture check-in** — 6-12+ weeks since the last engagement. Genuine relationship check-in: hear their problems, see what's changed, surface expansion signals naturally. The 4Rs are not the focus here — the conversation should feel relational, not transactional.
+## The four call types
+
+Each maps to an event-type SOP. The SOP page IDs are catalogued in `notion-helper/SKILL.md` → "Event-Type SOPs"; read the matching SOP when prepping.
+
+- **Discovery Call** — pre-sale conversation with a lead. Discovery-focused. The brief goes on an ABA Calls page. SOP: *Discovery Call*.
+- **1:1 Claude Workshop** — the paid 1:1 delivery session. The brief goes on an ABA Trainings page and is paired with a Pre-session checklist and Agenda (see "Training pages" under Step 6). SOP: *1:1 Claude Workshop*.
+- **Check-in Call** — a relational touchpoint with a client or warm lead, in one of three contexts: (1) *after a 1:1 session* — the ~1-week post-workshop 4Rs call (Results, Reviews, Referrals, Resells); (2) a periodic client nurture check-in (4Rs not forced); (3) a lead nurture check-in — warm but not-yet-converted, often pre-booked off a discovery call (no 4Rs, no engagement context yet). Identify which from CRM status and recency. The brief goes on an ABA Calls page. SOP: *Check-in Call*.
+- **Wrap-up Call** — end of a *group / multi-session training engagement*, days-to-weeks after it wraps, with company contacts (champion, buyer, leadership). Recommendations + the 4Rs. The brief goes on an ABA Calls page. SOP: *Wrap-up Call*.
 
 ## Key Locations
 
-Canonical Notion IDs live in `notion-helper/SKILL.md` → "Main Databases." CRM-specific sub-databases (Active Leads, Clients Nurture) and the Gmail account are documented in `crm/SKILL.md`. The key resources are:
+Canonical Notion IDs live in `notion-helper/SKILL.md` → "Main Databases" and "Event-Type SOPs." CRM-specific sub-databases (Active Leads, Clients Nurture) and the Gmail account are documented in `crm/SKILL.md`. The key resources are:
 
 - **Active Leads database** — CRM entries with status, notes, email, source
 - **Clients (Nurture) database** — past clients with engagement history, check-in cadence, and expansion signals
-- **ABA Calls database** — call pages where pre-call briefs and notes live
+- **ABA Calls database** — call pages where pre-call briefs and notes live (Discovery, Check-in, Wrap-up)
 - **ABA Trainings database** — delivery sessions (1:1 workshops, trainings, ongoing engagements) with session content and notes
+- **Engagements database** — won-deal project ledger; a client's engagement row links the ABA Trainings pages that hold prior session context
 - **Gmail** — shaw@aibuilder.academy, where all email threads with leads and clients live
 
 ## Workflow
 
 ### 1. Find the person and determine call type
 
-Search both the Active Leads database and the Clients (Nurture) database for the person's name. Pull their email, status, source, and notes.
+Search both the Active Leads database and the Clients (Nurture) database for the person's name. Pull their email, status, source, and notes. Also search the ABA Calls and ABA Trainings databases for any existing pages with this person's name — past calls and delivery sessions are essential context.
 
-Based on where you find them, determine the call type:
-- **Found in Active Leads** → this is a **prospect/sales call**. Use the Sales Discovery Question Bank.
-- **Found in Clients (Nurture)** → check recency. If the last engagement ended within the past few weeks, this is a **post-engagement follow-up** (use the Post-Engagement Question Bank + 4Rs). If it's been 6+ weeks, this is a **long-term nurture check-in** (use the Nurture Check-In Question Bank).
-- **Found in both** → the Clients entry takes precedence. They're a past client, not a prospect.
+Determine the call type from what the call *is*, cross-checked against where the person sits:
 
-Also search the ABA Trainings database for delivery pages (1:1 workshops, trainings, ongoing engagements) with this person's name. These give you the content of what Shaw actually covered with them — essential context for any client call.
+- **A lead in Active Leads, early-stage / pre-sale** → **Discovery Call**.
+- **A paid 1:1 delivery session** (there's an ABA Trainings page, an engagement row, or Shaw describes it as the workshop itself) → **1:1 Claude Workshop**.
+- **A client in Clients (Nurture)**, and the call is either ~1 week after a 1:1 session or a periodic nurture touch → **Check-in Call** (client context). Use recency to tell the two sub-contexts apart: a recently-ended 1:1 session means the post-session 4Rs context; 6+ weeks out means the relational nurture context.
+- **A lead in Active Leads with a check-in on the calendar** (warm but not converted — often pre-booked off a discovery call) → **Check-in Call** (lead nurture context). No 4Rs, no engagement to pull from.
+- **The end of a group / multi-session training engagement**, with company contacts → **Wrap-up Call**.
+- **Found in both Active Leads and Clients** → the Clients entry takes precedence. They're a past client, not a prospect.
 
-If the person isn't in either database, Shaw may point you to a different data source. Ask rather than assuming.
+If the call type is genuinely ambiguous, or the person isn't in any database and Shaw hasn't pointed you to a source, ask rather than assuming.
 
 ### 2. Find or create the call page
 
-Search the ABA Calls database for the person's name. This is where the pre-call brief will go. If there's no page yet, ask Shaw before creating one.
+Search the ABA Calls database (or ABA Trainings, for a 1:1 Claude Workshop) for the person's name. This is where the pre-call brief will go.
+
+- **Invoked by CRM Workflow 7 (Discovery Call Intake):** create the ABA Calls page and link it bidirectionally with the CRM record, without asking first. In the Workflow 7 flow, this skill is the **single creator** of that page — Workflow 7 does not also create it, so it never gets made twice.
+- **Invoked any other way:** if there's no page yet, ask Shaw before creating one.
 
 ### 3. Check for previous call notes
 
-If the CRM notes reference earlier calls with this person, find those call pages in the ABA Calls database and read them. Previous call context is valuable — it means this isn't a cold conversation and you should understand what was discussed before so Shaw doesn't re-tread old ground.
+If the CRM notes reference earlier calls, or earlier ABA Calls / ABA Trainings pages exist for this person, read them. Previous call context is valuable — it means this isn't a cold conversation and you should understand what was discussed before so Shaw doesn't re-tread old ground. For client calls, the engagement row's linked ABA Trainings pages are the canonical record of what Shaw actually delivered.
 
 ### 4. Pull the Gmail thread
 
@@ -63,17 +74,30 @@ Don't try to draw deep conclusions from web research. The goal is factual backgr
 
 Write the pre-call brief directly to the person's call page in Notion. The brief has two sections:
 
-**Pre-Call Research** — short blocks, glanceable before a call:
-- **Person**: 1-2 sentences on who they are, their role, and background
-- **Company**: 1-2 sentences on what the company does, size, and anything notable
-- **From emails**: 1-2 sentences on what the email exchange revealed — what they asked for, how they described their situation, any signals worth noting
-- **Context from previous sessions** (client calls only): summary of what Shaw covered with them, what homework was assigned, and where things left off. Pull this from the ABA Trainings pages.
+**Pre-Call Research** — short blocks, glanceable before a call. Each block is **1-2 sentences flat** — no bullet lists of details, no quoted excerpts, no stacked interpretive paragraphs. If a block is growing into a sub-document, you've over-researched the page; compress.
 
-Less is more. If something can be said in one sentence, don't use two. The brief exists to be glanced at before a call, not studied.
+- **Person**: who they are, their role, and background
+- **Company**: what the company does, size, anything notable
+- **From emails**: what the email exchange revealed — what they asked for, how they described their situation, any signals worth noting
+- **Read**: a one-line take on what the research adds up to — the angle Shaw should walk in with, or the tension worth probing live. Skip if there's nothing useful to say.
+- **Context from prior touchpoints** (client check-ins and lead check-ins): for clients, what Shaw covered in prior sessions and where things left off (pull from ABA Trainings pages on the Engagements row); for leads, what came up in the discovery call and any prior conversations.
 
-**Prioritized Questions** — select from the question bank below based on what gaps remain after the research. Each question gets a one-line note explaining why it's high-leverage for this specific person given what we already know. Skip questions that the research already answers, and skip reasoning annotations when the question speaks for itself.
+The brief exists to be glanced at before a call, not studied. If something can be said in one sentence, don't use two.
+
+**Prioritized Questions** — select **3-4 questions max** from the **matching event-type SOP's question bank** — the ones that fill the biggest gaps after the research. The SOP owns the bank and the tone for that call type; don't keep a copy here. More than 3-4 and the brief stops being a focusing tool and becomes a checklist. Each question gets a one-line note explaining why it's high-leverage for this specific person; skip the annotation when the question speaks for itself.
 
 After writing to Notion, let Shaw know it's ready. He'll review it there and follow up with questions in chat — for example, if the brief mentions an unfamiliar industry term, he'll ask about it and you can discuss. The brief is a starting point for conversation, not a finished deliverable.
+
+**Training pages (ABA Trainings):** When the brief is for a 1:1 Claude Workshop (written to an ABA Trainings page rather than ABA Calls), add a **Pre-session** checklist after the brief's `---` divider. This is the prep Shaw runs through 24 hours before the session. Include:
+
+```
+Pre-session
+- [Intake responses (Sheet)](https://docs.google.com/spreadsheets/d/1q27xEm6VBuuZXIocpagiCYus24hich9nigg5sQrbbVc/edit)
+- Rank use cases best (high impact, high probability of success) to worst (low impact, low probability of success)
+- Send agenda 24-hr before
+```
+
+Then add the standard **Agenda** section from the 1:1 Claude Workshop SOP. The Pre-session + Agenda block goes after the research brief, separated by a `---` divider.
 
 ### 7. Add Call Notes section
 
@@ -83,45 +107,9 @@ Add a `Call Notes` section immediately after `Prioritized Questions`. Leave it b
 
 Add a `Follow-up` section at the bottom of the call page (after `Call Notes`) with a blank space for Shaw to fill in during/after the call. This is where next steps, action items, and proposals go.
 
-## Question Banks
+## Question banks live in the SOPs
 
-Use the question bank that matches the call type identified in Step 1. Don't use all questions from any bank — pick the ones that fill the most gaps given what the research already uncovered. Each question should get a brief tailored note explaining why it's relevant for this specific person.
-
-### Sales Discovery (prospect/sales calls)
-
-1. Why are you looking for AI training?
-2. What have you tried so far?
-3. What do you want to be able to do that you can't today?
-4. What does your team do?
-5. What are your goals?
-6. What tools/AI do you use now?
-7. What's been the hardest part?
-8. Why do you even bother? Why is this important?
-9. If this were working really well, what would be different?
-
-### Post-Engagement Follow-Up (days/weeks after a paid session)
-
-The goal is to review what they've done since the engagement and collect the 4Rs while the experience is fresh.
-
-**Homework / progress review:**
-- Walk me through what you built since last time.
-- What tripped you up?
-
-**4Rs** (collect at the end of every post-engagement call):
-- **Results** — concrete "before → after" metrics. "What can you do now that you couldn't before, or what takes way less time?"
-- **Reviews** — testimonial around time saved / clarity. "Would you share a quick testimonial — even a few sentences on what changed?"
-- **Referrals** — tap their network. "Who else in your world would this help?"
-- **Resells** — upsell to ongoing advisory or team rollout. "Would it make sense to keep going, or bring in other people from your team?"
-
-### Long-Term Nurture Check-In (6-12+ weeks since last engagement)
-
-The goal is a genuine relationship check-in — hear their problems, see what's changed, surface expansion signals naturally. This should feel relational, not transactional. The 4Rs are not the focus here.
-
-1. How's it going? What have you been working on?
-2. What's been the hardest part lately?
-3. What problems are eating up your time right now?
-4. Has anything changed since we last talked — new projects, new team members, new challenges?
-5. Is there anything I can help with?
+This skill used to carry the question banks inline. They now live in the event-type SOPs — one bank per call type — so there's a single source of truth and the banks evolve with the SOPs. To pick the prioritized questions in Step 6, open the matching SOP (IDs in `notion-helper/SKILL.md` → "Event-Type SOPs") and select from its bank. The same goes for the 4Rs framework referenced by the Check-in and Wrap-up SOPs — those SOPs link the canonical 4Rs Framework page; don't restate it here.
 
 ## Principles
 

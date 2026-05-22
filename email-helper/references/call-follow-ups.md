@@ -2,7 +2,7 @@
 
 Patterns for following up after a research call, expert network sync, or discovery call. These emails confirm alignment, provide next steps, and keep momentum.
 
-Read this file before drafting any post-call follow-up email.
+Read this file before drafting any post-call follow-up email. Most named follow-up templates now live in their Notion SOPs (single source of truth) — this file owns the cross-cutting **Structure**, the general fallback template, threading, and batch mechanics, and points to the SOP for each codified template.
 
 ---
 
@@ -22,74 +22,21 @@ Shaw's call follow-ups tend to follow this shape, though the specifics vary by f
 
 ---
 
-## Template: Workshop/Talk Follow-Up
+## Workshop/Talk Follow-Up
 
-**When to use:** After a call where Shaw and the person agreed on a talk topic for an event series. The goal is to confirm the direction and share a narrative structure.
+**When to use:** After a call where Shaw and an event-series partner agreed on a talk topic. Confirms the direction and shares a narrative outline structure.
 
-**Subject line:** "Call follow-up"
-
-```
-Hey [First Name],
-
-Really enjoyed our call yesterday!
-
-Loved your [3-4 word description of their talk idea]. I think this would be super valuable to the target audience for this series.
-
-Here's a general talk outline that works well:
-- About you
-- Status quo (i.e. how [their specific domain] is done now)
-- Problem (i.e. why the status quo sucks)
-- Solution (i.e. how AI helps)
-- Demo or details on solution
-- Q&A
-
-What do you think?
-
-Cheers,
-Shaw
-```
-
-**Personalization rules for the compliment line:**
-- Keep the idea description to 3-4 words. Concise beats precise.
-- React to their IDEA, not their credentials.
-- Good: "Loved your agent skills for analytics talk idea"
-- Good: "Loved your metric creation use case"
-- Good: "Loved your talk idea on how AI is changing data platforms"
-- Bad: "Loved your impressive background in data engineering and your thoughts on metric creation" (too long, evaluative)
-
-**Talk outline customization:**
-- The status quo parenthetical should reference their specific domain (e.g., "how business metrics are built now", "how analytics tasks are done now", "how data platforms are managed now")
-- Keep it generic enough that it works as a starting framework, not a finished plan
-- The outline is a bulleted list — this is one of the allowed exceptions to the "no bullet points" rule
+**Template lives in the Event Series SOP** (below the `---` divider, "talk follow-up"). Draft from there — the SOP's drafting note covers the personalization rules: keep the compliment to a 3-4 word reaction to their *idea* (not their credentials), and name their specific domain in the status-quo parenthetical. The talk outline is a bulleted list — one of the allowed exceptions to the "no bullet points" rule.
 
 ---
 
-## Template: Proposal Follow-Up
+## Proposal Follow-Up
 
-**When to use:** After a sales call where the next step is sending a proposal or outline PDF. The proposal has the details — the email just hits the key terms (what, how, how much) and points to the attachment.
+**When to use:** After a discovery/sales call where the next step is sending a proposal or outline PDF.
 
-**Subject line:** "Call Follow-up"
+**Template lives in the Discovery Call SOP** as Variant A of the post-call FU. Draft from there.
 
-```
-Hey [First Name],
-
-I enjoyed our chat [yesterday/on Thursday/etc.]!
-
-Here's what I'm thinking for the [training/engagement] geared directly toward your [their specific team/function].
-
-- *[Format: e.g. Two-part Session: Primer + Done-With-You Workshop]* ([total hours] total)
-- Virtual live session via *[platform]*
-- *Total investment*: $[price]
-
-More details are provided in the attached PDF.
-
-What do you think?
-
-Cheers,
-Shaw
-```
-
-**Key principle:** Keep the email body short. The proposal PDF carries the detail — don't re-explain workshop content, use cases, or session breakdowns in the email. The bullets are just enough for the recipient to know the shape of the deal (format, delivery, price) before opening the attachment.
+**Key principle:** Keep the email body short. The proposal PDF carries the detail — don't re-explain workshop content, use cases, or session breakdowns in the email. The bullets just convey the shape of the deal (format, delivery, price) before the recipient opens the attachment.
 
 **Optional P.S. line:** If the recipient mentioned needing supporting docs for internal approval (e.g., a CV for L&D submission), add a `P.S.` noting the extra attachment.
 
@@ -97,7 +44,7 @@ Shaw
 
 ## Template: General Call Follow-Up
 
-**When to use:** After a discovery call, sales call, or research call where the next step is NOT a talk outline.
+**When to use:** The fallback skeleton for a sales or research call with no dedicated SOP template. For discovery calls specifically, use the Discovery Call SOP's two post-call FU variants (proposal vs. resources) instead.
 
 **Subject line:** "Call follow-up"
 
@@ -118,30 +65,11 @@ Shaw
 
 ---
 
-## Template: Post-Workshop/Post-Training Follow-Up
+## Post-Workshop/Post-Training Follow-Up
 
-**When to use:** After Shaw has delivered a 1:1 workshop, training session, or intensive. The session already happened — the goal is to recap what was covered, suggest what to build next, and point to the upcoming check-in.
+**When to use:** After Shaw has delivered a 1:1 workshop or training session — recap what was covered, suggest what to build next, point to the upcoming check-in.
 
-**Subject line:** "1:1 Claude Workshop Follow-up" for 1:1 workshops. "Call follow-up" for other post-training sessions.
-
-```
-Hey [First Name],
-
-Really enjoyed our session yesterday!
-
-Here are some suggestions for what to build next:
-
-- [verb] the *[kebab-case-skill-name]* skill [what it does / how to improve it]
-- [verb] a *[kebab-case-skill-name]* skill [what it does]
-- [verb] the *[kebab-case-skill-name]* [what it does]
-
-Let me know if any questions or blockers come up :)
-
-Cheers,
-Shaw
-
-P.S. If you ever get stuck on *what* skill to build next, I created a skill for that [here]([drive-link]).
-```
+**Template lives in the 1:1 Claude Workshop SOP** ("Call follow-up", below the `---` divider). Draft from there.
 
 **Key principles:**
 - Frame next steps as *suggestions*, not a committed plan. Peer tone, not PM tone.
@@ -159,46 +87,29 @@ P.S. If you ever get stuck on *what* skill to build next, I created a skill for 
 
 ---
 
-## Template: Check-in / Multi-Ask Follow-Up
+## Check-in / Multi-Ask Follow-Up
 
-**When to use:** After a subsequent touchpoint in an ongoing engagement — typically a 30-day check-in following a prior workshop, or any post-engagement call carrying multiple distinct asks (next steps + review + referral). Different from the Post-Workshop template because the relationship is established and the email is recapping rather than launching.
+**When to use:** After a subsequent touchpoint in an ongoing engagement — a post-session check-in, or any post-engagement call carrying multiple distinct asks (next steps + review + referral).
 
-**Subject line:** "Check-in Follow-up"
-
-```
-Hey [First Name],
-
-[OPENER — just the warm hello if there's nothing specific to celebrate. Fuse in a reaction if there's a tangible result worth naming, e.g. "Great catching up yesterday! It's exciting to see what simple skills for X can make on your work."]
-
-Here are a few follow-up notes based on our chat.
-
-   - *[Section label]*
-      - *[kebab-case-skill-name]* skill to have Claude help with [what Claude actually does]
-      - *[kebab-case-skill-name]* skill to have Claude [what Claude actually does]
-   - *Review*: I'd love to get your feedback on the session via this 3-question Google form <link>.
-   - *Referral*: would also appreciate a three-way intro email with [person reference] if you feel like he'd get value from the [offer] :)
-
-[WRAP-UP — one line, see below]
-
-Cheers,
-Shaw
-```
+**Template lives in the Check-in Call SOP** as Variant A of the post-call FU (Variant B is the lighter nurture-recap version). Draft from there.
 
 **Key principles:**
 
 - **Section labels match the content.** Use *Next Steps* when committing to action, *New skill ideas* when offering options. Same shape, different label.
 - **Cap at 3 body sections by default, 5 max.** See SKILL.md "Shaw never pads for length."
 - **Skill bullets describe what Claude does** — "*fireflies* skill to have Claude help with workflows involving meeting transcripts" beats "Fireflies skill (auto-extract action items)." Verb- and value-first, not feature-first. Skill names are always lowercase kebab-case and bolded. Only relevant when the section is skill suggestions.
+- **Proposal sections pull the headlines inline.** When one of the asks is "share the outline" or "send the proposal," that section should use the Proposal Follow-Up bullet pattern — format, scope, investment — not just gesture at the attachment. The body has to be readable without opening the PDF. When the call notes prescribe a specific starting point ("start with rev function, pick 3 teams"), prefer surfacing it as flexibility ("can be company-wide or function-wide e.g. RevOps only") over pre-committing the recipient.
 - **The wrap-up matches whether the next touchpoint is locked in.** Pick one:
   - **Next touchpoint scheduled:** "Thanks again for taking the time to go through this with me. Looking forward to our [call/session] [when]."
   - **No next touchpoint scheduled:** "Thanks again for taking the time to go through this with me. Please let me know if there's ever any way I can support you or [Company]."
+  - **Conditional next touchpoint** (next call is real but gated on the recipient doing X first — aligning with a stakeholder, filling out a form, reviewing the proposal): name the dependency in plain language, then propose one specific time anyway as a forcing function. Don't default to open-ended "let me know when you're ready" — it slows the deal and puts scheduling work on the recipient. Pattern: "Let's do another call after you [dependency]. How does [day] ([Mon DD]) look for you?" See SKILL.md "Single time inline" for the date format.
 
 ---
 
 ## Threading Rules
 
 - **Default:** Reply on the existing email thread — see SKILL.md "Drafting with `create_draft`" for the `replyToMessageId` mechanics.
-- **Exception:** If the last message in the thread is a Gmail emoji reaction (e.g., a heart or thumbs up), start a fresh thread instead. Gmail treats emoji reactions as messages, and replying after one breaks rendering.
+- **Emoji-reaction fallback:** See SKILL.md "Gmail emoji reactions break thread replies" — fresh thread when the live thread ends in a reaction.
 - **Subject line:** "Call follow-up" for first/standalone calls. "Check-in Follow-up" for subsequent touchpoints in an ongoing engagement (e.g., 30-day check-ins after a prior workshop). Same convention whether threaded or fresh.
 
 ---

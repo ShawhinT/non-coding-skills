@@ -88,6 +88,29 @@ needed. The "today" filter is relative and updates automatically each day.
 | ABA (Master) | `[page-id]` | Parent page for the ABA database and related resources |
 | ABA Trainings (Hub) | `[page-id]` | Hub page under ABA Master grouping all training/delivery sessions |
 
+### Event-Type SOPs
+
+The event-type SOPs live under the SOPs page, each carrying its email templates below a
+`---` divider. This is the canonical ID catalog for them — other skills (`crm`,
+`pre-call-research`, `email-helper`, `calendar-helper`) reference this table rather than
+restating the IDs. Creating or editing the SOPs themselves is `sop-helper`'s job, not this
+skill's.
+
+The call/session SOPs (Discovery Call, 1:1 Claude Workshop, Check-in Call, Wrap-up Call)
+follow a consistent **Trigger → Setup → Pre-call research → Call → Post-call** structure;
+the delivery/acquisition SOPs (Group Claude Workshop, Event Series, Post Event) follow their
+own workflow order.
+
+| SOP | Page ID | Covers |
+|---|---|---|
+| Discovery Call | `[page-id]` | Pre-sale discovery call (Calendly aliases: `ABA Intro Call`, `AI Transformation`, `1:1 Claude Workshop (Discovery)`) |
+| 1:1 Claude Workshop | `[page-id]` | The paid 1:1 delivery session |
+| Group Claude Workshop | `[page-id]` | Paid multi-attendee 1:1 workshop engagement sold through a champion |
+| Check-in Call | `[page-id]` | Post-1:1-session 4Rs call, or any client nurture check-in |
+| Wrap-up Call | `[page-id]` | End of a group / multi-session training engagement |
+| Event Series | `[page-id]` | Run of partner-led workshops promoted to the ABA audience |
+| Post Event | `[page-id]` | Post-event delivery of slides, resources, and recording to registrants |
+
 ---
 
 ## Core Workflow: Creating an Ad Hoc Task
@@ -153,9 +176,10 @@ pages you plan to flip and ask before proceeding.
   same type to confirm current conventions (title style, suffix patterns, etc.)
 - **Check for duplicates** — don't auto-create if a similar page already exists on the same
   date; surface it to Shaw first
-- **Default icon: ⭕ for FU tasks, nothing otherwise** — any page whose title starts with `FU`
-  (or "Follow up with") gets `⭕`. Other tasks have no icon unless Shaw asks for one. `⭕` means
-  open and `✅` means done — marking a task done = flipping the icon (see "Marking a task done")
+- **Default icons by page type** — ABA task pages get `⭕` (open). Event/training pages
+  (ABA Calls, ABA Trainings) get `⭐`. Pages in other databases (ABN, LFC, SFC) have no icon
+  by default unless Shaw asks for one. `⭕` flips to `✅` when a task is done — see
+  "Marking a task done".
 - **Minimal body content** — default to just a link; add structure only when Shaw asks
 - **Auto-link related pages** — if a person's name appears in the request, search and link their
   CRM + most recent call page

@@ -58,7 +58,7 @@ These are Lindy-tested — they won't change anytime soon.
 - AI educator, advisor, entrepreneur based in DFW
 - YouTube channel: 100k+ learners, millions of views (@ShawhinTalebi)
 - LinkedIn: 15k+ followers
-- Newsletter: ~5k subscribers (ConvertKit)
+- Newsletter (ABN): ~1.3k active subscribers (ConvertKit). Larger "30 AI Projects" cohort kept on the list as a dormant asset but not currently emailed — audience mismatch with current ICP (technical/engineering, not founder-buyers).
 - Created AI Builders Bootcamp on Maven (165 alumni, 4.7★ from 75 reviews)
 - Alumni from Google, Microsoft, Meta, AWS, and many others
 - Founded AI Builder Academy (ABA)
@@ -87,7 +87,9 @@ Key pages Claude should know how to find:
 - 🧠 **Strategy** → Quarterly strategy pages (Q1, Q2, etc.)
 - 🎓 **ABA (Master)** → Hub for AI Builder Academy business
 - 📇 **CRM** → Active Leads + Clients (Nurture) databases
+- 🤝 **Engagements** → Project ledger (one row per won, invoiced project). See `engagements` skill for conventions.
 - 👨‍🏫 **ABA Calls** → Sales call tracking database
+- 🛠️ **ABA Trainings** → Workshop delivery / training session database
 - ✍️ **Content (Master)** → Parent for SFC, LFC, ABN
 - 📹 **LFC** → YouTube video database
 - 👔 **SFC** → LinkedIn post database and strategy

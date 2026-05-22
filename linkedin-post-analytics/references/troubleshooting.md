@@ -8,9 +8,21 @@ Common problems encountered when scraping LinkedIn analytics, and how to fix the
 
 **Fix:** The scripts include a built-in 3-second delay, so this should be rare. If it still happens, run the scraper again — the page may need extra time on slow connections. If retrying doesn't help, the page structure may have changed or the URL is wrong. Verify the URL has all four parameters (`startDate`, `endDate`, `metricType`, `timeRange`).
 
-## Numbers look wrong or nonsensical
+## Shares / reposts look suspiciously high
 
-**Cause:** You're running the wrong scraper variant for the current view. The impressions scraper interprets `nums[1]` as impressions; the engagements scraper interprets it as reposts. If you run the impressions scraper on an engagements-sorted page (or vice versa), you'll misattribute metrics.
+**Cause:** The engagements view's third column is LinkedIn's **totalEngagements** metric — reactions + comments + reposts + clicks + saves + other interactions — *not* the repost count. Earlier versions of this skill mislabeled that number as "reposts," producing absurd outputs like "167 shares" on a post that actually had 1 repost (the other 165 were clicks, saves, etc.). If your output shows reposts much larger than reactions for several posts, you've hit this.
+
+**Fix:** The current `scrape-engagements.js` reports the number as `totalEng`, not `reposts`. If you need a true repost count for a specific post, navigate to the post page (`https://www.linkedin.com/feed/update/urn:li:activity:<id>/`) and read the count from the social-counts row at the bottom of the post body. There is no way to get reliable per-post repost counts from the analytics dashboard in bulk.
+
+## Engagement rate over 100% or wildly out of range
+
+**Cause:** Almost always one of two things: (a) reaction/comment counts on the dashboard are lifetime totals while impressions are window-specific, so an old post that received a few hundred impressions during the window will combine its lifetime engagement with a tiny denominator; or (b) the scraper misinterpreted the engagements-view third column (see above).
+
+**Fix:** Filter to posts whose age span (e.g., "2w", "3d") falls inside the analytics window. Posts marked "1mo" or older were created before the window opened. For (b), make sure you're using the current `scrape-engagements.js` that reports `totalEng` rather than fabricating a `reposts` value.
+
+## Numbers look wrong but not absurdly so
+
+**Cause:** You're running the wrong scraper variant for the current view. The impressions scraper interprets `nums[1]` as impressions; the engagements scraper interprets it as totalEngagements. Mismatching the scraper to the view silently swaps these.
 
 **Fix:** Check the `metricType` in the current URL and make sure you're using the matching scraper. The URL in the tab context from `tabs_context_mcp` will show you which view you're on.
 
@@ -40,7 +52,11 @@ Common problems encountered when scraping LinkedIn analytics, and how to fix the
 ```javascript
 document.querySelector('main').innerHTML.substring(0, 3000)
 ```
-This gives you enough HTML to identify the new pattern. Look for the post links (they'll still contain `/feed/update/`) and work backwards to find the new container structure.
+This gives you enough HTML to identify the new pattern. Look for the post links (they'll still contain `/feed/update/`) and work backwards to find the new container structure. Also dump the raw spans for a single post card and verify what each number actually means before trusting the scraper output:
+```javascript
+const li = document.querySelector('main li');
+Array.from(li.querySelectorAll('span')).map(s => s.innerText.trim()).filter(t => t && t.length < 80);
+```
 
 ## Data is capped at ~50 posts
 
@@ -48,14 +64,14 @@ This gives you enough HTML to identify the new pattern. Look for the post links 
 
 **Fix:** Note the cap in your analysis. For date ranges that would have more than 50 posts, you're seeing the top 50 only. If you need comprehensive data, break the date range into smaller chunks (e.g., month by month) and scrape each separately. Be aware that month-by-month scraping may still miss posts that aren't in the top 50 for any individual month.
 
-## Engagement numbers don't add up
+## Matching posts across the two views
 
-**Cause:** LinkedIn's total engagement count sometimes includes interaction types beyond reactions, comments, and reposts (e.g., clicks, follows). The scraped reactions + comments + reposts may be less than the total engagement figure LinkedIn shows.
+**Cause:** Preview text shown on each card is truncated, and the truncation point can differ slightly between views. Using "first N characters of preview" as a join key sometimes fails — especially when the truncation point lands inside a word.
 
-**Fix:** Accept this as a known discrepancy. The scraped metrics are still useful for relative comparisons — even if the absolute totals don't match LinkedIn's aggregates perfectly.
+**Fix:** Extract the activity ID from the post's `href` (`/feed/update/urn:li:activity:<id>/`) and use that as the join key. It's stable, unique, and identical across views.
 
 ## Output blocked by Chrome content filter
 
 **Cause:** The Chrome tool's content filter sometimes blocks scraper output with `[BLOCKED: Cookie/query string data]`. This happens when post preview text contains URLs, query strings, or character sequences that look like cookies or tracking parameters.
 
-**Fix:** The scripts now sanitize preview text by stripping URLs and special characters before output. If you still hit this, the simplest workaround is to remove preview text entirely from the output and return numbers only — the metrics are what matter for analysis, and you can cross-reference post previews manually if needed.
+**Fix:** The scripts now sanitize preview text by stripping URLs and special characters before output. If you still hit this, strip preview text more aggressively — drop quotes, hashes, and parentheses — or return numbers only and cross-reference previews manually.

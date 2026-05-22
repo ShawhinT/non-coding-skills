@@ -121,3 +121,48 @@ AI might be important to leadership, but just not important right now.
 This leads to stalled progress due to a lack of resources and urgency.
 
 How are you seeing AI transformations fail?
+
+---
+
+## Example: Notion as a System of Record
+
+SaaS companies lost 70% of their valuation due to AI uncertainty
+But there's one SaaS I feel getting more valuable with AI.
+
+→ Notion.
+
+Most apps are racing to bolt AI features onto their existing UI (usually a sidebar chatbot).
+
+Notion did something different.
+
+They exposed every action in their product to AI agents.
+
+The result: anything I can do in Notion, Claude can do too.
+
+- Create a page
+- Update a database
+- Query my CRM
+- Add a task to my docket
+- Pull engagement notes for a call
+
+But that's not why I think they win.
+
+The deeper value is this:
+
+Notion has become the shared context layer between me and my agents.
+
+When I ask Claude to follow up with a lead, it doesn't need me to re-explain who the lead is. It reads the CRM page.
+
+When I ask it to prep for a call, it pulls the engagement, past notes, and the proposal.
+
+The work I do in Notion becomes the memory my agents use.
+
+This is the playbook for winning in the age of AI.
+
+Don't compete with agents. Become the system of record they rely on.
+
+Every SaaS will eventually face the same question: am I a tool an agent uses, or a layer it bypasses?
+
+Notion answered first.
+
+Which tool in your stack got more valuable when you connected it to AI?

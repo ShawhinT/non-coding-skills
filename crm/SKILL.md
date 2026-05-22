@@ -9,8 +9,9 @@ description: >
   sales context. Also triggers when Shaw shares new contact form submissions or inbound emails
   that look like potential leads. Also triggers for client/nurture activity: "check on my
   clients", "any clients due for check-ins", "move this lead to clients", "nurture review", or
-  any mention of existing clients and expansion opportunities. Follow-up reviews cover Active
-  Leads, Clients (Nurture), AND any active campaign trackers linked from the CRM page.
+  any mention of existing clients and expansion opportunities. Also triggers when a discovery
+  call is booked — directly or surfaced during a sync. Follow-up reviews cover Active Leads,
+  Clients (Nurture), AND any active campaign trackers linked from the CRM page.
 ---
 
 # CRM Skill
@@ -32,10 +33,13 @@ CRM-specific sub-databases (sub-pages of the CRM page, not in the main database 
 | CRM page | Notion page ID: `[page-id]` |
 | Active Leads database | Data source: `collection://[database-id]` |
 | Clients (Nurture) database | Data source: `collection://[database-id]` |
+| 🧊 Archived Leads database | Data source: `collection://[database-id]` (parent: CRM page) |
 
 For **ABA Calls** (sales calls), **ABA Trainings** (delivery sessions: 1:1 workshops, trainings,
 ongoing engagements), and **ABA** (tasks, launches, events, outreach) — see the canonical
-catalog in `notion-helper/SKILL.md` → "Main Databases."
+catalog in `notion-helper/SKILL.md` → "Main Databases." Event-type SOPs (Discovery Call,
+Check-in Call, Wrap-up Call, 1:1 Claude Workshop) are catalogued in `notion-helper/SKILL.md` →
+"Event-Type SOPs."
 
 **Gmail account:** `shaw@aibuilder.academy` (all outbound sales activity lives here)
 **Google Calendar:** Available via the `gcal_list_events` tool — use as an additional signal for recent meetings
@@ -48,7 +52,7 @@ catalog in `notion-helper/SKILL.md` → "Main Databases."
 |---|---|---|
 | Name | Title | Full name |
 | Email | Text | Email address |
-| Source | Multi-select | `LinkedIn`, `YouTube`, `Personal`, `ABB`, `ABA Contact` |
+| Source | Multi-select | `LinkedIn`, `YouTube`, `Personal`, `Referral`, `ABB`, `ABA Contact`, `ABA Discovery Call`, `Homepage Contact`. `Referral` = warm intro from an existing client, partner, or other contact (e.g., a current client introduces Shaw to an investor or peer). `ABA Contact` = aibuilder.academy contact form. `ABA Discovery Call` = direct Calendly booking on aibuilder.academy (no contact form first — they jumped straight to scheduling). `Homepage Contact` = shawhintalebi.com contact form. |
 | Status | Multi-select | `Pending Call`, `Booked Call`, `Outline Sent`, `Closed`, `Lost`, `Disqualified` |
 | Last Contact? | Date | Date of most recent touchpoint |
 | Next Contact | Date | Date of next planned touchpoint. Structured replacement for "FU in April"-style notes. Workflow 1 uses this to surface what's due. See `references/follow-up-guidance.md` for cadence defaults by situation. |
@@ -65,10 +69,10 @@ need to be duplicated here.
 - `Warm outreach (3/4). FU (3/11). Asked about individual training (3/12). Replied about ABA (3/13).`
 - `ABA contact form (3/16). Replied, offered call (3/16).`
 - `Call on 3/13. Not right now.`
-- `Call w/ [Person 1] & [Person 2] (3/27). Sending proposal (3/28).`
+- `Call w/ [Lead Name] & [Lead Name] (3/27). Sending proposal (3/28).`
 
 **Bad example (too much context):**
-- `Call w/ [Person 1] & [Person 2] (3/27). [Company] growth analytics, small team, already using MCP + agents. $2k L&D budget/person. Sending proposal (3/28).`
+- `Call w/ [Lead Name] & [Lead Name] (3/27). [Company] growth analytics, small team, already using MCP + agents. $[amount] L&D budget/person. Sending proposal (3/28).`
 
 **Rules:**
 - Always append new entries; never overwrite existing notes
@@ -80,7 +84,7 @@ need to be duplicated here.
   `Next Contact` field. Notes log what *happened*; `Next Contact` tracks what's *next*.
 - When other stakeholders are involved in a deal (e.g. a second contact on the thread), mention them
   by name so future sessions have context without re-reading the full email chain.
-  Example: `[Person] ([email]) responded, evaluating proposals (3/17).`
+  Example: `Srikanth ([email]) responded, evaluating proposals (3/17).`
 
 ---
 
@@ -100,6 +104,26 @@ Status should reflect the furthest confirmed stage reached:
 
 ---
 
+## Lead Archiving
+
+The **🧊 Archived Leads** database (sub-page of the CRM page) holds `Lost` and `Disqualified`
+leads that have aged out — Shaw periodically batch-moves them out of Active Leads to keep the
+working pipeline focused. Same schema as Active Leads minus formula columns; `Next Contact` is
+blank on every archived record (terminal, no re-engagement planned from this table — true
+re-engagements get re-added to Active Leads).
+
+Archived Leads are a historical record, not a working queue. Don't draft follow-ups against
+them, don't auto-fill `Next Contact`, and don't surface them in syncs as "due" or "worth
+reviewing". Do treat them as known not-orphans when reconciling ABA Calls — see Workflow 1.
+
+Lifecycle: **Active Leads (working pipeline) → status changes to `Lost` / `Disqualified` →
+stays in Active Leads with a re-engagement date or blank `Next Contact` → moved to Archived
+Leads manually when the re-engagement window has clearly closed.**
+
+Archiving is a manual batch operation — no dedicated workflow.
+
+---
+
 ## Clients (Nurture) Database Schema
 
 This table holds people who have paid Shaw — the goal is to nurture clients for expansion and to
@@ -109,12 +133,18 @@ constantly hear their problems to inform marketing and new offers.
 |---|---|---|
 | Name | Title | Full name |
 | Email | Text | Email address |
-| Source | Multi-select | `LinkedIn`, `YouTube`, `Personal`, `ABB`, `ABA Contact`, `Homepage Contact` |
+| Source | Multi-select | `LinkedIn`, `YouTube`, `Personal`, `Referral`, `ABB`, `ABA Contact`, `ABA Discovery Call`, `Homepage Contact`. Mirrors Active Leads — source carries over when a lead graduates to a client. |
 | Status | Multi-select | `Active`, `Nurturing`, `Expansion`, `Churned` |
 | Last Contact? | Date | Date of most recent touchpoint |
-| Next Check-in | Date | `Active` → date of next scheduled training/session. `Nurturing` → future outreach date (quarterly cadence). See lifecycle stages below. |
+| Next Contact | Date | Date of next planned touchpoint — same field as Active Leads. See "Next Contact semantics" below for how its meaning shifts by status. |
 | Engagement Type | Multi-select | `1:1`, `Workshop`, `Bootcamp`, `Ad Hoc Advisory` |
 | Notes | Text | Short chronological log (see Client Notes Format below) |
+
+### Next Contact semantics
+
+`Next Contact` is a catch-all for the next planned touchpoint of any kind. Most often it's a follow-up message; sometimes it's a scheduled call. The type of touchpoint is read from the linked pages on the CRM record, not from a separate field — if there's an ABA Calls or ABA Trainings page dated `Next Contact`, the touchpoint is a call. Otherwise assume a follow-up message.
+
+This is the same field on both Active Leads and Clients. Workflow 1 sorts on `Next Contact <= today` for both tables.
 
 ### Client Lifecycle Stages
 
@@ -123,13 +153,12 @@ Active → Nurturing → Expansion → (back to Nurturing or Churned)
 ```
 
 - **Active** — currently in an engagement (delivering workshops, consulting, etc.). No nurture
-  outreach needed because Shaw is already talking to them regularly. `Next Check-in` should mirror
-  the date of the next scheduled training/session — it doubles as an "are we still on track" signal,
-  not a future outreach date.
+  outreach needed because Shaw is already talking to them regularly. `Next Contact` mirrors the
+  date of the next scheduled session — the linked ABA Trainings page is what makes it legible
+  as a session rather than a message.
 - **Nurturing** — engagement is complete; now in the quarterly check-in rhythm. The default state
-  for most clients. Stay close, hear their problems, inform marketing and new offers. `Next Check-in`
-  holds a forward-looking outreach date (~3 months out by default) — this is the only stage where
-  that field means "reach out next."
+  for most clients. Stay close, hear their problems, inform marketing and new offers. `Next Contact`
+  holds a forward-looking outreach date (~3 months out by default) — typically a check-in message.
 - **Expansion** — a nurture conversation has surfaced a new opportunity. They're back in a "buying"
   mode but warmer than a new lead because of existing trust and context. This is the highest-leverage
   sales motion in the CRM.
@@ -166,6 +195,7 @@ Read the relevant workflow file before executing. Each contains step-by-step ins
 | 4. Link Call Notes to CRM Lead Page | Connecting (or refreshing) the full list of call-note links on a lead/client page | `workflows/workflow-4-link-calls.md` |
 | 5. Move Lead to Clients | A deal closes and the lead needs to graduate to Clients (Nurture) | `workflows/workflow-5-move-to-clients.md` |
 | 6. Onboard Workshop Participant | A new participant is accepted for a free 1:1 Claude Workshop and needs CRM + ABA Trainings setup | `workflows/workflow-6-onboard-workshop.md` |
+| 7. Discovery Call Intake | A discovery call is booked — detected during a Workflow 1 sync, or Shaw mentions in chat that one was booked. Orchestrates CRM resolution, the ABA Calls page + brief, the FU task, and the confirmation email | `workflows/workflow-7-discovery-intake.md` |
 
 Client/nurture review is handled by Workflow 1, which syncs Active Leads and Clients in the
 same pass. Nurture-specific guidance (check-in cadence buckets, expansion signals, check-in
@@ -188,7 +218,9 @@ Read these when the workflow requires follow-up assessment or email drafting.
 Shaw's leads and clients leave a trail across three databases. Keeping them straight matters
 because the sync workflow treats each one differently.
 
-- **ABA Calls** — *sales calls only*. Discovery, follow-up, proposal review, research chats.
+- **ABA Calls** — *lead and client 1:1 conversations*. Discovery, follow-up, proposal review,
+  research chats, and check-ins — check-ins pair with leads (warm-but-not-converted nurture)
+  as well as clients (post-session and quarterly nurture); see the Check-in Call SOP.
   Workflow 1 reconciles this against the CRM in both directions, and Workflow 3 creates new
   entries when a brand-new sales call shows up in Gmail.
 - **ABA Trainings** — *delivery sessions only*. 1:1 workshops, trainings, ongoing engagements.
@@ -202,6 +234,11 @@ lead or client's CRM page. Use Workflow 4's full-rewrite rule. A lead typically 
 calls (ABA Calls) before conversion and delivery sessions (ABA Trainings) after — both belong on
 the CRM page so the full history is one click away. ABA task/event pages are generally not
 linked unless a specific event is directly relevant.
+
+**Page body structure:** the `## Calls` section always sits at the bottom of a CRM page. Anything
+else — `## Context` (engagement details, stakeholders, blockers, campaign tracker links),
+scratchwork, ad hoc sections — goes above it. Calls is a growing trail of historical links;
+pinning it to the bottom keeps the durable signal Shaw scans first from getting buried.
 
 **Search behavior:** when fetching context for a lead, search ABA Calls and ABA Trainings by
 name, email, company name, and email domain — pages are sometimes filed under company name,
@@ -226,9 +263,9 @@ follow-up review, you'll miss everyone Shaw is currently working on a campaign.
 off the CRM page first, then for each linked campaign:
 
 1. Open the campaign page and find its outreach tracker (inline database).
-2. Query the tracker for contacts where `Next Contact <= today` or `Next Contact` is blank
-   on a non-terminal status (i.e., not `Passed` or `Workshop Booked`). Same filter logic as
-   Active Leads.
+2. Query the tracker for contacts where `Next Contact <= today`. Only surface contacts with
+   an explicit due date. Blank `Next Contact` on campaign contacts is intentional (no follow-up
+   planned) — never flag it or backfill it.
 3. Cross-reference Gmail (or LinkedIn for LinkedIn-only contacts) for replies since
    `Last Contact`, exactly as you would for an Active Lead.
 4. Surface contacts that are due, replied, or have stale `Next Contact` dates in the summary.
@@ -236,6 +273,22 @@ off the CRM page first, then for each linked campaign:
 **Keep tracker updates light.** When a reply or status change comes in, append a dated note
 and bump `Last Contact` / `Next Contact` — same conventions as Active Leads notes. Don't
 restructure the tracker; that's the outreach skill's job.
+
+### Promotion to main CRM
+
+When a campaign contact graduates to the main CRM (Active Leads or Clients) — typically after
+they reply with intent and Workflow 3 creates a lead record — mark them `Added to CRM` in the
+campaign tracker and clear their `Next Contact` field. From that point on:
+
+- All future updates (Notes, Last Contact, Next Contact, Status) happen **only** in the main
+  CRM record
+- The campaign tracker entry remains as a historical breadcrumb showing where the lead originated
+- Workflow 1's active campaign sweep skips `Added to CRM` contacts — they're already covered by
+  the Active Leads / Clients filter
+
+This prevents two records from drifting apart and avoids duplicate cadences (one from the
+tracker, one from the CRM). If a campaign tracker doesn't have `Added to CRM` as a Status
+option yet, add it (orange or pink works well for visual distinction from active statuses).
 
 ## Gmail & Calendly Signals
 
@@ -250,6 +303,12 @@ All outbound sales activity lives in Gmail at `shaw@aibuilder.academy`. Two patt
 This is the canonical detection path for new bookings. A global scan for `from:notifications@calendly.com subject:"New Event" after:<last-sync-date>` catches brand-new leads who booked
 without an existing CRM entry.
 
+**Discovery-call bookings route to Workflow 7.** When a detected Calendly booking is a
+*discovery call* (event types per the Discovery Call SOP — `ABA Intro Call`, `AI Transformation`,
+`1:1 Claude Workshop (Discovery)`), hand it to **Workflow 7 (Discovery Call Intake)** rather
+than processing it piecemeal. Workflow 7 orchestrates CRM resolution, the ABA Calls page and
+brief, the FU task, and the confirmation email in one pass.
+
 ---
 
 ## Key Principles
@@ -258,6 +317,8 @@ without an existing CRM entry.
 - **Append, never overwrite** — notes are a chronological log; always add to the end
 - **Match Shaw's voice** — short, direct, friendly; no corporate filler
 - **Don't over-follow-up** — respect the cadence limits; after FU #2 on contact form leads, stop
-- **Every touchpoint updates two dates** — `Last Contact?` (when it happened) and `Next Contact` (when to touch them again). Set both, every time. `Next Contact` is the structured signal Workflow 1 sorts on; leaving it stale is how leads fall through the cracks.
+- **Blank `Next Contact` is assumed intentional** — not every lead needs an active follow-up date. `Next Contact` is the structured signal Workflow 1 sorts on, and Shaw leaves it blank deliberately when no follow-up is planned. If context strongly suggests a miss (e.g., an active lead with recent activity but no date), flag it in the summary as "worth reviewing" — but never auto-fill without Shaw's approval.
+- **Drafts aren't touchpoints — only sent is.** A drafted email sitting in Gmail is not a touchpoint until Shaw sends it. Update `Status`, `Last Contact?`, and `Next Contact` based only on actions that have actually happened — calls that took place, emails confirmed sent. When a workflow drafts a follow-up email in the same run as a CRM update, only update CRM for the action that actually occurred (e.g., the call). Leave email-dependent state changes (like advancing to `Outline Sent`, or the +2-day post-outline FU date) for a later update once Shaw confirms send — the next sync will pick up the send via Gmail signal anyway.
 - **Default to action** — when follow-ups are due, create Gmail drafts directly rather than presenting options. For LinkedIn-only leads, flag them in the summary for DM follow-up instead
+- **Always invoke email-helper before drafting an email** — every Gmail draft created during a CRM workflow goes through email-helper first. Skills compose: CRM owns the *who/when/why* of the follow-up; email-helper owns the *voice, threading, and Gmail mechanics*. Skipping it is how plain-body drafts, missed em-dash rules, and snippet-driven (rather than thread-driven) follow-ups slip through. This applies in Workflow 1's step 6, Workflow 2 follow-ups, Workflow 7's confirmation email, and any other CRM step that creates a draft.
 - **Every call deserves a follow-up email** — whenever a call or meeting is logged (via Workflow 2) or detected (via Workflow 1), check whether a follow-up email was sent. If not, prompt Shaw or flag it. Sources to check: ABA Calls, ABA Trainings, CRM notes, and Google Calendar

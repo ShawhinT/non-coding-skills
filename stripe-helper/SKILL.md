@@ -20,10 +20,10 @@ These are the canonical paid offers. When Shaw says "1-on-1 Claude workshop" or 
 
 | Offer | Product ID | Price ID | Amount |
 |---|---|---|---|
-| 1:1 Claude Workshop (90-min) | `prod_[id]` | `price_[id]` | $1,500 |
-| 1:1 AI Coaching (90 min) | `prod_[id]` | `price_[id]` | $1,500 |
-| 1:1 AI Coaching (1 hr) | `prod_[id]` | `price_[id]` | $1,500 |
-| 1:1 AI Coaching (1 hr, discounted) | `prod_[id]` | `price_[id]` | $1,000 |
+| 1:1 Claude Workshop (90-min) | `prod_UN9DVm0Oac8U3V` | `price_1TOOuyDfJnJi0xPA172irITu` | $1,500 |
+| 1:1 AI Coaching (90 min) | `prod_ULBsLf0npIr8Wc` | `price_1TMVV9DfJnJi0xPAPJAd0a3m` | $1,500 |
+| 1:1 AI Coaching (1 hr) | `prod_ULBr6TCqolpxX4` | `price_1TMVUbDfJnJi0xPAYSHVeNHe` | $1,500 |
+| 1:1 AI Coaching (1 hr, discounted) | `prod_ULBr6TCqolpxX4` | `price_1TMVTkDfJnJi0xPAe6TV0xjz` | $1,000 |
 
 For custom engagements (training contracts, retainers, etc.), Shaw's pattern is one-off invoices in the $1,500–$7,500 range with a custom line item — not always tied to a product. Ask him for the amount and a short description.
 

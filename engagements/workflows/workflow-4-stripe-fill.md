@@ -35,8 +35,8 @@ Try in order:
   e.g., `email~"<company-domain>"` finds anyone billed at that company
 
 If a customer matches but the name/email looks like a different person (e.g., a procurement
-contact at the client's company instead of the named client), that's likely the **proxy payer** — a
-procurement contact at the client's company. Use that customer.
+contact at the client's company instead of the contact you're searching for), that's likely
+the **proxy payer**. Use that customer.
 
 ### 3. Handle voided/replaced invoices
 
@@ -107,8 +107,8 @@ new_str:
 For `1:1 Claude Workshops — Team` engagements, the invoice should equal `$1,500 × N attendees`
 (no team discount currently). If the invoice amount doesn't match the expected count, flag it:
 
-> [Client A]'s invoice was $[amount] = 5 × $1,500. ✓
-> [Client B]'s invoice was $[amount] but I counted 5 attendees in the body — confirms 5 × $1,500.
+> [Client A]'s invoice was $7,500 = 5 × $1,500. ✓
+> [Client B]'s invoice was $7,500 but I counted 5 attendees in the body — confirms 5 × $1,500.
 
 If the amount and attendee count don't match, ask Shaw.
 
@@ -118,7 +118,7 @@ Reply with what you found and what you couldn't:
 
 > Filled in [E0003](url) — $7,500, Paid in Full, billed to [email] (4/20).
 >
-> [E0001](url) — no Stripe record under any email or name search. Likely paid via [Company]'s
+> [E0001](url) — no Stripe record under any email or name search. Likely paid via the client's
 > vendor portal. Need you to confirm the price.
 
 Always flag uncertainty rather than guessing.
@@ -129,11 +129,11 @@ Always flag uncertainty rather than guessing.
 
 Document any new proxy patterns encountered to make future lookups faster:
 
-- **[Company A]** ([Client Name]) — pays via internal portal, routes to a different Stripe account.
+- **[Company A]** ([Contact Name]) — pays via internal portal, routes to a different Stripe account.
   The original invoice on Shaw's account gets voided.
-- **[Company B]** ([Client Name]) — pays via internal vendor service, no Stripe record on Shaw's
+- **[Company B]** ([Contact Name]) — pays via internal vendor service, no Stripe record on Shaw's
   account at all.
-- **[Company C]** ([Client Name]) — billed via [Procurement Contact] (procurement),
+- **[Company C]** ([Contact Name]) — billed via [Procurement Contact],
   `[email]`. Search by company domain.
 
 When a new proxy pattern is discovered, suggest adding it to this list.
