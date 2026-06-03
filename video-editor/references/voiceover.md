@@ -1,0 +1,92 @@
+# Voiceover Editorial Guide
+
+Shaw records voiceovers one sentence at a time and re-records each sentence until he's satisfied. The raw transcript is a chain of takes, most of which are drafts that lead to a final, clean version.
+
+## Core principle — last take wins
+
+**When two takes of the same idea exist, keep the last.** Every earlier attempt is a draft. This holds even when the last take has a surface flaw like a trailing "um", a dangling "It.", or a word stumble — those are fixed by trimming the segment boundary back to the last clean word, not by falling back to an earlier take. Falling back is a failure mode: the viewer hears what Shaw rejected.
+
+When in doubt, cut. Keeping a retake is worse than losing a sentence — the viewer hears the same idea twice and loses trust. Expected retention is roughly a quarter to a little over half of the raw runtime; use it as a sanity signal, not a target.
+
+*Last-take-wins assumes the later take is complete — verify that it is.* A retake often re-records only **part** of a thought: the speaker fixes the sentence that bothered him and skips the setup, transition, or topic-introduction in front of it, so the unique connective clause survives **only in the earlier take**. Before dropping an earlier take as a draft, read it against the later one and ask — does it contain a clause the later take never delivers (a transition, a topic name, a motivation, a first definition)? If so they are not duplicates. Keep the unique clause: use `transcript_lookup` to find its boundary and preserve the front of the earlier take plus the clean later take. (This is the complement of "takes span segment boundaries" below: there the trailing fragment is a pure draft of what follows; here the earlier take carries something the later one dropped.) The failure is silent — you keep the polished definition and delete the bridge that made it make sense.
+
+## What to cut
+
+- **Retakes.** When the speaker says substantially the same idea more than once, cut earlier attempts and keep the last. "Substantially the same" means same idea, not same wording — two sentences with the same point in different phrasing still count as a retake. Filler between attempts ("um", "uh", "yeah") does not make them distinct. Recurring topics in this channel (compute, scale, parameters, context window, fine-tuning, tokens) are restated repeatedly across a section — only the last statement survives.
+
+  **Re-explanation markers.** In educational/tutorial content the speaker often re-derives a concept that was already covered, introduced by phrases like *"in other words"*, *"so for example"*, *"so again"*, *"just to explain this again"*, *"to put it another way"*. These multi-sentence re-explanations are soft retakes — the speaker is restating the same idea at greater length or with different numbers, not adding new information. They can span 10–25 seconds and feel substantive in isolation, but the concept already landed in an earlier segment. Cut them the same way you'd cut any retake: keep the last, cleanest version.
+
+  **Extended-analogy beats.** When an analogy or comparison opens — *"it's like you've just hired an intern"*, *"like if you were interacting with a human"*, *"imagine"*, *"that's the same way"* — and then unfolds across 3+ segments with parallel shape (*"So you won't… You'll have… You just let…"*, or *"explain it once / it remembers / you don't re-explain"*), each beat is a different framing of the same claim, not a new step. The tell is parallel grammar — the beats negate or restate each other rather than advancing. When the direct claim lives in the prose right before or after the analogy, cut the whole block: opener, middle, and payoff. The payoff (*"that's what skills enable Claude to do"*, *"that's the same way I approach Claude"*) is the analogy's restatement of the claim, not a distinct thesis — the direct prose already carries it.
+
+  **Two clean takes can still be one idea.** Retake detection keys on disfluency and shared openers, so two **fluent**, differently-worded segments that make the same point slip through both the chunk editor and the conservative dedup pass — e.g. a transition question (*"how do we turn autocomplete into a chatbot?"*) immediately followed by a restatement (*"even though it's autocomplete under the hood, it doesn't feel like autocomplete"*). When two adjacent kept segments deliver the same semantic beat in different words, keep the one doing the most narrative work and cut the other. "Substantially the same" is about the idea, and it applies even when *both* takes are clean — judge meaning, not surface form.
+
+- **Abandoned takes.** A take is abandoned when the speaker gave up mid-thought — the *whole* take is unusable. Three cheap shape cues to detect this:
+  1. **Restart opener** — the first few words stack two or more filler/restart particles from {so, um, uh, yeah, and, mhm, okay, well, like, I, mean}. Example: *"So for example, if we uh, so for example…"*. The speaker is visibly restarting.
+  2. **Dangling tail** — the segment ends on a bare conjunction or filler: *"…and"*, *"…so"*, *"…or"*, *"…but"*, *"…um"*, *"…uh"*, *"…yeah"*. The idea never landed.
+  3. **Internal restart** — the same 2–4 opening words repeat with filler between, either inside one segment (*"Uh, so here I could um, so here I could segment the questions…"*, *"and then I'm um, yeah, and then I might have…"*) or across two adjacent segments where a silence split the restart in half (segment N trails off *"…Uh, is that. And so"* and N+1 opens *"so the key and so, and so a key detail…"* — the "and so" fragment straddles the silence). The repeat IS the restart — the speaker bailed and started over. The first take, or first segment when the restart crossed a boundary, is the draft.
+
+  Cue 3 alone, or cues 1 + 2 together → cut. Cue 1 or 2 alone → cut if a later segment restates the idea; otherwise weigh against uniqueness.
+
+  *A restart-shaped opener marks the opener, not the whole segment.* "However, when you, uh, however, when you use these models…" opens like an abandoned take, but after the stumble it may deliver unique transition or definition content. Head-trim past the stumble rather than dropping the segment. Treat it as a pure draft only if a later take restates the **entire** idea — including any transition or motivation clause — not merely the cleaned-up sentence. Partial restatement (the later take redid the definition but not the setup) means head-trim, not discard.
+
+  *A landing doesn't rescue a visible restart.* The cues describe take *shape*. When the shape shows abandonment, the take is a draft even if the outer sentence eventually delivers its content — "the point lands" is not a counter-signal. The speaker restarted because the first pass wasn't working; the keepable delivery is the next attempt, not this one. Be especially alert when a long segment contains both a phrase-repeat with filler between AND a clean finish — the clean finish is the draft of the retake, not the retake itself.
+
+  *Trim-don't-discard applies only to a landed thought.* A sentence that delivers its point cleanly and then adds a trailing "um" or dangling "It." can be saved by trimming the segment boundary back to the last clean word. If the segment ends on a bare conjunction, the thought never landed — trimming cannot save it, because there is no landed thought to save. Cut the whole segment.
+
+  *Mirror: head-trim a clean sentence preceded by stutter.* When a segment opens with a restart fragment (*"Significantly… although"*, *"let me, for"*, *"…it's not. So basically if"*) and then delivers a complete sentence on the same topic, trim the segment forward to where the clean sentence starts. Don't discard the whole segment — the stutter is the draft, the complete sentence is the take. Especially common with substantive technical content (a fault-tolerance claim, a worked example, a roadmap line) that the editor is otherwise tempted to drop because the segment looks broken.
+
+  *Micro-flubs are not abandonment.* A mid-sentence duplicated word ("but we but we're"), wrong preposition ("an and responsibility"), or one embedded "um" is normal speech noise, not a shape cue. If the thought lands, the take is kept as-is — no trim needed. Abandonment is a structural shape (restart opener, dangling tail, or cross-segment stumble-then-restart), not generic unevenness.
+
+- **Filler-only segments, thinking aloud, and long silences.** Segments that are only "um/uh/you know/I mean", composing-in-real-time ("let me think", "what's the word", "how do I explain this"), or contain gaps longer than ~1.5s. Cut.
+
+- **Pre-recap drafts.** When a kept segment opens with an explicit recap marker — "okay, so I talked about", "alright, so", "to wrap up", "to summarize", "so in summary" — the immediately preceding 1–3 kept segments are a draft of the recap. Cut them even if they sound polished in isolation. Especially common at chapter boundaries and the end of the video.
+
+  *Pre-demo pivots behave the same.* A kept segment that opens a concrete demo or states the goal — "okay, so here's the goal", "so here's how this works", "alright, so what I'm going to do", "but instead of doing this, you can just…", "so step one/two is…" — signals that the 1–3 preceding kept segments are often a last restatement of the problem or motivation. The demo carries the point forward; the restatement is a draft. Cut it. The tell is a segment that *re-describes the current pain point* (not one that introduces a new constraint or example) immediately before the pivot.
+
+  *Self-deflecting setup.* When a segment names a specific tool/choice/detail and an adjacent segment immediately demotes it — "but really, what made X useful wasn't A, it was B", "it's not so much about X, it's actually Y" — the speaker caught themselves framing poorly and is re-aiming. The setup segment and the deflecting pivot are both scaffolding for the real point that follows; cut both. The tell is a pivot whose subject is the speaker's own prior framing, not a new topic. Keeping the setup puts the viewer through the wrong frame before the correct one.
+
+  *Hypothetical-then-reverse setups behave the same way.* When a segment stakes out a rosy hypothetical — "say we've built X that does an amazing job", "imagine we've nailed it", "suppose everything worked" — and the next kept segment reverses it ("however", "but the catch is", "before we celebrate"), the hypothetical exists only to set up the reversal; the reversal carries the real point alone. Cut the setup. The tell: the setup's tone is artificially confident and the very next sentence walks it back within ~10 seconds.
+
+- **Read-alouds of prompts, emails, or lists.** When the speaker reads an example prompt or email verbatim, the viewer reads it faster on-screen. Cut unless a specific phrase is called out for analysis. Code walkthroughs are different: when the speaker names each argument or step while pointing at code on-screen (*"takes in our training and validation data sets, it takes in our tokenizer, it takes in our data collator…"*), the narration pairs each term with its role — the viewer watching the code alone cannot tell which variable is which without it. That's teaching, not redundant reading. Keep.
+
+- **Personal-preference and production-process asides.** When a pedagogical beat pauses for the speaker to volunteer their own tool-exploration, uncertainty, or the behind-the-scenes process that produced the displayed artifact — *"you know, I'm still exploring Cursor or Windsurf"*, *"maybe I haven't decided on what IDE I like"*, *"this is actually rendered from a markdown file"*, *"I converted this with X to make it look nicer"* — the aside builds rapport in a live take but doesn't advance the teaching. Cut unless the detail itself anchors the point being made. The tell: the sentence's subject shifts from the concept under demonstration to the speaker's own tooling or the making-of the displayed artifact, then the next kept segment returns to the concept.
+
+- **Outro and closing — KEEP by default.** The last 30–60 seconds typically contain the sign-off and CTA — *"thanks for watching"*, *"let me know in the comments"*, *"check out [link]"*, *"hope you enjoyed"*. **Do not cut the outro.** It is intentional content Shaw wants in the final cut, not ornament — this is a standing preference. The only editing that applies inside the outro is *last-take-wins*: if the sign-off or CTA is recorded more than once, keep the last clean take and drop the earlier drafts, and trim a trailing stumble back to the last clean word. A mid-video meta-hedge that actively deflates a specific takeaway (*"take this with a grain of salt"* dropped right after a key claim) can still be cut where it undercuts the content — but the closing sign-off/CTA always stays. Only an explicit dispatch brief that says to drop the outro overrides this default.
+
+## What to protect
+
+A sentence that introduces a new detail, example, or step should be kept even if it shares words with a neighbor. Only cut when the *whole idea* is restated, not when a sentence *mentions* the same topic in a different context.
+
+- "If the LLM is connected to some database with confidential information…" — the conditional is unique even if "LLMs" are discussed elsewhere.
+- "You might be able to get the model small enough to run on a phone" — the specific example is unique even if model size is a recurring theme.
+- A step in a workflow vs a general definition of the same concept — different roles in the narrative.
+
+*Connective tissue is load-bearing even when it carries no new fact.* Three kinds of sentence do narrative work rather than deliver information, and the "is it new detail?" test wrongly flags them as redundant. A cut that reads fine segment-by-segment but no longer makes sense to a first-time viewer almost always lost one of these:
+
+- **Synthesis / payoff** — a line that states what a *group* of examples *meant* ("from these examples, we get a sense that predicting what comes next isn't trivial — it requires understanding the world"). The tell that separates this from a re-explanation retake: it doesn't restate an earlier *sentence*, it states the point of the preceding *block* for the first time. It's what the examples were built to land — keep it.
+- **Transitions / topic introductions** — a sentence whose job is to move between sections or name a new topic ("and so this brings up the idea of machine learning"; "models quote this in a different unit, called tokens"). It is the on-ramp the viewer needs, not redundant just because it states no technical fact. Dropping it makes the next concept arrive unannounced.
+- **First definition of a named term** — once a term is introduced it must be defined or illustrated before it is used again. Cutting "a training dataset is inputs and outputs — e.g. weather variables in, did-it-rain out" leaves a non-expert holding an undefined term in the very next sentence.
+
+*Hedged elaboration is not new detail.* When an earlier take expands the idea with hedges ("some kind of like", "just going to be", "I mean", "uh") and a later take states the same idea tight, the hedges are the draft signal — Shaw is feeling out the explanation. The concrete example embedded in the hedged take ("string check or string comparison", "some kind of X") reads as elaboration but isn't a callback worth protecting; the tight later take is the finished thought.
+
+## Editing style
+
+- Tight, fast pacing. Edit tighter at the start — retention drops off early, so the intro must land in the first half-minute.
+- **Self-introduction retakes.** In the first 3 minutes, the speaker rehearses his bio (credential claims: "I've taught…", "I work with…", company lists like "Google, Microsoft, Deloitte"). When the same bio claim appears twice, keep only the last. If the last take has a trimmable tail, trim the boundary — do not fall back to the earlier take.
+- Prefer fine-grained segments split at natural sentence boundaries. Align all cuts to word boundaries — never cut mid-word.
+
+## Sub-agent guidance
+
+Apply the rules above to your chunk, then re-scan your keep list before returning.
+
+**Within-chunk look-ahead.** Sweep the keep list from end to start. For each candidate, ask two questions: (1) does it land cleanly, or does it stutter / trail off? (2) does any later segment in this chunk restate the same idea? If yes, drop the earlier. Recurring themes (compute → performance, scale → capability, context-window size, fine-tuning benefit) are restated often — only the last survives.
+
+**Takes span segment boundaries.** Segments split at 0.5s silences, which often fall inside a take — speaker stumbles, pauses, then restarts fresh. The result is two adjacent segments where the first trails off (…and, …um, …as someone who) and the second opens clean on the same idea. When you see this pair, the first is the draft. A mid-segment landing inside the trailing segment doesn't rescue it — the clean take lives in the next one. Don't judge each segment in isolation.
+
+**Opener-match shortcut.** Two adjacent or near-adjacent keeps that share the first 3–5 content words are almost always the same sentence restarted, not two distinct points that begin alike. Cut the earlier one. Cheap, high-signal — catch it while sweeping without having to reason through the rest of each sentence.
+
+**Reason field.** Each keep's `reason` must cite *delivery quality*, not topic. Good: *"clean final take of context-window definition"*, *"concise restatement after earlier stutter"*. Bad: *"context engineering section"*, *"key differentiator"* — these describe topic, not why this take is the one to keep, and usually mean a retake is about to slip through.
+
+A clean take's reason is short and doesn't argue against a visible flaw. If you find yourself writing a *defense* — *"internal restart resolves cleanly"*, *"minor self-correct at opener but lands"*, *"last landed take"* on a segment that trails off, *"only take despite…"* — that phrasing is a tell: you're rationalizing a draft. Stop and re-check the next segment; the real take usually lives there.
+
+**Default action is cut.** It is far more costly to keep a retake than to lose a sentence that can be recovered elsewhere. Cross-chunk retakes are handled by the global dedup pass, but it is conservative and will not fix within-chunk stutters — that is your job.

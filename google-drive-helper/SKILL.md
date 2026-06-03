@@ -21,6 +21,7 @@ Hardcoded folder IDs Shaw uses regularly. When asked about content in any of the
 |---|---|---|
 | `forms` | `1nExDY6bLRQWq73TfX1ihZpQsPDqsbRrD` | Google Forms (intake, testimonial, feedback, etc.). Some entries are shortcuts to Forms shared in from elsewhere. |
 | `sheets` | `1hMTTUsNov7u3gfrP6Y1N50IplfpxFZpC` | Linked response sheets for the forms above. |
+| `Meet transcripts` | `14fmJnjIU0Dj5xL9trSxOJe_vUTdhQOyV` | Google Meet auto-saved call transcripts (Google Docs). Named `[Name or Company] / Shaw - [Type] (YYYY-MM-DD HH:MM GMT) - Transcript`. Only present for meetings Shaw organized; unscheduled instant meetings show a meeting code (e.g. `gdm-xxxx-xxx`) instead of a name. |
 
 When Shaw says "the forms folder" or "my response sheets," use the IDs above directly.
 
@@ -88,6 +89,28 @@ When the mimeType filter misbehaves, batch keyword variants:
 - Known folder → use the hardcoded ID.
 - Unknown folder → `title = '<folder name>' and mimeType = 'application/vnd.google-apps.folder'` to find the folder ID, then `parentId = '<id>'`.
 - If `parentId =` returns empty for a folder that *should* have contents, the folder is likely owned by another account and not actually accessible — flag this to Shaw.
+
+### "Find the transcript for a call"
+
+Google Meet drops call transcripts into the **Meet transcripts** folder (see Known Folders).
+This is the retrieval primitive other skills reuse — `notion-helper`'s transcript-linking
+workflow calls it. Keep this skill's job to *finding* the file; linking it onto a Notion page
+is `notion-helper`'s job.
+
+Given a name and a date (the caller supplies them — e.g. from an ABA Calls / ABA Trainings page):
+1. Anchor to the folder: `parentId = '14fmJnjIU0Dj5xL9trSxOJe_vUTdhQOyV'`.
+2. Filter by name and/or day. Scheduled calls carry the attendee/company name in the title, so
+   `title contains '<name>'` is the strongest signal. Combine with the call date via `createdTime`
+   (a transcript is written seconds after the meeting ends, so `createdTime` is essentially the
+   meeting time):
+   `parentId = '14fm...' and title contains '[Name]' and createdTime > '2026-05-24T00:00:00Z' and createdTime < '2026-05-25T00:00:00Z'`
+3. Return the match(es) with `viewUrl`. If more than one comes back for the same day, hand the
+   disambiguation to the caller (it has the Calendar event's exact start time) rather than
+   guessing here.
+
+Edge cases: transcripts only exist for meetings Shaw organized, and unscheduled instant meetings
+are named by meeting code (e.g. `gdm-xxxx-xxx`) instead of a person — a name search won't catch
+those, so fall back to date.
 
 ## Linking Back to Shaw
 

@@ -46,9 +46,15 @@ duplicating IDs, so updates only need to happen in one place.
 | ABN | 🗞️ | `[page-id]` | `[page-id]` | Newsletter editions, email blasts, list management |
 | LFC | 📹 | `[page-id]` | `[page-id]` | YouTube videos — scripting, filming, editing, uploads |
 | SFC | 📅 | `[page-id]` | `[page-id]` | LinkedIn posts, YT community posts, social shares |
+| Active Leads | 💼 | — | `[page-id]` | Pipeline rows — leads being actively worked. Lives under CRM page; handled by `crm`. Read-only for `executive-briefing` (surfaces rows whose `Next Contact` is due) |
+| Clients (Nurture) | 🌱 | — | `[page-id]` | Active / nurturing / expansion clients. Lives under CRM page; handled by `crm`. Read-only for `executive-briefing` (surfaces rows whose `Next Contact` is due) |
+| Testimonials | ⭐ | — | `[page-id]` | Testimonial workflow (Not Asked → Asked → Form Submitted → Approved → Published). Handled by `testimonials`. Read-only for `executive-briefing` (surfaces rows whose `Next Contact` is due) |
 
-All databases use a `Date` property. For task pages, the expanded property is
-`date:Date:start` (ISO format, e.g. `2026-04-17`) and `date:Date:is_datetime` (0 for date-only).
+The six dated work databases (ABA, ABA Trainings, ABA Calls, ABN, LFC, SFC) use a `Date`
+property. For task pages, the expanded property is `date:Date:start` (ISO format, e.g.
+`2026-04-17`) and `date:Date:is_datetime` (0 for date-only). The three relationship databases
+(Active Leads, Clients (Nurture), Testimonials) use `Next Contact` instead — expanded as
+`date:Next Contact:start`.
 
 ### Default View URLs
 
@@ -66,9 +72,11 @@ need to scan the whole database or apply your own filters in code:
 
 ### Today Views (executive-briefing)
 
-Filtered server-side to `Date is Today`. Used by the `executive-briefing` skill so each
-query returns only items scheduled for the current day — no client-side date filtering
-needed. The "today" filter is relative and updates automatically each day.
+Filtered server-side: the dated-work views (ABA → ABN) filter on `Date is Today`; the
+relationship views (Active Leads, Clients (Nurture), Testimonials) filter on `Next Contact`
+being due. Used by the `executive-briefing` skill so each query returns only what's owed
+right now — no client-side date filtering needed. The filters are relative and update
+automatically each day.
 
 | DB | View URL |
 |---|---|
@@ -78,12 +86,15 @@ needed. The "today" filter is relative and updates automatically each day.
 | LFC | `https://www.notion.so/[page-id]?v=[page-id]` |
 | SFC | `https://www.notion.so/[page-id]?v=[page-id]` |
 | ABN | `https://www.notion.so/[page-id]?v=[page-id]` |
+| Active Leads | `https://www.notion.so/[page-id]?v=[page-id]` |
+| Clients (Nurture) | `https://www.notion.so/[page-id]?v=[page-id]` |
+| Testimonials | `https://www.notion.so/[page-id]?v=[page-id]` |
 
 ### Other Key Pages
 
 | Page | Page ID | When to Use |
 |---|---|---|
-| CRM | `[page-id]` | Active Leads + Clients; handled by the `crm` skill — don't duplicate that work here |
+| CRM | `[page-id]` | Parent hub page for the Active Leads + Clients (Nurture) databases. Updates handled by the `crm` skill — don't duplicate that work here |
 | SOPs | `[page-id]` | Standard operating procedures; handled by the `sop-helper` skill — don't duplicate that work here |
 | ABA (Master) | `[page-id]` | Parent page for the ABA database and related resources |
 | ABA Trainings (Hub) | `[page-id]` | Hub page under ABA Master grouping all training/delivery sessions |
@@ -165,6 +176,41 @@ in parallel — one tool call per page in a single message. Before doing so, con
 are in scope: "this one and the other follow-ups" usually means only the tasks already
 discussed in the conversation, not every open task in the database. If in doubt, list the
 pages you plan to flip and ask before proceeding.
+
+## Page-Freshness Workflows
+
+Batch-style workflows that keep dated pages current, the way `crm` keeps the pipeline current.
+Run on-demand today ("link the recent transcripts"); each is written to be **idempotent** so it
+can later run unattended on a schedule.
+
+### Linking Meet transcripts to call pages
+
+Google Meet auto-saves each call's transcript to Drive. This workflow attaches the transcript to
+its matching ABA Calls (sales) or ABA Trainings (delivery) page, so the link lives on the page
+and anything that reads the page later — `pre-call-research`, the daily briefing — picks it up
+for free.
+
+The *find* isn't this skill's job: it lives in `google-drive-helper` ("Find the transcript for a
+call"). This workflow owns the **match + Notion write** — don't restate the Drive query here,
+call it.
+
+For each call page that needs a transcript (a single named call, or — for a batch run — recent
+ABA Calls / ABA Trainings pages with no `## Transcript` link yet):
+1. **Derive the key** — person/company name from the page title, date from the page's `Date`
+   property.
+2. **Find the transcript** via `google-drive-helper`. If it returns more than one for that day,
+   disambiguate with the matching Google Calendar event's start time.
+3. **Link it** — append a `## Transcript` line to the page body with the transcript's Drive
+   `viewUrl` as a **plain external Markdown link** (`[Transcript](https://docs.google.com/document/d/...)`),
+   *not* `<mention-page>` (that syntax is for internal Notion pages; a Google Doc isn't one). Use
+   the `update_content` search-and-replace pattern from "Linking pages on an existing task".
+4. **Stay idempotent** — skip any page that already has a `## Transcript` link. This is what makes
+   a future scheduled run safe to repeat.
+5. **Report** the pages linked, and surface any transcript with no confident page match (or any
+   page whose transcript isn't in Drive yet) instead of guessing.
+
+Only forward-looking calls have transcripts — transcription started May 2026, so pages before
+that stay notes-only.
 
 ---
 

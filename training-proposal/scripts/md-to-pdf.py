@@ -1,9 +1,7 @@
-"""Convert a markdown proposal to a branded PDF.
+"""Convert a markdown proposal to a branded ABA PDF.
 
 Usage: uv run python md-to-pdf.py /absolute/path/to/outline.md
 Output: PDF created in the same directory with the same base name.
-
-Note: Replace logo-square.png with your own logo and update the alt text below.
 """
 
 import sys

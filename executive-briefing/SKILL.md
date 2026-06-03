@@ -12,12 +12,14 @@ description: >
 
 # Executive Briefing Skill
 
-Shaw organizes his work across several Notion databases. Each uses a calendar/date view —
-items are pages with a Date property, and Shaw schedules work by assigning dates to pages.
-This skill pulls all items dated for today and presents a concise briefing.
+Shaw organizes his work across several Notion databases. The first six are dated work
+databases — pages with a `Date` property, scheduled for the day Shaw wants to act on them.
+The last three are relationship databases (Active Leads, Clients (Nurture), Testimonials)
+where each page has a `Next Contact` field; the briefing surfaces rows whose next touch is
+due. Together they form a single daily picture of what's on Shaw's plate.
 
-The briefing is a snapshot of what Shaw has scheduled — not a project management tool. It only
-shows items dated for today. No overdue items, no upcoming items, no backlog.
+The briefing is a snapshot of what's due now — not a project management tool. No overdue
+items from prior days, no upcoming items beyond today's window, no backlog.
 
 ---
 
@@ -27,12 +29,20 @@ The canonical database catalog (IDs, icons, descriptions, and view URLs) lives i
 `notion-helper/SKILL.md` under "Main Databases" and "Today Views (executive-briefing)."
 This skill queries **all main databases listed there**:
 
+Dated work:
+
 - 🎓 **ABA** — tasks, launches, outreach, partnerships, events
 - 🏫 **ABA Trainings** — delivery sessions (1:1 workshops, trainings, ongoing engagements)
 - 👨‍🏫 **ABA Calls** — sales calls (notes, prep, scheduling)
 - 📹 **LFC** — YouTube videos
 - 📅 **SFC** — LinkedIn posts, YT community posts, social shares
 - 🗞️ **ABN** — newsletter editions, email blasts
+
+Follow-ups due (filtered by `Next Contact`):
+
+- 💼 **Active Leads** — pipeline rows where the next touch is due
+- 🌱 **Clients (Nurture)** — active/nurturing client check-ins coming up
+- ⭐ **Testimonials** — testimonial asks where the next nudge is due
 
 If a new database is added, update `notion-helper/SKILL.md` and it will flow through here
 automatically.
@@ -44,9 +54,9 @@ automatically.
 ### Step 1: Query all databases
 
 Use `notion-query-database-view` on each view URL listed in `notion-helper/SKILL.md` →
-"Today Views (executive-briefing)." Each view is filtered server-side to today's date,
-so the result set is already the items you need — no client-side date filtering required.
-Run all six queries in parallel in a single tool-call batch.
+"Today Views (executive-briefing)." Each view is filtered server-side, so the result set
+is already the items you need — no client-side date filtering required. Run all nine
+queries in parallel in a single tool-call batch.
 
 ### Step 2: Fetch page content for each matching item
 
@@ -68,6 +78,16 @@ When summarizing page content:
 - For LFC items: describe the video topic and current stage (outline, scripting, filming, etc.)
 - For SFC items: describe the post topic and whether draft copy exists
 - For ABN items: describe the newsletter edition or email task
+- For Active Leads: status (Booked Call, Outline Sent, etc.) and the most recent Note line
+  so the next step is obvious
+- For Clients (Nurture): status (Active, Nurturing, Expansion) and the most recent Note line
+  — what's the next touch
+- For Testimonials: status (Asked, Form Submitted, Approved) and what's owed (FU nudge,
+  polish quote, publish, etc.)
+
+The relationship-database rows (Active Leads, Clients (Nurture), Testimonials) often have
+rich `Notes` columns in the query response itself — use those directly rather than fetching
+each page, unless the row needs deeper context.
 
 ### Step 3: Present the briefing
 
@@ -92,17 +112,28 @@ Output as plain text, organized by database section. Format:
 
 **🗞️ ABN**
 - Nothing scheduled for today.
+
+**💼 Active Leads**
+- [**Lead name**](https://www.notion.so/page-id) — Status; next step from Notes.
+
+**🌱 Clients (Nurture)**
+- [**Client name**](https://www.notion.so/page-id) — Status; next touch from Notes.
+
+**⭐ Testimonials**
+- [**Person name**](https://www.notion.so/page-id) — Status; what's owed.
 ```
 
 ---
 
 ## Output Rules
 
-- Only items dated for today — no overdue, no upcoming, no backlog
+- Only items due today (dated work + follow-ups whose Next Contact has arrived) — no
+  overdue items from prior days, no upcoming items beyond today's window, no backlog
 - Every section appears even if empty — show "Nothing scheduled for today." for empty sections
 - Each item name is bold and linked to its Notion page URL
 - Completed items (page icon ✅) get a ✅ prefix before the linked name; all others have no prefix
 - Descriptions are 1-2 sentences max, pulled from the actual page content
-- Keep the section order consistent: ABA → ABA Trainings → ABA Calls → LFC → SFC → ABN
+- Keep the section order consistent: ABA → ABA Trainings → ABA Calls → LFC → SFC → ABN →
+  Active Leads → Clients (Nurture) → Testimonials (dated work first, then follow-ups)
 - No commentary, no prioritization advice, no suggestions — just the facts
 - No widget/visualization — plain text only

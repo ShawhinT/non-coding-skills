@@ -31,6 +31,9 @@ The arc always flows into a concrete example/tutorial that shows the idea in act
 - **Numbered frameworks** everywhere — "3 Levels", "4 Architectures", "5 Rules of Thumb"
 - **Every concept gets a concrete example** with a named project and step-by-step code walkthrough
 - **Every content slide gets a subtitle** — synthesize one from context if not explicitly provided.
+- **Match the outline exactly** — one major bullet = one slide. Sub-bullets become on-slide content (subtitle, body bullets), NOT separate slides. Don't expand, split, add, remove, or restructure. If the outline has 10 major bullets, the deck should have ~10 content slides (plus title).
+- **Don't use Section layouts** unless the user explicitly requests section dividers. Default to Title Only for all content slides.
+- **No newline characters in titles** — keep titles on a single line. If a title is long, shorten it.
 - **Emojis as visual vocabulary** — robot = LLM/agent, screwdriver = tools, brain = memory, lightbulb = ideas, speech bubble = chat
 - **Pros/cons** with green checkmark / red X
 - **"What's Next?"** slide teasing the next video in the series

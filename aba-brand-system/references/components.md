@@ -245,10 +245,10 @@ These are **the only multi-color gradients in the system**, and only inside thum
                 margin:10px 12px 0 0"></div>
     <div>
       <div style="font-family:'Manrope';font-weight:600;font-size:14px;color:white">
-        Niraiventhi Mareesan
+        [Client Name]
       </div>
       <div style="font-size:13px;color:rgba(255,255,255,0.4)">
-        Founder, Vizhi
+        Founder, [Company]
       </div>
     </div>
   </div>

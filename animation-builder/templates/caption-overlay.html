@@ -1,0 +1,126 @@
+<!doctype html>
+<!--
+  Caption overlay template — transparent lower-third karaoke captions.
+
+  Render with:
+    uv run --project ~/.claude/skills/animation-builder \
+      ~/.claude/skills/animation-builder/scripts/render.py \
+      <this-file>.html --alpha --duration <seconds> --out <name>.mov
+
+  Output is ProRes 4444 .mov with alpha. Drop on a lane above the talking-head
+  spine in the editor; no keying needed.
+
+  Two non-negotiable rules:
+
+  1. The body MUST stay transparent. If you import a brand stylesheet that
+     sets `body { background: ... }`, override it with !important in the
+     style block below — see "Rendering pitfalls" in SKILL.md for the
+     opaque-bg-bleed gotcha that wastes render cycles.
+
+  2. Don't put captions where the speaker's face lives. Lower third is the
+     default safe zone for a centered head-and-shoulders shot. Grab one
+     frame of the talking-head footage as a reference if the shot framing
+     is unusual.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Caption overlay</title>
+<style>
+  /* Transparent body — required for --alpha render path. */
+  html, body {
+    margin: 0; padding: 0;
+    width: 1920px; height: 1080px;
+    background: transparent !important;
+    overflow: hidden;
+  }
+
+  .stage { position: relative; width: 1920px; height: 1080px; }
+
+  /* Lower-third placement: caption sits ~80px from the bottom edge so it
+     clears the speaker's face on a typical head-and-shoulders shot. */
+  .card {
+    position: absolute;
+    left: 0; right: 0;
+    bottom: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+    opacity: 0;                /* default hidden — animation gates visibility */
+    text-align: center;
+    /* Strong text-shadow does the legibility work — no background slab. */
+    text-shadow:
+      0 0 24px rgba(0, 0, 0, 0.55),
+      0 4px 12px rgba(0, 0, 0, 0.45);
+  }
+
+  .line {
+    font-family: 'Manrope', system-ui, sans-serif;
+    font-weight: 800;
+    font-size: 128px;
+    line-height: 0.95;
+    letter-spacing: -0.025em;
+    color: #FFFFFF;
+    white-space: nowrap;
+  }
+
+  .w {
+    display: inline-block;
+    opacity: 0;
+    margin: 0 0.08em;
+  }
+  .w.accent { color: #5DC3E8; }    /* overlay accent — see SKILL.md "Accent color for karaoke captions"; brand-system skills define their own (e.g. ABA = #5DC3E8) */
+
+  /* Per-word reveal — see references/techniques.md "Karaoke / word-by-word". */
+  @keyframes wordOn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .w { animation: wordOn 0.18s cubic-bezier(0.2, 0.7, 0.2, 1) forwards; }
+
+  /* Card window: cardIn at t_in, cardOut at t_out (or at the next card's t_in
+     when chaining cards). Add more .card.cN blocks for multi-phrase karaoke. */
+  @keyframes cardIn  { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes cardOut { from { opacity: 1; } to { opacity: 0; } }
+
+  /* Example: single card visible 0.10s → 2.80s. */
+  .card.c1 {
+    animation:
+      cardIn  0.10s linear 0.10s forwards,
+      cardOut 0.25s linear 2.60s forwards;
+  }
+  /* Each word's animation-delay = its spoken timestamp (seconds from t=0).
+     Pull these from a word-level transcript of the cut video. */
+  .card.c1 .line:nth-child(1) .w:nth-child(1) { animation-delay: 0.10s; }
+  .card.c1 .line:nth-child(1) .w:nth-child(2) { animation-delay: 0.45s; }
+  .card.c1 .line:nth-child(2) .w:nth-child(1) { animation-delay: 0.85s; }
+  .card.c1 .line:nth-child(2) .w:nth-child(2) { animation-delay: 1.30s; }
+</style>
+</head>
+<body>
+  <div class="stage">
+
+    <div class="card c1">
+      <div class="line">
+        <span class="w">REPLACE</span>
+        <span class="w">THIS</span>
+      </div>
+      <div class="line">
+        <span class="w">WITH</span>
+        <span class="w accent">YOURS.</span>   <!-- period on the sentence-ending word; mid-sentence cards stay punctuation-free -->
+      </div>
+    </div>
+
+    <!--
+      For multi-phrase karaoke, copy the .card block above, give it class c2,
+      add a matching .card.c2 { animation: ... } rule with new t_in / t_out,
+      and per-word animation-delay rules with the new word timestamps.
+      All cards can be in the DOM simultaneously — opacity gates which one
+      is visible at any given frame.
+    -->
+
+  </div>
+</body>
+</html>

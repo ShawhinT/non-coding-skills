@@ -67,10 +67,10 @@ Hooks fail when the language is invented. They land when it's real. Before draft
 Pull at minimum 3 verbatim phrases before generating. Quote the source for each candidate so Shaw can audit the grounding.
 
 Real examples (from one session):
-- Travis White (sales call): *"Last 4 month it was a good email summary tool, just scratching the surface"*
-- Otakar Suffner (sales call): *"Spending evenings with AI"* / *"Using it but feel behind. FOMO"*
-- Tom Blondeau (intake): script he built *"sometimes works sometimes it doesn't"*
-- Niraiventhi (testimonial): *"stitching outputs together, switching between tools"*
+- [Lead Name] (sales call): *"Last 4 month it was a good email summary tool, just scratching the surface"*
+- [Lead Name] (sales call): *"Spending evenings with AI"* / *"Using it but feel behind. FOMO"*
+- [Client Name] (intake): script he built *"sometimes works sometimes it doesn't"*
+- [Client Name] (testimonial): *"stitching outputs together, switching between tools"*
 
 These are the building blocks of line 1.
 

@@ -11,7 +11,10 @@ Use when Shaw shares new info about a lead (reply received, call happened, propo
    represent new information not yet in the log.
 3. Determine what changed: new activity, status change, or both
 4. Update properties:
-   - Append to Notes (never overwrite)
+   - Append to Notes (never overwrite). For **clients** (Nurture), log only relationship-level
+     events — status changes, expansion conversations, engagement milestones; routine touchpoints
+     are carried by the dates, not Notes (see SKILL.md → "Client Notes Format"). For leads, keep
+     the full pipeline play-by-play.
    - Update `Last Contact?` to today's date if a new touchpoint occurred
    - Update `Next Contact` to the next planned touchpoint — use cadence defaults from
      `references/follow-up-guidance.md` (e.g., reply sent → +2–3 days; proposal sent → +2 days;

@@ -36,6 +36,7 @@ Two ways I'd recommend using this repo:
 | **notion-helper** | Create ad hoc tasks, follow-ups, and reminders across Notion databases | Any | Notion MCP |
 | **sop-helper** | Create, update, and reference standard operating procedures in Notion | Any | Notion MCP |
 | **stripe-helper** | Create invoices and payment links, and pull reporting data (balance, recent payments, customer history) | Any | Stripe MCP |
+| **testimonials** | Manage a testimonial workflow in Notion — create rows, polish form responses into pull-quotes, advance status, surface follow-ups | Any | Notion MCP |
 | **business-strategy** | Strategic thinking partner for business decisions | Any | Notion MCP, web search |
 | **calendar-helper** | Create, reschedule, and delete Google Calendar events; sync paired Notion pages when applicable | Any | Google Calendar MCP, Notion MCP |
 | **crm** | Read, update, and manage a CRM in Notion; cross-reference Gmail for activity | Any | Notion MCP, Gmail MCP |

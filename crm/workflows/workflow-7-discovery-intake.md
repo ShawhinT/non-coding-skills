@@ -75,11 +75,18 @@ only run when Shaw explicitly asks for it.
 
 ## Step 5 — Draft the confirmation email
 
-Invoke the **`email-helper`** skill to draft the discovery-call confirmation. email-helper's
-`discovery-call-confirmations.md` owns the threading mechanics (reply inside the Calendly
-notification thread — or the contact-form / sales thread if the lead came in that way) and
-points to the Discovery Call SOP for the canonical template and question selection. Don't reach
-for `create_draft` directly.
+**Hard gate.** `email-helper` must be invoked in the current turn *before* the `create_draft`
+call. This is not "defer to" — it's "stop and load." The failure mode this prevents: by the
+time the workflow reaches step 5, the agent has already batched several writes (CRM record,
+ABA Calls page, FU task) and the draft feels like one more parallel write. Composing inline at
+that point produces off-template drafts that miss the SOP question selection, the threading
+mechanics, and Shaw's voice rules. See the "When another skill is already running" section in
+`email-helper/SKILL.md` for the canonical composition rule.
+
+Once email-helper is loaded, its `discovery-call-confirmations.md` owns the threading mechanics
+(reply inside the Calendly notification thread — or the contact-form / sales thread if the lead
+came in that way) and points to the Discovery Call SOP for the canonical template and question
+selection.
 
 ## Step 6 — Confirm
 

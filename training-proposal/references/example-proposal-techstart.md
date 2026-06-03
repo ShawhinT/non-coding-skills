@@ -1,6 +1,6 @@
 # TechStart AI Training - Outline
 
-*Prepared on Mar 28, 2026 by [Your Name]*
+*Prepared on Mar 28, 2026 by Shaw Talebi, PhD*
 
 ---
 
@@ -8,7 +8,7 @@
 
 <table class="syllabus">
 <tr><td><strong>Training Title:</strong></td><td>Harness Engineering for Analytics</td></tr>
-<tr><td><strong>Instructor:</strong></td><td>[Your Name]</td></tr>
+<tr><td><strong>Instructor:</strong></td><td>Shaw Talebi</td></tr>
 <tr class="spacer"><td colspan="2"></td></tr>
 <tr><td><strong>Date:</strong></td><td>TBD</td></tr>
 <tr><td><strong>Session Time:</strong></td><td>TBD</td></tr>
@@ -83,3 +83,4 @@
 
 ### Payment terms
 - **Full payment** (no less than) 7 days before session
+- Two payment links for $2,000 will be shared via Stripe

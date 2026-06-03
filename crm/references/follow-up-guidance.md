@@ -83,7 +83,7 @@ When a lead reaches `Closed` (deal won), move them to the Clients (Nurture) data
 | Rhythm | Details |
 |---|---|
 | Quarterly check-ins | Free, casual calls or emails every ~3 months, for clients in `Nurturing`. `Next Contact` tracks when each is due. |
-| Ad hoc touchpoints | When a client reaches out, or when Shaw has something relevant to share. Log these in Notes and update `Last Contact?`. |
+| Ad hoc touchpoints | When a client reaches out, or when Shaw has something relevant to share. Update `Last Contact?` (and `Next Contact` if it shifts); add a Notes line only if the touchpoint surfaces something relationship-level. |
 
 **`Next Contact` semantics by client status:**
 
@@ -93,6 +93,10 @@ When a lead reaches `Closed` (deal won), move them to the Clients (Nurture) data
 - **`Nurturing`** — set to a forward-looking outreach date, ~3 months out by default.
 - **`Expansion`** — same as Nurturing; reset to ~3 months out if the opportunity doesn't close.
 - **`Churned`** — leave alone or clear.
+
+For accounts that span multiple people, only the **point person** carries `Last Contact?` and
+`Next Contact` — teammate sessions and replies don't move these dates (they're captured by their
+linked session pages). See SKILL.md → "Point-person anchoring (multi-person accounts)".
 
 **Status transitions in the Clients table:**
 
@@ -118,8 +122,10 @@ Also flag any client whose `Last Contact?` is more than 4 months ago, regardless
 When expansion signals appear, flag them in the summary and recommend moving the client's
 status to `Expansion` — don't auto-change the status without Shaw's confirmation.
 
-After a check-in is sent, update the client's Notes and Last Contact? in the CRM, and set
-`Next Contact` ~3 months out.
+After a check-in is sent, update the client's `Last Contact?` and set `Next Contact` ~3 months
+out. A routine check-in doesn't need its own Notes line — the dates carry it; add one only if the
+check-in surfaces something relationship-level (an expansion signal, a status change). See
+SKILL.md → "Client Notes Format".
 
 ## When NOT to draft a follow-up
 

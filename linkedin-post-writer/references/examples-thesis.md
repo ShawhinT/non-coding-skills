@@ -166,3 +166,33 @@ Every SaaS will eventually face the same question: am I a tool an agent uses, or
 Notion answered first.
 
 Which tool in your stack got more valuable when you connected it to AI?
+
+---
+
+## Example: If AI Is Making You Hopeless (tight single-reframe)
+
+If AI is making you feel despondent...
+
+Read this.
+
+For many people, AI triggers anxiety.
+
+Anxiety about the future, their career, and falling too far behind.
+
+This is compounded by headlines about massive job layoffs and AI news that moves at an overwhelming pace.
+
+So people give up.
+
+They think, "Why should I bother? Either AI or someone using it is just going to replace me."
+
+But that's more anxiety speaking than reality.
+
+The reality of AI is not in news headlines and social media posts.
+
+It's when you actually use tools like Claude and Codex to solve real-world problems that have an impact on your life.
+
+Everything else is noise.
+
+So if you've been feeling hopeless about AI, stop consuming content about it and start using it to learn or build something new!
+
+**Why it works:** ~125 words, one single point (stop consuming, start building). The status quo names the exact fears (the future, their career, falling behind) so the anxious reader feels seen, and that precise naming *is* the validation, so there's no separate "I get it" line. The turn is one flat line ("but that's more anxiety speaking than reality"), not a paragraph explaining the psychology. It names real tools (Claude, Codex) instead of gesturing at "the tools everyone's anxious about." "Everything else is noise." is a flat declarative carrying the whole pivot. The solution stays single (no list of example tactics) and it closes on a directive, not a discussion question.

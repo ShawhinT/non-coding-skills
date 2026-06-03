@@ -1,0 +1,690 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Claude skill-building guide — A</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Libre+Franklin:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #087CA7;
+    --accent-warning: #D19C1D;
+    --accent-success: #8FC93A;
+    --accent-coral: #E07856;
+    --accent-code: #3A4452;
+    --bg: #FAFAF7;
+    --surface: #FFFFFF;
+    --ink: #0A0A0A;
+    --ink-muted: rgba(0,0,0,0.55);
+    --ink-soft: rgba(0,0,0,0.42);
+    --border: rgba(0,0,0,0.14);
+    --hair: rgba(0,0,0,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 1080px;
+    min-height: 100vh;
+    background: var(--bg);
+    font-family: 'Libre Franklin', system-ui, sans-serif;
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+  .canvas {
+    width: 1080px;
+    min-height: 100vh;
+    padding: 48px 48px 28px 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+  }
+  /* Header */
+  .header { display: flex; flex-direction: column; gap: 6px; }
+  .header .title {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: 56px;
+    line-height: 1;
+    letter-spacing: -0.025em;
+  }
+  .header .title .accent { color: var(--accent-coral); }
+  .header .subtitle {
+    font-family: 'Libre Franklin', sans-serif;
+    font-size: 18px;
+    color: var(--ink-muted);
+    margin-top: 8px;
+  }
+  .header .rule { margin-top: 10px; height: 3px; width: 72px; background: var(--primary); border-radius: 2px; }
+
+  .section { display: flex; flex-direction: column; gap: 14px; }
+  .section-title {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: 28px;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+  .section-title .accent { color: var(--primary); }
+  .section-title .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    margin-right: 10px;
+    vertical-align: middle;
+  }
+
+  /* ============ SECTION 1: Chat vs Cowork vs Code ============ */
+  .s1-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .s1-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 22px 18px 20px 18px;
+    position: relative;
+    overflow: hidden;
+    min-width: 0;
+  }
+  .s1-card .accent-bar { position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .s1-card.chat .accent-bar { background: var(--primary); }
+  .s1-card.cowork .accent-bar { background: var(--accent-coral); }
+  .s1-card.code .accent-bar { background: var(--accent-code); }
+  .s1-word {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: 30px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .s1-tagline {
+    font-family: 'Libre Franklin', sans-serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--ink-muted);
+    margin-top: 4px;
+    margin-bottom: 12px;
+  }
+  .s1-row { padding: 8px 0; border-top: 1px solid var(--hair); }
+  .s1-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .s1-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+  .s1-chip {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: rgba(8,124,167,0.10);
+    color: var(--primary);
+  }
+  .s1-chip.limited {
+    background: transparent;
+    border: 1px solid var(--primary);
+    padding: 2px 7px;
+  }
+  .s1-context { font-family: 'Libre Franklin', sans-serif; font-size: 14px; line-height: 1.35; }
+  .s1-context .hl { color: var(--primary); font-weight: 600; }
+  .s1-context .hl-warm { color: var(--accent-coral); font-weight: 600; }
+  .s1-tools { display: flex; flex-direction: column; gap: 4px; }
+  .s1-tool {
+    font-family: 'Libre Franklin', sans-serif;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .s1-tool .chk { color: var(--accent-success); font-weight: 700; font-size: 11px; }
+
+  /* ============ SECTION 2: Connectors vs Skills ============ */
+  .s2-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .s2-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 22px 24px;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .s2-eq {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--primary);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .s2-word {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: 32px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: 6px;
+  }
+  .s2-line { font-family: 'Libre Franklin', sans-serif; font-size: 16px; color: var(--ink); }
+  .s2-graphic {
+    width: 100%;
+    height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 14px;
+  }
+  .hub { position: relative; width: 220px; height: 220px; }
+  .hub .center {
+    position: absolute; left: 50%; top: 50%;
+    width: 72px; height: 72px;
+    transform: translate(-50%, -50%);
+    background: #FFF; border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 2; border: 1.5px solid rgba(0,0,0,0.10);
+  }
+  .hub .center img { width: 50px; height: 50px; object-fit: contain; }
+  .hub .spoke {
+    position: absolute; width: 52px; height: 52px;
+    background: #FFF; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 2; border: 1.5px solid rgba(0,0,0,0.10);
+  }
+  .hub .spoke img { width: 32px; height: 32px; object-fit: contain; }
+  .hub .h-s1 { top: 0; left: 50%; transform: translate(-50%, 0); }
+  .hub .h-s2 { top: 50%; left: 0; transform: translate(0, -50%); }
+  .hub .h-s3 { top: 50%; right: 0; transform: translate(0, -50%); }
+  .hub .h-s4 { bottom: 0; left: 18%; }
+  .hub .h-s5 { bottom: 0; right: 18%; }
+  .hub svg.lines { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; }
+  .tree {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    line-height: 1.55;
+    color: var(--ink);
+    white-space: pre;
+  }
+  .tree .folder { color: var(--primary); font-weight: 600; }
+  .tree .file { color: var(--ink); }
+  .tree .muted { color: var(--ink-muted); }
+
+  /* ============ SECTION 3: 6 Ways (3x2 grid) ============ */
+  .s3-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .s3-item {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: grid;
+    grid-template-columns: 36px 1fr 40px;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+  .s3-icon { order: 3; }
+  .s3-num { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 600; color: var(--primary); }
+  .s3-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: rgba(8,124,167,0.10); color: var(--primary);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .s3-icon svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .s3-heading { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 15px; line-height: 1.15; letter-spacing: -0.01em; }
+  .s3-desc { font-family: 'Libre Franklin', sans-serif; font-size: 13px; line-height: 1.3; color: var(--ink-muted); margin-top: 2px; }
+  .s3-surfaces { display: flex; gap: 4px; margin-top: 6px; }
+  .s3-pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+    color: #FFF;
+  }
+  .s3-pill.chat.on { background: var(--primary); }
+  .s3-pill.cowork.on { background: var(--accent-coral); }
+  .s3-pill.code.on { background: var(--accent-code); color: #FFF; }
+  .s3-pill.chat.partial { background: transparent; color: var(--primary); border: 1px solid var(--primary); padding: 1px 6px; }
+  .s3-pill.cowork.partial { background: transparent; color: var(--accent-coral); border: 1px solid var(--accent-coral); padding: 1px 6px; }
+  .s3-pill.code.partial { background: transparent; color: var(--accent-code); border: 1px solid var(--accent-code); padding: 1px 6px; }
+  .s3-pill.off { background: rgba(0,0,0,0.06); color: var(--ink-soft); }
+
+  /* ============ SECTION 4: 3 Types of Skills ============ */
+  .s4-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .s4-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 18px 16px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 230px;
+  }
+  .s4-eq {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--primary);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .s4-word {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: 22px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
+  }
+  .s4-line { font-family: 'Libre Franklin', sans-serif; font-size: 14px; font-weight: 500; line-height: 1.35; }
+  .s4-graphic { flex: 1; display: flex; align-items: center; justify-content: center; margin-top: 12px; min-height: 90px; }
+  .s4-examples {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid var(--hair);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-muted);
+    line-height: 1.4;
+  }
+  .s4-examples .k { color: var(--primary); font-weight: 600; margin-right: 4px; }
+  .t-tools { display: flex; flex-direction: column; gap: 6px; align-items: center; }
+  .t-tools-row { display: flex; gap: 6px; }
+  .t-tile {
+    width: 36px; height: 36px;
+    background: #FFF;
+    border: 1.5px solid rgba(0,0,0,0.08);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .t-tile img { width: 22px; height: 22px; object-fit: contain; }
+  .t-steps { display: flex; flex-direction: column; gap: 8px; width: 100%; padding: 0 8px; }
+  .t-step { display: flex; align-items: center; gap: 10px; }
+  .t-step .n {
+    width: 22px; height: 22px;
+    border-radius: 7px;
+    background: rgba(8,124,167,0.10);
+    color: var(--primary);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    font-size: 11px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .t-step .bar { height: 8px; border-radius: 4px; background: rgba(0,0,0,0.08); flex: 1; }
+  .t-step .bar.short { max-width: 60%; }
+  .t-step .bar.mid { max-width: 82%; }
+  .t-domain { position: relative; width: 100px; height: 100px; }
+  .t-paper {
+    position: absolute;
+    width: 66px; height: 82px;
+    background: #FFF;
+    border: 1.5px solid rgba(0,0,0,0.14);
+    border-radius: 8px;
+    top: 9px; left: 17px;
+  }
+  .t-paper.p1 { transform: translate(-16px, 12px) rotate(-9deg); }
+  .t-paper.p2 { transform: translate(0, 0) rotate(-2deg); }
+  .t-paper.p3 { transform: translate(16px, -10px) rotate(7deg); z-index: 2; }
+  .t-paper .lines { padding: 8px 7px; display: flex; flex-direction: column; gap: 4px; }
+  .t-paper .lines span { display: block; height: 3px; background: rgba(8,124,167,0.18); border-radius: 2px; }
+  .t-paper .lines span:nth-child(2) { width: 80%; }
+  .t-paper .lines span:nth-child(3) { width: 60%; background: rgba(0,0,0,0.10); }
+  .t-paper .lines span:nth-child(4) { width: 90%; background: rgba(0,0,0,0.10); }
+  .t-paper .lines span:nth-child(5) { width: 55%; background: rgba(0,0,0,0.10); }
+
+  /* ============ SECTION 5: 4-Step Loop ============ */
+  .s5-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; }
+  .s5-step {
+    display: flex; flex-direction: column; align-items: center;
+    background: var(--surface);
+    border: 1px solid var(--hair);
+    border-radius: 14px;
+    padding: 14px 8px 14px 8px;
+    min-height: 160px;
+  }
+  .s5-graphic { flex: 1; display: flex; align-items: center; justify-content: center; padding-bottom: 10px; }
+  .s5-step-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--primary);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .s5-step-label {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 1.15;
+    text-align: center;
+  }
+  .s5-step-desc {
+    font-family: 'Libre Franklin', sans-serif;
+    font-size: 12px;
+    line-height: 1.3;
+    color: var(--ink-muted);
+    text-align: center;
+    margin-top: 6px;
+    padding: 0 6px;
+  }
+  .step1 { width: 140px; height: 70px; display: flex; align-items: center; justify-content: center; gap: 4px; }
+  .step1 .user { width: 38px; height: 38px; }
+  .step1 .arrows { width: 26px; height: 26px; }
+  .step1 .claude { width: 38px; height: 38px; }
+  .step1 .claude img { width: 100%; height: 100%; }
+  .step2 { width: 110px; display: flex; flex-direction: column; gap: 2px; }
+  .step2 .thread { display: flex; flex-direction: column; gap: 4px; }
+  .step2 .row { display: flex; }
+  .step2 .row.left { justify-content: flex-start; }
+  .step2 .row.right { justify-content: flex-end; }
+  .step2 .msg { padding: 4px 8px; border-radius: 8px; width: 42px; height: 12px; display: inline-flex; align-items: center; justify-content: center; }
+  .step2 .msg .dots { display: inline-flex; gap: 2px; align-items: center; }
+  .step2 .msg .dots span { width: 3px; height: 3px; border-radius: 50%; background: #FFF; display: inline-block; }
+  .step2 .msg.claude { background: var(--accent-coral); border-bottom-left-radius: 3px; }
+  .step2 .msg.user { background: var(--primary); border-bottom-right-radius: 3px; }
+  .step2 .arrow-wrap { display: flex; justify-content: center; padding-top: 2px; }
+  .step2 .arrow-down { width: 16px; height: 16px; }
+  .step2 .doc-wrap { display: flex; justify-content: center; padding-top: 1px; }
+  .step2 .doc { width: 26px; height: 26px; }
+  .step3 { position: relative; width: 140px; height: 110px; }
+  .step3 .doc-top { position: absolute; top: 4px; left: 16px; width: 30px; height: 30px; }
+  .step3 .plus { position: absolute; top: 10px; left: 58px; width: 16px; height: 16px; }
+  .step3 .claude-mini { position: absolute; top: 4px; right: 16px; width: 30px; height: 30px; }
+  .step3 .claude-mini img { width: 100%; height: 100%; }
+  .step3 .arrow-down { position: absolute; top: 42px; left: 50%; transform: translateX(-50%); width: 20px; height: 20px; }
+  .step3 .bubble-out { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 42px; height: 42px; }
+  .step4-wrap { display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .step4-doc-wrap { position: relative; width: 50px; height: 60px; }
+  .step4-doc { width: 50px; height: 60px; }
+  .step4-sparkle { position: absolute; top: -4px; right: -6px; width: 22px; height: 22px; }
+  .step4 { width: 60px; height: 60px; }
+
+  .footer {
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--ink-muted);
+    letter-spacing: 0.08em;
+    opacity: 0.6;
+    margin-top: auto;
+    padding-top: 18px;
+  }
+</style>
+</head>
+<body>
+<div class="canvas">
+
+  <div class="header">
+    <div class="title">Claude Skills Cheatsheet</div>
+    <div class="subtitle">The essentials for turning Claude into your first AI employee.</div>
+    <div class="rule"></div>
+  </div>
+
+  <!-- SECTION 1 -->
+  <div class="section">
+    <div class="section-title">How to interact with <span class="accent">Claude</span></div>
+    <div class="s1-grid">
+      <div class="s1-card chat">
+        <div class="accent-bar"></div>
+        <div class="s1-word">Chat</div>
+        <div class="s1-tagline">Made for conversation.</div>
+        <div class="s1-row">
+          <div class="s1-label">Surface</div>
+          <div class="s1-chips"><span class="s1-chip">Browser</span><span class="s1-chip">Desktop</span><span class="s1-chip">Mobile</span></div>
+        </div>
+        <div class="s1-row">
+          <div class="s1-label">Context</div>
+          <div class="s1-context">Files <span class="hl">uploaded</span> and downloaded.</div>
+        </div>
+        <div class="s1-row">
+          <div class="s1-label">Tools</div>
+          <div class="s1-tools">
+            <div class="s1-tool"><span class="chk">✓</span> Connectors and skills</div>
+            <div class="s1-tool"><span class="chk">✓</span> Sandboxed code</div>
+          </div>
+        </div>
+      </div>
+      <div class="s1-card cowork">
+        <div class="accent-bar"></div>
+        <div class="s1-word">Cowork</div>
+        <div class="s1-tagline">Made for work.</div>
+        <div class="s1-row">
+          <div class="s1-label">Surface</div>
+          <div class="s1-chips"><span class="s1-chip">Desktop</span><span class="s1-chip limited">Mobile (dispatch)</span></div>
+        </div>
+        <div class="s1-row">
+          <div class="s1-label">Context</div>
+          <div class="s1-context">Operates on your <span class="hl">local files</span>.</div>
+        </div>
+        <div class="s1-row">
+          <div class="s1-label">Tools</div>
+          <div class="s1-tools">
+            <div class="s1-tool"><span class="chk">✓</span> Connectors and skills</div>
+            <div class="s1-tool"><span class="chk">✓</span> Sandboxed code</div>
+            <div class="s1-tool"><span class="chk">✓</span> Chrome and computer use</div>
+          </div>
+        </div>
+      </div>
+      <div class="s1-card code">
+        <div class="accent-bar"></div>
+        <div class="s1-word">Code</div>
+        <div class="s1-tagline">Made for coding.</div>
+        <div class="s1-row">
+          <div class="s1-label">Surface</div>
+          <div class="s1-chips"><span class="s1-chip">Desktop</span><span class="s1-chip">Terminal</span><span class="s1-chip">Remote control</span></div>
+        </div>
+        <div class="s1-row">
+          <div class="s1-label">Context</div>
+          <div class="s1-context">Operates on your <span class="hl">local files</span>.</div>
+        </div>
+        <div class="s1-row">
+          <div class="s1-label">Tools</div>
+          <div class="s1-tools">
+            <div class="s1-tool"><span class="chk">✓</span> Connectors and skills</div>
+            <div class="s1-tool"><span class="chk">✓</span> Chrome and computer use</div>
+            <div class="s1-tool"><span class="chk">✓</span> Local CLI tools</div>
+            <div class="s1-tool"><span class="chk">✓</span> Runs locally</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2 -->
+  <div class="section">
+    <div class="section-title">Connectors vs <span class="accent">Skills</span></div>
+    <div class="s2-grid">
+      <div class="s2-card">
+        <div class="s2-eq">Access</div>
+        <div class="s2-word">Connectors</div>
+        <div class="s2-line">Give Claude access to your apps.</div>
+        <div class="s2-graphic">
+          <div class="hub">
+            <svg class="lines" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+              <g stroke="rgba(8,124,167,0.35)" stroke-width="2">
+                <line x1="110" y1="110" x2="110" y2="26" />
+                <line x1="110" y1="110" x2="26" y2="110" />
+                <line x1="110" y1="110" x2="194" y2="110" />
+                <line x1="110" y1="110" x2="66" y2="194" />
+                <line x1="110" y1="110" x2="154" y2="194" />
+              </g>
+            </svg>
+            <div class="spoke h-s1"><img src="assets/gmail.png" alt="Gmail"/></div>
+            <div class="spoke h-s2"><img src="assets/gcal.png" alt="Google Calendar"/></div>
+            <div class="spoke h-s3"><img src="assets/jira.svg" alt="Jira"/></div>
+            <div class="spoke h-s4"><img src="assets/notion.svg" alt="Notion"/></div>
+            <div class="spoke h-s5"><img src="assets/stripe.svg" alt="Stripe"/></div>
+            <div class="center"><img src="assets/claude.png" alt="Claude"/></div>
+          </div>
+        </div>
+      </div>
+      <div class="s2-card">
+        <div class="s2-eq">Competence</div>
+        <div class="s2-word">Skills</div>
+        <div class="s2-line">Teach Claude how to use them.</div>
+        <div class="s2-graphic">
+          <div class="tree"><span class="folder">my-skill/</span>
+<span class="muted">├──</span> <span class="file">SKILL.md</span>
+<span class="muted">├──</span> <span class="folder">references/</span>
+<span class="muted">│   └──</span> <span class="file">examples.md</span>
+<span class="muted">└──</span> <span class="folder">scripts/</span>
+<span class="muted">    └──</span> <span class="file">render.py</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 4 (now above) - 3 Types of Skills -->
+  <div class="section">
+    <div class="section-title">3 types of <span class="accent">skills</span></div>
+    <div class="s4-grid">
+      <div class="s4-card">
+        <div class="s4-eq">Type 1</div>
+        <div class="s4-word">Tool-specific</div>
+        <div class="s4-line">Help Claude use a tool better.</div>
+        <div class="s4-graphic">
+          <div class="t-tools">
+            <div class="t-tools-row"><div class="t-tile"><img src="assets/stripe.svg"/></div><div class="t-tile"><img src="assets/notion.svg"/></div><div class="t-tile"><img src="assets/gmail.png"/></div></div>
+            <div class="t-tools-row"><div class="t-tile"><img src="assets/slack.png"/></div><div class="t-tile"><img src="assets/google-calendar.png"/></div></div>
+          </div>
+        </div>
+        <div class="s4-examples"><span class="k">e.g.</span>stripe-helper, notion-helper</div>
+      </div>
+      <div class="s4-card">
+        <div class="s4-eq">Type 2</div>
+        <div class="s4-word">Task-specific</div>
+        <div class="s4-line">Document a process Claude follows.</div>
+        <div class="s4-graphic">
+          <div class="t-steps">
+            <div class="t-step"><div class="n">1</div><div class="bar mid"></div></div>
+            <div class="t-step"><div class="n">2</div><div class="bar"></div></div>
+            <div class="t-step"><div class="n">3</div><div class="bar short"></div></div>
+          </div>
+        </div>
+        <div class="s4-examples"><span class="k">e.g.</span>linkedin-post-writer, call-prep</div>
+      </div>
+      <div class="s4-card">
+        <div class="s4-eq">Type 3</div>
+        <div class="s4-word">Domain-specific</div>
+        <div class="s4-line">Encode knowledge about a subject.</div>
+        <div class="s4-graphic">
+          <div class="t-domain">
+            <div class="t-paper p1"><div class="lines"><span></span><span></span><span></span><span></span><span></span></div></div>
+            <div class="t-paper p2"><div class="lines"><span></span><span></span><span></span><span></span><span></span></div></div>
+            <div class="t-paper p3"><div class="lines"><span></span><span></span><span></span><span></span><span></span></div></div>
+          </div>
+        </div>
+        <div class="s4-examples"><span class="k">e.g.</span>aba-brand-system, business-strategy</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 5 -->
+  <div class="section">
+    <div class="section-title">How to build custom skills <span class="accent">(4-step loop)</span></div>
+    <div class="s5-grid">
+      <div class="s5-step">
+        <div class="s5-graphic">
+          <div class="step1">
+            <svg class="user" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" style="color: var(--primary);"/></svg>
+            <svg class="arrows" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" style="color: var(--primary);"/></svg>
+            <div class="claude"><img src="assets/claude.png" alt="Claude"/></div>
+          </div>
+        </div>
+        <div class="s5-step-eyebrow">Step 1</div>
+        <div class="s5-step-label">Do it once</div>
+        <div class="s5-step-desc">Walk through the task with Claude.</div>
+      </div>
+      <div class="s5-step">
+        <div class="s5-graphic">
+          <div class="step2">
+            <div class="thread">
+              <div class="row right"><div class="msg user"><span class="dots"><span></span><span></span><span></span></span></div></div>
+              <div class="row left"><div class="msg claude"><span class="dots"><span></span><span></span><span></span></span></div></div>
+              <div class="row right"><div class="msg user"><span class="dots"><span></span><span></span><span></span></span></div></div>
+              <div class="row left"><div class="msg claude"><span class="dots"><span></span><span></span><span></span></span></div></div>
+            </div>
+            <div class="arrow-wrap"><svg class="arrow-down" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25 12 21m0 0-3.75-3.75M12 21V3" style="color: var(--primary);"/></svg></div>
+            <div class="doc-wrap"><svg class="doc" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" style="color: var(--primary);"/></svg></div>
+          </div>
+        </div>
+        <div class="s5-step-eyebrow">Step 2</div>
+        <div class="s5-step-label">Distill into skill</div>
+        <div class="s5-step-desc">Tell Claude to create skill.</div>
+      </div>
+      <div class="s5-step">
+        <div class="s5-graphic">
+          <div class="step3">
+            <svg class="doc-top" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" style="color: var(--primary);"/></svg>
+            <svg class="plus" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" style="color: var(--primary);"/></svg>
+            <div class="claude-mini"><img src="assets/claude.png" alt="Claude"/></div>
+            <svg class="arrow-down" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25 12 21m0 0-3.75-3.75M12 21V3" style="color: var(--primary);"/></svg>
+            <svg class="bubble-out" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" style="color: var(--primary);"/></svg>
+          </div>
+        </div>
+        <div class="s5-step-eyebrow">Step 3</div>
+        <div class="s5-step-label">Use it</div>
+        <div class="s5-step-desc">Invoke when the task comes up again.</div>
+      </div>
+      <div class="s5-step">
+        <div class="s5-graphic">
+          <svg class="step4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" style="color: var(--primary);"/></svg>
+        </div>
+        <div class="s5-step-eyebrow">Step 4</div>
+        <div class="s5-step-label">Improve it</div>
+        <div class="s5-step-desc">Refine when it misses or surprises.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3 (now below) - 6 Ways 3x2 grid -->
+  <div class="section">
+    <div class="section-title">6 ways to give Claude <span class="accent">context</span></div>
+    <div class="s3-grid">
+      <div class="s3-item">
+        <div class="s3-num">01</div>
+        <div class="s3-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></div>
+        <div><div class="s3-heading">Let it search the web</div><div class="s3-desc">Point Claude at the open internet.</div><div class="s3-surfaces"><span class="s3-pill chat on">chat</span><span class="s3-pill cowork on">cowork</span><span class="s3-pill code on">code</span></div></div>
+      </div>
+      <div class="s3-item">
+        <div class="s3-num">02</div>
+        <div class="s3-icon"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-1.2 4.3 8.5 8.5 0 0 1-7.3 4.2 8.4 8.4 0 0 1-4.3-1.2L3 20l1.2-5.2A8.5 8.5 0 1 1 21 11.5z"/></svg></div>
+        <div><div class="s3-heading">Have it interview you</div><div class="s3-desc">Ask it to interview you first.</div><div class="s3-surfaces"><span class="s3-pill chat on">chat</span><span class="s3-pill cowork on">cowork</span><span class="s3-pill code on">code</span></div></div>
+      </div>
+      <div class="s3-item">
+        <div class="s3-num">03</div>
+        <div class="s3-icon"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div>
+        <div><div class="s3-heading">Give it folder access</div><div class="s3-desc">Drop files into a Project.</div><div class="s3-surfaces"><span class="s3-pill chat off">chat</span><span class="s3-pill cowork on">cowork</span><span class="s3-pill code on">code</span></div></div>
+      </div>
+      <div class="s3-item">
+        <div class="s3-num">04</div>
+        <div class="s3-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.2"/><circle cx="4.5" cy="6" r="1.8"/><circle cx="4.5" cy="18" r="1.8"/><circle cx="19.5" cy="6" r="1.8"/><circle cx="19.5" cy="18" r="1.8"/><path d="M6.2 7l4 4M6.2 17l4-4M17.8 7l-4 4M17.8 17l-4-4"/></svg></div>
+        <div><div class="s3-heading">Plug in connectors</div><div class="s3-desc">Pull from Gmail, Notion, Stripe.</div><div class="s3-surfaces"><span class="s3-pill chat on">chat</span><span class="s3-pill cowork on">cowork</span><span class="s3-pill code on">code</span></div></div>
+      </div>
+      <div class="s3-item">
+        <div class="s3-num">05</div>
+        <div class="s3-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+        <div><div class="s3-heading">Use Chrome or computer use</div><div class="s3-desc">Let Claude drive the browser.</div><div class="s3-surfaces"><span class="s3-pill chat off">chat</span><span class="s3-pill cowork on">cowork</span><span class="s3-pill code on">code</span></div></div>
+      </div>
+      <div class="s3-item">
+        <div class="s3-num">06</div>
+        <div class="s3-icon"><svg viewBox="0 0 24 24"><path d="M4 17l5-5-5-5"/><path d="M12 19h8"/></svg></div>
+        <div><div class="s3-heading">Build custom CLI tools</div><div class="s3-desc">For reliability and cost control.</div><div class="s3-surfaces"><span class="s3-pill chat off">chat</span><span class="s3-pill cowork partial">cowork</span><span class="s3-pill code on">code</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">aibuilder.academy</div>
+</div>
+</body>
+</html>

@@ -5,11 +5,11 @@ description: Run Shaw's skills-sync tool to publish user-created skills from Cla
 
 # skill-sync
 
-Shaw's `skills-sync` is a Python CLI at `/Users/shaw/agents/skills-sync` that publishes user-created skills from **Claude Desktop** (source of truth) to three destinations:
+Shaw's `skills-sync` is a Python CLI at `~/agents/skills-sync` that publishes user-created skills from **Claude Desktop** (source of truth) to three destinations:
 
-- **Canonical repo:** `/Users/shaw/agents/skills` — git-tracked; successful syncs auto-commit.
-- **Codex:** `/Users/shaw/.codex/skills`
-- **Claude Code:** `/Users/shaw/.claude/skills`
+- **Canonical repo:** `~/agents/skills` — git-tracked; successful syncs auto-commit.
+- **Codex:** `~/.codex/skills`
+- **Claude Code:** `~/.claude/skills`
 
 A LaunchAgent runs the tool on a schedule, but Shaw sometimes needs to trigger it manually — right after authoring a new skill, when debugging, or when verifying what's live. This skill is the wrapper for those manual runs.
 
@@ -18,7 +18,7 @@ A LaunchAgent runs the tool on a schedule, but Shaw sometimes needs to trigger i
 Every command runs from the tool directory via `uv`. Use the Bash tool:
 
 ```bash
-cd /Users/shaw/agents/skills-sync && uv run main.py <command>
+cd ~/agents/skills-sync && uv run main.py <command>
 ```
 
 ## Three operations
@@ -28,7 +28,7 @@ cd /Users/shaw/agents/skills-sync && uv run main.py <command>
 Trigger phrases: "status", "what's synced", "what's in canonical", "list skills across endpoints".
 
 ```bash
-cd /Users/shaw/agents/skills-sync && uv run main.py status
+cd ~/agents/skills-sync && uv run main.py status
 ```
 
 Show the raw output. It prints each endpoint (`canonical`, `codex`, `claude_code`, `claude`) with skill count, file count, and the full skill list. If counts differ across endpoints, that's a signal a sync is needed — point that out.
@@ -42,7 +42,7 @@ The tool is idempotent and well-logged, but Shaw wants the safety of seeing the 
 **Step 1 — dry-run:**
 
 ```bash
-cd /Users/shaw/agents/skills-sync && uv run main.py sync --dry-run
+cd ~/agents/skills-sync && uv run main.py sync --dry-run
 ```
 
 **Step 2 — show the plan and interpret it.** Output is a list of:
@@ -60,7 +60,7 @@ If there are **conflicts**, flag them prominently. The tool writes `*.<endpoint>
 **Step 3 — confirm and apply.** Something like: *"Dry-run shows N copies and M deletes. Want me to apply?"* Wait for his OK, then:
 
 ```bash
-cd /Users/shaw/agents/skills-sync && uv run main.py sync
+cd ~/agents/skills-sync && uv run main.py sync
 ```
 
 Show the result. On success you'll usually see `Committed canonical skills repo: Sync skills` — mention the commit happened. If Shaw wants to inspect canonical changes before committing, add `--no-commit`.
@@ -72,7 +72,7 @@ Trigger phrases: "remove X from codex", "drop X from canonical", "get rid of ski
 **Step 1 — dry-run:**
 
 ```bash
-cd /Users/shaw/agents/skills-sync && uv run main.py remove <skill-name> --dry-run
+cd ~/agents/skills-sync && uv run main.py remove <skill-name> --dry-run
 ```
 
 **Step 2 — show where it'll be removed from.** Output lists each endpoint holding the skill.
@@ -80,7 +80,7 @@ cd /Users/shaw/agents/skills-sync && uv run main.py remove <skill-name> --dry-ru
 **Step 3 — confirm and apply.**
 
 ```bash
-cd /Users/shaw/agents/skills-sync && uv run main.py remove <skill-name>
+cd ~/agents/skills-sync && uv run main.py remove <skill-name>
 ```
 
 **Important caveat to surface to Shaw:** `remove` only touches canonical + targets. It does **not** delete the skill from Claude Desktop. If Shaw wants to retire a skill permanently, he needs to delete it in Claude Desktop first — otherwise the next scheduled sync will restore it everywhere.
@@ -102,16 +102,16 @@ cd /Users/shaw/agents/skills-sync && uv run main.py remove <skill-name>
 
 ## Troubleshooting
 
-- **`Lock exists: /Users/shaw/agents/skills-sync/skills-sync.lock`** — check if another sync is running (`ps aux | grep skills-sync`). If nothing's running, the lock is stale; remove the file and retry.
-- **`Warning: manifest not found for claude: ...`** — the Claude Desktop `manifest.json` path in `config.toml` is stale (session IDs rotate). Shaw needs to update `[claude].path` and `[claude].manifest_path` in `/Users/shaw/agents/skills-sync/config.toml`. Don't try to auto-fix.
+- **`Lock exists: ~/agents/skills-sync/skills-sync.lock`** — check if another sync is running (`ps aux | grep skills-sync`). If nothing's running, the lock is stale; remove the file and retry.
+- **`Warning: manifest not found for claude: ...`** — the Claude Desktop `manifest.json` path in `config.toml` is stale (session IDs rotate). Shaw needs to update `[claude].path` and `[claude].manifest_path` in `~/agents/skills-sync/config.toml`. Don't try to auto-fix.
 - **Conflicts written to canonical** — surface them clearly and stop. The tool intentionally doesn't resolve these; Shaw decides which version wins.
 
 ## Logs
 
-Every run appends to `/Users/shaw/agents/skills-sync/.logs/skills-sync.log`. If Shaw asks "what happened last time" or "did the scheduled sync run", check there first:
+Every run appends to `~/agents/skills-sync/.logs/skills-sync.log`. If Shaw asks "what happened last time" or "did the scheduled sync run", check there first:
 
 ```bash
-tail -n 30 /Users/shaw/agents/skills-sync/.logs/skills-sync.log
+tail -n 30 ~/agents/skills-sync/.logs/skills-sync.log
 ```
 
 ## What this skill does NOT do

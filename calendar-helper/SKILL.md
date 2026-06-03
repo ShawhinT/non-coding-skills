@@ -74,7 +74,7 @@ Use `list_events` to search Shaw's calendar for past events that match the reque
 search depends on what's available:
 
 - **Attendee + topic** is the strongest signal. E.g., for "another session with [Name]", search
-  for past events with that person's email on the attendee list.
+  for past events with [Name]'s email on the attendee list.
 - **Topic alone** if no attendee is named (e.g., "schedule the next podcast recording" →
   search for "podcast" in past event titles).
 - **Pure recurrence** (e.g., a weekly standup) may have no attendee and no topic keyword —
@@ -107,8 +107,8 @@ Search the most likely database first based on event type:
 | Sales call (discovery, intro, qualifier) | `ABA Calls` | `[page-id]` |
 | Training / delivery / workshop / 1:1 session | `ABA Trainings` | `[page-id]` |
 
-Search query: combine attendee name + topic keywords (e.g., "[First Last] skill building"
-or "[First Name] training session"). Look at the top 1-3 matches and pick the one whose title most
+Search query: combine attendee name + topic keywords (e.g., "[Name] skill building"
+or "[Name] training session"). Look at the top 1-3 matches and pick the one whose title most
 closely mirrors the calendar event's title pattern.
 
 **Decision rule:**
@@ -201,6 +201,14 @@ clear date, clear reference event, clear Notion pairing), just do it. Then repor
 - The created Notion page (link), if one was created
 - One sentence noting which reference event/page was used
 
+**Don't ask about the Notion side — execute it.** When the event is a sales call or training,
+the paired page + FU task + CRM linking is part of the standard Setup, not an opt-in. Even
+when the user's request sounds focused on just the calendar event ("schedule the check-in for
+next week", "put it on my calendar", "send him a Google Meet"), the full Setup still runs by
+default. Asking "do you also want the Notion pages?" is the half-execution bug Step 3.5 exists
+to prevent — just report what got created. The discovery-call carve-out (Workflow 7) is the
+only exception.
+
 **Surface ambiguity via `AskUserQuestion`** when:
 - Multiple attendees match the name (which [Name]?)
 - Multiple reference events have conflicting patterns and no recent winner
@@ -219,9 +227,9 @@ Many of Shaw's recurring events use numbered patterns. Detect these and auto-inc
 
 **Examples:**
 - `[Name] / Shaw - 1:1 Skill Building (Session 1)` → `(Session 2)`
-- `[Series] Recording — Episode 12` → `Episode 13`
+- `[Show] Recording — Episode 12` → `Episode 13`
 - `Cohort 3 Workshop, Week 4` → `Week 5`
-- `[Series Name] Issue #47` → `#48`
+- `[Publication] Issue #47` → `#48`
 
 If the pattern increments, use the incremented title. If the pattern doesn't increment (a
 generic recurring meeting like "Weekly Sync"), reuse the same title.
@@ -239,18 +247,18 @@ what the reference event used — a stale `x` on a paid client's reference is th
 to avoid.
 
 **Name vs company in the title.** Use the attendee's first name when they're the only
-person on the other side (`[Name] / Shaw - 1:1 Claude Workshop`). Use the company
+person on the other side (`[Client Name] / Shaw - 1:1 Claude Workshop`). Use the company
 name when multiple people from their side are attending (`[Company] / Shaw - Wrap-Up Call`,
 `[Company] / Shaw - Check-in`). This applies to any event type.
 
 **Spaces around `/` and `x` separators.** When a title joins two names with `/` or `x`,
-always include surrounding spaces: `[Name] / Shaw – Catch-up`, never `[Name]/Shaw`. Same for
-`x` collabs: `[Name] x Shaw`, never `[Name]xShaw`. This applies to any new title composition;
+always include surrounding spaces: `[Person] / Shaw – Catch-up`, never `[Person]/Shaw`. Same for
+`x` collabs: `[Person] x Shaw`, never `[Person]xShaw`. This applies to any new title composition;
 when mirroring an existing reference event, preserve its exact format.
 
 **Suffix the event type after the names.** Coffee chats, check-ins, workshops, and 1:1s
-all take an explicit suffix: `[Name] / Shaw - Coffee Chat`, `[Name] / Shaw - Check-in`,
-`[Name] / Shaw - 1:1 Claude Workshop`. A bare `Name / Shaw` (no suffix) is rare — only
+all take an explicit suffix: `[Person] / Shaw - Coffee Chat`, `[Client Name] / Shaw - Check-in`,
+`[Client Name] / Shaw - 1:1 Claude Workshop`. A bare `Name / Shaw` (no suffix) is rare — only
 use it when the reference event also has none AND the type is genuinely ambiguous. When
 in doubt, infer the type from context (CRM status, email thread, prior call notes) and
 add the suffix. Older Calendly auto-imports often dropped suffixes — don't take that as
@@ -367,8 +375,8 @@ Use the data source ID when calling `notion-create-pages`.
 
 ## Edge Cases
 
-**Ambiguous attendee name** — a single first name could match multiple people. Search calendar for past
-events with anyone matching that name; if there's exactly one frequent match, use it. If there
+**Ambiguous attendee name** — "[Name]" could be multiple people. Search calendar for past
+events with anyone named [Name]; if there's exactly one frequent match, use it. If there
 are multiple, ask via `AskUserQuestion` and offer the top 2-3 by recency.
 
 **Multiple reference events with conflicting patterns** — last 3 sessions were 60 / 90 / 60
@@ -426,6 +434,12 @@ rather than calling `notion-update-page` directly — `notion-helper` owns that 
   wants attendees to know about new/changed events
 - **Always include a Google Meet URL when attendees exist** unless the reference event
   explicitly didn't have one
+- **Share event links scoped to the business account** — when giving Shaw a calendar event
+  link, insert the `/u/1/` account-index path so it opens his business account
+  (shaw@aibuilder.academy): `https://www.google.com/calendar/u/1/event?eid=<eid>`. The raw
+  `htmlLink` returned by `create_event` omits the index and can open the wrong account. This
+  mirrors the Gmail u/1 convention — see email-helper's "Gmail accounts and the u/ path" for
+  what the index means.
 - **Never create a Notion page for an event that isn't a sales call or training** — even if
   Shaw seems excited about the meeting, the rule holds
 - **Don't create ABA Calls pages for discovery calls** — Calendly-sourced discovery-call

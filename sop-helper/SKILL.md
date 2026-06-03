@@ -1,17 +1,17 @@
 ---
 name: sop-helper
 description: >
-  Create, update, and reference Shaw's standard operating procedures (SOPs) in Notion. Use this
-  skill whenever Shaw wants to turn a process into an SOP, update an existing SOP, or pull up
-  an SOP to reference or walk through. Triggers include: "write an SOP for X", "document the
-  process for X", "turn this into an SOP", "capture this workflow", "update the SOP for X",
-  "fix the launch SOP", "where's the SOP for X", "pull up the SOP for X", "walk me through the
-  SOP", or any reference to the SOPs page. Also trigger when Shaw describes a repeatable
-  workflow (launch sequence, event run-of-show, research-call process) and says "let's save
-  this" or "this should be written down" — that almost always means a new SOP. Casual mentions
-  like "I keep redoing this, make it an SOP" or "we need a playbook for X" should trigger this
-  skill. Do NOT use for one-off tasks — those go through `notion-helper`. SOPs are for
-  repeatable processes, not single to-dos.
+  Create, update, and reference Shaw's standard operating procedures (SOPs) in Notion. Use
+  whenever Shaw wants to turn a process into an SOP, update an existing one, or pull up an SOP
+  to reference or walk through. Triggers: "write/update/fix the SOP for X", "document this
+  process", "turn this into an SOP", "where's the SOP for X", "walk me through the SOP", or
+  any reference to the SOPs page. Also trigger when Shaw describes a repeatable workflow and
+  says "let's save this" or "this should be written down", or casual phrasings like "I keep
+  redoing this, make it an SOP" or "we need a playbook for X". Also load at the start of any
+  SOP-adjacent reasoning — proposing template edits, comparing sent mail to existing templates,
+  or sketching SOP changes. Don't wait for the actual edit; if you're reasoning about what an
+  SOP should say, the skill should already be loaded. Do NOT use for one-off tasks — those go
+  through `notion-helper`. SOPs are for repeatable processes, not single to-dos.
 ---
 
 # SOP Helper Skill
@@ -80,13 +80,16 @@ process steps**, followed by templates. Read top to bottom, it's the workflow in
   Notion databases/pages and external tools this SOP touches.
 - **Email/message templates last**, below a `---` divider, stacked with `---` between each.
   Each template is: a `Subject:` line carrying an italic `*(annotation)*` that says what the
-  email is and when it's sent; a fenced ```plain text``` block with the verbatim body; and a
-  closing `*Drafting note:*` inside the fence — grounded in a real send Shaw has actually
-  made, and (for emails) ending with "Always draft via email-helper."
+  email is and when it's sent, and a fenced ```plain text``` block with the verbatim body. A
+  `**Context**:` line can sit above the `Subject:` line to carry one-line adaptation rules
+  (e.g. when to drop the greeting, which words to swap) — this keeps the body clean of
+  bracketed guidance. A `*Drafting note:*` inside the fence is optional, used only when it
+  carries something the body and context line don't: provenance ("based on real send to X,
+  5/27/26"), non-obvious policy, or a cross-skill pointer. Don't add boilerplate suffixes
+  like "Always draft via email-helper" — that's a system-level rule, not template content.
 - **When one step needs more than one template** (e.g. a follow-up that differs by
-  situation), stack them as **Variant A / Variant B**. Each variant gets its own one-line
-  `**Context**:` statement above its `Subject:` line saying when to use that variant, then the
-  usual Subject / annotation / fence / drafting note.
+  situation), stack them as **Variant A / Variant B**. Each variant gets its own
+  `**Context**:` line saying when to use it.
 
 Keep bullets short and action-first — "ID target audience", not "Identify the target audience
 for the campaign." No Purpose, Scope, Owner, Last Updated, Version, or Revision History
@@ -114,24 +117,18 @@ artifacts.
 Subject: <email subject> *(what it is — when it's sent)*
 ```plain text
 <email body>
-
-*Drafting note: grounded in a real send; email templates end with "Always draft via email-helper."*
 ```
 ---
 **Context**: when to use this variant
 Subject: <subject> *(... — Variant A, <short label>)*
 ```plain text
 <email body>
-
-*Drafting note: ...*
 ```
 ---
 **Context**: when to use this variant
 Subject: <subject> *(... — Variant B, <short label>)*
 ```plain text
 <email body>
-
-*Drafting note: ...*
 ```
 ````
 

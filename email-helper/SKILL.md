@@ -9,7 +9,7 @@ description: >
   workflow — skills compose. Also trigger for phrases like "draft a reply", "write an email
   to", "respond to this", "follow up with", or any reference to composing email; when Shaw
   shares an email thread and asks what to say; or when sharing a link to a Gmail thread
-  (Shaw's account uses `u/2` — see Gmail Technical Notes). Casual requests like "shoot them
+  (Shaw's account uses `u/1` — see Gmail Technical Notes). Casual requests like "shoot them
   an email" count too. Covers outreach, replies, follow-ups, declines, intros, and
   scheduling.
 ---
@@ -41,7 +41,7 @@ If you are already inside another skill's workflow (calendar-helper for a sessio
 
 Shaw writes email like he talks — casual, direct, and warm. He sounds like a peer, not a brand. The energy is friendly efficiency: get to the point, be human about it, move things forward.
 
-**Greeting.** "Hey [First Name]," for peers and warm contacts. "Hi [First Name]," for first-time contacts and more formal contexts. Never "Dear" or "Hello there."
+**Greeting.** "Hey [First Name]," for peers and warm contacts. "Hi [First Name]," for first-time contacts and more formal contexts. Never "Dear" or "Hello there." Drop the greeting entirely on active back-and-forth threads — same rule that drops the sign-off.
 
 **Opening line.** "Thanks for reaching out!" (inbound) or "Thanks for your reply!" (responding). This is a consistent pattern — don't vary it for variety's sake.
 
@@ -50,6 +50,8 @@ Shaw writes email like he talks — casual, direct, and warm. He sounds like a p
 **Sign-off.** "Thanks again, Shaw" for more formal contexts. "Cheers, Shaw" for peer-level. "-Shaw" for quick replies. No sign-off in active back-and-forth threads.
 
 **Tone markers.** `:)` not emoji. One per email max, usually near the end. No bold, no headers, no visible formatting — the email should look plain even though it's sent as HTML.
+
+*Exception: proposal/offer follow-ups.* In emails whose body lists the shape of a deal as bullets (format, platform, investment), bold the leading category label on each bullet — e.g. `**1:1 Claude Workshops** (3-4 participants): ...`, `**Virtual live sessions** via Google Meet`, `**Total investment**: $4,500-$6,000`. The labels work as scan-anchors over distinct deal facets, while the rest of the email stays plain. Bold only the label, not the value or the trailing clause. See `references/call-follow-ups.md` → "Proposal Follow-Up" for the full pattern.
 
 **Punctuation.** Never use em dashes (`—`) in drafted emails. Use a period, a comma, or split into two sentences. Shaw doesn't use them and they read as AI-written.
 
@@ -86,12 +88,13 @@ Use when suggesting one specific time inline — typically a follow-up where you
 - **Parenthetical date, plain text.** `Thurs (May 14)` — not bold, no comma. The bold + comma format is reserved for the multi-option list above.
 - **Drop the escape hatch.** No "let me know if another time works better." The brevity is the point; the recipient can still counter-propose without being invited to.
 - **Drop the `:)`.** Skip the tone marker on tight nudges — it softens what should land as a direct ask.
+- **Opener.** Default to `Just wanted to follow up.` — that's Shaw's most-used FU opener by a wide margin. `Just wanted to check in.` is the alternate for warmer or relationship-anchored contexts (existing client, peer, anyone he's already in rhythm with). `Just bumping this up.` is rare; reach for it only on a thread that has already had a substantive FU and you're sending a one-line escalation, not another full follow-up.
 
 Example (FU after a multi-option proposal went unanswered):
 
 > Hi [First Name],
 >
-> Just bumping this up.
+> Just wanted to follow up.
 >
 > Would Thurs (May 14) at 4PM ET work?
 >
@@ -113,6 +116,8 @@ This means: one CTA per email, not two. If someone's message is vague, ask one c
 
 If an email can be 3 lines, it's 3 lines. The length should match what the situation actually requires, not what feels "complete." Personalization is earned — react to what someone said or did, not who they are. Skip filler like "Hope you're doing well!" and go straight to the substance.
 
+**Re-engagement and catch-up asks are 2-3 lines.** When the goal is just to reconnect — a check-in outreach to a quiet lead or past client, a "want to catch up?" nudge — keep it to a warm line plus a single low-friction ask. Don't recap the relationship history, re-list the paths or options you discussed last time, or propose specific times; the low effort is what makes it easy to say yes. (For a revival that carries a real pitch — closing or reviving a warm lead with an offer — that's conversion-copy's domain; see its `channel-emails.md`.)
+
 **Name the specific reason to meet, not a generic one.** When you state why you want to talk or what you'll bring, pull the concrete thing from their context rather than a placeholder. "I'd love to continue the conversation on rolling out Claude across your portfolio companies" beats "I'd love to continue the conversation and share a few insights." The specific material is almost always already sitting in the thread or the CRM notes, so use it. This is conversion-copy's "specific beats vague" applied to everyday email; see that skill for the deeper treatment.
 
 **Default to 3 sections in the body, never more than 5.** Body sections = the distinct ideas or asks between the opener and the wrap-up. When an email starts feeling heavy, reach for compression: fuse the opener and the reaction into one sentence, drop a forced compliment, trim parentheticals the reader doesn't need. These are tools to pull when the email is dense, not rules to apply every time.
@@ -120,6 +125,16 @@ If an email can be 3 lines, it's 3 lines. The length should match what the situa
 ### Read the full thread before drafting a follow-up.
 
 Search snippets are lossy — they cut off mid-sentence and routinely miss the substantive parts of a message (proposed times, attached outlines, specific questions asked). Before drafting any follow-up or reply, fetch the full sent message body with `get_thread`, not just the search snippet. What was already proposed in the prior message directly shapes what the follow-up should say: narrow a previously-offered menu rather than re-opening the ask, reference a specific question that was raised, etc. Drafting from a snippet leads to vague nudges that ignore the live state of the conversation.
+
+### Check if it's already been sent before drafting.
+
+Recurring templated emails (workshop welcome, pre-session agenda, post-call FU, testimonial ask) are easy to draft twice. Shaw is often a few days removed from sending the first one, and a "draft me an X for Y" request doesn't always mean Y hasn't already gotten X. The Notion task being open isn't proof the send hasn't happened either, since Shaw doesn't always check off tasks the moment they're done.
+
+Before drafting any SOP-templated email, search sent mail for the recipient (`from:me to:<email> newer_than:30d`, or whatever window fits the template) and scan results for a thread whose content matches the template's intent.
+
+If a match exists, don't draft. Reply with a one-line summary, the Gmail link to that thread (`https://mail.google.com/mail/u/1/#inbox/<threadId>`), and ask whether to reply on that thread with a nudge or draft something else instead. If no match, proceed normally.
+
+The cost of drafting a duplicate is higher than the cost of one extra search.
 
 ### Infer templates from sent mail, don't just use reference files.
 
@@ -176,15 +191,15 @@ When proposing specific times manually, see calendar-helper's "Picking times to 
 
 Shaw is signed into multiple Gmail accounts in the same browser, and each one is addressed by a `u/N` index in the URL:
 
-- `u/2` — `shaw@aibuilder.academy` — the **business inbox**. All ABA outbound sales activity, the connected Gmail MCP tool, and the canonical destination for thread links.
-- `u/1` — `shawhintalebi@gmail.com` — **personal inbox**. This is where the contact form on `shawhintalebi.com` lands (Squarespace forwards submissions here, not to the business address).
-- `u/0` — other personal account.
+- `u/1` — `shaw@aibuilder.academy` — the **business inbox**. All ABA outbound sales activity, the connected Gmail MCP tool, and the canonical destination for thread links.
+- `u/2` — `shawhintalebi@gmail.com` — **non-ABA business inbox** (Shaw's personal-brand / `shawhintalebi.com` business, distinct from AI Builder Academy). This is where the contact form on `shawhintalebi.com` lands (Squarespace forwards submissions here, not to the ABA address).
+- `u/0` — personal account.
 
 When pasting a Gmail link into chat or Notion, always use:
 
-`https://mail.google.com/mail/u/2/#inbox/<threadId>`
+`https://mail.google.com/mail/u/1/#inbox/<threadId>`
 
-The `u/2` path opens the business inbox. Using `u/0` or `u/1` will open the wrong account and the link will fail to resolve the thread. This applies to thread links AND individual message links (`/<messageId>`).
+The `u/1` path opens the business inbox. Using `u/0` or `u/2` will open the wrong account and the link will fail to resolve the thread. This applies to thread links AND individual message links (`/<messageId>`).
 
 ### Searching Gmail for context
 
@@ -198,7 +213,7 @@ When you need conversation context with a specific person — an upcoming sessio
 
 The connected Gmail MCP is scoped to one inbox and search hits sometimes miss threads filtered into custom labels — most commonly contact-form submissions in `shawhintalebi@gmail.com` that get auto-labeled `stv/Website/contacts` and never land in the main inbox view. If the CRM notes (or any other source) reference an email exchange but `search_threads` comes back empty, fall back to Claude in Chrome:
 
-1. Open Gmail at `https://mail.google.com/mail/u/1/#search/<keyword>` for the personal account, or `u/2` for the business account. Pick the account based on where the thread should live (contact form → `u/1`; outbound sales → `u/2`).
+1. Open Gmail at `https://mail.google.com/mail/u/2/#search/<keyword>` for the non-ABA business account (`shawhintalebi@gmail.com`), or `u/1` for the ABA business account. Pick the account based on where the thread should live (contact form → `u/2`; ABA outbound sales → `u/1`).
 2. Click the result to open the thread.
 3. Use `get_page_text` to read the full body in one call — Gmail renders the entire thread inline.
 4. Treat what you read like normal email context: extract goals, asks, pain points, then move on.
@@ -209,7 +224,9 @@ Reach for this only when the MCP comes back empty for a thread that other eviden
 
 The Gmail MCP tool `create_draft` accepts `to`, `subject`, `body` (plain text), `htmlBody` (HTML), and `replyToMessageId`. Use `htmlBody` whenever the message has paragraphs, links, or any structure — Gmail's plain text mode auto-wraps lines at ~78 characters, inserting hard line breaks mid-sentence. In HTML, use `<div>` tags for paragraphs, `<div><br></div>` for blank lines between them, and `<ul><li>` for bullet points (text dashes render as plain text, not actual bullets).
 
-**Threading.** To attach the draft to an existing thread (most follow-ups, all CRM nudges, post-call replies), pass `replyToMessageId` set to the most recent message ID in that thread — find it via `search_threads` or `get_thread`. Omit `replyToMessageId` to start a fresh thread. The reply subject should be the original subject prefixed with `Re:` (e.g., `Re: [Name] / Shaw - Check-in`). Pick the thread per "The live thread wins" above — don't reply on a stale template-named thread when the actual conversation has moved elsewhere.
+**Bare URLs: don't anchor them.** When the link is a raw URL the recipient sees in full — a Calendly link, a Google Form, a YouTube URL — drop it into the HTML as plain text inside the `<div>`, not wrapped in an `<a href>` tag. Gmail rewrites anchored hrefs through a `google.com/url?q=…` redirect, so an anchored Calendly link renders as an ugly Google URL in the compose window (annoying enough that Shaw will hand-fix it before sending). Plain text URLs stay clean and Gmail still linkifies them on send. Reserve `<a href>` for when you're hiding a long URL behind anchor text (e.g. "book a time [here]").
+
+**Threading.** To attach the draft to an existing thread (most follow-ups, all CRM nudges, post-call replies), pass `replyToMessageId` set to the most recent message ID in that thread — find it via `search_threads` or `get_thread`. Omit `replyToMessageId` to start a fresh thread. The reply subject should be the original subject prefixed with `Re:` (e.g., `Re: [First Name] / Shaw - Check-in`). Pick the thread per "The live thread wins" above — don't reply on a stale template-named thread when the actual conversation has moved elsewhere.
 
 **List spacing.** When a `<ul>` follows a line of text, attach it directly — no `<div><br></div>` between the text and the opening `<ul>`, and none between the closing `</ul>` and the next line. HTML `<ul>` already renders with its own top/bottom margin; adding blank-line divs doubles the gap.
 
@@ -221,9 +238,9 @@ When Shaw reacts to an email with an emoji, Gmail creates a new message in the t
 
 ### Squarespace contact-form threads
 
-The `shawhintalebi.com` contact form forwards to `u/1` from `[email]`, with the actual sender's name and email in the body. Gmail's Reply button parses that real email out of the body and pre-fills it as the recipient — so click Reply on the thread to keep everything threaded under `Form Submission - Contact Page`. Composing a new email instead loses the thread and breaks future CRM cross-referencing.
+The `shawhintalebi.com` contact form forwards to `u/2` from `[email]`, with the actual sender's name and email in the body. Gmail's Reply button parses that real email out of the body and pre-fills it as the recipient — so click Reply on the thread to keep everything threaded under `Form Submission - Contact Page`. Composing a new email instead loses the thread and breaks future CRM cross-referencing.
 
-**Reply mechanics.** Reply in the u/1 thread (via Chrome — click Reply on the Squarespace message) and **CC `shaw@aibuilder.academy`**. This keeps the thread clean in the personal inbox while ensuring the business inbox has a copy. Do NOT create a standalone draft in the business inbox — that loses the thread and the CC link.
+**Reply mechanics.** Reply in the u/2 thread (via Chrome — click Reply on the Squarespace message) and **CC `shaw@aibuilder.academy`**. This keeps the thread clean in the `shawhintalebi` (non-ABA) inbox while ensuring the ABA business inbox has a copy. Do NOT create a standalone draft in the business inbox — that loses the thread and the CC link.
 
 **Calendly link selection.** See "Calendly Links and When to Use Them" above for the full link table and selection logic.
 

@@ -16,8 +16,9 @@ Author short motion graphics in HTML/CSS/SVG, render them frame-accurate to MP4 
 ## Workflow
 
 1. **Read the brief.** If the user pasted a script with `[ANIMATION]` callouts, treat each one as a separate clip. Confirm scope — which animation(s), how long each, target aspect ratio (default 1920×1080 / 16:9).
-2. **Write the scene sentence.** Before opening the template, write one sentence stating: what the voice-over is saying when this clip is on screen, what idea the clip must reinforce, and what feeling it should leave. "An icon morphs" is not a scene. "Under the line *'…and that's when the wrench becomes a screwdriver'*, a wrench rotates and resolves into a screwdriver — quick, confident, no theatrics" is. If the sentence doesn't force the timing and the motion, add detail until it does.
-3. **Check for brand context.** If the animation belongs to a specific brand (e.g. AI Builder Academy), invoke the matching brand-system skill (e.g. `aba-brand-system`) and use its colors/type/voice. Otherwise default to a tinted-neutral dark palette (see "Color hygiene") and system-ui fonts.
+2. **Find the transcript and pace beats to the voice-over (mandatory when one exists).** Before settling on durations or delays, look for a word-level transcript in or near the working folder — typical names include `*_transcript.json`, `transcript.json`, `*.srt`, `*.vtt`. If one exists, use it. Don't invent pacing by gut feel when the actual timing data is sitting in the project; the clip will sit on a real spine and the editor will not adjust delays clip by clip to recover what should have been baked in. See "Pacing beats to the transcript" below for the lookup pattern.
+3. **Write the scene sentence.** Before opening the template, write one sentence stating: what the voice-over is saying when this clip is on screen, what idea the clip must reinforce, and what feeling it should leave. "An icon morphs" is not a scene. "Under the line *'…and that's when the wrench becomes a screwdriver'*, a wrench rotates and resolves into a screwdriver — quick, confident, no theatrics" is. If the sentence doesn't force the timing and the motion, add detail until it does.
+3. **Check for brand context.** If the animation belongs to a specific brand (e.g. AI Builder Academy), invoke the matching brand-system skill (e.g. `aba-brand-system`) and pull its colors/type/voice plus the brand's *animation-motion* reference (e.g. `aba-brand-system/references/animation-motion.md`) — never the brand's web composition. Otherwise default to a tinted-neutral dark palette (see "Color hygiene") and system-ui fonts.
 4. **Gather assets.** See "Asset library" below. If a needed logo/icon isn't already in `assets/`, fetch it (see "Fetching new assets") and save it into `assets/` so future animations can reuse it.
 5. **Author the HTML** using `templates/starter.html` as the base for animations, or `templates/card.html` for static section/chapter cards. See "Folder and naming convention" below for where the file goes.
 6. **Render to MP4** with `scripts/render.py`. Don't roll your own render — the script handles frame-accurate seeking, a Playwright bug, and YouTube-safe encoding.
@@ -76,6 +77,52 @@ Pair the numbers: `01-split-screen/01-split-screen.html` renders to `1-animation
 - The shared `assets/` folder means everything an editor needs to import lives in one place.
 - The nested `src/<clip-name>/` subfolders isolate each clip's render workspace and supporting assets, so parallel renders are safe and per-clip iteration doesn't pollute siblings.
 
+## Pacing beats to the transcript
+
+Talking-head B-roll lives on a spine the editor has already cut. If the project has a word-level transcript, the only correct pacing strategy is: **anchor the clip at one VO moment, then express every animation delay as `wordTime − anchorTime`**. Hand-tuned delays that "feel about right" land beats half a second early or late and force the editor to nudge the clip in FCP — they will not do that for every beat, and the asset reads as off.
+
+### How to find and read the transcript
+
+- Look in the working folder, its siblings (`../`, `../../`), and any nearby `edits/` or `transcripts/` folders for `*_transcript.json`, `transcript.json`, `*.srt`, or `*.vtt`. If a `BRIEF.md` or project README mentions where the transcript lives, trust it.
+- JSON transcripts in this house style are `{"words": [{"word": "...", "start": 0.123, "end": 0.456}, ...]}`. The lookup pattern (read-only — never modify the transcript):
+  ```bash
+  python3 -c "
+  import json
+  words = json.load(open('PATH/TO/transcript.json'))['words']
+  # Find all occurrences of target keywords with surrounding context
+  targets = {'sales', 'pipeline', 'customer'}
+  for i, w in enumerate(words):
+      wt = (w.get('word') or '').strip().lower().strip('.,!?;:')
+      if wt in targets:
+          ctx = ' '.join((words[j].get('word') or '') for j in range(max(0,i-5), min(len(words),i+6)))
+          print(f\"{w['start']:7.2f}s  [{wt}]  ...{ctx}...\")"
+  ```
+- For SRT/VTT, fall back to cue start times — coarser than word-level but still better than gut-feel pacing.
+
+### How to convert word times into clip delays
+
+1. Pick the **anchor word** — the first word the clip should react to (often the first noun or verb in the VO sentence).
+2. For each subsequent beat, compute `delay = wordStart − anchorStart`.
+3. Communicate the anchor to the user in your final report: "Place this clip on the spine at **{anchorTime}s** so beats land on the words."
+4. Set the clip's `--duration` to `(last beat delay) + 0.6s settle + ≥0.9s hold` so the editor has slack.
+
+### Before you write any delay — the visual-naming checklist
+
+Wrong delays don't come from misreading the transcript. They come from **picking the wrong word to align to**, and that mistake is easy to skip past because "230.39s" and "230.95s" both look like reasonable answers. Run this checklist for every clip *before* you start typing `animation-delay`:
+
+1. **List the visual beats in plain language, in order.** Not "card 1 appears" — write what's *on* card 1. ("A pill labeled PRE-CALL with a draft email preview." "A schedule chip saying 'Every morning at 7:00 AM'.")
+2. **For each beat, name the word the VO uses for the thing on screen.** This is the word the beat must land on. If the chip says "every morning," the word is `morning` — not `running`, not `daily`, not the verb that introduces the phrase.
+3. **The anchor word is whatever the *first* beat names.** Don't anchor at the start of Shaw's sentence by reflex. Anchor at the moment the first visual subject is named — anything earlier becomes pre-roll dead air, and 1.75s of dead air before the editor's cut-in is a noticeable hole.
+4. **Look up each named word in the transcript JSON.** Convert to relative delays. Now write the CSS.
+
+**Common slip:** aligning a beat to the *verb that introduces* the noun rather than the *noun itself*. VO says "automatically draft pre-call emails" — the visual is a PRE-CALL card; the word the beat must land on is `pre-call` (the category), not `draft` (the verb), not `automatically` (the adverb). The verb is the editor's cue; the noun is the viewer's cue. Land on the viewer's cue.
+
+**Self-test before rendering:** read the VO line out loud while looking at your delays. If at any point you say a word that names something on screen but no beat fires, the alignment is wrong — go back to step 2.
+
+### When there is no transcript
+
+Ask the user for word-level timings for the key beats, or transcribe the segment yourself with a quick `whisper`/`ffmpeg` pipeline if audio is available. Don't proceed with invented pacing and hope the editor fixes it.
+
 ## Section cards (chapter slates) — minimal by default
 
 Section cards (full-bleed chapter slates marked `[CARD]` in a script, file type `card` in the naming convention) are a different deliverable than concept animations. They're on screen for 1–2 seconds while the voice-over names the next section. Viewers don't read them — they pattern-match.
@@ -89,6 +136,54 @@ Strip to three elements max:
 Don't add: logos, frame marks ("Chapter 01 / 05" in the corner), pagination, signatures, body copy, supporting glyphs, decorative dividers. If a brand-system skill (`aba-brand-system`, etc.) is loaded, use its color and type tokens, but **don't import its hero composition** — landing-page chrome doesn't translate to a 1-second slate.
 
 Author cards from `templates/card.html` (static — no keyframes), not `templates/starter.html` (which has animation scaffolding).
+
+## Transparent overlays (alpha rendering)
+
+A third artifact type, distinct from full-frame animations and full-frame cards: **transparent overlays that composite over live talking-head footage** rather than replacing it. Lower-third captions, karaoke-style intro emphasis, name plates, callout arrows that point at the speaker — anywhere the live shot's energy should remain visible while text or a graphic is layered on top.
+
+Reach for the overlay form when the goal is to *augment* the live frame, not to *cut away from* it. If the editor would rather cut to a full-frame card, build a card; if they'd rather keep the speaker on screen with something layered, build an overlay.
+
+### Render with `--alpha`
+
+`scripts/render.py --alpha` switches the pipeline to a transparency-preserving path:
+
+- Playwright screenshots use `omit_background=True`.
+- ffmpeg encodes ProRes 4444 (`yuva444p10le`) into a `.mov` instead of h264 yuv420p `.mp4`.
+- The output's alpha channel is preserved end-to-end; FCP imports it directly and composites it over the spine without keying or masking.
+
+Output extension is `.mov`, not `.mp4`, when `--alpha` is on. Final Cut, DaVinci Resolve, and Premiere all import ProRes 4444 `.mov` natively.
+
+### Place content where it doesn't fight the subject
+
+The talking-head shot fills the frame; overlay content must claim space the subject doesn't. For a centered head-and-shoulders shot, the safe zone is the lower third (roughly y > 800 of 1080, depending on framing). Don't center an overlay where the speaker's face lives — viewers will read the overlay as obscuring the speaker rather than annotating them. If unsure, pull one frame from the talking-head footage with ffmpeg and design against that as the reference background.
+
+### Legibility comes from the element, not from a slab
+
+Backgrounds defeat the point of going transparent. Use a strong text-shadow on the overlay text — typically a combined soft glow + hard offset — so the text reads against any frame content the editor might cut to:
+
+```css
+text-shadow:
+  0 0 24px rgba(0, 0, 0, 0.55),
+  0 4px 12px rgba(0, 0, 0, 0.45);
+```
+
+White text with this shadow reads cleanly against both bright walls and dark clothing without imposing a card-like backdrop.
+
+### Accent color for karaoke captions
+
+When a text-only karaoke caption emphasizes a word (an `.accent` span over the talking-head shot), **do not use the brand's primary accent at full strength**. Deep, saturated brand primaries are tuned for ink on white surfaces — they read as muddy or muted when composited against varied talking-head footage (warm lamplight, dark clothing, mid-tone walls).
+
+The rule: overlay accents need to punch against the live frame at both extremes of brightness. Test against light *and* dark frames before committing. A lighter, brighter mid-tone version of the brand's accent generally wins — saturated cyan-blues, bright mid-tone reds, and high-luminance greens hold up; deep brand primaries (deep blues, deep reds) do not.
+
+This rule applies only to **font-only karaoke overlays** — captions with no pill, no card, no chip backing. Where the accent text sits on its own white pill or card surface (e.g. lower-third name plates with a white background), keep the brand primary — the surface contrast does the legibility work and the brand color is what's actually appropriate against white. The test: is the talking-head footage itself the backdrop behind this word? If yes, use the overlay-tuned accent. If a white surface is between the text and the footage, use the brand primary.
+
+If a brand-system skill is loaded, it should specify the overlay-accent value for that brand. ABA's overlay-accent (`#5DC3E8`) is defined in `aba-brand-system/references/animation-motion.md`.
+
+### File naming
+
+Use the `overlay` type slot in the naming convention (see "Folder and naming convention"). Example: `0-overlay-intro_captions.mov`. The numeric prefix still represents playback order; the `.mov` extension tells the editor "this one has alpha."
+
+Author from `templates/caption-overlay.html`. See the karaoke / word-by-word pattern in `references/techniques.md` for the per-word reveal mechanism.
 
 **Render cards at 6 seconds by default** (`--duration 6`). Since the card is static, the rendered length is just slack for the editor — the editor cuts to whatever the VO actually needs (typically 1–2s). Giving them 6s of held frame means they can extend the card if the VO runs long, freeze on it during a pause, or trim freely without running out of footage. Shorter renders (2–3s) regularly turn out to be too tight in the edit and force a re-render.
 
@@ -257,7 +352,7 @@ When a needed asset isn't in `assets/` yet:
     -o "<dest>.png"
   ```
   Names follow the pattern `<brand>-color.png` for full-color variants. If the brand has only a monochrome mark, drop the `-color` suffix.
-- **Generic brand logos** (Google products, Microsoft, Slack, Notion, etc.) — Wikimedia Commons via WebSearch/WebFetch. Use a descriptive User-Agent including contact info (e.g. `LogoFetcher/1.0 ([email])`). The pattern: find the SVG file on Wikimedia Commons, then construct the thumb URL `https://upload.wikimedia.org/wikipedia/commons/thumb/<x>/<xy>/<File.svg>/500px-<File.svg>.png`. See the keynote skill (`~/.claude/skills/keynote/SKILL.md` § "Fetching assets from the web") for the canonical pattern and gotchas (thumb widths are restricted to specific values like 500/960/1280).
+- **Generic brand logos** (Google products, Microsoft, Slack, Notion, etc.) — Wikimedia Commons via WebSearch/WebFetch. Use a descriptive User-Agent including contact info (e.g. `LogoFetcher/1.0 (you@example.com)`). The pattern: find the SVG file on Wikimedia Commons, then construct the thumb URL `https://upload.wikimedia.org/wikipedia/commons/thumb/<x>/<xy>/<File.svg>/500px-<File.svg>.png`. See the keynote skill (`~/.claude/skills/keynote/SKILL.md` § "Fetching assets from the web") for the canonical pattern and gotchas (thumb widths are restricted to specific values like 500/960/1280).
 - **Icons not in Heroicons** — try simpleicons.org for brand marks, or ask the user to paste the SVG.
 
 After fetching, **save into `~/.claude/skills/animation-builder/assets/logos/` (or `icons/`) AND update `assets/README.md` with a one-line entry**. This is how the library grows.
@@ -327,9 +422,12 @@ alias animrender='uv run --project ~/.claude/skills/animation-builder ~/.claude/
 uv run render.py <file>.html
 # Optional flags:
 uv run render.py <file>.html --duration 5 --fps 60 --out custom.mp4
+uv run render.py <file>.html --alpha --out overlay.mov   # transparent ProRes 4444
 ```
 
 Defaults: `--duration 3.6`, `--fps 30`, output is `<file>.mp4` next to the HTML. Override `--duration` to match the clip — it should equal the time of the last build-in beat plus ≥2 seconds of hold.
+
+Pass `--alpha` when the clip is an overlay that will composite over live footage (see "Transparent overlays" above). Output extension becomes `.mov` (ProRes 4444 with alpha channel). The HTML's `body` must be transparent — see "Rendering pitfalls" for the gotcha if it isn't.
 
 ### Verifying the output
 
@@ -344,6 +442,8 @@ Should report `width=1920 height=1080 r_frame_rate=30/1 codec_name=h264 pix_fmt=
 ### Visual validation (when the composition is non-trivial)
 
 `ffprobe` confirms the file is technically right; it can't tell you whether the spacing, proportions, or alignment look correct. For multi-element compositions — split-screens, flow diagrams, anything with parallel/symmetric elements — screenshot the final held frame in a browser and look at it before declaring the asset done. This catches issues the prose brief doesn't surface (optical asymmetry, off-balance gradients, mismatched-by-a-pixel components).
+
+**Before any Playwright MCP tool call, invoke the `playwright-mcp-guidance` skill.** This applies whether the call is direct or made by a dispatched subagent — in the subagent's prompt, include "first invoke the `playwright-mcp-guidance` skill" as an explicit step.
 
 Workflow with Playwright MCP:
 
@@ -404,6 +504,40 @@ The `animation:` shorthand sets `animation-delay: 0` implicitly. `.row.bot` has 
 - **Fix:** bump the override selector's specificity to match: `.row.r2 { animation-delay: 0.5s }`. Same number of class selectors, so later rule wins.
 - **Prevent:** when writing animation shorthands, set delay explicitly in the same rule (`animation: name 0.5s 0.3s ease-out forwards`), OR use longhand `animation-delay` everywhere, OR override delay only from rules with equal-or-greater specificity.
 
+### 4. Animating `background: color-mix(..., transparent)` leaks thin colored stripes at row edges
+
+A row whose `background` is animated via keyframes that interpolate between `transparent` and a semi-transparent `color-mix()` value (e.g. `color-mix(in srgb, var(--accent) 12%, transparent)`) renders **thin colored horizontal lines at the row's top/bottom edges before the highlight is supposed to appear**. The bug shows up even with explicit `0%, 40% { background: transparent }` holds — the interpolated value at the edge pixels resolves to a faint tint of the destination color.
+
+- **Cause:** Chromium's compositor pre-rasterizes the animation's final paint into a layer to enable cheap interpolation. `transparent` and `color-mix(..., transparent)` are both `rgba(?,?,?,0)`, but Chromium picks the destination's non-zero RGB channels to interpolate from. At sub-pixel boundaries (top/bottom row edges), antialiasing samples the partially-blended layer and you see a 1–2px stripe of the destination color even at frames where the animation's effective alpha should be zero.
+- **Fix:** Don't animate the `background` property when the endpoint uses `color-mix(..., transparent)`. Instead, paint the highlight on a `::before` pseudo-element with the final color pre-set and animate `opacity` from 0 to 1:
+  ```css
+  .row.highlight { position: relative; }
+  .row.highlight::before {
+    content: ''; position: absolute; inset: 0;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    opacity: 0; pointer-events: none;
+  }
+  .row.highlight::before { animation: fade-hl 0.6s ease-out 2.4s forwards; }
+  .row.highlight > * { position: relative; z-index: 1; }
+  @keyframes fade-hl { from { opacity: 0 } to { opacity: 1 } }
+  ```
+  Opacity interpolation is a single scalar — no per-channel sub-pixel artifacts. The trick generalizes to any "tinted highlight fades in" pattern.
+- **Prevent:** anytime you reach for `background: ... color-mix(..., transparent)` in a keyframe, stop and reach for the pseudo-element + opacity pattern instead.
+
+### 5. Imported stylesheets bleed an opaque background into alpha renders
+
+`--alpha` produces a `.mov` whose viewport area still composites as a solid color (often near-white or near-black) over any non-white background in the editor — even though Playwright's `omit_background=True` is set and ffmpeg's `yuva444p10le` pixel format is correct.
+
+- **Cause:** a parent stylesheet (a brand palette, a CSS reset, a design-system import) sets `html, body { background: <color>; }`. `omit_background: true` only suppresses Chromium's default white backdrop; it cannot un-paint pixels the page itself painted. The "transparent" `.mov` is actually opaque off-white because the body was painted off-white before the screenshot.
+- **Diagnosis:** open one frame of the `.mov` over a saturated solid color (red or green) — `ffmpeg -y -f lavfi -i "color=c=0xff0000:s=1920x1080" -i out.mov -filter_complex "[1:v]overlay=shortest=1" -frames:v 1 check.png`. If the red doesn't show through anywhere the overlay isn't painting, the bg is opaque.
+- **Fix:** in the overlay HTML's own `<style>` block (after any `<link>` to an external stylesheet), set:
+  ```css
+  html, body { background: transparent !important; }
+  ```
+  `!important` so it beats the imported rule regardless of source order or specificity. Re-render and re-verify against red.
+- **Prevent:** when authoring overlays from a template that imports a brand palette, always include the transparent-bg override even if the template's own styles look harmless — palettes change, and the next palette edit may silently re-introduce the bug.
+
 ## When the animation has many states / labels building in
 
 For sequences like "four boxes appear left-to-right" or "three labels fade in then animate into a file diagram," author one animation per element with staggered `animation-delay`, all sharing the same total duration. Don't try to script complex sequences with JavaScript timelines — CSS keyframes + delays cover the common cases and are dead simple to seek deterministically with the render pipeline.
@@ -447,6 +581,7 @@ If the MP4 is overwriting a path already referenced by an FCPXML the editor open
 - `templates/chat-thread.html` — scaffold for any "Claude in a back-and-forth with the user" scene. User on right, bot on left, with sub-styles for thinking dots, tool-call chips, draft docs, and edit annotations.
 - `templates/file-mock.html` — scaffold for an IDE-style file window (SKILL.md, README, settings). Title bar with traffic-light dots, cerulean-keyed frontmatter, neutral instruction skeleton.
 - `templates/math-curve.html` — scaffold for any chart of an analytical relationship. Generates the SVG path procedurally from a JS function (Gaussian + tanh by default); easy to swap in any y(x).
+- `templates/caption-overlay.html` — scaffold for transparent lower-third caption overlays (karaoke / word-by-word reveal). Render with `--alpha`; output is ProRes 4444 `.mov` with alpha.
 - `scripts/render.py` — the render pipeline. Don't reinvent.
 - `references/techniques.md` — patterns for common animation types (morph, build-in, draw-on, side-by-side).
 - `assets/README.md` — running index of bundled logos/icons.

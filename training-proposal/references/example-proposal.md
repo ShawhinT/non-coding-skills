@@ -1,6 +1,6 @@
 # Acme Corp AI Training - Outline
 
-*Prepared on Mar 12, 2026 by [Your Name]*
+*Prepared on Mar 12, 2026 by Shaw Talebi, PhD*
 
 ---
 
@@ -8,7 +8,7 @@
 
 <table class="syllabus">
 <tr><td><strong>Training Title:</strong></td><td>AI Applications with Microsoft Copilot for Business Teams</td></tr>
-<tr><td><strong>Instructor:</strong></td><td>[Your Name]</td></tr>
+<tr><td><strong>Instructor:</strong></td><td>Shaw Talebi</td></tr>
 <tr class="spacer"><td colspan="2"></td></tr>
 <tr><td><strong>Date(s):</strong></td><td>TBD</td></tr>
 <tr><td><strong>Session Times:</strong></td><td>TBD</td></tr>
@@ -62,7 +62,7 @@
     - Prompt engineering recap
     - Copilot capabilities relevant to Finance & Accounting
 
-- **Bring Your Own Use Case — Live Building** *(75 min)*
+- **Bring Your Own Use Case: Live Building** *(75 min)*
     - Participants bring real tasks from their day-to-day work
     - Use Case 1
     - Use Case 2
@@ -78,7 +78,7 @@
     - Prompt engineering recap
     - Copilot capabilities relevant to Operations
 
-- **Bring Your Own Use Case — Live Building** *(75 min)*
+- **Bring Your Own Use Case: Live Building** *(75 min)*
     - Participants bring real tasks from their day-to-day work
     - Use Case 1
     - Use Case 2
@@ -94,7 +94,7 @@
     - Prompt engineering recap
     - Copilot capabilities relevant to Sales & Marketing
 
-- **Bring Your Own Use Case — Live Building** *(75 min)*
+- **Bring Your Own Use Case: Live Building** *(75 min)*
     - Participants bring real tasks from their day-to-day work
     - Use Case 1
     - Use Case 2

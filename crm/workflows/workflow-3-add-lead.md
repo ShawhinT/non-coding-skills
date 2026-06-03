@@ -41,8 +41,8 @@ owns the cadence going forward. See SKILL.md → "Promotion to main CRM" for the
 
 ## When the new lead came from a Homepage Contact form
 
-If the source is `Homepage Contact` (shawhintalebi.com contact form), the original submission lives in u/1 (`shawhintalebi@gmail.com`), not the business inbox. When drafting a reply as part of this workflow:
+If the source is `Homepage Contact` (shawhintalebi.com contact form), the original submission lives in u/2 (`shawhintalebi@gmail.com`), not the ABA inbox. When drafting a reply as part of this workflow:
 
-- Follow the Squarespace threading instructions in `email-helper` → "Squarespace contact-form threads": reply in the u/1 thread via Chrome (click Reply), CC `shaw@aibuilder.academy`
+- Follow the Squarespace threading instructions in `email-helper` → "Squarespace contact-form threads": reply in the u/2 thread via Chrome (click Reply), CC `shaw@aibuilder.academy`
 - Use the Calendly link mapping in that same section to pick the right link based on the lead's ask (corporate training → `ai-transformation`, individual workshop → `claude-workshop-discovery`, general/vague → `aba-intro-call`)
 - Do NOT create a standalone draft in the business inbox — that loses the thread

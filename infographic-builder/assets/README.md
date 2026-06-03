@@ -28,3 +28,8 @@ After fetching:
 2. Copy into the project's local `assets/` folder.
 3. Append a line here.
 4. Verify with `file <path>` — should report PNG or SVG, not HTML/ASCII (those are error pages).
+slack — simpleicons.org #4A154B, 2026-05-17
+slack — Wikimedia Commons (Slack_icon_2019.svg), multicolor, 2026-05-17
+keynote — Wikimedia Commons (Keynote 15.1 application icon), macOS app icon (blue), 2026-05-25
+youtube — Wikimedia Commons (YouTube full-color icon 2017), brand red #FF0000, 2026-05-25
+google-analytics — Wikimedia Commons (Logo Google Analytics), icon mark cropped from wordmark, orange/yellow, 2026-05-25

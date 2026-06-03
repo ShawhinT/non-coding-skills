@@ -12,6 +12,28 @@ When in doubt, open one of these and read the HTML before authoring from scratch
   - Right card graphic: monospace ASCII directory tree.
   - Footer `@shawhintalebi` centered, 14px JetBrains Mono.
 
+- **`two-types-of-skills`** — two-panel comparison with parallel-card eyebrows + bottom-anchored examples row.
+  Path: `~/Documents/_stv/_content/_SFC/linkedin/2026/AI-education/two-types-of-skills/two-types-of-skills.html`
+  - Title at top (Manrope 800, 48px), then two cards in `1fr 1fr` grid.
+  - Each card: `TYPE 1` / `TYPE 2` mono eyebrow → display word → one-line descriptor → graphic → `e.g.` footer row separated by a hairline border.
+  - Equal-bottom alignment via `.card { min-height: 560px; display: flex; flex-direction: column }` + `.graphic { flex: 1 }` — works when the two graphics are different sizes (left = 3-step list, right = 3+2 logo tile grid).
+  - Logo tiles use `object-fit: contain` on the `<img>` so mixed-aspect-ratio logos (Gmail 4:3, Slack 1:1) don't squish.
+  - Use when comparing two named *types* or *categories* with examples — the eyebrow carries the "this is one of two" framing.
+
+- **`four-step-framework`** — N-step horizontal progression (4 cards in a row).
+  Path: `~/Documents/_stv/_content/_SFC/linkedin/2026/ai-education/four-step-framework/four-step-framework.html`
+  - Header is title-first, eyebrow-below (h1 then `4-STEP FRAMEWORK` mono in accent). Inverts the default eyebrow-above order when the title is the main hook and the eyebrow is metadata.
+  - Cards in a `1fr 1fr 1fr 1fr` grid with **explicit `height` on the grid** (470px) instead of letting `flex: 1` distribute remaining space — without this the cards float up and leave dead space at the bottom of the canvas.
+  - Each card: white bg, 18px radius, 1px hairline border, mono step eyebrow (`STEP 1`) in accent, bold Manrope step label below.
+  - Connector arrows (Heroicons `arrow-long-down`) use **stroke-width 2.75**, not the default 1.5 — at ~22–32px on-canvas the thin default reads as a render glitch.
+  - Step 2 uses the **chat-thread bubble cluster** pattern:
+    - Vertical `.thread` of alternating `.row.left` / `.row.right` flex rows, each with a fixed-width pill (`width: 72px; height: 22px; border-radius: 14px`).
+    - Two colors map to two senders — pick one mapping and keep it consistent across all conversation graphics in the same brand context. (If a brand-system skill is loaded, see its composition reference for the specific sender→color mapping; e.g. `aba-brand-system/references/infographic-composition.md` defines ABA's coral=AI / Cerulean=user pairing.)
+    - Pills contain three small white dots (5px circles, 4px gap) to read as "a message" without committing to text content.
+    - One bubble per row to keep the thread reading top-to-bottom; never stack bubbles diagonally — that scatters the eye.
+    - Use whenever a graphic needs to *imply* a conversation without rendering legible text (e.g. "many messages distill into one document").
+  - Use when the post is an ordered framework with N≤4 parallel steps and each step needs its own visual.
+
 ## Portrait (1080×1350)
 
 - **`6-ways-claude-context`** — numbered vertical list.
@@ -23,6 +45,30 @@ When in doubt, open one of these and read the HTML before authoring from scratch
   - Use when the post is a numbered list of N≤6 with parallel structure (each item is one method/tactic/option).
   - No `assets/` folder — all icons are inline SVG.
 
+- **`non-coding-skills`** — icon-led vertical card list (7 items), sized to fill the frame.
+  Path: `references/examples/non-coding-skills/non-coding-skills.html`
+  - Title-only header (Manrope 800, 72px), then 7 cards in a flex column, `gap: 16px`, each a 20px-radius hairline-border card. No number column (unlike `6-ways-claude-context`) — the icon leads.
+  - Card row: `92px` icon tile (`rgba(1,4,19,0.04)` fill + hairline) + text block (Manrope 700 42px name, JetBrains Mono 23px accent handle inline, Libre Franklin 28px desc).
+  - Icon tiles mix inline Heroicons (in the accent) with brand-logo `<img>`s using `object-fit: contain` — so a Heroicon and a Keynote/YouTube logo sit at consistent size in the same tile.
+  - **Frame-fill sizing:** scaled type/tiles up and sized the canvas to *measured* content (~1080×1555) instead of a fixed 1350; footer sits in normal flow (no `margin-top: auto`). See SKILL.md § "Composition principles — Fill the frame" and § "Iterative height tuning for tall composites."
+  - Use for a flat catalog/list of N items (tools, skills, features) where each item is one icon + name + one-line description and order doesn't imply sequence.
+
 ## Square (1080×1080)
 
 _(none yet — add when one ships.)_
+
+## Composite cheatsheet (tall portrait, 1080×~2000)
+
+- **`claude-skill-cheatsheet`** — multi-section educational summary bundling several standalone topics into one shareable artifact.
+  Path: `references/examples/claude-skill-cheatsheet/claude-skill-cheatsheet.html`
+  - Title-only header (Manrope 800, large) + one-line subtitle + 3px cerulean rule. No eyebrow.
+  - Multiple labeled sections stacked vertically with `gap: 36px`; each section is a `.section` flex column with its own `.section-title` (Manrope 800, 28px) and a card group below.
+  - Each section reuses the markup from an existing standalone graphic (Chat/Cowork/Code triplet, Connectors vs Skills two-card, 3 types of skills, 4-step loop, 6 ways grid). Copy from the source HTMLs rather than re-authoring, and namespace classes by section (`.s1-card`, `.s2-card`, etc.) to avoid collisions.
+  - **Footer auto-positioning:** `html, body { min-height: 100vh }` + `.canvas { min-height: 100vh; display: flex; flex-direction: column }` + `.footer { margin-top: auto }` + canvas `padding-bottom: 28px` anchors the footer to the lower third regardless of canvas height. Footer text defaults to `@shawhintalebi`; brand-system skills may override (e.g. `aba-brand-system` uses `aibuilder.academy`).
+  - **Surface-state pill pattern** (used in the 6-ways grid) — small per-row mono pills showing which of N surfaces a method works on. Three states with semantic styling:
+    - **On:** filled pill in the surface's accent color (chat=cerulean, cowork=coral, code=slate). One color per surface — pills read as a legend without needing one.
+    - **Partial:** transparent bg with 1px outline in the same color (when a feature exists but is limited on that surface).
+    - **Off:** muted gray fill, no strikethrough. Strikethrough reads as "removed" and feels aggressive; muted reads as "not applicable."
+    Reusable for any "X works on Y" availability matrix without resorting to a full grid.
+  - **Section-flow notes:** every card uses `1.5px solid var(--border)` with `border-radius` 14–22px depending on density. Card edges *are* the section breaks — no decorative dividers between sections.
+  - Use when the brief is a "cheatsheet," "guide," or "everything-you-need" piece summarizing 3–6 topics already proven as individual graphics. See SKILL.md § "What this skill is for — Recognized exception" for when composite cheatsheets justify the multi-idea format.

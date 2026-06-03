@@ -48,9 +48,9 @@ These explain *why* Shaw's writing works. Internalize them rather than treating 
 
 **Specificity is credibility.** Concrete numbers, tool names, dollar amounts, real outcomes. Never generic observations anyone could make. Don't write "I see this in my work and in the teams I train." Write "Claude Code writes ~99.9% of my code."
 
-**One idea, one post.** Never cover two topics. If you can't state the post's single idea in one sentence, it's too broad.
+**One idea, one post.** Never cover two topics. If you can't state the post's single idea in one sentence, it's too broad. This applies to the solution too: keep it as single as the problem. If the payoff is "stop consuming, start building," don't expand it into a list of example tactics ("automate the task you hate, build the tool you wish existed, fix the thing that's been bugging you"). One clean move lands harder than three illustrations of it.
 
-**Validate the hard part before offering structure.** When a thesis asks the reader to do something difficult, acknowledge the difficulty before presenting the solution. A line like "this won't be as easy as you'd like, but it is a simple roadmap" disarms the "easy for you to say" objection that otherwise makes clean frameworks read as glib. Especially useful in thesis posts that introduce a roadmap or model — without the validation beat, the reader files the post under "consultant energy" and scrolls past.
+**Validate the hard part before offering structure.** When a thesis asks the reader to do something difficult, acknowledge the difficulty before presenting the solution. A line like "this won't be as easy as you'd like, but it is a simple roadmap" disarms the "easy for you to say" objection that otherwise makes clean frameworks read as glib. Especially useful in thesis posts that introduce a roadmap or model — without the validation beat, the reader files the post under "consultant energy" and scrolls past. But validation doesn't always need its own line. When a post opens by naming the reader's situation precisely (the exact fears, the exact thought they're having), that accurate naming *is* the validation, and a separate "I get it, this is hard" beat on top of it reads as padding. Reserve the explicit validation line for when you're about to hand the reader a difficult ask or framework, not as a reflex.
 
 **Technology is personal.** Never discuss tech in the abstract. Ground it in Shaw's specific experience — what he pays, what he uses, what broke, what clicked.
 
@@ -60,7 +60,7 @@ These explain *why* Shaw's writing works. Internalize them rather than treating 
 
 **Write for the repost.** Reposts are Shaw's primary reach amplifier — they account for 26-65% of all engagement across 9 months of data. Posts that get reshared tend to be: (1) self-contained insights someone can endorse by sharing, (2) frameworks or lists that make the sharer look informed, (3) opinions that let the sharer signal alignment. When drafting, ask: "Would someone repost this to say 'this is what I think too'?" If yes, you're on the right track.
 
-**Every line moves forward.** If a line restates the hook or echoes an earlier point, cut it. The reader should learn something new from every sentence.
+**Every line moves forward.** If a line restates the hook or echoes an earlier point, cut it. The reader should learn something new from every sentence. The most common offenders: throat-clearing transitions ("here's what I've noticed," "but here's the thing," "here's the problem"), restating the hook in different words a few lines down, and anaphora triples ("Another model... Another headline... Another reminder...") that feel rhetorical but carry no new information. Cut the connective tissue and let the lines sit next to each other. A single flat declarative ("Everything else is noise.") can carry a turn that a multi-line build would only dilute.
 
 ## Formatting
 
@@ -79,7 +79,7 @@ These are loose shapes, not rigid templates. The examples show how they actually
 
 **Builder's Log** — Process, tech stack, how-I-do-X. Walk through tools or steps. Practical, no fluff. Can carry 6-8 short items. (See `examples-educational.md`)
 
-**Thesis Post** — Opinion, trend, bigger idea. Build a narrative arc: status quo → tension → resolution. 2-3 conceptual moves max. Include a "so what" connecting to broader stakes. (See `examples-thesis.md`)
+**Thesis Post** — Opinion, trend, bigger idea. Build a narrative arc: status quo → tension → resolution. 2-3 conceptual moves max. Include a "so what" connecting to broader stakes. When the thesis corrects a belief, reframe in one line rather than explaining the mechanism behind it: assert that the thinking is wrong and give the truer frame, then move on. Don't lecture on *why* the reader feels that way. A reliable micro-structure for emotion-driven theses: name the reader's situation precisely → quote the giving-up thought → one-line pivot ("but that's more anxiety speaking than reality") → the reframe → a flat-declarative punch → a directive close. (See `examples-thesis.md`)
 
 **Personal / Life Milestone** — Shaw's single highest-performing archetype. A concrete life event (travel, birthday, career transition, first win) becomes the anchor for one earned insight. Numbers do the credibility work, light self-deprecation protects against a brag read. Use when Shaw shares something that actually happened to him personally. (See `examples-personal.md`)
 
@@ -133,7 +133,7 @@ Hooks are two-line systems. The second line pulls the reader forward — ellipsi
 
 ### Step 5: Write the CTA
 
-One clear, specific question. No "or" / "and" splitting attention. Answerable in one sentence but invites real thought.
+Usually one clear, specific question. No "or" / "and" splitting attention. Answerable in one sentence but invites real thought. But a question isn't mandatory. When the thesis is itself a call to action, a directive close ("stop consuming content about AI and start building with it") often lands harder than a discussion question tacked on. Match the ending to the post; don't force a question where an imperative is the natural close.
 
 **Prefer outcome questions over activity questions.** "What AI skill resulted in the biggest transformation for your work?" outperforms "What AI skill are you developing right now?" because it invites concrete stories and results rather than status updates. Past-tense, result-focused CTAs generate testimonial-style replies that add credibility for later readers and are more shareable than in-progress updates. When in doubt, ask about an outcome someone has already experienced, not an activity they're currently doing.
 
@@ -164,4 +164,6 @@ Data patterns from 9 months of Shaw's LinkedIn analytics (Q3 2025 – Q1 2026). 
 
 ## Post Length
 
-Most posts: 150-300 words. Listicles can run longer. Thesis posts up to 400 if the argument requires it. Never pad for length.
+Most posts: 150-300 words. Listicles can run longer. Never pad for length.
+
+Thesis posts skew shorter than you'd think. A thesis built on a single reframe often lands best at ~120-150 words: long enough to name the tension and turn it, short enough that every line is load-bearing. Treat 400 as a rare ceiling for genuinely multi-move arguments, not a target. When in doubt, cut. The tighter draft almost always hits harder than the fuller one.

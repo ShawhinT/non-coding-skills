@@ -61,12 +61,14 @@ If the CRM notes reference earlier calls, or earlier ABA Calls / ABA Trainings p
 
 Search Gmail for messages to/from the person's email address. Read the full thread. Email exchanges often contain context that the CRM notes compress out — tone, specific asks, how they described their situation in their own words.
 
-### 5. Web search the company and person
+### 5. Web search the company and everyone on the call
 
-Do a quick web search on both the company and the individual. You're looking for:
+Do a quick web search on the company and on **every named attendee**, not just the primary contact. You're looking for:
 
 - **Company**: what they do, approximate size, business model, anything notable (acquisitions, funding, industry position). A few sentences, not a report.
-- **Person**: role, title, brief career background. Just enough so Shaw knows who he's talking to without asking them to walk through their resume.
+- **Each person**: role, title, brief career background. Just enough so Shaw knows who he's talking to without asking anyone to walk through their resume.
+
+On a group call, who the contact chooses to bring is itself a signal — an IT or security lead, an ops/process owner, a finance gatekeeper, or a senior sponsor each tells you what the conversation is really about. Pull each attendee's email and name from the calendar event, and don't let Shaw walk in cold on anyone in the room. (For a 1:1 call this is just the one person.)
 
 Don't try to draw deep conclusions from web research. The goal is factual background, not analysis. Insights about their pain points, goals, and motivations are for the call itself.
 
@@ -76,7 +78,7 @@ Write the pre-call brief directly to the person's call page in Notion. The brief
 
 **Pre-Call Research** — short blocks, glanceable before a call. Each block is **1-2 sentences flat** — no bullet lists of details, no quoted excerpts, no stacked interpretive paragraphs. If a block is growing into a sub-document, you've over-researched the page; compress.
 
-- **Person**: who they are, their role, and background
+- **Person**: who they are, their role, and background. On a multi-person call, give each additional attendee their own short block (name, role, and why they're likely in the room) held to the same 1-2 sentence discipline — for a 1:1 this is just the single block.
 - **Company**: what the company does, size, anything notable
 - **From emails**: what the email exchange revealed — what they asked for, how they described their situation, any signals worth noting
 - **Read**: a one-line take on what the research adds up to — the angle Shaw should walk in with, or the tension worth probing live. Skip if there's nothing useful to say.
@@ -92,7 +94,7 @@ After writing to Notion, let Shaw know it's ready. He'll review it there and fol
 
 ```
 Pre-session
-- [Intake responses (Sheet)](https://docs.google.com/spreadsheets/d/1q27xEm6VBuuZXIocpagiCYus24hich9nigg5sQrbbVc/edit)
+- [Intake responses (Sheet)](https://docs.google.com/spreadsheets/d/[sheet-id]/edit)
 - Rank use cases best (high impact, high probability of success) to worst (low impact, low probability of success)
 - Send agenda 24-hr before
 ```

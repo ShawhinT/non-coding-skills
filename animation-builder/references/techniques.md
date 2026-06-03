@@ -165,3 +165,55 @@ Two valid patterns:
 2. **One scene-wide timeline.** Use a single keyframe `@keyframes scene` on a parent, with `transform` and `opacity` affecting children via descendant selectors and CSS variables. More compact but harder to debug.
 
 Default to pattern 1 unless the scene has many elements with tightly choreographed timing.
+
+## Karaoke / word-by-word reveal
+
+For captions where words appear in sync with the voice-over (intro emphasis, callouts that build alongside the line being spoken). Pairs naturally with the alpha render path — see "Transparent overlays" in `SKILL.md`.
+
+Each word lives in its own `<span class="w">` and starts invisible. A single shared keyframe handles the reveal; `animation-delay` per word is set to that word's spoken timestamp (relative to t=0 on the clip):
+
+```css
+.w {
+  display: inline-block;
+  opacity: 0;
+  animation: wordOn 0.18s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+@keyframes wordOn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Per-word delay = the spoken timestamp from a transcript. */
+.line:nth-child(1) .w:nth-child(1) { animation-delay: 0.11s; }  /* IF */
+.line:nth-child(1) .w:nth-child(2) { animation-delay: 0.21s; }  /* YOU'RE */
+.line:nth-child(2) .w:nth-child(1) { animation-delay: 0.27s; }  /* RUNNING */
+/* … etc, one rule per word, delay = word.start from the transcript */
+```
+
+**Why it works under the render pipeline.** Each `<span>`'s animation is an independent `Animation` object on the document. The renderer's `document.getAnimations().pause()` then per-frame `currentTime = t` seek applies to every animation uniformly, and each one resolves its `delay → duration → fill` state at that `t`. Frame-accurate, deterministic, no JS timelines needed.
+
+**Multi-card karaoke (one phrase replaces the next).** Wrap each card in its own `<div class="card">` and give the card two animations — one to fade it in at its window's start, one to fade it back out at the next card's start:
+
+```css
+.card { opacity: 0; }   /* default hidden */
+.card.c1 {
+  animation:
+    cardIn  0.10s linear 0.11s forwards,
+    cardOut 0.10s linear 1.31s forwards;   /* fades out as card 2 fades in */
+}
+.card.c2 {
+  animation:
+    cardIn  0.10s linear 1.31s forwards,
+    cardOut 0.10s linear 2.27s forwards;
+}
+/* …one per card; the LAST card's cardOut fires near the clip's end. */
+
+@keyframes cardIn  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes cardOut { from { opacity: 1; } to { opacity: 0; } }
+```
+
+Card opacity gates the words inside multiplicatively (child opacity × parent opacity), so words that "appeared" in a previous card naturally disappear when that card fades out — no need to write per-word fade-outs. Visible-card windows can stack (cards 1 through N can all be in the DOM at once) because only one is opacity > 0 at any given t.
+
+**Getting the timestamps.** When the captions sit over a cut video, transcribe the cut directly with the `video-editor` skill's `scripts/transcribe.py` — its output is already in timeline-time (no FCPXML spine math). Then group words into 1–4-word cards at natural speech beats, with 0–2 "punch" words per card promoted to an accent color. Function words (the, of, and) almost never carry the accent; verbs and nouns do.
+
+**Punctuation lands at sentence boundaries, not mid-phrase.** A period on the final word of a sentence ("SOMEONE.", "MONTHS.") signals "the thought lands here" — it gives the viewer a beat of closure before the next card replaces it. Putting periods on mid-sentence cards instead makes each card feel like a complete sentence, which fights the karaoke flow (the cards are meant to read as one continuous spoken line, broken into beats). Commas inside a card are usually noise — drop them; the line break between cards already does that work.

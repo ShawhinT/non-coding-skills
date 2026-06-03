@@ -13,7 +13,7 @@ Extract:
 - **Database** — default to **ABA** unless Shaw explicitly names another or it's clearly a
   newsletter/video/social/call item
 - **Related people or pages** — names mentioned in the request (e.g., "FU with [Person]" → auto-link
-  that person's CRM entry and most recent call page)
+  [Person]'s CRM entry and most recent call page)
 
 ## Step 2: Match Shaw's naming conventions
 
@@ -26,7 +26,7 @@ Shaw's task titles are short, action-first, and follow recurring patterns:
 | `Follow up with <Name>` | `Follow up with [Person]`, `Follow up with speakers` |
 | `Prep for <thing>` | `Prep for 1:1 Training (PM)` |
 | `<Name> - <session type>` | `[Person] - Check-in`, `[Person] - 1:1 Claude Workshop` |
-| `Reply <Name>` | `Reply [person]` |
+| `Reply <Name>` | `Reply [Person]` |
 | `<verb> <object>` | `Update website messaging`, `Test new ABA copy` |
 
 Prefer these patterns over verbose titles. If Shaw says "remind me to follow up with [Person]

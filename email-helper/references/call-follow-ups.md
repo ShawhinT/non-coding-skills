@@ -38,15 +38,19 @@ Shaw's call follow-ups tend to follow this shape, though the specifics vary by f
 
 **Key principle:** Keep the email body short. The proposal PDF carries the detail — don't re-explain workshop content, use cases, or session breakdowns in the email. The bullets just convey the shape of the deal (format, delivery, price) before the recipient opens the attachment.
 
+**Bullet formatting (the bold exception).** The deal-shape bullets bold the leading category label — `**1:1 Claude Workshops**`, `**Virtual live sessions**`, `**Total investment**`. This is the one place the skill's blanket "no bold" rule does not apply, because each bullet covers a distinct deal facet and the bold label functions as a scan-anchor for the recipient. Bold only the label, not the value or the trailing clause. When drafting via `create_draft`, use HTML `<b>` tags inside `<li>` (Gmail renders them; plain Markdown `**...**` does not). The rest of the email — opener, intro line, wrap-up — stays plain.
+
 **Optional P.S. line:** If the recipient mentioned needing supporting docs for internal approval (e.g., a CV for L&D submission), add a `P.S.` noting the extra attachment.
 
 ---
 
 ## Template: General Call Follow-Up
 
-**When to use:** The fallback skeleton for a sales or research call with no dedicated SOP template. For discovery calls specifically, use the Discovery Call SOP's two post-call FU variants (proposal vs. resources) instead.
+**When to use:** The fallback skeleton for any call with no dedicated SOP template — sales, research, or an informal coffee chat. For discovery calls specifically, use the Discovery Call SOP's two post-call FU variants (proposal vs. resources) instead.
 
 **Subject line:** "Call follow-up"
+
+**One next step → keep it prose:**
 
 ```
 Hey [First Name],
@@ -55,13 +59,32 @@ Really enjoyed our call [yesterday/on Thursday/etc.]!
 
 [COMPLIMENT — one sentence reacting to something specific from the call]
 
-[VALUE — recap of agreed next step, resource, or info you promised to send]
+[VALUE — the one resource, agreed next step, or info you promised to send]
 
 [CLOSING QUESTION — one question to move things forward]
 
 Cheers,
 Shaw
 ```
+
+**Two or more next steps → use bullets (the session-FU shape).** When the call leaves you with more than one concrete thing to hand off (book this, set up that, try this skill), put them in a short verb-first bulleted list instead of threading them through paragraphs. Buried action items are the failure mode — the reader should see the asks at a glance. This is the same shape as the Post-Workshop/Post-Training FU below, and it applies to informal calls too (e.g. a coffee chat where you're sending a booking link and a skill).
+
+```
+Hey [First Name],
+
+Really enjoyed our [call/coffee chat] [yesterday/on Thursday/etc.]!
+
+Here are a couple of next steps:
+- [Verb-first action, e.g. Book the 1:1 here (link)]
+- [Verb-first action, e.g. Set up the some-skill skill with this prompt for Claude: "..."]
+
+[Open-door close, e.g. Let me know if any questions come up :)]
+
+Cheers,
+Shaw
+```
+
+Cap at ~3 bullets, each starting with a verb; skill names lowercase kebab-case and bolded (see Post-Workshop/Post-Training FU). One CTA still leads — the extra bullets are gives (resources), not competing asks.
 
 ---
 
@@ -81,7 +104,7 @@ Shaw
 - Include the P.S. with the skill-helper Google Drive link.
 
 **Examples of what suggestion bullets look like (from real sent emails):**
-- "Improve the *ssc-lbo-model* skill by manually reviewing its output and giving Claude feedback"
+- "Improve the *lbo-model* skill by manually reviewing its output and giving Claude feedback"
 - "Create a *calendar-helper* skill based on the existing chat where Claude helped you prioritize your week"
 - "Create a *slack-helper* skill by having Claude research your Slack channels so it can navigate them more effectively in the future"
 

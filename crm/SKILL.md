@@ -70,21 +70,30 @@ need to be duplicated here.
 - `ABA contact form (3/16). Replied, offered call (3/16).`
 - `Call on 3/13. Not right now.`
 - `Call w/ [Lead Name] & [Lead Name] (3/27). Sending proposal (3/28).`
+- `Booked ABA Intro Call 6/2 (5/31).` *(first entry on a new lead — just the trigger)*
+- `[Lead Name] (CFO/COO, [email]) replied accepting, sent next steps (6/1). Closed (6/1).` *(multi-person reply compressed to the lead actor)*
 
-**Bad example (too much context):**
+**Bad examples:**
 - `Call w/ [Lead Name] & [Lead Name] (3/27). [Company] growth analytics, small team, already using MCP + agents. $[amount] L&D budget/person. Sending proposal (3/28).`
+  *(business context belongs in the ABA Calls page, not Notes)*
+- `Booked ABA Intro Call 6/2 4pm CT (5/31). Saw Cowork for Execs video. Owns business, already using Claude. At [Company] ([Person] on LinkedIn — AI solutions exec).`
+  *(everything after the booking line is background — that belongs in the page body's Context section)*
+- `[Lead Name] (CFO/COO, [email]) replied for [Lead Name] — accepted, moving forward w/ 4 participants ([Lead Name], [Lead Name], [Lead Name], [Lead Name]). cc'd [email] + [email] (6/1). Replied w/ next steps: kickoff email + invoice (6/1). Closed (6/1).`
+  *(too verbose — don't list every cc'd person or unpack what "next steps" included)*
 
 **Rules:**
 - Always append new entries; never overwrite existing notes
 - Use `(M/D)` date format
 - Common shorthands: `FU` = follow up, `BAMFAM` = book a meeting, from a meeting, `ABA` = AI Builder Academy, `ABB` = AI Builders Bootcamp
 - Only include: outreach actions, call dates, proposal/outline sent, follow-ups, responses, status changes
-- Do NOT include: company details, team size, tech stack, budget info, call discussion topics
+- Do NOT include: company details, team size, tech stack, budget info, call discussion topics, **lead role/title, intake form answers, how they heard about Shaw, links to their LinkedIn or website**. All of that lives in the page body's Context section.
+- **First Notes entry on a new lead is just the trigger.** A new Active Lead's first entry logs only the pipeline action that created the record (e.g. `Booked ABA Intro Call 6/2 (5/31).`, `ABA contact form (3/16). Replied, offered call (3/16).`, `Warm outreach DM (3/4).`). Background, role, company, and intake answers go in the Context section of the page body, not Notes.
+- **Compress multi-person replies.** When several stakeholders get cc'd in a single reply, log who acted and what happened — not every cc'd address, and not what was inside "next steps." Use shorter form: `[Lead Name] (CFO/COO) replied accepting, sent next steps (6/1).` Reserve full email addresses for the page body's Context/stakeholders list (and add them there once, the first time they appear).
 - **Do NOT include future-FU markers** (e.g., "FU in April", "BAMFAM 4/30"). Those belong in the
   `Next Contact` field. Notes log what *happened*; `Next Contact` tracks what's *next*.
 - When other stakeholders are involved in a deal (e.g. a second contact on the thread), mention them
   by name so future sessions have context without re-reading the full email chain.
-  Example: `Srikanth ([email]) responded, evaluating proposals (3/17).`
+  Example: `[Person] ([email]) responded, evaluating proposals (3/17).`
 
 ---
 
@@ -146,6 +155,29 @@ constantly hear their problems to inform marketing and new offers.
 
 This is the same field on both Active Leads and Clients. Workflow 1 sorts on `Next Contact <= today` for both tables.
 
+### Point-person anchoring (multi-person accounts)
+
+When an engagement spans several people at one organization — a champion plus the teammates
+who attend sessions — the CRM holds a single record for the account, anchored on the **point
+person**: the buyer/champion Shaw negotiates with and stays in relationship with. Only that
+person's touchpoints move `Last Contact?` and `Next Contact`.
+
+Teammate sessions, replies, and scheduling are real activity — link their session pages on the
+account record so the history is one click away — but they do **not** advance the account's
+cadence dates. Per the client-notes philosophy, those linked pages are the record of the sessions;
+only add a Notes line when a teammate touchpoint surfaces something relationship-level (an
+expansion signal, a problem worth remembering). The point is to keep the sync anchored on the
+relationship that actually drives the account, rather than resetting the dates every time a
+teammate's session lands.
+
+`Last Contact?` is the most recent direct touchpoint with the point person (e.g., their last
+email or a call they were on); `Next Contact` is the next planned touchpoint with them. When a
+teammate touchpoint is the only recent activity, leave the point person's dates where the last
+*point-person* touchpoint put them.
+
+Example: for the [Company] account, only [Person] (CEO/champion) carries the dates —
+their teammates' sessions are captured by their linked session pages, and never reset their dates.
+
 ### Client Lifecycle Stages
 
 ```
@@ -167,18 +199,31 @@ Active → Nurturing → Expansion → (back to Nurturing or Churned)
 
 ### Client Notes Format
 
-Same short-log style as Active Leads, but vocabulary shifts from pipeline actions to relationship
-actions. Record check-ins, expansion conversations, and status changes — not business context
-(that goes in the page body).
+Client Notes are a high-signal relationship log, not a per-touchpoint diary. This is the biggest
+break from Active Leads: once someone is a client, the routine play-by-play stops earning a Notes
+line. The cadence dates (`Last Contact?` / `Next Contact`) plus the linked call and session pages
+already capture the routine — a session that happened, a follow-up that went out, an agenda
+confirmed, a check-in sent. Re-logging those in Notes only duplicates what the dates and linked
+pages already say.
+
+Reserve Notes for things that change the relationship, or that the dates can't convey:
+
+- Status transitions (Active → Nurturing, Nurturing → Expansion, etc.)
+- Expansion conversations and new opportunities surfaced
+- Engagement milestones (engagement started, wrapped, re-up)
+- Durable context worth remembering (a referral made, a notable outcome, why they paused)
+
+When a routine touchpoint happens, move the dates and leave Notes alone. When something
+relationship-level happens, add a short dated line.
 
 **Good examples:**
-- `Quarterly check-in (1/15). Exploring data team training (1/20). Sent proposal (1/22).`
-- `Check-in (4/1). Happy with workshop results. Next check-in July.`
-- `Reached out about new team members (5/3). Booked call (5/5).`
+- `Moved from Active Leads (4/1). Workshop engagement.`
+- `Exploring data team training (1/20). Sent proposal (1/22).`
+- `Hired full-time AI trainer, pausing 1:1s — moved to Nurturing (4/28).`
 
 **Rules:**
-- Same rules as Active Leads notes: append only, `(M/D)` date format, use shorthands
-- Track: check-in dates, expansion conversations, proposals, status changes
+- Same mechanics as Active Leads notes: append only, `(M/D)` date format, use shorthands
+- Log relationship-level events, not routine touchpoints — the dates and linked pages carry those
 - Do NOT duplicate business context that belongs in the page body
 
 ---
@@ -320,5 +365,5 @@ brief, the FU task, and the confirmation email in one pass.
 - **Blank `Next Contact` is assumed intentional** — not every lead needs an active follow-up date. `Next Contact` is the structured signal Workflow 1 sorts on, and Shaw leaves it blank deliberately when no follow-up is planned. If context strongly suggests a miss (e.g., an active lead with recent activity but no date), flag it in the summary as "worth reviewing" — but never auto-fill without Shaw's approval.
 - **Drafts aren't touchpoints — only sent is.** A drafted email sitting in Gmail is not a touchpoint until Shaw sends it. Update `Status`, `Last Contact?`, and `Next Contact` based only on actions that have actually happened — calls that took place, emails confirmed sent. When a workflow drafts a follow-up email in the same run as a CRM update, only update CRM for the action that actually occurred (e.g., the call). Leave email-dependent state changes (like advancing to `Outline Sent`, or the +2-day post-outline FU date) for a later update once Shaw confirms send — the next sync will pick up the send via Gmail signal anyway.
 - **Default to action** — when follow-ups are due, create Gmail drafts directly rather than presenting options. For LinkedIn-only leads, flag them in the summary for DM follow-up instead
-- **Always invoke email-helper before drafting an email** — every Gmail draft created during a CRM workflow goes through email-helper first. Skills compose: CRM owns the *who/when/why* of the follow-up; email-helper owns the *voice, threading, and Gmail mechanics*. Skipping it is how plain-body drafts, missed em-dash rules, and snippet-driven (rather than thread-driven) follow-ups slip through. This applies in Workflow 1's step 6, Workflow 2 follow-ups, Workflow 7's confirmation email, and any other CRM step that creates a draft.
+- **Always invoke email-helper before drafting an email** — every Gmail draft created during a CRM workflow goes through email-helper first. Skills compose: CRM owns the *who/when/why* of the follow-up; email-helper owns the *voice, threading, and Gmail mechanics*. The failure mode to watch for is batching: once a workflow has several writes lined up (CRM record, ABA Calls page, FU task, *then* draft), the draft starts to feel like one more parallel tool call and gets composed inline. That's how off-template drafts, missed em-dash rules, and snippet-driven follow-ups slip through. The discipline isn't "remember the rule" — it's "if the next tool call is `create_draft` and email-helper isn't loaded in this turn, stop." This applies in Workflow 1's step 6, Workflow 2 follow-ups, Workflow 7's confirmation email, and any other CRM step that creates a draft.
 - **Every call deserves a follow-up email** — whenever a call or meeting is logged (via Workflow 2) or detected (via Workflow 1), check whether a follow-up email was sent. If not, prompt Shaw or flag it. Sources to check: ABA Calls, ABA Trainings, CRM notes, and Google Calendar

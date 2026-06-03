@@ -44,8 +44,8 @@ For each non-LinkedIn lead, client, **and active-campaign contact**, run three s
 their `Last Contact?` watermark (campaign-contact emails come from the trackers Sub-agent C pulls):
 
 1. `from:<email> OR to:<email>` — direct thread activity
-2. `<company domain>` — catches cc'd stakeholders from the same org (e.g., Srikanth at Matson
-   cc'd on the Debarshi thread)
+2. `<company domain>` — catches cc'd stakeholders from the same org (e.g., [Person] at [Company]
+   cc'd on the [Person] thread)
 3. Name-based fallback for Calendly: `from:notifications@calendly.com "<first> <last>"` —
    catches bookings where the invitee email differs from the CRM email on file
 4. **Multi-participant client engagements:** when the CRM record is a client whose engagement
@@ -174,10 +174,17 @@ Discovery-call bookings won't appear as orphans here — Workflow 7 creates thei
 ### 3. Update existing CRM records
 
 For each record with new signals, apply **Workflow 2**:
-- Append dated entries to `Notes` (short, `(M/D)` format)
+- Append dated entries to `Notes` (short, `(M/D)` format) — for **clients**, log only
+  relationship-level events; routine touchpoints are carried by the dates and linked pages
+  (see SKILL.md → "Client Notes Format")
 - Update `Status` to furthest confirmed stage
 - Update `Last Contact?` to most recent touchpoint
 - Update `Next Contact` per the cadence rules in `references/follow-up-guidance.md`
+
+For multi-person/company accounts, only the **point person's** touchpoints move `Last Contact?`
+and `Next Contact` — teammate sessions and replies don't advance the account's cadence dates
+(they're captured by their linked session pages). See SKILL.md → "Point-person anchoring
+(multi-person accounts)".
 
 "Confirmed" means actually happened — calls that took place, emails that were sent. Sub-agent
 A's Gmail signal is the source of truth for sends; drafts created later in step 6 do NOT
@@ -197,9 +204,15 @@ For any lead now at `Closed`, apply **Workflow 5** to move them to Clients (Nurt
 ### 6. Draft follow-ups
 
 Apply cadence rules from `references/follow-up-guidance.md` to determine *who* needs a follow-up
-and *what* the message should say (FU#1, FU#2, Calendly nudge, etc.). For *how* to draft and
-send — voice, threading, draft management — defer to the **email-helper** skill. For
-LinkedIn-only leads, flag for manual DM.
+and *what* the message should say (FU#1, FU#2, Calendly nudge, etc.).
+
+**Hard gate on every draft.** Before any `create_draft` call in this step, the **email-helper**
+skill must already be invoked in the current turn. This is not "defer to" — it's "stop and
+load." The failure mode this prevents: when step 6 batches several drafts in close succession
+(e.g. one FU per due lead), it's tempting to compose them inline like any other write. That
+produces off-template drafts, missed em-dash rules, and snippet-driven follow-ups. See the
+"When another skill is already running" section in `email-helper/SKILL.md` for the canonical
+composition rule. For LinkedIn-only leads, flag for manual DM (no draft to gate).
 
 **Missing follow-up audit:** In addition to cadence-based follow-ups, check whether any
 recent calls or meetings (last 48 hours) are missing a follow-up email. Cross-reference
@@ -219,6 +232,23 @@ For clients with recent Gmail activity, look for expansion signals: new use case
 budget-cycle references, new hires, positive sentiment about past work. Flag candidates for
 `Expansion` status in the summary — don't auto-change the status.
 
+## Self-audit before producing the summary
+
+Before drafting the three sections below, audit your own tool-call history in this run:
+
+1. **Draft discipline.** For every `create_draft` call made during this sync, confirm an
+   `email-helper` Skill invocation appeared earlier in the same turn. If any draft was created
+   without one, redraft it through email-helper and flag the original draft ID in section 2
+   as "delete — created without email-helper."
+2. **Pre-call brief discipline.** For every new ABA Calls page created during this sync (most
+   often via Workflow 7), confirm `pre-call-research` was invoked to populate the brief. If a
+   page has a placeholder brief, flag it in section 3 ("Calls / sessions") as "needs
+   pre-call-research before the call."
+
+Close the summary with a one-line `Verification:` footer — either `Verification: clean` or
+`Verification: <N> issues fixed (<short list>)`. The line is non-optional; it makes the audit
+visible in the output rather than buried in the run history.
+
 ## Summary report format
 
 Report back in three sections, in this order. Drop sections that are empty — don't show an
@@ -228,7 +258,7 @@ empty bucket. Do not include a "quiet / waiting on others" / "looks up to date" 
 
 Bulleted list of leads/clients/campaign contacts who are *due right now*. For each bullet where
 you created a Gmail draft, link the draft inline using
-`https://mail.google.com/mail/u/2/#drafts/<draftId>` (the `<draftId>` is the `id` returned by
+`https://mail.google.com/mail/u/1/#drafts/<draftId>` (the `<draftId>` is the `id` returned by
 `create_draft`, including the `r` or `r-` prefix). LinkedIn-only DM follow-ups go here too —
 flag the channel inline instead of linking.
 

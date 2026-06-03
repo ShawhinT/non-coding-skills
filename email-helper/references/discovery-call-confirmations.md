@@ -36,9 +36,9 @@ confirmation reply.
   instead so the relationship context carries.
 - **`to:` is the invitee's email**, not `notifications@calendly.com`. Pull the invitee email
   from the notification body.
-- **Subject:** keep the Calendly subject prefixed with `Re:` (e.g., `Re: New Event: [lead name] -
+- **Subject:** keep the Calendly subject prefixed with `Re:` (e.g., `Re: New Event: [Lead Name] -
   05:00pm Tue, May 5, 2026 - ABA Intro Call`).
-- Business inbox is `u/2` — see "Gmail accounts and the `u/` path" in SKILL.md.
+- Business inbox is `u/1` — see "Gmail accounts and the `u/` path" in SKILL.md.
 - No em dashes in the drafted email — see "Punctuation" under Voice in SKILL.md.
 
 ---

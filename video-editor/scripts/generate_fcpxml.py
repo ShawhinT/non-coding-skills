@@ -1,7 +1,18 @@
-"""Phase 3: Convert an EDL (Edit Decision List) + analysis JSON into FCPXML v1.11."""
+#!/usr/bin/env python3
+"""Convert a v3 EDL into an FCPXML v1.11 project file.
 
+Takes a single EDL JSON (with source_file, source_duration, segments) and
+probes the video metadata via ffprobe. All segments are treated as keeps.
+Non-destructive — the FCPXML references the original media file.
+
+Usage:
+    generate_fcpxml.py <edl.json> -o <edit.fcpxml>
+"""
+
+import argparse
 import json
 import os
+import subprocess
 import sys
 import xml.etree.ElementTree as ET
 from fractions import Fraction
@@ -10,12 +21,35 @@ from urllib.parse import quote
 from xml.dom import minidom
 
 
-def seconds_to_rational(seconds: float, fps_num: int, fps_den: int) -> str:
-    """Convert seconds to FCPXML rational time string.
+def probe_video(path: str) -> dict:
+    """Return video metadata via ffprobe: width, height, fps, fps_num, fps_den."""
+    result = subprocess.run(
+        [
+            "ffprobe", "-v", "error",
+            "-select_streams", "v:0",
+            "-show_entries", "stream=width,height,r_frame_rate,avg_frame_rate",
+            "-of", "json", path,
+        ],
+        capture_output=True, text=True, check=True,
+    )
+    stream = json.loads(result.stdout)["streams"][0]
+    width = int(stream["width"])
+    height = int(stream["height"])
+    # Prefer avg_frame_rate (more accurate for VFR); fall back to r_frame_rate
+    rate_str = stream.get("avg_frame_rate") or stream["r_frame_rate"]
+    num_str, den_str = rate_str.split("/")
+    fps_num, fps_den = int(num_str), int(den_str)
+    if fps_den == 0:
+        raise ValueError(f"Invalid frame rate from ffprobe: {rate_str}")
+    fps = fps_num / fps_den
+    return {
+        "width": width, "height": height,
+        "fps": fps, "fps_num": fps_num, "fps_den": fps_den,
+    }
 
-    For 29.97fps: fps_num=30000, fps_den=1001
-    For 30fps: fps_num=30, fps_den=1
-    """
+
+def seconds_to_rational(seconds: float, fps_num: int, fps_den: int) -> str:
+    """Convert seconds to FCPXML rational time string aligned to whole frames."""
     frame_duration = Fraction(fps_den, fps_num)
     total_frames = round(Fraction(seconds) / frame_duration)
     rational = total_frames * frame_duration
@@ -23,7 +57,7 @@ def seconds_to_rational(seconds: float, fps_num: int, fps_den: int) -> str:
 
 
 def get_format_name(width: int, height: int, fps: float) -> str:
-    """Generate FCP format name string."""
+    """Generate FCP format name string (e.g. FFVideoFormat1080p30)."""
     fps_names = {
         23.976: "2398", 24.0: "24", 25.0: "25",
         29.97: "2997", 30.0: "30", 50.0: "50",
@@ -46,43 +80,33 @@ def file_url(path: str) -> str:
     return "file://" + quote(abs_path, safe="/:")
 
 
-def generate_fcpxml(analysis: dict, edl: dict, output_path: str) -> str:
-    """Generate FCPXML v1.11 from analysis and EDL.
+def generate_fcpxml(edl: dict, output_path: str, project_name: str | None = None) -> str:
+    """Generate FCPXML v1.11 from a v3 EDL.
 
-    Args:
-        analysis: Analysis JSON with metadata, source_file
-        edl: EDL JSON with 'segments' list, each having:
-            - start: float (source start time in seconds)
-            - end: float (source end time in seconds)
-            - action: "keep" or "cut"
-            - volume_adjust_db: optional float
-        output_path: Path to write FCPXML file
+    project_name, when provided, overrides the event and project labels inside
+    the FCPXML. The media asset keeps the real file stem so Final Cut can
+    resolve the underlying media.
     """
-    meta = analysis["metadata"]
-    video_info = meta.get("video", {})
-    source_file = analysis["source_file"]
+    source_file = edl["source_file"]
+    total_duration = edl["source_duration"]
+    segments = edl["segments"]
     stem = Path(source_file).stem
+    label = project_name or stem
 
-    fps_num = video_info.get("fps_num", 30)
-    fps_den = video_info.get("fps_den", 1)
-    width = video_info.get("width", 1920)
-    height = video_info.get("height", 1080)
-    fps = video_info.get("fps", 30.0)
-    total_duration = meta["duration"]
+    video_info = probe_video(source_file)
+    fps_num = video_info["fps_num"]
+    fps_den = video_info["fps_den"]
+    width = video_info["width"]
+    height = video_info["height"]
+    fps = video_info["fps"]
 
     format_name = get_format_name(width, height, fps)
     frame_dur = seconds_to_rational(fps_den / fps_num, fps_num, fps_den)
 
-    # Filter to kept segments only
-    kept_segments = [s for s in edl["segments"] if s.get("action") == "keep"]
+    timeline_dur = sum(s["end"] - s["start"] for s in segments)
 
-    # Calculate total timeline duration
-    timeline_dur = sum(s["end"] - s["start"] for s in kept_segments)
-
-    # Build XML
     fcpxml = ET.Element("fcpxml", version="1.11")
 
-    # Resources
     resources = ET.SubElement(fcpxml, "resources")
     ET.SubElement(resources, "format",
                   id="r1", name=format_name,
@@ -95,44 +119,39 @@ def generate_fcpxml(analysis: dict, edl: dict, output_path: str) -> str:
                           hasVideo="1", hasAudio="1")
     ET.SubElement(asset, "media-rep", kind="original-media", src=file_url(source_file))
 
-    # Library > Event > Project > Sequence > Spine
     library = ET.SubElement(fcpxml, "library")
-    event = ET.SubElement(library, "event", name=f"{stem} Edit")
-    project = ET.SubElement(event, "project", name=f"{stem}_edit")
+    event = ET.SubElement(library, "event", name=label if project_name else f"{stem} Edit")
+    project = ET.SubElement(event, "project", name=label if project_name else f"{stem}_edit")
     sequence = ET.SubElement(project, "sequence",
                              format="r1",
                              duration=seconds_to_rational(timeline_dur, fps_num, fps_den),
                              tcStart="0s", tcFormat="NDF")
     spine = ET.SubElement(sequence, "spine")
 
-    # Add clips
-    timeline_offset = 0.0
-    for i, seg in enumerate(kept_segments):
+    frame_duration = Fraction(fps_den, fps_num)
+    timeline_offset = Fraction(0)
+    for i, seg in enumerate(segments):
         seg_start = seg["start"]
         seg_dur = seg["end"] - seg["start"]
 
-        clip = ET.SubElement(spine, "asset-clip",
-                             ref="r2",
-                             offset=seconds_to_rational(timeline_offset, fps_num, fps_den),
-                             name=f"Segment {i + 1}",
-                             duration=seconds_to_rational(seg_dur, fps_num, fps_den),
-                             start=seconds_to_rational(seg_start, fps_num, fps_den),
-                             tcFormat="NDF")
+        dur_frames = round(Fraction(seg_dur) / frame_duration)
+        rational_dur = dur_frames * frame_duration
 
-        # Volume adjustment
-        vol_db = seg.get("volume_adjust_db", 0)
-        if vol_db != 0:
-            ET.SubElement(clip, "adjust-volume", amount=f"{vol_db:+.1f}dB")
+        ET.SubElement(spine, "asset-clip",
+                      ref="r2",
+                      offset=f"{timeline_offset.numerator}/{timeline_offset.denominator}s",
+                      name=f"Segment {i + 1}",
+                      duration=f"{rational_dur.numerator}/{rational_dur.denominator}s",
+                      start=seconds_to_rational(seg_start, fps_num, fps_den),
+                      tcFormat="NDF")
 
-        timeline_offset += seg_dur
+        timeline_offset += rational_dur
 
-    # Write XML with pretty printing
     os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
     rough = ET.tostring(fcpxml, encoding="unicode")
     xml_str = '<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE fcpxml>\n' + rough
     parsed = minidom.parseString(xml_str)
     pretty = parsed.toprettyxml(indent="  ")
-    # Remove the extra xml declaration minidom adds
     lines = pretty.split("\n")
     final_lines = []
     seen_xml_decl = False
@@ -149,55 +168,28 @@ def generate_fcpxml(analysis: dict, edl: dict, output_path: str) -> str:
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(final)
 
-    print(f"FCPXML written to {output_path}")
-    print(f"  {len(kept_segments)} clips on timeline")
-    print(f"  Timeline duration: {timeline_dur:.1f}s (original: {total_duration:.1f}s)")
-    print(f"  Removed: {total_duration - timeline_dur:.1f}s ({(1 - timeline_dur/total_duration)*100:.0f}%)")
+    print(json.dumps({
+        "fcpxml": output_path,
+        "n_clips": len(segments),
+        "timeline_duration_s": round(timeline_dur, 2),
+        "source_duration_s": round(total_duration, 2),
+    }))
 
     return output_path
 
 
-def _find_project_root(start_path: str) -> str:
-    """Walk up from start_path to find the project root (contains .claude/ or .git/)."""
-    current = os.path.dirname(start_path) if os.path.isfile(start_path) else start_path
-    while current != os.path.dirname(current):
-        if os.path.isdir(os.path.join(current, ".claude")) or os.path.isdir(os.path.join(current, ".git")):
-            return current
-        current = os.path.dirname(current)
-    return os.path.dirname(start_path) if os.path.isfile(start_path) else start_path
+def main():
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("edl", type=Path, help="Path to EDL JSON")
+    ap.add_argument("-o", "--out", type=Path, required=True, help="Output FCPXML path")
+    ap.add_argument("--project-name", type=str, default=None,
+                    help="Override event/project labels inside the FCPXML "
+                         "(asset media name still uses the source file stem).")
+    args = ap.parse_args()
+
+    edl = json.loads(args.edl.read_text())
+    generate_fcpxml(edl, str(args.out), project_name=args.project_name)
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 3:
-        print("Usage: uv run generate_fcpxml.py <analysis_json> <edl_json> [--output-dir <dir>]")
-        sys.exit(1)
-
-    analysis_path = sys.argv[1]
-    edl_path = sys.argv[2]
-    output_dir = None
-
-    args = sys.argv[3:]
-    i = 0
-    while i < len(args):
-        if args[i] == "--output-dir" and i + 1 < len(args):
-            output_dir = args[i + 1]
-            i += 2
-        else:
-            i += 1
-
-    with open(analysis_path) as f:
-        analysis = json.load(f)
-
-    with open(edl_path) as f:
-        edl = json.load(f)
-
-    stem = Path(analysis["source_file"]).stem
-
-    if output_dir is None:
-        # Default to claude-edits/ in the project root
-        source_file = analysis.get("source_file", analysis_path)
-        project_root = _find_project_root(os.path.abspath(source_file))
-        output_dir = os.path.join(project_root, "claude-edits")
-
-    output_path = os.path.join(output_dir, f"{stem}_edit.fcpxml")
-    generate_fcpxml(analysis, edl, output_path)
+    main()

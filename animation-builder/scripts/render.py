@@ -53,7 +53,7 @@ def _is_cloud_path(path: Path) -> bool:
     return any(p.startswith(prefix) for prefix in CLOUD_PREFIXES)
 
 
-def render(html_path: Path, duration: float, fps: int, out_path: Path) -> None:
+def render(html_path: Path, duration: float, fps: int, out_path: Path, alpha: bool = False) -> None:
     # Per-invocation UUID-suffixed frames dir. Two parallel renders of sibling
     # HTMLs would otherwise share `.frames/` and overwrite each other's PNGs,
     # producing Frankenstein MP4s. Don't drop the suffix.
@@ -75,7 +75,13 @@ def render(html_path: Path, duration: float, fps: int, out_path: Path) -> None:
 
     with sync_playwright() as p:
         browser = p.chromium.launch()
-        context = browser.new_context(viewport={"width": WIDTH, "height": HEIGHT})
+        # When alpha is on, ask Chromium for a transparent backdrop so
+        # omit_background screenshots can carry the page's alpha channel.
+        ctx_kwargs = {"viewport": {"width": WIDTH, "height": HEIGHT}}
+        page_kwargs = {}
+        if alpha:
+            page_kwargs["color_scheme"] = "light"
+        context = browser.new_context(**ctx_kwargs)
         page = context.new_page()
         page.goto(html_path.resolve().as_uri())
 
@@ -92,7 +98,10 @@ def render(html_path: Path, duration: float, fps: int, out_path: Path) -> None:
                 t,
             )
             # NB: no animations="disabled" — that flag would override the seek.
-            page.screenshot(path=str(frames_dir / f"frame_{i:05d}.png"))
+            page.screenshot(
+                path=str(frames_dir / f"frame_{i:05d}.png"),
+                omit_background=alpha,
+            )
             if (i + 1) % 30 == 0 or i == total_frames - 1:
                 print(f"  frame {i + 1}/{total_frames}")
 
@@ -103,24 +112,40 @@ def render(html_path: Path, duration: float, fps: int, out_path: Path) -> None:
     # When staging in /tmp/ (CloudStorage paths), encode to a local MP4 first,
     # then move it to the requested out_path. Avoids the same Drive sync lag
     # for the final encoded file.
+    target_ext = ".mov" if alpha else ".mp4"
     encode_target = (
-        frames_dir.parent / f"{frames_dir.name}.mp4"
+        frames_dir.parent / f"{frames_dir.name}{target_ext}"
         if frames_dir.parent == Path(tempfile.gettempdir())
         else out_path
     )
 
-    cmd = [
-        "ffmpeg", "-y",
-        "-framerate", str(fps),
-        "-i", str(frames_dir / "frame_%05d.png"),
-        "-c:v", "libx264",
-        "-preset", "slow",
-        "-crf", "16",
-        "-pix_fmt", "yuv420p",
-        "-movflags", "+faststart",
-        "-r", str(fps),
-        str(encode_target),
-    ]
+    if alpha:
+        # ProRes 4444 carries the alpha channel; .mov container. FCP imports
+        # this directly with transparency preserved.
+        cmd = [
+            "ffmpeg", "-y",
+            "-framerate", str(fps),
+            "-i", str(frames_dir / "frame_%05d.png"),
+            "-c:v", "prores_ks",
+            "-profile:v", "4444",
+            "-pix_fmt", "yuva444p10le",
+            "-qscale:v", "9",
+            "-r", str(fps),
+            str(encode_target),
+        ]
+    else:
+        cmd = [
+            "ffmpeg", "-y",
+            "-framerate", str(fps),
+            "-i", str(frames_dir / "frame_%05d.png"),
+            "-c:v", "libx264",
+            "-preset", "slow",
+            "-crf", "16",
+            "-pix_fmt", "yuv420p",
+            "-movflags", "+faststart",
+            "-r", str(fps),
+            str(encode_target),
+        ]
     subprocess.run(cmd, check=True)
 
     if encode_target != out_path:
@@ -137,14 +162,20 @@ def main() -> None:
     ap.add_argument("--duration", type=float, default=3.6, help="Seconds (default 3.6)")
     ap.add_argument("--fps", type=int, default=30)
     ap.add_argument("--out", default=None)
+    ap.add_argument(
+        "--alpha",
+        action="store_true",
+        help="Render with transparency: ProRes 4444 .mov + omit_background screenshots.",
+    )
     args = ap.parse_args()
 
     html_path = Path(args.html)
     if not html_path.exists():
         sys.exit(f"Not found: {html_path}")
 
-    out = Path(args.out) if args.out else html_path.with_suffix(".mp4")
-    render(html_path, args.duration, args.fps, out)
+    default_ext = ".mov" if args.alpha else ".mp4"
+    out = Path(args.out) if args.out else html_path.with_suffix(default_ext)
+    render(html_path, args.duration, args.fps, out, alpha=args.alpha)
 
 
 if __name__ == "__main__":

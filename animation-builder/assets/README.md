@@ -23,12 +23,20 @@ When you fetch a logo or icon to use in an animation:
 
 ## Logos
 
-| File | Dimensions | Source | Notes |
-|---|---|---|---|
-| `logos/claude-color.png` | 640×640 | lobehub icons-static-png (`light/claude-color.png`) | Anthropic Claude sparkle, orange on transparent. Use on light avatar backgrounds for contrast. |
-| `logos/gmail.png` | 500×375 | Wikimedia Commons (`Gmail_icon_(2020).svg`) | Gmail icon, color, 2020 variant. Use when referencing Gmail as a data source or product. |
-| `logos/google-calendar.png` | 500×500 | Wikimedia Commons (`Google_Calendar_icon_(2020).svg`) | Google Calendar icon, color, 2020 variant (shows current day's number). |
-| `logos/slack.png` | 500×500 | Wikimedia Commons (`Slack_icon_2019.svg`) | Slack four-color hashmark. |
+| File | Source | Notes |
+|---|---|---|
+| `logos/atlassian.png` / `.svg` | Wikimedia Commons | Atlassian "A" mark, blue gradient. |
+| `logos/calendly.png` / `.svg` | Wikimedia Commons | Calendly C mark, blue. |
+| `logos/chrome.png` | Wikimedia Commons | Google Chrome browser icon, color. |
+| `logos/claude-color.png` | lobehub icons-static-png (`light/claude-color.png`) | Anthropic Claude sparkle, orange on transparent. Use on light avatar backgrounds for contrast. |
+| `logos/github.png` | Wikimedia Commons | GitHub Octocat / wordmark, black. |
+| `logos/gmail.png` | Wikimedia Commons (`Gmail_icon_(2020).svg`) | Gmail icon, color, 2020 variant. |
+| `logos/google-calendar.png` | Wikimedia Commons (`Google_Calendar_icon_(2020).svg`) | Google Calendar icon, color, 2020 variant (shows current day's number). |
+| `logos/google-drive.png` | Wikimedia Commons | Google Drive triangle, color. |
+| `logos/google-sheets.svg` | Wikimedia Commons | Google Sheets icon, color. |
+| `logos/linkedin.png` | Wikimedia Commons | LinkedIn "in" mark, blue. |
+| `logos/notion.png` | Wikimedia Commons | Notion N, black on white. |
+| `logos/slack.png` | Wikimedia Commons (`Slack_icon_2019.svg`) | Slack four-color hashmark. |
 
 > For more brand logos, see the keynote skill (`~/.claude/skills/keynote/SKILL.md` § "Fetching assets from the web") — same Wikimedia/lobehub fetch pattern.
 
