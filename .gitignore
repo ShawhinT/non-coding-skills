@@ -2,3 +2,6 @@
 *~
 *.swp
 .env
+
+# Private PII denylist for the scrub script (real names/companies/IDs — never commit)
+.claude/skills/sync-desktop-skills/pii-denylist.local.json

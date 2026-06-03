@@ -19,7 +19,8 @@ Workflow for bringing skills from Shaw's canonical skills repo into this public 
 
 - Creating a skill from scratch → skill-creator
 - Editing one file inside a single already-imported skill → just edit it directly
-- Anything touching skills that live only in Claude Code or Cowork (those already live in this repo and aren't in the canonical source)
+
+Note: Code-native skills (animation-builder, infographic-builder, keynote, skill-updater, training-proposal, video-editor) are NOT in the canonical `~/agents/skills` repo — they source from `~/.claude/skills/` instead. They are still in scope for this skill; see "Second source" below.
 
 ## Source location
 
@@ -36,6 +37,29 @@ ls /Users/shaw/agents/skills/
 ```
 
 Target is always this repo's root: `/Users/shaw/Documents/_code/_stv/_repos/non-coding-skills/`.
+
+### Second source — Code-native skills (`~/.claude/skills/`)
+
+Shaw maintains **two** skill sources, and a full sync covers both:
+
+1. `~/agents/skills/` — the canonical repo above. The "portable" skills (run on any surface / Chat / Cowork). The `scrub.py` script targets this source.
+2. `~/.claude/skills/` — his live Claude Code skills. This is the ONLY source for the **Code-native** skills that have no canonical copy: `animation-builder`, `infographic-builder`, `keynote`, `skill-updater`, `training-proposal`, `video-editor`. (It also contains the canonical skills, plus Code-only skills that are intentionally NOT published — e.g. `fasthtml`, `playwright-mcp-guidance`, `claude-trace-helper`, `generate-video-ideas`. Don't add those without Shaw's say-so.)
+
+For the canonical set, compare against `~/agents/skills/`. For the six Code-native skills, compare against `~/.claude/skills/`. To tell which truly changed (vs. PII-scrub noise), scrub a temp copy of the source and diff *that* against the repo.
+
+**Syncing Code-native skills (`scrub.py` does NOT handle these — it's wired to `~/agents/skills` + Notion patterns):**
+
+- Use `rsync -a --delete` per skill so upstream *deletions* propagate (e.g. video-editor dropped `analyze.py`/`propose_edits.py`). **Pass each `--exclude` as its own argument inline** — do NOT collect them in a shell variable and expand it: zsh does not word-split unquoted variables, so `$EXC` arrives as one bogus pattern and every exclude silently no-ops (this leaked full `.venv` trees and a real `.env` in one run). 
+- **Exclude junk/secrets/generated:** `.DS_Store __pycache__ *.pyc .venv *.egg-info build dist wheels .env uv.lock output transcripts claude-edits .gitkeep`. (`uv.lock`/`.python-version`: don't churn them — restore whatever the repo already committed with `git checkout`; the repo's footprint is deliberate and you can't run `uv` to regen a lock.)
+- **Protect repo adaptations from `--delete`** by also `--exclude`-ing them (so they're neither overwritten nor removed), then reconcile by hand:
+  - `keynote/` — repo renamed `shaw-style-guide.md` → `style-guide.md` and de-personalizes ("Shaw" → "your", `"author": "Shaw Talebi"` → `"Your Name"`, etc.). Port new style-guide bullets into the renamed file; fix the SKILL.md reference to `style-guide.md`. (The `shawhintalebi@gmail.com` curl-UA contact is KEEP — allowlisted + matches the committed infographic-builder precedent.)
+  - `video-editor/` — keep the sanitized `.env.example`, `README.md`, `.gitignore`; never copy the real `.env`.
+  - `training-proposal/` — keep `scripts/LOGO-README.md` (placeholder for the gitignored `logo-square.png`); skip `evals/` and the real logo binary. New example proposals carry **real client names in filenames + bodies**. Scrub to fictional placeholders matching the committed convention (`Acme Corp`, `TechStart`, `Globex`), rename the files to match, drop orphaned examples no longer referenced by SKILL.md, and update the SKILL.md reference list. Also genericize personal absolute paths (`/Users/shaw/...` → `~/...` or "your ... directory") and strip personal-website logo links from `md-to-pdf.py`.
+  - `infographic-builder/` — `@shawhintalebi` footer handle and `aibuilder.academy` are KEEP (public). Genericize personal folder paths to "your content directory".
+
+**Heads-up — prior-pass misses surface here.** Earlier syncs left some PII in the *committed* repo (e.g. `crm/workflows/workflow-4-link-calls.md` and `workflow-1-sync.md` had real lead/company names; `pre-call-research/SKILL.md` had a private Google Sheets ID; `crm/SKILL.md` had a bare first-name example). Re-scan the whole file even when a name appears unchanged vs HEAD, and scrub for consistency. The `report-pii` mode + the private denylist exist to catch exactly these — run it after every sync. Note: the deterministic overwrite *reintroduces* real names where the committed repo had placeholders — check each name against the committed version and restore its placeholder.
+
+**Google Drive / Forms IDs:** `scrub.py` only catches Notion 32-hex/UUID. Google Form/Sheet/Doc IDs (43-char mixed-case with `-`/`_`) and `forms.gle` / `docs.google.com/.../d/<id>` URLs must be scrubbed by hand → `[form-id]`/`[sheet-id]`/`[page-id]`. EXCEPTION: `google-drive-helper`'s "Known Folders" table IDs are load-bearing and KEEP (committed precedent — folder IDs aren't access grants).
 
 ## Workflow
 
@@ -85,7 +109,9 @@ Present the plan to Shaw **before** writing anything. Include:
 
 ### 3. Deterministic scrub pass (script)
 
-Before spawning agents, run the regex scrubber at `scripts/scrub.py`. It copies source → target while replacing the deterministic categories: Notion IDs (32-char hex + UUID), emails (with allowlist for `shaw@aibuilder.academy`, `notifications@calendly.com`, system addresses), phone numbers, and Calendly URLs. This handles the bulk of replacements (~70+ per full sync) with no agent tokens.
+Before spawning agents, run the regex scrubber at `scripts/scrub.py`. It copies source → target while replacing the deterministic categories: Notion IDs (32-char hex + UUID), emails (with allowlist for `shaw@aibuilder.academy`, `notifications@calendly.com`, placeholder/system addresses), phone numbers, Calendly + Google Doc/Sheet URLs, and `forms.gle` links. This handles the bulk of replacements (~70+ per full sync) with no agent tokens.
+
+It also applies the **private name/company denylist** at `pii-denylist.local.json` (gitignored, never committed — see "Second source" above for why and how it's stored). Known real names/companies/IDs are auto-replaced (longest-match-first, possessive-safe); `risky: true` entries (bare first names) are report-only. Keep-verbatim files (`linkedin-post-writer/references/examples-*`) are copied without scrubbing so public-figure names survive. When you scrub a NEW name by hand during a sync, **add it to the denylist** so it's caught automatically next time.
 
 ```bash
 # Copy + scrub
@@ -96,8 +122,12 @@ python3 .claude/skills/sync-desktop-skills/scripts/scrub.py scrub \
   --overwrite \
   --log /tmp/sync-scrub.tsv
 
-# Audit (should be clean except for gitignored .claude/settings.local.json)
+# Audit 1 — deterministic regex (should be clean except gitignored .claude/settings.local.json)
 python3 .claude/skills/sync-desktop-skills/scripts/scrub.py verify --target .
+
+# Audit 2 — judgment layer: denylist LEAKS (real names that slipped through) + proper-noun
+# CANDIDATES for review. Exit non-zero if any leak. Run this after the agent pass too.
+python3 .claude/skills/sync-desktop-skills/scripts/scrub.py report-pii --target .
 ```
 
 Notion-ID replacement uses a small left-context heuristic: `[database-id]` if the word "database"/"data_source" appears within 60 chars to the left, else `[page-id]`. Spot-check the log; agents can fix mis-classifications during their pass.
@@ -153,8 +183,11 @@ For each new skill, add a row. For deleted skills, remove the row. Update instal
 
 - `git diff --stat` — sanity check file counts
 - No `.DS_Store`, no `.env`, no files outside intended skill dirs
+- **`scrub.py report-pii --target .` → "Denylist leaks: none". This is the gate.** Eyeball the candidate list for any real name/company not yet in the denylist; scrub it and add it to the denylist.
+- `scrub.py verify --target .` → clean (deterministic patterns)
 - Repo-wide grep: `grep -rnE "[a-f0-9]{32}" --include="*.md"` → should be empty
 - Repo-wide grep: `grep -rnE "[a-z0-9._-]+@[a-z0-9.-]+\.(com|net|org|io|ai)"` → should only show `shaw@aibuilder.academy`-adjacent hits and known system addresses
+- Confirm `pii-denylist.local.json` is gitignored and NOT staged (`git check-ignore` it)
 - Confirm stale files were handled (deleted or preserved per Shaw's call)
 
 ### 7. Commit + push
