@@ -3,11 +3,12 @@ name: engagements
 description: >
   Use this skill whenever Shaw mentions creating, updating, querying, or wrapping a paid client
   engagement. Triggers include: "create an engagement for X", "X just paid the invoice", "log
-  the engagement", "what's the engagement ID for Y", "wrap up [Name]'s intensive", "mark X as
-  delivered", "X's session moved", "fill in Stripe data for E####", "update engagement status",
-  "look up the engagement for X", "did X pay yet". Also fires when a CRM workflow signals "deal
-  closed" — that's the kickoff for a new engagement row. Also fires when a new ABA Trainings or
-  ABA Calls page is created for an active client and needs to be linked to an existing engagement.
+  the engagement", "what's the engagement ID for Y", "wrap up [Client Name]'s intensive", "mark X as
+  delivered", "X's session moved", "fill in Stripe data for E###", "update engagement status",
+  "look up the engagement for X", "did X pay yet". Also fires for auditing/syncing the ledger:
+  "audit/sync the engagements", "is the engagement data up to date", "reconcile E###", or the
+  daily scheduled sync. Also fires when a CRM workflow signals "deal closed" (kickoff for a new
+  row), or when a new ABA Trainings/Calls page needs linking to an existing engagement.
   This skill governs the Engagements database in ABA (Master) — the project ledger that tracks
   one row per won, invoiced project. The CRM (Nurture) database tracks the relationship; this
   database tracks the work.
@@ -15,8 +16,8 @@ description: >
 
 # Engagements Skill
 
-The Engagements database is Shaw's project ledger. One row = one won, invoiced project. A given
-client's 1:1 Workshop and 30-Day Intensive are two separate rows. Re-ups become new rows. Past and
+The Engagements database is Shaw's project ledger. One row = one won, invoiced project. [Client Name]'s
+1:1 Workshop and his 30-Day Intensive are two separate rows. Re-ups become new rows. Past and
 active engagements live here together.
 
 This skill governs how to read, create, update, and wrap engagement rows — and how the
@@ -43,7 +44,7 @@ For CRM (Nurture, Active Leads), see `crm/SKILL.md`. For ABA tasks/events, see `
 
 | Field | Type | Notes |
 |---|---|---|
-| Engagement ID | Title | Format `E####` (4-digit zero-padded). E.g., `E0001`, `E0023`. NOTE: the property is named "Engagement ID" not "ID" — Notion reserves "id" as a system field name and rejects it. |
+| Engagement ID | Title | Format `E### - <Name>` — 3-digit zero-padded number, then the client name (e.g., `E007 - [Company]`, `E005 - [Client Name]`). Use the organization name when the client is a company, the person's name for solo individuals. Pull the name from the Client relation, never a search result. NOTE: the property is named "Engagement ID" not "ID" — Notion reserves "id" as a system field name and rejects it. |
 | Client | Relation → Clients (Nurture) | Single client per engagement. The synced backlink on the Nurture page is named "Engagements". |
 | Offer | Multi-select | `1:1 Claude Workshop`, `1:1 Claude Workshops — Team`, `30-Day Claude Intensive`, `Custom AI Training`, `AI Advisory`, `Ad Hoc Consulting`. See `references/offer-pricing.md` for default prices. |
 | Source | Multi-select | `LinkedIn`, `YouTube`, `Personal`, `ABB`, `ABA Contact`, `Homepage Contact`, `ABA Discovery Call`, `Referral`. Mirrors CRM Source options. |
@@ -57,12 +58,12 @@ For CRM (Nurture, Active Leads), see `crm/SKILL.md`. For ABA tasks/events, see `
 
 ## Naming Convention
 
-Engagement IDs are `E####` (4-digit zero-padded), assigned in **temporal order by Start Date**.
+Engagement titles are `E### - <Name>`: a 3-digit zero-padded number assigned in **temporal order by Start Date**, followed by the client name. Use the **organization name** when the client is a company (e.g., `E007 - [Company]`, `E004 - [Company]`) and the **person's name** for solo individuals with no company context (e.g., `E005 - [Client Name]`). Pull the name from the Client relation, never from a search result. The fixed-width `E###` prefix keeps an ID-ascending sort chronological regardless of the suffix.
 
 **Getting the next ID for a brand-new engagement (Start Date = today or future):**
 1. Query the Engagements DB sorted by Engagement ID descending
-2. Take the highest existing ID and increment by 1
-3. Format as `E####` (e.g., `E0023` → `E0024`)
+2. Parse the `E###` numeric prefix of the highest existing ID and increment by 1
+3. Format as `E### - <Name>` (e.g., `E023` → `E024 - <Name>`)
 
 **Inserting an older engagement (backfill):**
 If the new engagement has a Start Date that falls before existing rows, you have two options:
@@ -100,7 +101,9 @@ Sold → Active → Delivered
 being the active workspace. All wrap-up activity (testimonial chasing, referral asks, re-up
 conversations) tracks in the Clients (Nurture) page going forward. The engagement row stays
 as a permanent record for revenue/case-study purposes, but its 4Rs body section gets filled in
-once and not actively maintained.
+once and not actively maintained. If the client re-ups before wrap-up is done, the wrap-up items
+(testimonial ask, 4Rs) roll forward to the newest engagement; the older row staying at TBD is
+not a gap.
 
 ---
 
@@ -152,7 +155,7 @@ _TBD at wrap_ — who got referred from this engagement?
 
 ### Reviews
 
-_TBD at wrap_ — testimonial captured (yes/no/declined), with quote or page link
+- <mention-page url="..."/>  ← link the Testimonials DB record(s) for this engagement, one bullet per record (a team engagement links every attendee's row). The Testimonials record carries the live Status (Asked → Approved → Published → Declined), so don't restate status or quotes in prose here — the linked record is the source of truth. If no Testimonials row exists yet, leave _TBD at wrap_ and create the row when the ask goes out.
 ```
 
 **Section rules:**
@@ -161,7 +164,7 @@ _TBD at wrap_ — testimonial captured (yes/no/declined), with quote or page lin
 - **Sessions** lists ABA Trainings mention-pages chronologically with `(M/D — name)` annotation
 - **Calls** lists ABA Calls mention-pages chronologically with `(M/D — type)` annotation
 - **Notes** mirrors CRM notes style: short, date-stamped, append-only
-- **4Rs** stays as four sub-headings; fill in during wrap, then leave alone
+- **4Rs** stays as four sub-headings; fill in during wrap, then leave alone. **Reviews** is the exception to the prose style — it links the Testimonials DB record(s) (one mention-page per attendee), never restated status text, because that record holds the live status.
 
 ---
 
@@ -185,7 +188,7 @@ This is the load-bearing rule that determines what goes where.
 4. Once Delivered, engagement row is archive material; Clients (Nurture) takes over for nurture/expansion
 
 **Why this matters:**
-- One client can have many engagements (e.g., Workshop + Intensive). Two rows in Engagements,
+- One client can have many engagements ([Client Name] = Workshop + Intensive). Two rows in Engagements,
   one row in Nurture. Don't conflate.
 - Wrap-up (4Rs) gets filled in once when the engagement flips to Delivered. After that, all
   ongoing nurture activity goes in the Nurture row's Notes — not back into the engagement.
@@ -200,6 +203,7 @@ This is the load-bearing rule that determines what goes where.
 | 2. Status Transitions | First session held; last session held; refund issued; engagement stalled | `workflows/workflow-2-status.md` |
 | 3. Link Session/Call to Engagement | New ABA Trainings or ABA Calls page created for an active client | `workflows/workflow-3-link-session.md` |
 | 4. Stripe Fill | "Look up Stripe for X"; filling in Price + Stripe link on existing row | `workflows/workflow-4-stripe-fill.md` |
+| 5. Daily Sync / Audit | scheduled daily; "audit the engagements", "sync the engagements", "is the engagement data up to date", "reconcile E###" | `workflows/workflow-5-sync.md` |
 
 ---
 
@@ -209,6 +213,7 @@ This is the load-bearing rule that determines what goes where.
 |---|---|---|
 | Offer Pricing | Canonical offer names + default prices | `references/offer-pricing.md` |
 | Offer Scopes | Canonical default program scope per offer (deliverables, bonuses, guarantees) | `references/offer-scopes.md` |
+| Reconciliation Checks | Canonical catalog of sync checks with auto/surface tiers, sources of truth, fixes, and traps | `references/reconciliation-checks.md` |
 
 ---
 
@@ -221,7 +226,7 @@ This is the load-bearing rule that determines what goes where.
 - **Leave Price/Paid Status blank if unsure.** Better to flag for Shaw than guess. The Stripe
   workflow can fill these in later.
 - **Check for proxy-email payers before declaring "no invoice found."** Some clients pay via
-  vendor portals where the billing email differs from the
+  vendor portals ([Company], [Company], [Company]) where the billing email differs from the
   client's contact email. The actual payer may be a procurement contact at the company. Search
   by company domain or company name before giving up. See `workflows/workflow-4-stripe-fill.md`.
 - **Voided + replaced invoices are common.** Don't assume a voided invoice means no payment —

@@ -4,14 +4,26 @@
 // Wrapped in async IIFE with built-in page-load delay so it works
 // directly in javascript_tool without top-level await errors.
 //
-// DOM pattern (as of early 2026):
+// DOM pattern (as of mid-2026):
 //   Each post is an <li> inside <main> containing an <a href="/feed/update/...">
 //   Metrics are short <span> elements (< 30 chars) matching number patterns
 //   In impressions view, standalone numbers are: [reactions, impressions]
 //   Text-containing metrics: "X comments", "X reposts"
+//   The post's activity ID is in the link href: /feed/update/urn:li:activity:<id>/
+//   The post's age is inside the byline span: "Shaw Talebi posted this • 2w"
+//
+// This scraper captures activityId and age in addition to the metrics, because
+// the engagement-rate workflow needs both: activityId to merge with the
+// engagements view, and age to filter to posts created inside the window.
+//
+// AGE-UNIT GOTCHA: LinkedIn writes months as "mo" and minutes as "m". When you
+// match units with a regex alternation, "mo" and "yr" MUST come before "m",
+// otherwise "10mo" matches the "m" branch first and is read as "10m" (10
+// minutes) — silently letting a months-old post pass a same-day/week window
+// filter and corrupting its engagement rate. Order the alternation mo|yr|...|m.
 //
 // NOTE: This view does NOT reliably surface repost counts. Always pair with
-// the engagements view scraper to get repost data.
+// the engagements view scraper to get totalEngagements for rate analysis.
 
 (async () => {
   await new Promise(r => setTimeout(r, 3000));
@@ -19,18 +31,30 @@
   // Sanitize preview text — strip URLs and special chars that can trigger
   // Chrome tool content filters ([BLOCKED: Cookie/query string data])
   const sanitize = (text) =>
-    text.replace(/https?:\/\/\S+/g, '[url]').replace(/[^\w\s.,!?'"\-:;()@#]/g, '');
+    text.replace(/https?:\/\/\S+/g, '[url]').replace(/[^\w\s.,!?'\-:;@#]/g, '');
 
   const allLinks = document.querySelectorAll('main li > a[href*="/feed/update/"]');
   const data = [];
 
   allLinks.forEach(link => {
     const li = link.closest('li');
+    const href = link.getAttribute('href') || '';
+    const idMatch = href.match(/urn:li:activity:(\d+)/);
+    const activityId = idMatch ? idMatch[1] : null;
+
     const allSpans = li.querySelectorAll('span');
     const spanTexts = Array.from(allSpans).map(s => s.innerText.trim()).filter(t => t);
 
+    // Age lives inside the byline span ("... posted this • 2w"), not a standalone
+    // span. Match mo|yr before m so months aren't truncated to minutes.
+    let age = null;
+    for (const t of spanTexts) {
+      const m = t.match(/posted this\s*[•·]\s*(now|\d+\s*(?:mo|yr|s|m|h|d|w))/i);
+      if (m) { age = m[1].replace(/\s+/g, ''); break; }
+    }
+
     const postText = Array.from(allSpans).find(s => s.innerText.length > 80);
-    const preview = postText ? sanitize(postText.innerText.substring(0, 50)) : 'N/A';
+    const preview = postText ? sanitize(postText.innerText.substring(0, 60)) : 'N/A';
 
     // Filter to metric-bearing spans only
     const metricSpans = spanTexts.filter(t =>
@@ -50,8 +74,13 @@
     const totalEng = reactions + comments + reposts;
     const engRate = impressions > 0 ? ((totalEng / impressions) * 100).toFixed(1) : '0';
 
-    data.push({ preview, reactions, comments, reposts, impressions, totalEng, engRate });
+    data.push({ activityId, age, preview, reactions, comments, reposts, impressions, totalEng, engRate });
   });
+
+  // Persist so a later merge survives navigation to the engagements view.
+  // Navigating to another URL wipes window.* globals; localStorage survives it.
+  try { localStorage.setItem('__imprData', JSON.stringify(data)); } catch (e) {}
+  window.__impr = data;
 
   // Format output
   const totalImpr = data.reduce((s, d) => s + d.impressions, 0);
@@ -62,7 +91,7 @@
 
   out += `TOP 20 BY IMPRESSIONS:\n`;
   data.slice(0, 20).forEach((d, i) => {
-    out += `${i + 1}. ${d.impressions.toLocaleString()} impr | ${d.engRate}% eng | ${d.reactions}r/${d.comments}c/${d.reposts}s — "${d.preview}"\n`;
+    out += `${i + 1}. ${d.impressions.toLocaleString()} impr | ${d.engRate}% eng | ${d.reactions}r/${d.comments}c/${d.reposts}s | ${d.age || '?'} — "${d.preview}"\n`;
   });
 
   out += `\nBOTTOM 10:\n`;

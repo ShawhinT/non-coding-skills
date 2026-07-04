@@ -106,7 +106,7 @@ Declined Intensive — happy with current scope. Will revisit Q3.
 ```
 or
 ```
-Re-upped into 30-Day Intensive (E0024) on 5/15.
+Re-upped into 30-Day Intensive (E024) on 5/15.
 ```
 
 ### Referrals
@@ -114,7 +114,7 @@ Re-upped into 30-Day Intensive (E0024) on 5/15.
 Names + outcomes:
 
 ```
-Referred 2 contacts: [Name] (booked discovery 5/20), [Name] (sent intro email 5/22, no reply).
+Referred 2 contacts: [Person A] (booked discovery 5/20), [Person B] (sent intro email 5/22, no reply).
 ```
 
 ### Reviews
@@ -124,7 +124,7 @@ Testimonial status + content or page link:
 ```
 Testimonial captured — see [linked doc](url) or:
 > "Shaw's workshop saved me 10 hours a week. The skill we built is still running 6 months later."
-> — [Client Name], [Title], [Company]
+> — [Client Name], Founder, Acme Co
 ```
 
 If declined or pending: `Testimonial declined.` or `Testimonial pending — sent draft for review (M/D).`

@@ -1,7 +1,7 @@
 ---
 name: conversion-copy
 description: >-
-  Draft, sharpen, or diagnose copy whose job is conversion — landing pages, one-pagers, LinkedIn posts meant to sell, newsletters meant to sell, sales emails, and cold outreach DMs. Use whenever Shaw asks to write, rewrite, review, tighten, or critique conversion-focused copy. Triggers include "write the landing page", "draft the one-pager", "sharpen this headline", "tighten this newsletter", "rewrite this CTA", "write me a cold email", "outreach DM", "review this copy", "make this hit harder", "sounds like a brand wrote it". Also trigger when Shaw shares a copy draft and asks for review or rewrite, or casual phrasing like "help me write the promo". Applies Harry Dry's 3-question filter plus universal and channel-specific frameworks. Do NOT use for general LinkedIn posts (→ linkedin-post-writer), top-of-funnel essays (→ linkedin-post-writer or newsletter-writer), full sales letter structure (→ sales-letter-writer), or emails without conversion intent (→ email-helper).
+  Draft, sharpen, or diagnose copy whose job is conversion — landing pages, event registration pages (Luma), one-pagers, LinkedIn posts meant to sell, newsletters meant to sell, sales emails, and cold outreach DMs. Use whenever Shaw asks to write, rewrite, review, tighten, or critique conversion-focused copy. Triggers include "write the landing page", "draft the one-pager", "sharpen this headline", "tighten this newsletter", "rewrite this CTA", "write me a cold email", "outreach DM", "review this copy", "make this hit harder", "sounds like a brand wrote it". Also trigger when Shaw shares a copy draft and asks for review or rewrite, or casual phrasing like "help me write the promo". Applies Harry Dry's 3-question filter plus universal and channel-specific frameworks. Do NOT use for general LinkedIn posts (→ linkedin-post-writer), top-of-funnel essays (→ linkedin-post-writer or newsletter-writer), full sales letter structure (→ sales-letter-writer), or emails without conversion intent (→ email-helper).
 ---
 
 # Conversion Copy
@@ -14,15 +14,17 @@ This skill exists because most conversion copy fails for the same reasons: it's 
 
 These apply every time this skill runs. Skipping any of them produces worse copy.
 
-1. **Ground the copy in real customer language.** Conversion copy written from imagination almost always sounds like a brand wrote it. Before drafting, pull from real customer sources: testimonials and case-study quotes, CRM notes, survey responses, Reddit/X/LinkedIn comments on similar offers, online forums where the ICP hangs out, and — importantly — Shaw's own memory of things specific clients have said. Shaw often remembers the sharpest line verbatim; ask him. If sources aren't handed over and he doesn't surface anything from memory, ask before drafting (see "Asking for customer language" below). Don't paper over missing source material with invented phrases — the whole piece gets weaker when the voice is fake.
+1. **Ground the copy in real customer language.** Conversion copy written from imagination almost always sounds like a brand wrote it. Before drafting, pull from real customer sources: testimonials and case-study quotes, CRM notes, survey responses, Reddit/X/LinkedIn comments on similar offers, online forums where the ICP hangs out, and — importantly — Shaw's own memory of things specific clients have said. Shaw often remembers the sharpest line verbatim; ask him. If sources aren't handed over and he doesn't surface anything from memory, ask before drafting (see "Asking for customer language" below). Don't paper over missing source material with invented phrases — the whole piece gets weaker when the voice is fake. And weight the language by who said it: a testimonial edit from someone outside the target ICP is a data point, not a veto — check the source before letting one client's phrasing overrule the copy.
 
-2. **Run every line through the central filter.** The three questions (visualize / falsify / unsignable) are non-negotiable. Every line passes all three, or it gets rewritten.
+2. **Verify proof claims against the source databases.** Numbers in copy ("35 leaders," "5-10 hours/week") get checked before they ship, not after. Counts of people trained come from the ABA Trainings database in Notion — count unique people (multi-session clients once, 2:1 sessions as two), and don't count sessions that haven't happened yet. Quantified wins and quotes come from the Testimonials database — use only Published/Approved entries, and respect anonymity constraints (an anonymous testimonial also means you can't name the company elsewhere on the page without checking). Round claims down to what the data supports: "30+" that's true beats "35" that isn't, and a falsifiable claim that survives an audit is the whole point of the filter.
 
-3. **Load the channel file before drafting.** The universal principles are always in play, but channel tactics matter most. Don't try to draft a LinkedIn post using landing-page logic, or a cold email using newsletter logic.
+3. **Run every line through the central filter.** The three questions (visualize / falsify / unsignable) are non-negotiable. Every line passes all three, or it gets rewritten.
 
-4. **Offer 2–3 versions when drafting, not one.** First-pass copy is almost never the best. Draft variants that point at different angles (e.g., one leads with the fear, one leads with the dream, one leads with the enemy), then state your top pick with reasoning. This is how Shaw wants to iterate on copy — pre-selecting one version wastes his time.
+4. **Load the channel file before drafting.** The universal principles are always in play, but channel tactics matter most. Don't try to draft a LinkedIn post using landing-page logic, or a cold email using newsletter logic.
 
-5. **Push back when the brief is thin.** Minimum viable brief = channel + offer + specific reader + customer-language source. If any are missing, ask before drafting. Don't paper over a weak brief with generic copy.
+5. **Offer 2–3 versions when drafting, not one.** First-pass copy is almost never the best. Draft variants that point at different angles (e.g., one leads with the fear, one leads with the dream, one leads with the enemy), then state your top pick with reasoning. This is how Shaw wants to iterate on copy — pre-selecting one version wastes his time.
+
+6. **Push back when the brief is thin.** Minimum viable brief = channel + offer + specific reader + customer-language source. If any are missing, ask before drafting. Don't paper over a weak brief with generic copy.
 
 ## Asking for customer language
 
@@ -79,6 +81,7 @@ Once the channel is locked, read the relevant file and follow its framework befo
 | Channel | File |
 |---|---|
 | Landing pages | `references/channel-landing-pages.md` |
+| Event registration pages (Luma) | `references/channel-event-pages.md` |
 | One-pagers | `references/channel-one-pagers.md` |
 | LinkedIn posts (to sell) | `references/channel-linkedin-posts.md` |
 | Newsletters (to sell) | `references/channel-newsletters.md` |

@@ -20,6 +20,8 @@ Common problems encountered when scraping LinkedIn analytics, and how to fix the
 
 **Fix:** Filter to posts whose age span (e.g., "2w", "3d") falls inside the analytics window. Posts marked "1mo" or older were created before the window opened. For (b), make sure you're using the current `scrape-engagements.js` that reports `totalEng` rather than fabricating a `reposts` value.
 
+Watch the age *unit* when you filter: LinkedIn writes months as `mo` and minutes as `m`. A regex that lists `m` before `mo` will truncate `10mo` to `10m` and treat a 10-month-old post as 10 minutes old — it then passes the window filter and detonates the rate. Order alternations `mo|yr|s|m|h|d|w`. See the dedicated entry below.
+
 ## Numbers look wrong but not absurdly so
 
 **Cause:** You're running the wrong scraper variant for the current view. The impressions scraper interprets `nums[1]` as impressions; the engagements scraper interprets it as totalEngagements. Mismatching the scraper to the view silently swaps these.
@@ -74,4 +76,46 @@ Array.from(li.querySelectorAll('span')).map(s => s.innerText.trim()).filter(t =>
 
 **Cause:** The Chrome tool's content filter sometimes blocks scraper output with `[BLOCKED: Cookie/query string data]`. This happens when post preview text contains URLs, query strings, or character sequences that look like cookies or tracking parameters.
 
-**Fix:** The scripts now sanitize preview text by stripping URLs and special characters before output. If you still hit this, strip preview text more aggressively — drop quotes, hashes, and parentheses — or return numbers only and cross-reference previews manually.
+**Fix:** The scripts now sanitize preview text by stripping URLs and special characters before output. If you still hit this, strip preview text more aggressively — drop quotes, hashes, and parentheses — or return numbers only and cross-reference previews manually. One non-obvious trigger: returning `location.href` (or anything containing the analytics URL's query string) from `javascript_tool` trips this filter too. Don't echo the URL back — return only the data you need.
+
+## Age unit: months ("mo") read as minutes ("m")
+
+**Cause:** The post age in the byline ("... posted this • 10mo") uses `mo` for months and `m` for minutes. A unit-matching regex that lists `m` before `mo` matches the `m` branch first, so `10mo` is captured as `10m`. The post then looks 10 minutes old instead of 10 months old, slips past a "created in the last N days" window filter, and its lifetime engagement gets divided by a small window impression count — producing a garbage (often chart-topping) engagement rate.
+
+**Fix:** Order the alternation so longer units win: `mo|yr|s|m|h|d|w`. Treat `now`, `Nh`, `Nm` (minutes), `Nd`, and `Nw` as in-window; treat `Nmo` and `Nyr` as out-of-window. The bundled scrapers already parse age this way and store it on each row — sanity-check by dumping the distinct ages (`[...new Set(rows.map(r => r.age))]`) and confirming you see no bare `m` values you actually meant as months.
+
+## Data disappears after navigating between the two views
+
+**Cause:** Scraping impressions then engagements means navigating to a second URL. Navigation reloads the page and wipes every `window.*` global, so a result stashed in `window.__impr` on the first page is gone by the time you scrape the second.
+
+**Fix:** Persist each view's result to `localStorage` (the bundled scrapers write `__imprData` and `__engData`), then read both keys back and merge by activity ID after the second scrape. `localStorage` survives same-origin navigation; `window` globals do not.
+
+## Voyager feed API returns 400 / nothing
+
+**Cause:** Either the legacy `identity/profileUpdatesV2` endpoint (dead — returns 400) was used, or the GraphQL `queryId` hash has rotated and no longer matches.
+
+**Fix:** Use the GraphQL endpoint `voyager/api/graphql?variables=(...)&queryId=voyagerFeedDashProfileUpdates.<hash>`. If it 404s, capture a fresh hash: on `/in/me/recent-activity/all/`, start `read_network_requests` filtered to `graphql`, scroll and click "Show more results" to trigger a real feed request, and copy the live queryId into `window.__QID` before running the scraper.
+
+## Voyager pagination not advancing (same posts repeat)
+
+**Cause:** The endpoint ignores `start` as an offset. Incrementing `start` alone returns the same first page.
+
+**Fix:** Pass the `paginationToken` from each response (`data.data.feedDashProfileUpdatesByMemberShareFeed.metadata.paginationToken`) into the next request's variables. `scrape-feed-api.js` already threads this; page until the oldest post predates the window.
+
+## Feed DOM only shows ~5 posts / "Show more" does nothing
+
+**Cause:** The recent-activity feed virtualizes — only ~5 post nodes are mounted at once — and the "Show more results" button doesn't fire on a synthetic `.click()` or dispatched mouse events.
+
+**Fix:** Don't scrape the feed DOM for completeness. Call the Voyager API (`scrape-feed-api.js`), which returns every post regardless of what's rendered.
+
+## javascript_tool output is truncated
+
+**Cause:** The full row set (all posts in a month, with previews) can exceed the tool's output limit, so the JSON gets cut off mid-string.
+
+**Fix:** Don't return the whole array. Persist it (the feed scraper writes `window.__feed` and `localStorage.__feedData`) and dump it in slices: `JSON.stringify(window.__feed.slice(0,10))`, then `slice(10,20)`, etc. Same trick for any large in-page computation.
+
+## javascript_tool returns `undefined` (bare top-level `return`)
+
+**Cause:** `javascript_tool` runs with REPL semantics — it returns the value of the last *expression*, and a top-level `return` statement throws in that context, so the tool silently yields `undefined` instead of your result. This bites when you inline or adapt a scraper by hand instead of pasting it whole, because the bundled scripts' output lives inside `return` statements.
+
+**Fix:** Keep the `(async () => { ... })()` wrapper (the bundled `scrape-feed-api.js` already has it) so the `return`s sit inside a function and the IIFE itself is the trailing expression. If you paste only a fragment, either restore the wrapper or end with a bare expression (e.g. `JSON.stringify(result)`) rather than `return ...`.

@@ -1,6 +1,6 @@
 # ABA — infographic composition
 
-Load this when building an infographic (single PNG, social-feed still) that should sit on an ABA surface. The universal tokens in `SKILL.md` and `colors_and_type.css` still apply; this file covers the things web composition doesn't — display-scale type, color at scale, light-bg inverse usage, eyebrow rules outside marketing, and the ABA-specific patterns that used to live (incorrectly) inside `infographic-builder`.
+Load this when building an infographic (single PNG, social-feed still) that should sit on an ABA surface. The universal tokens in `SKILL.md` and `colors_and_type.css` still apply; this file covers the things web composition doesn't — display-scale type, color at scale, light-bg inverse usage, eyebrow rules outside marketing, and the ABA-specific patterns that used to live (incorrectly) inside `graphic-builder`.
 
 ## What does *not* transfer from the web side
 
@@ -39,7 +39,7 @@ Saturated colors as ≥80px fills look intentional only when paired with negativ
 
 ## Light-bg inverse palette
 
-`infographic-builder` defaults to a near-white canvas (`#FAFAF7`). On that surface, the ABA dark-mode opacity scheme inverts:
+`graphic-builder` defaults to a near-white canvas (`#FAFAF7`). On that surface, the ABA dark-mode opacity scheme inverts:
 
 - Page bg: `#FAFAF7` (off-white). Avoid pure `#FFFFFF`.
 - Primary text: `rgba(1, 4, 19, 1.0)` (the dark `#010413` at full opacity, not pure black).
@@ -90,7 +90,7 @@ When an infographic depicts a chat thread between Claude and a user (a common AB
 
 Same mapping should be used consistently across all ABA conversation graphics so the colors function as a sender key without needing a legend. If the conversation involves a different non-Claude AI (e.g. depicting a tool that uses GPT or Gemini for contrast), use that brand's native color for *that* speaker and keep Cerulean for the user.
 
-`infographic-builder` describes only the *structural* rule ("two-sender threads need two semantic accent colors with sufficient contrast"). The specific hex mapping is ABA-only and lives here.
+`graphic-builder` describes only the *structural* rule ("two-sender threads need two semantic accent colors with sufficient contrast"). The specific hex mapping is ABA-only and lives here.
 
 ## Composition defaults for ABA stills
 
@@ -102,7 +102,7 @@ Same mapping should be used consistently across all ABA conversation graphics so
 
 ## Footer convention
 
-ABA-tagged stills: `aibuilder.academy` in JetBrains Mono ~14px at ~60% opacity, bottom-center, `0.04em` tracking. Quiet signature, not a brand stamp. The generic `infographic-builder` default is `@shawhintalebi` — swap to `aibuilder.academy` for ABA-branded work.
+ABA-tagged stills: `aibuilder.academy` in JetBrains Mono ~14px at ~60% opacity, bottom-center, `0.04em` tracking. Quiet signature, not a brand stamp. The generic `graphic-builder` default is `@shawhintalebi` — swap to `aibuilder.academy` for ABA-branded work.
 
 ## Quick checklist before shipping an ABA still
 

@@ -1,7 +1,7 @@
 ---
 name: youtube-strategy
 description: >-
-  Turn a pain point, topic, or rough idea into a compelling YouTube package — title, thumbnail, intro hook, motivation/story, and outro — for Shaw's channel. Use any time Shaw is writing, brainstorming, or iterating on YouTube content. Triggers include "title ideas for this video", "help me title this YouTube video", "punch up this title", "thumbnail ideas", "design the thumbnail for X", "title and thumbnail for X", "package this video", "what would this look like as a YouTube video", "write the intro", "write the hook", "draft the motivation", "write the outro", "iterate on the script", "Ed Lawrence-style intro". Casual mentions like "title this for me", "thumbnail this", "I'm making a video about X", or "help me write the open" should also trigger. Do NOT use for LinkedIn posts (use linkedin-post-writer), newsletters (use newsletter-writer), or sales copy (use conversion-copy or sales-letter-writer) — this skill is specifically for YouTube packaging and scripting.
+  Turn a pain point, topic, or rough idea into a compelling YouTube package — title, thumbnail, intro hook, motivation/story, outro, and video description — for Shaw's channel. Use any time Shaw is writing, brainstorming, or iterating on YouTube content. Triggers include "title ideas", "punch up this title", "thumbnail ideas", "design the thumbnail for X", "package this video", "write the intro/hook", "draft the motivation", "write the outro", "iterate on the script", "Ed Lawrence-style intro", "write the (YouTube) description", and casual mentions like "title this for me", "thumbnail this", "I'm making a video about X", or "help me write the open". Do NOT use for LinkedIn posts (use linkedin-post-writer), newsletters (use newsletter-writer), or sales copy (use conversion-copy or sales-letter-writer) — this skill is specifically for YouTube packaging and scripting.
 ---
 
 # YouTube Strategy
@@ -80,6 +80,7 @@ Pull at minimum 3 verbatim phrases before drafting. Quote the source for each ca
 | Generate / sharpen thumbnails | `references/thumbnails.md` |
 | Write or iterate on the intro hook (Ed Lawrence-style) | `references/intros.md` |
 | Write motivation/story section or outro | `references/script-body.md` |
+| Write the video description (CTA, summary, links, chapters) | `references/descriptions.md` |
 | Sentence-level filter on a single line | `conversion-copy` skill (canonical) |
 
 For paired packaging (title + thumbnail together), load both `titles.md` and `thumbnails.md`. For a full script pass, load `intros.md` and `script-body.md`.

@@ -306,7 +306,7 @@ Pill-shaped, **JetBrains Mono 11px**. The mono font is what tells you it's a dat
                 margin-bottom:4px">
     Email <span style="color:rgba(255,255,255,0.3)">(required)</span>
   </label>
-  <input type="email" placeholder="[email]"
+  <input type="email" placeholder="you@example.com"
          style="width:100%;background:transparent;
                 border:1px solid rgba(255,255,255,0.2);border-radius:8px;
                 color:white;padding:10px 14px;font-family:'Libre Franklin';

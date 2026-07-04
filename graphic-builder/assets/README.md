@@ -1,4 +1,4 @@
-# Logo library — infographic-builder
+# Logo library — graphic-builder
 
 Running index of bundled logos. Before fetching anything from the web, check this list and `ls logos/`. If you fetch a new asset, **add a line here** — without an entry, the file is invisible to future runs.
 
@@ -12,6 +12,8 @@ Format: `filename — source, brand color (if applicable), date added`
 - `notion.svg` — simpleicons.org, #000000 (black), 2026-05-13
 - `stripe.svg` — simpleicons.org, #635BFF, 2026-05-13
 - `jira.svg` — simpleicons.org, #0052CC (Atlassian blue), 2026-05-13
+- `chrome.svg` — simpleicons.org (googlechrome), monochrome single-path (recolor via `currentColor`), 2026-06-24
+- `claude.svg` — simpleicons.org, monochrome single-path (recolor via `currentColor`); complements full-color `claude.png`, 2026-06-24
 
 ## How to add a new logo
 
@@ -33,3 +35,4 @@ slack — Wikimedia Commons (Slack_icon_2019.svg), multicolor, 2026-05-17
 keynote — Wikimedia Commons (Keynote 15.1 application icon), macOS app icon (blue), 2026-05-25
 youtube — Wikimedia Commons (YouTube full-color icon 2017), brand red #FF0000, 2026-05-25
 google-analytics — Wikimedia Commons (Logo Google Analytics), icon mark cropped from wordmark, orange/yellow, 2026-05-25
+google-drive — Wikimedia Commons (Google Drive icon 2020), multicolor, 2026-06-24

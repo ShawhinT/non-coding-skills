@@ -25,24 +25,40 @@ Shaw will specify which consultants to include. If he says "all consultants" or 
 
 ## Consultant Roster
 
-> Template — fill in real entries locally; do NOT commit real contact details.
-
 ### [Consultant 1]
 - **Title:** [Title]
 - **Company:** [Company]
-- **Description:** [One-line description of what they do]
+- **Description:** [One-line description of what their firm does]
 - **Email:** [email]
 
 ### [Consultant 2]
 - **Title:** [Title]
 - **Company:** [Company]
-- **Description:** [One-line description of what they do]
+- **Description:** [One-line description of what their firm does]
 - **Email:** [email]
 
 ### [Consultant 3]
 - **Title:** [Title]
 - **Company:** [Company]
-- **Description:** [One-line description of what they do]
+- **Description:** [One-line description of what their firm does]
+- **Email:** [email]
+
+### [Consultant 4]
+- **Title:** [Title]
+- **Company:** [Company]
+- **Description:** [One-line description of what their firm does]
+- **Email:** [email]
+
+### [Consultant 5]
+- **Title:** [Title]
+- **Company:** [Company]
+- **Description:** [One-line description of what their firm does]
+- **Email:** [email]
+
+### [Consultant 6]
+- **Title:** [Title]
+- **Company:** [Company]
+- **Description:** [One-line description of what their firm does]
 - **Email:** [email]
 
 ---
@@ -92,7 +108,7 @@ Confirm to Shaw once all drafts are saved, and flag if any consultant email was 
 
 ## Example
 
-**Lead:** [Lead Name] ([email]) — building [brief description of what they're building], looking for [what they need].
+**Lead:** [Lead Name] ([email]) — building an AI-driven investment platform, looking for a technical AI consultant.
 
 **Output draft for [Consultant 1]:**
 
@@ -102,9 +118,9 @@ Confirm to Shaw once all drafts are saved, and flag if any consultant email was 
 >
 > I wanted to connect you two because I see the potential for a fruitful collaboration.
 >
-> [Lead First Name], meet [Consultant First Name]. He's the [Title] of [Company], [description].
+> [Lead Name], meet [Consultant Name]. He's the [Title] of [Company], [one-line description of what their firm does].
 >
-> [Consultant First Name], meet [Lead First Name]. He's [brief description of what they're building and looking for].
+> [Consultant Name], meet [Lead Name]. He's building an AI-driven investment platform and is looking for a technical AI consultant to bring it to life.
 >
 > Hope you two get a chance to connect :)
 >

@@ -98,29 +98,19 @@ automatically each day.
 | SOPs | `[page-id]` | Standard operating procedures; handled by the `sop-helper` skill — don't duplicate that work here |
 | ABA (Master) | `[page-id]` | Parent page for the ABA database and related resources |
 | ABA Trainings (Hub) | `[page-id]` | Hub page under ABA Master grouping all training/delivery sessions |
+| Campaigns | `[page-id]` | Parent page under ABA (Master) for per-campaign pages (e.g. event promos). Each campaign page carries its own campaign-local databases (e.g. a Promo Calendar) — fetch the campaign page to get their `collection://` data source IDs rather than hardcoding them |
 
 ### Event-Type SOPs
 
-The event-type SOPs live under the SOPs page, each carrying its email templates below a
-`---` divider. This is the canonical ID catalog for them — other skills (`crm`,
-`pre-call-research`, `email-helper`, `calendar-helper`) reference this table rather than
-restating the IDs. Creating or editing the SOPs themselves is `sop-helper`'s job, not this
-skill's.
+Event-type SOPs live as child pages under the SOPs page (`[database-id]`) — the one ID worth hardcoding, since it's the stable entry point. **Don't hardcode the individual SOP IDs.** They drift as SOPs are added, split, or renamed. Instead, `fetch` the SOPs page and read its child pages to get the current set and their live IDs, then match by title. Other skills (`crm`, `pre-call-research`, `email-helper`, `calendar-helper`) point here for *how to find* an SOP rather than carrying their own IDs.
 
-The call/session SOPs (Discovery Call, 1:1 Claude Workshop, Check-in Call, Wrap-up Call)
-follow a consistent **Trigger → Setup → Pre-call research → Call → Post-call** structure;
-the delivery/acquisition SOPs (Group Claude Workshop, Event Series, Post Event) follow their
-own workflow order.
+What to expect on the SOPs page (titles, for orientation — confirm against the live page):
 
-| SOP | Page ID | Covers |
-|---|---|---|
-| Discovery Call | `[page-id]` | Pre-sale discovery call (Calendly aliases: `ABA Intro Call`, `AI Transformation`, `1:1 Claude Workshop (Discovery)`) |
-| 1:1 Claude Workshop | `[page-id]` | The paid 1:1 delivery session |
-| Group Claude Workshop | `[page-id]` | Paid multi-attendee 1:1 workshop engagement sold through a champion |
-| Check-in Call | `[page-id]` | Post-1:1-session 4Rs call, or any client nurture check-in |
-| Wrap-up Call | `[page-id]` | End of a group / multi-session training engagement |
-| Event Series | `[page-id]` | Run of partner-led workshops promoted to the ABA audience |
-| Post Event | `[page-id]` | Post-event delivery of slides, resources, and recording to registrants |
+- **Acquisition** — Discovery Call, Testimonial Ask, Referral Ask, AI Rollout Audit Call, Event Series, Post Event
+- **Delivery** — 1:1 Claude Workshop, Group Claude Workshop, Wrap-up Call, and the Check-in Call family: **Check-in Call** (shared base — Setup, call bank, post-call mechanics) plus three spokes carrying the agenda + templates: **Check-in Call (1:1 Claude Workshop)** (post-session 4Rs), **Check-in Call (Client Nurture)** (periodic; 4Rs not forced), **Check-in Call (Lead Nurture)** (warm lead; no 4Rs)
+- **Resources** — reference pages, not process SOPs (e.g. The 4Rs Framework, Hormozi frameworks); SOPs link to these instead of restating them
+
+The call/session SOPs follow a consistent **Trigger → Setup → Pre-call research → Call → Post-call** structure; delivery/acquisition SOPs follow their own order. Creating or editing SOPs is `sop-helper`'s job, not this skill's.
 
 ---
 
@@ -140,16 +130,47 @@ When Shaw names the database explicitly (e.g. "add to LFC", "put in SFC"), use t
 data source ID. If the data source ID isn't in the table above, fetch the database page first
 to get it from the `<data-source url="collection://...">` tag, then create.
 
+### Mirroring campaign tasks into ABA
+
+Campaign-local databases (like a Promo Calendar under a campaign page) don't feed the daily
+briefing — only the main databases do. So when action items land in a campaign database and
+Shaw needs to act on them day-to-day, mirror each one as a task copy in ABA: same title and
+date, `⭕` icon, body containing just a `<mention-page>` link back to the campaign row. The
+campaign database stays the campaign's source of truth; the ABA copy is what surfaces the work
+in the briefing.
+
 ### Finding a page
 
 Use `notion-search` with the content term. Don't search over just a person's name when the
-target is specific content — include both (e.g., "[Person] workshop", not just "[Person]").
+target is specific content — include both (e.g., "[Name] workshop", not just "[Name]").
 Return the top 1-3 most relevant results with links.
 
 ### Linking pages on an existing task
 
 Fetch the page, then use `notion-update-page` with `command: "update_content"` and a
 search-and-replace to inject `<mention-page url="..."/>` inline.
+
+### Capturing a Kit/newsletter draft into an ABN page
+
+When appending a newsletter draft (e.g. from Kit) to its dated ABN page, match Shaw's
+layout — the page *is* the container, so don't wrap the draft in your own headings or labels:
+
+- The source link the newsletter repurposes stays at the top, followed by a `---` divider.
+  The source is often a LinkedIn post, but it can just as easily be a blog post, video, or any
+  piece the newsletter is built from — label it for what it is (e.g. `Source blog: <title>`) so
+  the origin is clear at a glance.
+- **Subject + Preview** go together as one tight block, not two separate paragraphs:
+  `**Subject**: "..."` then `<br>**Preview:** ...`.
+- The newsletter body follows as written — mirror what actually shipped in Kit, don't re-edit
+  it here. The CTA isn't always a P.S.; it's sometimes an inline line right before the signoff,
+  so capture whatever the final draft used rather than forcing a P.S.
+- Keep the signoff compact: `Keep building,<br>Shaw`.
+- If the email closes on a trailing asset (e.g. a cheat-sheet image), keep it *after* the
+  signoff, mirroring the email — the signoff isn't always the last element on the page.
+- No section heading like "Latest Kit Draft" above the draft.
+
+This is the ABN-specific instance of the general "match formatting from recent examples"
+rule below — when in doubt, sample the last 1-2 ABN pages and mirror them.
 
 ### Marking a task done
 

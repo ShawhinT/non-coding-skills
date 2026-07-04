@@ -32,6 +32,15 @@ A single search term misses most of the network. You need multiple queries becau
 
 Run the highest-seniority queries first. Stop adding queries once you've hit the target volume.
 
+**When sourcing founders/owners, search by *functional and board titles too* — they often don't say "founder."** A founder/owner query set:
+
+- Core: "founder", "co-founder", "cofounder" (no hyphen finds different people), "CEO", "owner", "president"
+- Functional (esp. technical/product founders): "CTO", "CPO", "Chief AI Officer", "founder CTO"
+- Board / ownership (founders who stepped back but still own): "executive chairman", "chairman", "managing partner", "general partner"
+- Builder language (AI-native founders): "building", "entrepreneur", "startup"
+
+`CEO`-type terms have a **long tail** — page deep (LinkedIn caps people search at ~10 pages/query). Watch new-adds-per-page: a drop usually means *overlap* with prior queries, not exhaustion — confirm before stopping a core term early. Note which query surfaced each lead (tag it) so you can tell diversifiers from duplicates. Pure variants ("cofounder" vs "co-founder") often 100% overlap — drop them fast.
+
 ## Execute the searches
 
 For each search query:
@@ -46,56 +55,54 @@ The `network=%5B%22F%22%5D` parameter filters for 1st-degree connections. This i
 
 To paginate, append `&page=N`.
 
-### Wait for the page to load
+### 3-tab pipelining (overlap the load waits)
 
-Always wait 2-3 seconds after navigation. LinkedIn's content loads asynchronously.
+LinkedIn content loads asynchronously (~2-3s). Don't pay that wait serially. Open a **3-tab pool** and, in one `browser_batch`, navigate all three to different query pages; by the time you cycle back to extract, the first has loaded. Navigate-batch → extract-batch, three pages per round. Pace gently — rapid concurrent profile/search hits on one account risk a throttle or flag. (Subagents can't help here: one browser, one logged-in session.)
 
-### Extract profile URLs via JavaScript
+### Extract via JavaScript — key on the `• 1st` degree badge
 
-This is the most reliable extraction method. LinkedIn's CSS class names are obfuscated random strings, so don't try to use semantic selectors like `.search-result`. Instead, filter all `<a>` tags:
-
-```javascript
-const allLinks = [...document.querySelectorAll('a')];
-const seen = new Set();
-const profiles = allLinks
-  .filter(a => a.href && a.href.includes('/in/')
-    && a.textContent.includes('View')
-    && a.textContent.includes('profile'))
-  .map(a => {
-    const url = a.href.split('?')[0];
-    const name = a.textContent.replace(/View.*profile/,'').trim();
-    return { name, url };
-  })
-  .filter(p => {
-    if (seen.has(p.url)) return false;
-    seen.add(p.url);
-    return true;
-  });
-JSON.stringify(profiles);
-```
-
-This works because LinkedIn wraps each person's name in a link whose text includes "View [Name]'s profile" and whose href contains `/in/`. Splitting on `?` strips tracking parameters.
-
-### Get titles and locations
-
-The URL extraction gives you names and URLs but not titles or locations. For those, read the `main` element's `innerText`:
+LinkedIn's CSS classes are obfuscated, and the old "View [name]'s profile" link text is **stale** — don't rely on it. Each result card's anchor text contains the degree badge (`• 1st`); mutual-connection links don't. Filter on that:
 
 ```javascript
-const main = document.querySelector('main');
-const text = main ? main.innerText : '';
-const lines = text.split('\n').filter(l => l.trim().length > 0);
-lines.slice(0, 150).join('\n');
+const byUrl = {};
+[...document.querySelectorAll('a')].forEach(a => {
+  if (!a.href || !a.href.includes('/in/')) return;
+  const url = a.href.split('?')[0];
+  const t = a.textContent.replace(/\s+/g, ' ').trim();
+  (byUrl[url] = byUrl[url] || {url, texts: []}).texts.push(t);
+});
+const out = [];
+Object.values(byUrl).forEach(r => {
+  const card = r.texts.find(t => /•\s*1st/.test(t));   // result card only
+  if (!card) return;
+  const name = r.texts.filter(t => !/•/.test(t)).sort((a,b)=>a.length-b.length)[0] || '';
+  let h = (card.split(/•\s*1st/)[1] || '')
+    .split(/\d+[KM]?\s*followers|mutual connection|Visit my website|is a mutual/)[0]
+    .replace(/Message/g,'').trim();
+  out.push({name, url, headline: h.slice(0,150)});
+});
 ```
 
-This returns the full text of all search results on the page. Parse it to fill in the title and location fields for each lead.
+The headline carries the role, company (`@`/`at`/`Current:`), and often the AI/industry signal — enough for free-stage scoring.
 
-Note: `get_page_text` sometimes grabs a promoted article instead of search results (it targets `<article>` elements). The JavaScript `main.innerText` approach is more reliable.
+### Accumulate to localStorage, exfiltrate via the DOM
 
-**Run both JavaScript calls in parallel** (URL extraction + page text) to save time.
+Two truncation traps: the `javascript_tool` return truncates at ~1,130 chars, and `get_page_text` targets `<article>`/`<main>` (sometimes grabbing a promoted post). Beat both:
 
-### Save after each page
+1. **Accumulate, don't return.** Have the extractor merge results into `localStorage` (dedup by URL, tag with the query) and return only `{added, total}` — tiny, never truncated. This survives across pages/queries (localStorage persists; `window` globals don't). You can run the 3 tabs' accumulators in one `browser_batch` since each return is small.
+2. **Exfiltrate by injecting into `<main>`.** When done, write the whole store as delimited text (use sentinels like ` ~REC~ ` / ` ~F~ ` so headlines with spaces parse cleanly) into `document.querySelector('main').innerHTML`, then read it with `get_page_text` — which returns ~25KB cleanly (far past the JS-eval cap). Dump in halves if larger. Save that to `raw/<campaign>_leads_raw.json` via a small Python parser.
 
-Append to `raw/<campaign>_leads_raw.json` after each page. Don't accumulate across multiple pages before saving — if something goes wrong, you lose everything. A small Python helper that deduplicates by URL and reports the running count pays for itself immediately.
+For reading individual **profile/activity pages** (e.g. checking recent posts), use a **self-waiting** extractor — `javascript_tool` supports top-level `await`, so poll until the feed loads instead of guessing a fixed wait:
+
+```javascript
+(async()=>{let t='';for(let i=0;i<12;i++){const m=document.querySelector('main');
+  t=m?m.innerText.replace(/\s+/g,' ').trim():''; if(t.length>300) break;
+  await new Promise(r=>setTimeout(r,400));} return t.slice(0,1400);})()
+```
+
+### Save after each round
+
+Persist after each round of pages — never accumulate only in context. The localStorage store is the durable buffer; flush it to `raw/` periodically and at the end.
 
 ### Pagination
 

@@ -19,6 +19,7 @@ This file is the **universal core** — colors, type, voice, icons, logos, the a
 |---|---|
 | A website, marketing page, course page, LMS surface, HTML email | `references/web-composition.md` + `references/components.md` |
 | A still infographic (LinkedIn graphic, social-feed image, PNG one-pager, cheatsheet) | `references/infographic-composition.md` |
+| An embedded figure in an ABA blog post, slide, or doc | `references/infographic-composition.md` (same still-scale composition tokens; `graphic-builder`'s embedded-graphic mode strips the social packaging) |
 | A motion-graphic clip (B-roll, intro card, lower-third overlay, MP4 / `.mov`) | `references/animation-motion.md` |
 | Any voice/copy decision | `references/voice-and-tone.md` |
 
@@ -81,7 +82,7 @@ Load from Google Fonts:
 - Inline UI icons: `20px` or `22px` (`size-5`)
 - Thumbnail centerpieces (inside card gradient tiles): `48px` (`size-12`)
 - Live-event dot: `10–12px`
-- Infographic flow arrows: bump `stroke-width` to `2.5–3` — the default 1.5 reads as a hairline render glitch at 22–32px on-canvas. See `infographic-builder` Gotchas.
+- Infographic flow arrows: bump `stroke-width` to `2.5–3` — the default 1.5 reads as a hairline render glitch at 22–32px on-canvas. See `graphic-builder` Gotchas.
 
 **Coloring:** icons inherit `currentColor`. Tint with `color: #087CA7` / `#8FC93A` / `#EE6352` / `#D19C1D` — never with a stroke override.
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Render an infographic HTML to a 2x retina PNG via headless Chrome.
+# Render a graphic HTML to a 2x retina PNG via headless Chrome.
+# (Any graphic mode: social infographics, embedded blog/slide figures, doc diagrams.)
 #
 # Usage:
 #   render.sh <html-path> [--size square|portrait|landscape|<W>x<H>] [--out <png-path>]

@@ -133,6 +133,12 @@ p {
     margin: 0;
 }
 
+/* Footnotes (e.g. asterisk notes under a session) render 20% smaller */
+.footnote {
+    font-size: 0.8em;
+    color: #555;
+}
+
 /* Borderless syllabus info table */
 table.syllabus {
     border-collapse: collapse;
@@ -173,4 +179,55 @@ hr {
     border-top: 1px solid #087CA7;
     margin: 1.5em 0;
     opacity: 0.3;
+}
+
+/* Hide the markdown TOC permalink anchors (¶) — meaningless in a PDF */
+.headerlink {
+    display: none;
+}
+
+/* Print flow: keep headings with following content, and avoid orphaning
+   list items or splitting table rows across a page break */
+h1, h2, h3, h4, h5, h6 {
+    break-after: avoid;
+}
+
+li {
+    break-inside: avoid;
+}
+
+tr {
+    break-inside: avoid;
+}
+
+/* Compact data tables (e.g. audit scorecards): smaller text, centered
+   column headers, and stage labels kept on a single line. Scoped to
+   .scorecard so standard proposal tables are unaffected. */
+table.scorecard th,
+table.scorecard td {
+    font-size: 12px;
+}
+
+table.scorecard th {
+    text-align: center;
+}
+
+table.scorecard td:first-child {
+    white-space: nowrap;
+}
+
+/* Callout blockquote: light Cerulean tint with a full border and rounded
+   corners (no side-stripe, per ABA brand), smaller text. */
+blockquote {
+    background-color: #e8f4f8;
+    border: 1px solid #b9dce8;
+    border-radius: 0.5rem;
+    padding: 0.7em 1.1em;
+    margin: 1.5em 0;
+    font-size: 14px;
+    color: #333;
+}
+
+blockquote p {
+    margin: 0;
 }

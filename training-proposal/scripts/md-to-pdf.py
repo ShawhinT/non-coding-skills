@@ -62,11 +62,11 @@ def convert_md_to_pdf(md_file_path):
 
     # Inject running elements for header/footer logos
     header_logo = f'''<div class="header-logo-element">
-  <img src="{logo_uri}" alt="Logo">
+  <img src="{logo_uri}" alt="AI Builder Academy">
 </div>'''
 
     footer_logo = f'''<div class="footer-logo-element">
-  <img src="{logo_uri}" alt="Logo">
+  <img src="{logo_uri}" alt="AI Builder Academy">
 </div>'''
 
     html_with_body = f"<body>{header_logo}{footer_logo}{html_content}</body>"

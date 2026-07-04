@@ -11,16 +11,16 @@ This skill is a **router**, not a content store. It owns the *mechanics* of prep
 
 ## The four call types
 
-Each maps to an event-type SOP. The SOP page IDs are catalogued in `notion-helper/SKILL.md` → "Event-Type SOPs"; read the matching SOP when prepping.
+Each maps to an event-type SOP. SOPs aren't hardcoded by ID — find the matching SOP on the SOPs page (see `notion-helper/SKILL.md` → "Event-Type SOPs" for how to discover them), then read it when prepping.
 
 - **Discovery Call** — pre-sale conversation with a lead. Discovery-focused. The brief goes on an ABA Calls page. SOP: *Discovery Call*.
 - **1:1 Claude Workshop** — the paid 1:1 delivery session. The brief goes on an ABA Trainings page and is paired with a Pre-session checklist and Agenda (see "Training pages" under Step 6). SOP: *1:1 Claude Workshop*.
-- **Check-in Call** — a relational touchpoint with a client or warm lead, in one of three contexts: (1) *after a 1:1 session* — the ~1-week post-workshop 4Rs call (Results, Reviews, Referrals, Resells); (2) a periodic client nurture check-in (4Rs not forced); (3) a lead nurture check-in — warm but not-yet-converted, often pre-booked off a discovery call (no 4Rs, no engagement context yet). Identify which from CRM status and recency. The brief goes on an ABA Calls page. SOP: *Check-in Call*.
+- **Check-in Call** — a relational touchpoint with a client or warm lead, in one of three contexts: (1) *after a 1:1 session* — the ~1-week post-workshop 4Rs call (Results, Reviews, Referrals, Resells), SOP: *Check-in Call (1:1 Claude Workshop)*; (2) a periodic client nurture check-in (4Rs not forced), SOP: *Check-in Call (Client Nurture)*; (3) a lead nurture check-in — warm but not-yet-converted, often pre-booked off a discovery call (no 4Rs, no engagement context yet), SOP: *Check-in Call (Lead Nurture)*. Identify which from CRM status and recency. The brief goes on an ABA Calls page. The shared Setup, relational call bank, and post-call mechanics live in the base *Check-in Call* SOP; each spoke above adds its own context.
 - **Wrap-up Call** — end of a *group / multi-session training engagement*, days-to-weeks after it wraps, with company contacts (champion, buyer, leadership). Recommendations + the 4Rs. The brief goes on an ABA Calls page. SOP: *Wrap-up Call*.
 
 ## Key Locations
 
-Canonical Notion IDs live in `notion-helper/SKILL.md` → "Main Databases" and "Event-Type SOPs." CRM-specific sub-databases (Active Leads, Clients Nurture) and the Gmail account are documented in `crm/SKILL.md`. The key resources are:
+Canonical Notion IDs for the main databases live in `notion-helper/SKILL.md` → "Main Databases." Event-type SOPs aren't hardcoded by ID — discover them on the SOPs page (see `notion-helper/SKILL.md` → "Event-Type SOPs" for how). CRM-specific sub-databases (Active Leads, Clients Nurture) and the Gmail account are documented in `crm/SKILL.md`. The key resources are:
 
 - **Active Leads database** — CRM entries with status, notes, email, source
 - **Clients (Nurture) database** — past clients with engagement history, check-in cadence, and expansion signals
@@ -39,8 +39,8 @@ Determine the call type from what the call *is*, cross-checked against where the
 
 - **A lead in Active Leads, early-stage / pre-sale** → **Discovery Call**.
 - **A paid 1:1 delivery session** (there's an ABA Trainings page, an engagement row, or Shaw describes it as the workshop itself) → **1:1 Claude Workshop**.
-- **A client in Clients (Nurture)**, and the call is either ~1 week after a 1:1 session or a periodic nurture touch → **Check-in Call** (client context). Use recency to tell the two sub-contexts apart: a recently-ended 1:1 session means the post-session 4Rs context; 6+ weeks out means the relational nurture context.
-- **A lead in Active Leads with a check-in on the calendar** (warm but not converted — often pre-booked off a discovery call) → **Check-in Call** (lead nurture context). No 4Rs, no engagement to pull from.
+- **A client in Clients (Nurture)**, and the call is either ~1 week after a 1:1 session or a periodic nurture touch → **Check-in Call** (client context). Use recency to tell the two sub-contexts apart: a recently-ended 1:1 session means the post-session 4Rs context → *Check-in Call (1:1 Claude Workshop)*; 6+ weeks out means the relational nurture context → *Check-in Call (Client Nurture)*.
+- **A lead in Active Leads with a check-in on the calendar** (warm but not converted — often pre-booked off a discovery call) → **Check-in Call** (lead nurture context) → *Check-in Call (Lead Nurture)*. No 4Rs, no engagement to pull from.
 - **The end of a group / multi-session training engagement**, with company contacts → **Wrap-up Call**.
 - **Found in both Active Leads and Clients** → the Clients entry takes precedence. They're a past client, not a prospect.
 
@@ -70,9 +70,13 @@ Do a quick web search on the company and on **every named attendee**, not just t
 
 On a group call, who the contact chooses to bring is itself a signal — an IT or security lead, an ops/process owner, a finance gatekeeper, or a senior sponsor each tells you what the conversation is really about. Pull each attendee's email and name from the calendar event, and don't let Shaw walk in cold on anyone in the room. (For a 1:1 call this is just the one person.)
 
+When you state someone's role, get it from the primary source — open and read their actual profile (usually LinkedIn). Titles pulled from search-result snippets, conference posts, or the search engine's own summary are point-in-time and drift; a role you saw in a two-year-old event blurb may be stale or belong to a different person who shares the name. LinkedIn is gated and JavaScript-rendered, so `web_fetch` comes back as an empty shell — use the Chrome browser tools (`navigate` then `get_page_text`) to read the page for real. And read the role *body*, not just the headline title: what someone actually does day to day (their function) matters more for the call than their HR title, and the two often diverge — a "Director of X" whose work is really go-to-market, or vice versa. Characterizing someone from the title alone is how you produce a confident block that's quietly wrong. If you can only match a person by an email handle and can't open a profile to confirm, say "couldn't confirm role" rather than borrowing a plausible-looking title.
+
 Don't try to draw deep conclusions from web research. The goal is factual background, not analysis. Insights about their pain points, goals, and motivations are for the call itself.
 
 ### 6. Write the brief to the call page
+
+**First, check whether the page already carries a complete, current brief — if it does, don't regenerate it.** This skill can run against the same page more than once: CRM Workflow 7 writes the brief at booking, and a morning call-research sweep can hit the same page again hours later. When the Pre-Call Research and Prioritized Questions are already present and still accurate, leave them in place and report the page as ready. Only refresh a section when something material changed since it was written — a new email thread, a reschedule, an added attendee, a corrected role. Reproducing near-identical content wastes effort and risks clobbering hand-edits Shaw made on the page; this restraint is what makes a scheduled or repeat run safe.
 
 Write the pre-call brief directly to the person's call page in Notion. The brief has two sections:
 
@@ -111,7 +115,7 @@ Add a `Follow-up` section at the bottom of the call page (after `Call Notes`) wi
 
 ## Question banks live in the SOPs
 
-This skill used to carry the question banks inline. They now live in the event-type SOPs — one bank per call type — so there's a single source of truth and the banks evolve with the SOPs. To pick the prioritized questions in Step 6, open the matching SOP (IDs in `notion-helper/SKILL.md` → "Event-Type SOPs") and select from its bank. The same goes for the 4Rs framework referenced by the Check-in and Wrap-up SOPs — those SOPs link the canonical 4Rs Framework page; don't restate it here.
+This skill used to carry the question banks inline. They now live in the event-type SOPs — one bank per call type — so there's a single source of truth and the banks evolve with the SOPs. To pick the prioritized questions in Step 6, find the matching SOP on the SOPs page (see `notion-helper/SKILL.md` → "Event-Type SOPs" for how to discover them) and select from its bank. For check-ins, the base *Check-in Call* SOP carries the shared relational question bank, while *Check-in Call (1:1 Claude Workshop)* carries the 4Rs agenda. The same goes for the 4Rs framework referenced by the Check-in and Wrap-up SOPs — those SOPs link the canonical 4Rs Framework page; don't restate it here.
 
 ## Principles
 

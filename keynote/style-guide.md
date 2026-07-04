@@ -6,6 +6,15 @@
 - Monochrome by default — color only enters via emojis, screenshots, logos, or occasional accent text (red/green for pros/cons).
 - Author name in small bold at bottom-left of title slides, centered footer on content slides. Bracketed references `[1-3]` in bottom-left.
 
+### Reference citation markers (exact spec)
+On content slides, citations are small bracketed markers in the bottom-left, flush to the footer line:
+- **Position `{95, 1027}`** (the x=95 content left margin, sitting on the footer band, next to the page number), **font `HelveticaNeue-Bold` at size 24** (bold, not regular), default black. Width ~38 for a single `[n]`; widen to ~61 for a range.
+- **Gotcha:** creating the text item with a `height` property shifts the stored y up ~52px (e.g. you ask for 1027 and get 975). After `make new text item`, explicitly `set position of <item> to {95, 1027}` and `set font ... to "HelveticaNeue-Bold"` — don't rely on creation-time position.
+- Markers can **combine refs as a range** on one slide: `[1-2]`, `[2-3]`.
+- **Number by first appearance** — the marker numbers must ascend in slide order (first cited ref = `[1]`). When adding markers, renumber the References-slide list to match.
+- The **References slide** itself lists `[n] Title` lines at position `{~95-100, 280}`, **font size 48**, one blank line between entries.
+- Do NOT float markers up at e.g. y=965 or use size 28 — that reads as content, not a citation.
+
 ### Title Slide Formula
 Big bold title + lighter subtitle + name at bottom-left + optional thematic graphic (emojis, logos) at bottom-right.
 

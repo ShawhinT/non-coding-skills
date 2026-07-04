@@ -50,12 +50,14 @@ Each principle should convey the *why* so the model can reason about analogous s
 - Make surgical additions — don't rewrite sections that are working fine
 - When a new artifact shows a different structural pattern, copy it to `references/` as an additional example rather than trying to describe every variation in prose
 - Remove instructions that caused unproductive work (check run transcripts or conversation history for evidence)
+- **The frontmatter `description` is capped at 1024 characters.** It's a routing trigger, not documentation — when a capability grows, the instinct is to bloat the description with more example phrases, but that's the wrong home. Add at most a phrase or two of new trigger language; put the actual *how* in the body or a `references/` file and point to it from the routing table. A trigger list that already covers the territory rarely needs another near-synonym.
 
 ### 5. Verify
 
 - Re-read the updated SKILL.md to confirm coherence
 - Check that new reference examples match the final version of the artifact
 - Ensure no duplication with existing instructions
+- If you touched the frontmatter `description`, confirm it's still ≤1024 characters — exceeding the cap makes the skill fail to load, so catch it here rather than at load time
 
 ## Anti-patterns
 

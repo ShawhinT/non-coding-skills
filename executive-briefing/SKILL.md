@@ -58,6 +58,30 @@ Use `notion-query-database-view` on each view URL listed in `notion-helper/SKILL
 is already the items you need — no client-side date filtering required. Run all nine
 queries in parallel in a single tool-call batch.
 
+#### Other-day briefings (tomorrow, Monday, a specific date)
+
+The Today Views are filtered server-side on a *relative* `Today` — they only ever return
+today's items, so they can't serve a briefing for any other day. When Shaw asks for a
+different day ("tomorrow briefing", "what's on my plate Friday", a specific date), skip the
+Today Views and query the **data sources** directly with an explicit date.
+
+1. Resolve the target day to an ISO date (`YYYY-MM-DD`) — use `bash` for relative phrasing
+   like "tomorrow" or "next Monday" so you're not guessing the calendar.
+2. Pull the nine data source IDs from `notion-helper/SKILL.md` → "Main Databases" (don't
+   restate them here — that table is the single source of truth).
+3. Query with `notion-query-data-sources` (SQL mode). The six dated sources filter on the
+   day; the three relationship sources surface anything due on or before it:
+   - Dated work: `WHERE "date:Date:start" >= '<date>' AND "date:Date:start" < '<next-day>'`
+   - Relationship: `WHERE "date:Next Contact:start" <= '<date>'`
+
+   Two gotchas worth remembering: the SQL columns are the expanded
+   `date:Date:start` / `date:Next Contact:start` (querying bare `Date` / `Next Contact`
+   errors with "no such column"), and Notion rate-limits a burst of all nine at once — fire
+   them in batches of ~3 rather than one big parallel block.
+
+Everything downstream (Step 2 page fetch, Step 3 formatting) is identical — only the date
+label in the output header changes.
+
 ### Step 2: Fetch page content for each matching item
 
 For each returned item, use `notion-fetch` with the page URL/ID to pull the page content.

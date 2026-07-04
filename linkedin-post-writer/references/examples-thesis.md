@@ -196,3 +196,41 @@ Everything else is noise.
 So if you've been feeling hopeless about AI, stop consuming content about it and start using it to learn or build something new!
 
 **Why it works:** ~125 words, one single point (stop consuming, start building). The status quo names the exact fears (the future, their career, falling behind) so the anxious reader feels seen, and that precise naming *is* the validation, so there's no separate "I get it" line. The turn is one flat line ("but that's more anxiety speaking than reality"), not a paragraph explaining the psychology. It names real tools (Claude, Codex) instead of gesturing at "the tools everyone's anxious about." "Everything else is noise." is a flat declarative carrying the whole pivot. The solution stays single (no list of example tactics) and it closes on a directive, not a discussion question.
+
+---
+
+## Example: Access ≠ adoption (contrast reframe + first-person crux)
+
+Access ≠ adoption.
+
+Most companies' AI rollout plan has been buying Claude seats and hoping for ROI.
+
+However, what people have now realized is that giving people access to tools doesn't make an impact… getting them to change their behavior does.
+
+So what does it take to drive behavior change?
+
+It comes down to the internal cost-benefit analysis people run in their heads.
+
+Is the cost of changing my habits worth the benefit (e.g. time saved, better results)?
+
+The problem here is that the cost is clear (using a new tool or learning a new workflow is immediately painful) while the benefit is not (how do I know this will actually pay off?).
+
+So people fall back on a central heuristic we all use for hard decisions.
+
+What do people like me do?
+
+If no one on my team uses Claude, I probably won't either.
+But if someone on my team is getting real results, then I'll give it a proper shot.
+
+This simple feature of human nature writes the whole playbook for driving adoption.
+
+1. Pick a champion.
+2. Have them get a personal win with Claude.
+3. Have them share that result with the team.
+4. Repeat.
+
+While it might start slow, this is how behaviors change at scale.
+
+What's gotten your team to actually adopt Claude?
+
+**Why it works:** The reframe runs on contrast, not explanation — "the cost is clear (immediately painful) while the benefit is not (how do I know this will pay off?)" is two mirrored halves, each with its own parenthetical, instead of a sentence narrating why people hesitate. At the crux it drops into first person ("if no one on *my* team uses Claude, *I* probably won't either"), so the reader runs the heuristic themselves. Note what it *doesn't* do: no manufactured mic-drop couplet at the end — it lands on one quiet line ("this is how behaviors change at scale") and goes to the CTA. It keeps a little connective warmth ("So what does it take to drive behavior change?", "However, what people have now realized…") that a maximal-compression pass would wrongly strip. The CTA names Claude specifically, not "a new tool." The 4-step framework is the payoff and is left to stand on its own.

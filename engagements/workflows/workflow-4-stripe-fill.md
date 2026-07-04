@@ -2,7 +2,7 @@
 
 **Triggers:**
 - Engagement row has blank `Price`, `Paid Status`, or Stripe link in body
-- "Look up Stripe for X" / "Pull invoice for E####" / "Fill in payment info for X"
+- "Look up Stripe for X" / "Pull invoice for E###" / "Fill in payment info for X"
 - Run as a sub-step of **Workflow 1 (Create)** when an invoice is expected to exist already
 
 **Goal:** Pull invoice ID, amount, and status from Stripe; fill in `Price`, `Paid Status`, and
@@ -32,11 +32,11 @@ Try in order:
 - **Last name only:** `search_stripe_resources(query='customers:name~"<Last>"')`
 - **First name only** if last name is uncommon
 - **Company domain substring:** `search_stripe_resources(query='customers:email~"<domain>"')`
-  e.g., `email~"<company-domain>"` finds anyone billed at that company
+  e.g., `email~"[company-domain]"` finds anyone billed at that company
 
-If a customer matches but the name/email looks like a different person (e.g., a procurement
-contact at the client's company instead of the contact you're searching for), that's likely
-the **proxy payer**. Use that customer.
+If a customer matches but the name/email looks like a different person (e.g., "[Person A] at
+[Company]" instead of "[Person B]"), that's likely the **proxy payer** — a
+procurement contact at the client's company. Use that customer.
 
 ### 3. Handle voided/replaced invoices
 
@@ -107,8 +107,8 @@ new_str:
 For `1:1 Claude Workshops — Team` engagements, the invoice should equal `$1,500 × N attendees`
 (no team discount currently). If the invoice amount doesn't match the expected count, flag it:
 
-> [Client A]'s invoice was $7,500 = 5 × $1,500. ✓
-> [Client B]'s invoice was $7,500 but I counted 5 attendees in the body — confirms 5 × $1,500.
+> [Person A]'s invoice was $7,500 = 5 × $1,500. ✓
+> [Person B]'s invoice was $7,500 but I counted 5 attendees in the body — confirms 5 × $1,500.
 
 If the amount and attendee count don't match, ask Shaw.
 
@@ -116,9 +116,9 @@ If the amount and attendee count don't match, ask Shaw.
 
 Reply with what you found and what you couldn't:
 
-> Filled in [E0003](url) — $7,500, Paid in Full, billed to [email] (4/20).
+> Filled in [E003](url) — $7,500, Paid in Full, billed to [email] (4/20).
 >
-> [E0001](url) — no Stripe record under any email or name search. Likely paid via the client's
+> [E001](url) — no Stripe record under any email or name search. Likely paid via [Company]'s
 > vendor portal. Need you to confirm the price.
 
 Always flag uncertainty rather than guessing.
@@ -129,11 +129,11 @@ Always flag uncertainty rather than guessing.
 
 Document any new proxy patterns encountered to make future lookups faster:
 
-- **[Company A]** ([Contact Name]) — pays via internal portal, routes to a different Stripe account.
+- **[Company]** ([Client Name]) — pays via internal portal, routes to a different Stripe account.
   The original invoice on Shaw's account gets voided.
-- **[Company B]** ([Contact Name]) — pays via internal vendor service, no Stripe record on Shaw's
+- **[Company]** ([Person]) — pays via internal vendor service, no Stripe record on Shaw's
   account at all.
-- **[Company C]** ([Contact Name]) — billed via [Procurement Contact],
+- **[Company]** ([Client Name]) — billed via [Person] (procurement),
   `[email]`. Search by company domain.
 
 When a new proxy pattern is discovered, suggest adding it to this list.

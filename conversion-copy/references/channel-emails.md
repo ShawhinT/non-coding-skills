@@ -121,6 +121,29 @@ If your email is longer than this, ask what's doing the extra work.
 - Two-step CTA (watch the Loom, then reply "in"). Lower friction than "let's schedule a call."
 - Short. Direct. Doesn't rehash the sell from the call.
 
+## Pricing, discount & objection replies
+
+When a serious buyer asks the price, asks for a discount, or raises an objection, the reply's job is to hold value and advance the deal — not to answer literally and stop. Shaw's repeatable move, seen across deals:
+
+1. **State the price plainly, hold the line.** Give the number without hedging. If they asked for a discount, decline it directly ("I won't be able to do a discount"), then immediately pivot to levers that lower *cost* without cutting *price* — fewer seats, a group session, a smaller starting scope. You protect the rate while still giving them a path to yes.
+2. **Recommend the highest-leverage starting point.** Don't hand them a flat menu. Point at where the ROI is most obvious ("I'd recommend starting with the 1:1 sessions for the exec team").
+3. **Anchor with a concrete value proof.** Tie price to a tangible outcome in customer language. Shaw's go-to: "Most people delegate 5-10 hr/wk of busywork to Claude after the session, which has an outsized impact when the right people apply it." Run it through the 3-question filter — visualizable, falsifiable, unsignable.
+4. **Offer a scope expansion when it fits.** A pricing question is often the moment to widen the deal, not just size it ("We could also do sessions for key people on the executive team").
+5. **Close soft and open.** "What do you think?" beats "Just say the word" while they're still deciding — it invites the next message rather than presuming the close.
+
+**Worked example (discount ask):**
+
+> While I won't be able to do a discount, here are a couple of ways we could get the cost down.
+>
+> 1. Fewer seats: start with 1-3 sessions instead of 5.
+> 2. Group session: a single workshop where I walk through the framework and share examples. Priced at $5k, but no limit on seats.
+>
+> I'd recommend starting with the 1:1 sessions with the exec team. Most people delegate 5-10 hr/wk of busywork to Claude after the session, which has an outsized impact when the right people apply it.
+>
+> What do you think?
+
+Why it works: holds the rate, reframes "discount" as "cost-down options," steers to the highest-ROI starting point, anchors the price against a falsifiable outcome, and ends on an open question that keeps the thread moving.
+
 ## Common failure modes
 
 1. **"I hope this email finds you well" opener.** Burns preview text and signals a template.

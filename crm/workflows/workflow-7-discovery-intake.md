@@ -6,8 +6,8 @@ booking surfaced in Gmail) or when Shaw mentions in chat that a discovery call w
 This workflow is the **execution layer** for the Discovery Call SOP. The SOP owns intent,
 policy, the question bank, the confirmation email template, and the alias list; this workflow
 owns the tool calls, database IDs, payload shapes, and orchestration order. Read the Discovery
-Call SOP before running — it's the source of truth for the *what* and *why*. Its page ID lives
-in `notion-helper/SKILL.md` → "Event-Type SOPs."
+Call SOP before running — it's the source of truth for the *what* and *why*. `notion-helper`
+discovers it at runtime by fetching the SOPs page and matching on title (no hardcoded ID).
 
 ## Trigger
 
@@ -69,8 +69,9 @@ Hand off to **`notion-helper`** to create a `FU - [First Name]` task in the ABA 
 If Shaw indicates he wants a check-in pre-booked off the discovery (to keep the conversation
 warm regardless of whether the discovery converts), hand off to **`calendar-helper`** to
 schedule a `Name / Shaw - Check-in` event ~3 weeks out at the discovery slot's time-of-day.
-calendar-helper consults the Check-in Call SOP for full Setup (paired ABA Calls page, FU task,
-bidirectional CRM linking) — no extra orchestration needed here. Skip this step by default;
+This is a **Check-in Call (Lead Nurture)** check-in (a warm, not-yet-converted lead); Setup
+mechanics (paired ABA Calls page, FU task, bidirectional CRM linking) come from the base
+Check-in Call — calendar-helper handles this, so no extra orchestration is needed here. Skip this step by default;
 only run when Shaw explicitly asks for it.
 
 ## Step 5 — Draft the confirmation email

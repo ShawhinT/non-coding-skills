@@ -8,6 +8,20 @@ polished version should always be identifiable as the client's own thought — j
 tightened. If a polished quote sounds like a brand wrote it, it's overcooked; pull
 back toward the verbatim.
 
+## Presenting a quote inline in an email
+
+The polished or pre-drafted quote often goes straight into an email: the FU2
+pre-drafted ask and the approval ask both drop the quote inline. There it renders
+as *italicized* quote text with the attribution on its own line directly beneath
+it, no blank line between them. Don't wrap it in an HTML blockquote. Gmail renders
+`<blockquote>` inconsistently (stray indent bar, broken spacing) and Shaw flags it
+on sight; the Gmail connector can't produce the clean gray-bar look, so if he
+wants it he adds it by hand after the draft.
+
+The `>` blockquote styling in the worked examples below is documentation
+formatting for this file only, not the shape the quote takes in an email. See the
+email-helper skill for the htmlBody mechanics.
+
 ## The 3-variant default
 
 When polishing a fresh form submission, produce three variants. Each pulls a
@@ -22,7 +36,7 @@ field, and the closing Impact line from the "Worth It" column (NOT the Impact
 field). The Worth-It column carries the peer-rec language that lands hardest as
 the close; the Impact field's outcome description is the middle "After" beat.
 
-**Example (Client A):**
+**Example ([Client Name]):**
 
 > "I came in with a manual hiring workflow that was eating my week: copying contracts, cross-checking NDAs, swapping out parameters. Shaw and I built a Claude skill on the call itself that gave me ~3 hours back every week. The bigger win: I left with a clear framework for deciding what to automate as a skill, what to vibe-code as software, and what to keep doing by hand."
 
@@ -31,7 +45,7 @@ the close; the Impact field's outcome description is the middle "After" beat.
 **For:** social posts, hero one-liners, deck slides, email signatures.
 **Format:** 1–2 sentences. Boil it down to the single sharpest line.
 
-**Example (Client A):**
+**Example ([Client Name]):**
 
 > "Shaw and I built a Claude skill on the call that automated my hiring workflow. ~3 hours back every week, and a sharper way of thinking about what to automate next."
 
@@ -41,7 +55,7 @@ the close; the Impact field's outcome description is the middle "After" beat.
 deliverable (the skill / outcome) AND the meta-value (the framework / mental model).
 **Format:** 2–4 sentences. Lead with deliverable, end with framework.
 
-**Example (Client A):**
+**Example ([Client Name]):**
 
 > "Two things I walked away with: a Claude skill we built live on the call that automated the manual parts of my hiring process (~3 hours a week back), and Shaw's framework for deciding when a task should become a Claude skill, when it should become a vibe-coded product, and when it should stay manual."
 
@@ -52,7 +66,7 @@ form, just phrased per-individual vs. per-team:
 
 | Form column | What it yields in the polished version |
 |---|---|
-| **Before** (pain / context) | The opening hook. Sets the "before" state, makes the reader feel the problem. The more specific, the better — pull sub-steps from call notes if the form answer is thin (e.g., the client's form said "manual hiring process" but the call notes had the actual sub-steps: copy contract, cross-check NDA, swap params, send via Google e-sig). |
+| **Before** (pain / context) | The opening hook. Sets the "before" state, makes the reader feel the problem. The more specific, the better — pull sub-steps from call notes if the form answer is thin (e.g., [Client Name]'s form said "manual hiring process" but the call notes had the actual sub-steps: copy contract, cross-check NDA, swap params, send via Google e-sig). |
 | **Impact** (outcome) | The middle / pivot. Lead with the quantified win when present — hours saved per week, % improved, $ value, time-compression ratio. Numbers convert. |
 | **Worth It?** (peer rec) | Often the strongest one-line testimonial material. Frequently becomes Variant 2 on its own — pull the cleanest sentence. |
 | **Permission** | Dictates attribution. See "Permission levels" below. |
@@ -106,10 +120,10 @@ gets attributed:
 |---|---|
 | No / Decline | Don't share. Flip the row Status to `Declined` and stop. |
 | Yes, anonymous | `— [Role from client's self-ID] + generic industry descriptor` (e.g. `— People leader, mid-size cybersecurity SaaS`). See "Anonymous attribution research" below. |
-| First name only | `— [First name]` |
-| Name only | `— [Full name]` |
-| Name + role | `— [Full name], [Role]` |
-| Name + role + company | `— [Full name], [Role], [Company]` |
+| First name only | `— [First Name]` |
+| Name only | `— [Client Name]` |
+| Name + role | `— [Client Name], Founder & Principal` |
+| Name + role + company | `— [Client Name], Founder & Principal, [Company]` |
 | + photo / video | Same as above + visual asset. Flag to Shaw that he needs to source the photo/video. |
 
 Default to **less-rather-than-more** if a permission level is ambiguous. Better to
@@ -135,7 +149,7 @@ have a different attribution shape in mind.
 
 ## Worked examples
 
-### Client A — form submission, 3 variants, Variant 1 approved verbatim
+### [Client Name] — form submission, 3 variants, Variant 1 approved verbatim
 
 **Raw form response:**
 
@@ -144,10 +158,10 @@ have a different attribution shape in mind.
 - *Worth It:* "This was time well spent! I got two concrete things out of this—(1) I got ~3 hours per week back, because of a Claude skill that Shaw and I built together quickly just on the call itself, and (2) I got from Shaw's AI-wisdom a good way of deciding—is this task automatable by a Claude skill, by a software product which I can vibe-code, or I should continue to do this manually."
 - *Permission:* Name + role + company
 
-**Polished (Variant 1, approved by the client via email thread):**
+**Polished (Variant 1, approved by [Client Name] via email thread 5/27):**
 
 > "I came in with a manual hiring workflow that was eating my week: copying contracts, cross-checking NDAs, swapping out parameters. Shaw and I built a Claude skill on the call itself that gave me ~3 hours back every week. The bigger win: I left with a clear framework for deciding what to automate as a skill, what to vibe-code as software, and what to keep doing by hand."
-> — [Name], Founder & Principal, [Company]
+> — [Client Name], Founder & Principal, [Company]
 
 **Notes on the move:**
 
@@ -156,9 +170,9 @@ have a different attribution shape in mind.
   context).
 - Used "~3 hours back" as the lead quantified win.
 - "The bigger win:" replaces an em dash that would've split the sentence.
-- Closed with the client's framework — the secondary win they described.
+- Closed with [Client Name]'s framework — the secondary win he described.
 
-### Client B — verbatim was strong, light tightening, form consent
+### [Client Name] — verbatim was strong, light tightening, form consent
 
 **Raw Worth It answer (full):**
 
@@ -168,35 +182,35 @@ have a different attribution shape in mind.
 email):**
 
 > "In one session, we automated a task that was taking me 20 hours. Shaw doesn't just show tools, he helps you build systems I can extend across the business."
-> — [Name], Founder, [Company]
+> — [Client Name], Founder, [Company]
 
 **Notes on the move:**
 
 - Verbatim was clear but long for a pull-quote (74 words → 28 words).
 - Pulled the "20 hours" quantified win from the Impact answer (not in the Worth It).
-- Kept the client's strongest phrase — "doesn't just show tools, he helps you build
+- Kept [Client Name]'s strongest phrase — "doesn't just show tools, he helps you build
   systems" — almost verbatim, just removed the em dash.
 - Status went Form Submitted → Approved without a separate approval email because
-  the client's form Permission answer was "Yes — name, role, and company" — explicit
+  [Client Name]'s form Permission answer was "Yes — name, role, and company" — explicit
   consent covered the publish. Notes captured this for the record.
 
-### Client C — no form submitted, pre-drafted from call notes (FU2 path)
+### [Client Name] — no form submitted, pre-drafted from call notes (FU2 path)
 
-The client never filled out the form. Shaw pre-drafted the testimonial from the
+[Client Name] never filled out the form. Shaw pre-drafted the testimonial from the
 engagement page Results section, anchored on call notes from 4/15 (3-week financial
 project → 1 hour, email time cut in half). Sent as the initial ask via the FU2
-pre-drafted template (per the SOP). The client reviewed and approved.
+pre-drafted template (per the SOP). [Client Name] reviewed and approved.
 
 **Polished (sent inline in the ask email):**
 
 > "Before working with Shaw, I was spending my nights and weekends trying to self-learn AI. I was using Claude, but I didn't feel like I was maximizing it for my work. One session with him and a week of applied work later, I've turned a 3-week financial project into a 1-hour job, cut my email time in half, and built skills across our business that I didn't have time to even think about before."
-> — [Name], Co-founder & CEO, [Company]
+> — [Client Name], Co-founder & CEO, [Company]
 
 **Notes on the move:**
 
 - No raw form to anchor on — built entirely from call notes.
 - Before/After structure with 1–2 quantified wins is the formula for the pre-drafted
-  path (this one worked because it named the "3-week project → 1 hour" win + "cut
+  path ([Client Name]'s worked because it named the "3-week project → 1 hour" win + "cut
   email time in half").
 - Status went Asked → Approved directly, skipping Form Submitted, since no form
   submission existed. Notes captured "pre-drafted path."

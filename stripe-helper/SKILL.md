@@ -29,13 +29,15 @@ For custom engagements (training contracts, retainers, etc.), Shaw's pattern is 
 
 ## Sending an invoice (the standard workflow)
 
-Stripe doesn't have a single "send invoice" action — it's four steps. Follow this order:
+Stripe doesn't have a single "send invoice" action — follow this order:
 
-1. **Find or create the customer.** Always call `list_customers` with the email first to avoid duplicates. Only call `create_customer` if no match.
+0. **Ground the amount in the agreement, not a summary.** Before touching Stripe, confirm what was actually agreed from the source — the email thread with the client, not CRM notes (notes lag and compress; a restructured deal can change the total). If the total doesn't equal a catalog price × a whole-number quantity, stop and ask Shaw before improvising.
+1. **Find or create the customer.** Search by email first to avoid duplicates (`search_stripe_resources` with `customers:email~"domain.com"`). Only call `create_customer` if no match.
 2. **Create a draft invoice** with `create_invoice` (sets `customer` and `days_until_due`).
-3. **Attach a line item** with `create_invoice_item` (using either a `price` ID for a standard offer, or a custom amount/description for bespoke work).
-4. **Pause and confirm with Shaw.** Show the summary — customer, line item, amount, due date — and wait for explicit OK before finalizing. This is the rule, even when the request feels obvious.
-5. **Finalize** with `finalize_invoice`. This locks the invoice and triggers Stripe to email the hosted invoice link to the customer.
+3. **Attach ONE line item** with `create_invoice_item` using the existing price ID from the offers table. The MCP can't set quantity, so for multi-unit invoices create a single line item and tell Shaw what quantity to set in the dashboard — do NOT create N duplicate line items, and never create a new price to fake a total (e.g. don't mint a $6,000 price when the deal is 4 × the $1,500 workshop price).
+4. **Remind Shaw about ACH.** The MCP can't set payment methods. If the client should be able to pay by bank transfer, remind Shaw to check **ACH Direct Debit** under Payment options in the dashboard before finalizing.
+5. **Pause and confirm with Shaw.** Show the summary — customer, line item, quantity to set, amount, due date — and wait for explicit OK before finalizing. This is the rule, even when the request feels obvious.
+6. **Finalize** with `finalize_invoice` after Shaw has made his dashboard tweaks (quantity, ACH). This locks the invoice and triggers Stripe to email the hosted invoice link to the customer.
 
 The `finalize_invoice` response includes a hosted invoice URL (`url` field). Always include this in the reply to Shaw, plus the dashboard URL (see URL patterns below).
 
@@ -61,6 +63,10 @@ When Shaw asks to change a finalized invoice:
 4. Choose **Mark invoice as void**
 5. Click **Update status**
 
+### Draft invoices are nearly as locked (MCP walls)
+
+Discovered limits of the Stripe MCP, even on drafts: no invoice update (due date, payment methods), no invoice or invoice-item deletion, and `create_invoice_item` accepts only a price ID — no quantity, no custom amount, no description. `stripe_api_execute` doesn't expose invoiceitems operations either. Practical upshot: get the draft right at creation; anything wrong on a draft is fixed or deleted by Shaw in the dashboard (drafts delete cleanly from the ⋯ menu). If you create a price by mistake, deactivate it with `PostPricesPrice` (`active: false`).
+
 ## Payment links
 
 For "create a Stripe link for X" — use `create_payment_link` with a price ID. Payment links are shareable and don't require a customer record. Good for: course/intensive checkouts, lead magnets with a paid tier, one-off offers Shaw wants to drop into a DM or post.
@@ -72,9 +78,9 @@ Confirm with Shaw before creating: which price, any quantity limits, where he pl
 When Shaw asks "did X pay", "how much is in my account", "what's my Stripe doing", reach for:
 
 - **`retrieve_balance`** — current available + pending balance
-- **`list_invoices`** — recent invoices with status (`paid`, `open`, `void`, `draft`, `uncollectible`). Filter by `customer` ID if Shaw names a specific person.
+- **`GetInvoices`** via `stripe_api_execute` — recent invoices with status (`paid`, `open`, `void`, `draft`, `uncollectible`) and full line items. Filter with the `customer` param if Shaw names a specific person. (There is no `list_invoices` tool.)
 - **`list_payment_intents`** — actual successful payments (`status: succeeded`) vs. canceled attempts. Useful for verifying a charge actually went through.
-- **`list_customers`** with `email` filter — quick lookup for a specific person
+- **`search_stripe_resources`** with `customers:email~"..."` — quick lookup for a specific person (there is no `list_customers` tool)
 
 Shaw's account has no subscriptions and no coupons — everything is one-off invoicing. Don't waste time checking those unless he specifically asks.
 

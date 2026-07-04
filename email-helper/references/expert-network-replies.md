@@ -164,12 +164,7 @@ All good, there is a tentative plan to do another series on AI for customer acqu
 
 ## Batch Drafting Notes
 
-When drafting replies to multiple expert network respondents at once:
-
-- **Use a consistent template.** Don't force variation across recipients for the sake of it. The same clean template sent to 6 people is better than 6 slightly different versions.
-- **Group by response category first.** Sort people into the categories above before drafting.
-- **Reply on the original thread.** See SKILL.md "Drafting with `create_draft`" for the `replyToMessageId` mechanics.
-- **Only personalize where earned.** Most people in a batch will get the clean template. That's fine.
+Follow SKILL.md "Batch Outreach Workflow" for the general mechanics (one consistent template, present before creating drafts, reply on the original thread). The only addition here: **group respondents by response category first** (the five categories above), then draft. Most people in a batch get the clean template with no personalization — that's fine.
 
 ---
 

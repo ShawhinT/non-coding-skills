@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Embedded graphic</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Libre+Franklin:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* Embedded-graphic mode: a figure that lives inside a blog post, slide, or doc.
+     The surrounding prose/slide supplies the title and explanation, so this is JUST the diagram:
+     no editorial title/subtitle, no takeaway line, no footer by default.
+     Height is NOT fixed — content drives it. Render generous, then trim (see SKILL.md § Rendering).
+     If the user explicitly asks for a title, add one (a single dominant display title may be
+     Title Case / centered). Otherwise leave it off. */
+  :root {
+    --bg: #FAFAF7;
+    --surface: #FFFFFF;
+    --ink: #0A0A0A;
+    --ink-muted: rgba(0,0,0,0.55);
+    --border: rgba(0,0,0,0.14);
+    --accent: #5B7FB8;  /* brand-neutral placeholder — override with the brand's accent (e.g. `aba-brand-system` Cerulean #087CA7) */
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* NOTE: no fixed height, no min-height:100vh — that reintroduces dead space + a floating footer. */
+  body {
+    width: 1080px;
+    background: var(--bg);
+    font-family: 'Libre Franklin', system-ui, sans-serif;
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .canvas {
+    width: 1080px;
+    padding: 56px 60px 34px 60px;  /* tight vertical padding — embedded figures don't carry social-still margins */
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Small in-diagram labels (section captions, mono discriminators) are part of the figure — keep them. */
+  .cap {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+</style>
+</head>
+<body>
+<div class="canvas">
+  <!-- Replace with the diagram. No title/subtitle/takeaway/footer unless the user asks.
+       Render at a generous height (e.g. --size 1080x4000), PIL-measure the content end,
+       then re-render at content-end + ~36px so there's no bottom dead band. -->
+</div>
+</body>
+</html>

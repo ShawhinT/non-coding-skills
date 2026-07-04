@@ -16,9 +16,13 @@ The caller provides:
 - `parent_file` (optional) — absolute path to the parent video. Defaults to `source_file`.
 - `transcript_path` (optional) — path to a word-level transcript JSON shaped `{"words": [{"word", "start", "end"}, ...]}`. If absent, Step 0 generates one via AssemblyAI.
 - `source_duration` (optional, seconds) — if absent, probe via `ffprobe`.
-- `project_root` (optional) — directory under which the `claude-edits/` scaffold is created. Defaults to the current working directory.
+- `project_root` (optional) — directory under which the `claude-edits/` scaffold is created. Defaults to the per-video draft folder (see below), NOT the raw folder or the current working directory.
 
 ## Output directory
+
+**Shaw's channel SOP (default):** edits live under `2-drafts/`, never in `1-raw/` (raw holds only source media). Each video gets its own folder `2-drafts/<video-name>/` containing `claude-edits/` (this skill's artifacts) alongside `shaw-edits/`, optional `assets/`, and the eventual `<video-name>_draft.mp4`. So `project_root` = `…/_YouTube/2-drafts/<video-name>/`. Derive `<video-name>` from the raw folder name (e.g. raw `1-raw/agentcon-2026/` → draft `2-drafts/agentcon-2026/`); create the draft folder if it doesn't exist. If a `claude-edits/` for that video already exists from a prior pass, write the new run to `claude-edits-v2/`, `-v3/`, … (the channel keeps versioned passes). The FCPXML references source media by absolute `file://` path, so the project folder can sit in `2-drafts` while the media stays in `1-raw` — the two need not be colocated.
+
+**Project naming SOP:** pass `--project-name <video-name>_draft` (e.g. `agentcon-2026_draft`) to the FCPXML step so the event/project label inside Final Cut matches the channel's `<video-name>_draft.mp4` convention. Name the output file `edit.fcpxml` as usual; it's the `--project-name` value that shows up in FCP.
 
 All artifacts go in `<project_root>/claude-edits/`. Create the folder if missing. Nothing is ever written next to or on top of the source video.
 
@@ -324,6 +328,10 @@ uv run scripts/place_overlays.py <cut>.mp4 <project_dir>/placements.json -o <pro
 The reason this matters: FCPXML durations are frame-aligned rationals like `19134115/30000s` that look like arbitrary numerators. A single transposed digit produces a project that's sub-second-off — small enough to look right at a glance, large enough to drift every overlay placement past its VO line. The emitter's wrapper computes those rationals via `to_frame_str`; bypassing it by hand-authoring a wrapper FCPXML re-introduces the typo class. Reach for the script, not the keyboard.
 
 See `references/fcpxml-format.md` ("Connected Clips and Lanes", "DTD Content Order", "Mixed Formats") for the structural rules the emitter enforces.
+
+### Step 7-alt — Dual-source picture-in-picture (rare)
+
+When the shoot has **two recordings of the same talk** — e.g. a speaker camera plus a separate screen/slides capture — and you want one full-screen as the main show with the other as a synced PiP inset (usually keeping the *better* recording's audio), use `make_pip_fcpxml.py` **instead of** Step 7. This path is uncommon; the full workflow — audio-sync discovery, the emitter, the FCP transform coordinate system, and verification — lives in **`references/picture-in-picture.md`**. Read it before running.
 
 ## Output
 

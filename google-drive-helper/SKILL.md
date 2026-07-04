@@ -21,7 +21,8 @@ Hardcoded folder IDs Shaw uses regularly. When asked about content in any of the
 |---|---|---|
 | `forms` | `1nExDY6bLRQWq73TfX1ihZpQsPDqsbRrD` | Google Forms (intake, testimonial, feedback, etc.). Some entries are shortcuts to Forms shared in from elsewhere. |
 | `sheets` | `1hMTTUsNov7u3gfrP6Y1N50IplfpxFZpC` | Linked response sheets for the forms above. |
-| `Meet transcripts` | `14fmJnjIU0Dj5xL9trSxOJe_vUTdhQOyV` | Google Meet auto-saved call transcripts (Google Docs). Named `[Name or Company] / Shaw - [Type] (YYYY-MM-DD HH:MM GMT) - Transcript`. Only present for meetings Shaw organized; unscheduled instant meetings show a meeting code (e.g. `gdm-xxxx-xxx`) instead of a name. |
+| `Meet Recordings` | `14fmJnjIU0Dj5xL9trSxOJe_vUTdhQOyV` | Google Meet auto-saved call transcripts (Google Docs). Named `[Name or Company] / Shaw - [Type] (YYYY-MM-DD HH:MM GMT) - Transcript`. Only present for meetings Shaw organized; unscheduled instant meetings show a meeting code (e.g. `gdm-ytcq-wzh`) instead of a name. |
+| `agents` | `1jyO_4Z95-KY8_XfYqGNMHCdzFItqTm3B` | Handoff / research-brief docs prepared for downstream agents and content work (e.g. brainstorm + research handoffs synthesized from Notion, transcripts, and CRM). Plain Google Docs, named `[Topic] Handoff — [Detail]`. |
 
 When Shaw says "the forms folder" or "my response sheets," use the IDs above directly.
 
@@ -46,6 +47,8 @@ When Shaw says "the forms folder" or "my response sheets," use the IDs above dir
 4. **Shortcuts vs. files.** The `forms` folder contains both real Forms (`application/vnd.google-apps.form`) and shortcuts (`application/vnd.google-apps.shortcut`). Shortcuts point to files shared into the workspace from elsewhere. When listing, surface both; when reading, resolve to the target ID first.
 5. **Title search is case-insensitive but returned titles preserve case.** Don't echo a casing different from the file's actual name.
 6. **Files that aren't shared in aren't reachable.** If a folder's `parentId` lookup returns empty but you saw the folder ID in metadata earlier, it's likely owned by another account and only individual files are shared — not the whole folder. Stop and tell Shaw rather than guessing.
+7. **`create_file` only auto-converts plain text into a native Google Doc.** When the goal is an editable Google Doc (not a raw file sitting in Drive), upload the body as `contentMimeType: 'text/plain'` — Drive converts `text/plain` → `application/vnd.google-apps.document` and `text/csv` → Sheets. Uploading `text/markdown` or `text/html` does **not** convert: you get a raw `.md`/`.html` file with the markup left literal, even though you'd expect Drive to render it. So when Shaw wants a clean Doc, flatten the content to plain text rather than passing Markdown/HTML. Confirm by checking the `mimeType` on the returned object — `application/vnd.google-apps.document` means it converted; anything else means it's a raw file. (Conversely, when the file *should* stay a real `.md`/`.html` — e.g. uploading an actual skill or code file — pass its native `contentMimeType` with `disableConversionToGoogleType: true` so it isn't turned into a Doc.)
+8. **There's no delete, trash, move, or in-place-update tool.** The connector can create, copy, and read, but a botched `create_file` can't be cleaned up programmatically — it leaves an orphan in Drive. This is why the format matters on the *first* call (quirk #7): get it right rather than iterating. If duplicates do get created, tell Shaw to trash them manually instead of trying to fix it through the connector.
 
 ## Search Query Syntax
 
@@ -58,7 +61,7 @@ When Shaw says "the forms folder" or "my response sheets," use the IDs above dir
 | MIME type | `mimeType = 'application/vnd.google-apps.spreadsheet'` (works for most types — not Forms; see Quirks) |
 | Folder | `parentId = '<folder_id>'` — use `'root'` for top-level My Drive |
 | Fulltext | `fullText contains 'OAuth'` (matches title or body) |
-| Owner | `owner = 'me'` or `owner = '[email]'` |
+| Owner | `owner = 'me'` or `owner = 'someone@example.com'` |
 | Shared | `sharedWithMe = true` |
 | Date | `modifiedTime > '2025-01-01T00:00:00Z'` |
 
@@ -92,7 +95,7 @@ When the mimeType filter misbehaves, batch keyword variants:
 
 ### "Find the transcript for a call"
 
-Google Meet drops call transcripts into the **Meet transcripts** folder (see Known Folders).
+Google Meet drops call transcripts into the **Meet Recordings** folder (see Known Folders).
 This is the retrieval primitive other skills reuse — `notion-helper`'s transcript-linking
 workflow calls it. Keep this skill's job to *finding* the file; linking it onto a Notion page
 is `notion-helper`'s job.
@@ -103,14 +106,28 @@ Given a name and a date (the caller supplies them — e.g. from an ABA Calls / A
    `title contains '<name>'` is the strongest signal. Combine with the call date via `createdTime`
    (a transcript is written seconds after the meeting ends, so `createdTime` is essentially the
    meeting time):
-   `parentId = '14fm...' and title contains '[Name]' and createdTime > '2026-05-24T00:00:00Z' and createdTime < '2026-05-25T00:00:00Z'`
+   `parentId = '14fm...' and title contains '<name>' and createdTime > '2026-05-24T00:00:00Z' and createdTime < '2026-05-25T00:00:00Z'`
 3. Return the match(es) with `viewUrl`. If more than one comes back for the same day, hand the
    disambiguation to the caller (it has the Calendar event's exact start time) rather than
    guessing here.
 
 Edge cases: transcripts only exist for meetings Shaw organized, and unscheduled instant meetings
-are named by meeting code (e.g. `gdm-xxxx-xxx`) instead of a person — a name search won't catch
+are named by meeting code (e.g. `gdm-ytcq-wzh`) instead of a person — a name search won't catch
 those, so fall back to date.
+
+### "Save this to Drive" / create a doc or file
+
+Decide the destination format first, because the upload mime type drives the outcome (quirk #7):
+1. **A clean, editable Google Doc** (handoffs, briefs, notes Shaw will read/edit in Drive): flatten
+   the content to plain text and pass `contentMimeType: 'text/plain'`. Use plain-text structure
+   (CAPS headers, indentation, dashes) — Markdown/HTML symbols would otherwise show up literally.
+   Confirm the returned `mimeType` is `application/vnd.google-apps.document`.
+2. **The actual file, preserved as-is** (a skill's `SKILL.md`, code, a real `.md`/`.csv`): pass the
+   native `contentMimeType` (e.g. `text/markdown`) with `disableConversionToGoogleType: true` so
+   Drive keeps the bytes instead of converting to a Doc.
+3. Set `parentId` to drop it in a known folder; omit it to land in My Drive root.
+4. There's no undo (quirk #8) — get the format right on the first call rather than creating, checking,
+   and re-creating.
 
 ## Linking Back to Shaw
 

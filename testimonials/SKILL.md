@@ -1,7 +1,7 @@
 ---
 name: testimonials
 description: >-
-  Manage Shaw's testimonial workflow — create rows in the Testimonials database, polish form submissions into pull-quotes, advance status through the lifecycle (Asked → Form Submitted → Approved → Published), and surface rows that need a follow-up nudge. Use this skill whenever Shaw mentions a testimonial — "did the client approve?", "polish their response", "draft a testimonial from a form submission", "kick off testimonial asks for a team", "check which testimonials are stuck", "publish a client's quote on the site", "process the new form submissions". Also fires when a training wraps and a testimonial ask should be queued, or when Shaw says he's ready to publish. Trigger words: testimonial, pull-quote, review, social proof, form response from a client. Do NOT use for the SOP itself (sop-helper), generic CRM work (crm), pre-call context (pre-call-research), or referral asks (the Referral Ask SOP covers that).
+  Manage Shaw's testimonial workflow — create rows in the Testimonials database, polish form submissions into pull-quotes, advance status through the lifecycle (Asked → Form Submitted → Approved → Published), and surface rows that need a follow-up nudge. Use this skill whenever Shaw mentions a testimonial — "did [Client Name] approve?", "polish [Client Name]'s response", "draft a testimonial from [Client Name]'s form submission", "kick off testimonial asks for the [Company] team", "check which testimonials are stuck", "publish [Client Name]'s quote on the site", "process the new form submissions". Also fires when a training wraps and a testimonial ask should be queued, or when Shaw says he's ready to publish. Trigger words: testimonial, pull-quote, review, social proof, form response from a client. Do NOT use for the SOP itself (sop-helper), generic CRM work (crm), pre-call context (pre-call-research), or referral asks (the Referral Ask SOP covers that).
 ---
 
 # Testimonials Skill
@@ -55,11 +55,11 @@ The `Form` column on the Testimonials row tracks the response sheet URL (so Shaw
 
 | Property | Type | Notes |
 |---|---|---|
-| Name | title | Person's full name. One row per person (multiple per company is fine — e.g. several trainees from the same company) |
+| Name | title | Person's full name. One row per person (multiple per company is fine — e.g. several [Company] trainees) |
 | Email | email | Person's direct email |
 | CRM | url | Plain URL field — paste the URL of their page in any of the three CRM databases. No relation, no title sync; the URL itself is the link |
 | Engagement | relation | → Engagements DB. Only set when there's a paid engagement row |
-| Status | select | `Not Asked` · `Asked` · `Form Submitted` · `Approved` · `Published` · `Declined`. See the SOP for what each stage means and when to advance |
+| Status | select | Testimonial lifecycle: `Not Asked` · `Asked` · `Form Submitted` · `Approved` · `Published` · `Declined`. `Published` is terminal on the testimonial side. After greenlight, the referral on-ramp (a warm check-in ~3 weeks out, then the ask) is tracked in the Referrals DB, not here. See the SOP for what each stage means and when to advance |
 | Last Contact | date | Most recent testimonial-related touch (initial ask, FU, approval reply, etc.) |
 | Next Contact | date | When to send next FU. Clear when no FU is pending (e.g. after Approved or Declined) |
 | Form | url | Link to the response sheet of the form they were sent |
@@ -72,9 +72,16 @@ restate them.
 
 ### 1. Open a new testimonial ask
 
-**Trigger:** a training wrapped (paid or unpaid). Shaw says "open a testimonial ask
-for [Name]", "queue a testimonial for [the team I just trained]", or "kick off
+**Trigger:** a training wrapped (paid or unpaid), OR an engagement was just created
+(placeholder rows for every participant open at engagement creation — see
+`engagements/workflow-1-create.md`, which owns that step). Shaw says "open a testimonial
+ask for [Name]", "queue a testimonial for [the [Company] team]", or "kick off
 testimonials for the cohort I just finished".
+
+For placeholder rows opened at engagement creation: partial names are fine (tag with the
+company, e.g. `[Person] ([Company])`), Email can be blank, and Status stays `Not Asked` until
+the training wraps and the ask actually goes out. Fill in names/emails when the participant
+list arrives.
 
 **Steps:**
 
@@ -85,9 +92,9 @@ testimonials for the cohort I just finished".
    - **Multi-attendee engagements.** When the engagement covers a team (group
      training, multi-attendee 1:1s), individual attendees usually don't have their
      own CRM rows. Every attendee's Testimonials row points to the same CRM page:
-     the payer/champion's Clients (Nurture) record. Examples: a pair of attendees
-     from one company all point to the payer's page; a four-person team all point to
-     that company's shared team page.
+     the payer/champion's Clients (Nurture) record. Examples: [Person A] + [Person B]
+     ([Company]) → [Person]'s page; [Person C] + [Person D] + [Person E] + [Person F]
+     ([Company]) → the [Company] team page.
 2. **Find their Engagement, if one exists.** Search the Engagements DB by name.
    Engagements only exist for paid work — unpaid sessions don't have a row, leave
    the relation empty.
@@ -148,8 +155,8 @@ testimonial]".
 
 ### 4. Publish
 
-**Trigger:** Shaw says "I published X's quote on the website", "the testimonial is
-live", or "added their quote to the landing page".
+**Trigger:** Shaw says "I published X's quote on the website", "[Client Name]'s testimonial is
+live", or "added [Client Name]'s to the landing page".
 
 **Steps:**
 
@@ -178,11 +185,17 @@ mark them declined" (the SOP's end-of-cadence outcome).
 
 **Steps:**
 
+**Reconcile first** — run Workflow 7 (Reconcile submissions) against the response sheet so
+the sweep acts on current Status, not stale Status. A freshly-detected submission is processed
+(Workflow 2), not nudged. Then:
+
 1. Query the Testimonials default view (`notion-query-database-view` on the database
    URL with the default view's `?v=` query string — fetch the database once to get
    the view URL if you don't have it).
-2. Filter client-side: rows where `Status` is in (`Asked`, `Form Submitted`) AND
-   `Next Contact` ≤ today.
+2. Filter client-side: any row with `Next Contact` ≤ today that isn't in a terminal
+   state (`Declined` / `Published`). This catches testimonial follow-ups
+   (`Asked` / `Form Submitted`). Post-greenlight referral check-ins live in the
+   Referrals DB, not here.
 3. **Group by FU stage** using the SOP cadence (don't restate the numbers — look them
    up if you need them):
    - `Asked` + Next Contact past, days since Last Contact maps to FU1 / FU2 / FU3
@@ -192,12 +205,83 @@ mark them declined" (the SOP's end-of-cadence outcome).
    stage is due. Then hand each off to `email-helper` for the appropriate FU draft
    per the SOP template.
 
+### 7. Reconcile submissions (sync against the form sheet)
+
+The Testimonials DB lags its source channel: a client fills out the form and the row isn't
+flipped, so `Status` is not a reliable answer to "did they submit?". This is the testimonial
+analog of the CRM's three-source sync (`crm/workflows/workflow-1-sync.md`) — reconcile the
+database against the response sheet (the source of truth) before acting on Status. Run it at
+the start of every sweep (Workflow 6) and before writing any FU2 pre-draft.
+
+**Steps:**
+
+1. **Read both response sheets** via Drive `read_file_content` — the 1:1 Claude Workshop sheet
+   and the ABA Training sheet (IDs in the Form response sheets table above). Each row is a
+   submission: Timestamp, Name, the four answers, Permission.
+2. **Match each submission to its Testimonials row** by Name (one row per person).
+3. **Drift detection (unprocessed submissions).** A submission is unprocessed when its row is
+   still `Not Asked`/`Asked`, or its Timestamp is newer than the row's `Last Contact` and the
+   answers aren't yet captured in the body. For each, run **Workflow 2 (Process a submission)**:
+   `Status` → `Form Submitted`, `Last Contact` = the submission Timestamp, pull the verbatim
+   into the body, polish, and queue the approval ask. A submission supersedes any pending nudge
+   or pre-draft for that person, so process it instead of drafting one.
+4. **Orphan detection.** A submission with no matching row means someone submitted who isn't
+   tracked (a name typo, or a participant whose row was never opened). Surface it and open a row
+   via Workflow 1 rather than silently dropping it.
+5. **Then** run the sweep / drafting on the now-current data.
+
+This is detection-and-update, not drafting: advancing a row to `Form Submitted` records an
+event that actually happened (they submitted). The approval-ask email is still a draft and
+doesn't advance state further until sent.
+
+### Sourcing a pre-drafted testimonial
+
+**First confirm there's no form submission to process** — run Workflow 7 (or read the response
+sheet directly). A submitted form supersedes a pre-draft, so process it via Workflow 2 instead
+of drafting from the transcript; the pre-draft path is only for the genuinely no-form case.
+
+When writing an FU2 pre-draft (or polishing any quote), ground the Before/After in
+primary records:
+
+- **Intake form** — read it from Drive (`google-drive-helper`); the "how much time
+  did you spend" columns are the quantified before-state. It's the sheet linked from
+  the client's session page (see `pre-call-research` Step 6).
+- **Session + check-in pages** — the attendee's ABA Trainings (session) and ABA Calls
+  (check-in) pages. Find them via `notion-search` for "[Name] - 1:1 Claude Workshop"
+  and "[Name] - Check-in"; those data-source IDs live in `engagements/SKILL.md`.
+- **Session + check-in transcripts** — the Meet Recordings folder in Drive
+  (`google-drive-helper`, "Find the transcript for a call"). Highest-fidelity source:
+  the Notion pages summarize, but the transcript has the client's own words and the
+  real numbers in context. Read *their* lines, not just Shaw's — the quotable
+  before/after and their natural phrasing live there.
+
+The check-in is where you learn whether the in-session build actually stuck, so draft
+to what's true there, not just what was built live. If results are thin or no intake
+was submitted, go approach/mindset-focused or hold the ask rather than manufacture a
+quantified win.
+
+**Every beat traces to something the client actually said.** Pull the before-state,
+the after-state, the numbers, and the emotional register straight from their words,
+then check each one back against the source. Two ways a pre-draft drifts: inventing
+the half they never stated (if they gave the before — "45 minutes a week" — but never
+said how long it takes now, keep the after qualitative instead of fabricating "a
+couple of minutes"), and amplifying their language (if they said "so nice to have",
+don't upgrade it to "such a relief"). It's the same maximum-verbatim discipline the
+polish framework applies to form responses, just applied to spoken source: if your
+draft carries a stronger claim or stronger feeling than the transcript does, pull back.
+
+**Save the sent pre-draft on the row.** After an FU2 pre-draft goes out, append the
+exact sent quote to the row body as a `## Pre-Drafted (FU2, sent M/D)` block (read it
+from sent mail, since Shaw often tightens on the way out). A "yes, go ahead" reply then
+promotes straight to Approved without reconstructing the quote.
+
 ## Polish Framework
 
 → See [references/polish-framework.md](references/polish-framework.md)
 
 The HOW of turning raw form responses into pull-quotes. Includes the 3-variant
-default, voice rules, attribution by permission level, and worked examples.
+default, voice rules, attribution by permission level, and worked examples from
+three real client submissions.
 
 ## Composition with Other Skills
 
@@ -227,6 +311,9 @@ default, voice rules, attribution by permission level, and worked examples.
 - **Polish from real submissions only.** Don't invent testimonials. The pre-drafted
   FU2 case (where no form submission exists) pulls from call notes / Engagement
   Results, not from imagination.
+- **Reconcile before acting on Status.** The response sheet is the source of truth for
+  whether someone submitted; the row's `Status` can lag it. Run Workflow 7 at the start of
+  any sweep and before any pre-draft, so a submitted form gets processed rather than nudged.
 - **Status flips and body updates are atomic.** When advancing to Form Submitted /
   Approved / Published, update both properties AND body together — don't leave the
   row inconsistent.

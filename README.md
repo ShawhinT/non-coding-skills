@@ -27,8 +27,8 @@ Two ways I'd recommend using this repo:
 | **newsletter-writer** | Draft newsletters for a Kit-style email list in a consistent voice and structure | Any | None |
 | **sales-letter-writer** | Draft long-form sales letters and one-pagers using Hormozi's $100M Offers principles | Any | None |
 | **skill-helper** | Walk someone through building their first (or next) high-leverage Claude skill, end-to-end | Any | None |
+| **skimmable-summary** | House format for multi-item summaries, digests, briefings, and status reports | Any | None |
 | **youtube-strategy** | Turn a pain point or idea into a YouTube package — title, thumbnail, intro hook, motivation, outro | Any | None |
-| **validate-saas-idea** | Validate startup or product ideas through systematic market research | Any | Web search |
 | **workshop-use-case-researcher** | Research practical use cases for custom AI workshops and training proposals | Any | Web search |
 | **email-helper** | Draft emails in a consistent voice and style (including three-way intros, follow-ups, etc.) | Any | Gmail MCP |
 | **executive-briefing** | Generate a daily briefing by pulling tasks from Notion databases | Any | Notion MCP |
@@ -41,13 +41,16 @@ Two ways I'd recommend using this repo:
 | **calendar-helper** | Create, reschedule, and delete Google Calendar events; sync paired Notion pages when applicable | Any | Google Calendar MCP, Notion MCP |
 | **crm** | Read, update, and manage a CRM in Notion; cross-reference Gmail for activity | Any | Notion MCP, Gmail MCP |
 | **engagements** | Track paid client engagements end-to-end — create, status, link sessions, fill Stripe data | Any | Notion MCP, Stripe MCP |
+| **referrals** | Manage a referral workflow in Notion — kick off asks, log intros, trace referred leads back to referrers | Any | Notion MCP, Gmail MCP |
+| **sfc-helper** | Strategy-aware LinkedIn content ideation — mine call transcripts, CRM, and analytics into hooks and scheduled post briefs | Any | Notion MCP, Google Drive MCP |
 | **outreach** | Run 1:1 outreach campaigns end-to-end — sourcing, enriching, tracking, and drafting messages | Any | Notion MCP, Gmail MCP, Chrome tool |
 | **pre-call-research** | Research prospects before sales calls | Any | Notion MCP, Gmail MCP, web search |
 | **skill-updater** | Update and repackage existing skills on Claude.ai | Claude Chat or Cowork | None |
 | **linkedin-post-analytics** | Pull and analyze LinkedIn post performance from the creator analytics dashboard | Claude Code or Cowork | Chrome tool |
+| **proposal-deck-creator** | Build a clean, on-brand client proposal deck (pptx) from an engagement's source material | Claude Code or Cowork | Node (pptxgenjs), Notion MCP |
 | **skill-sync** | Run a local skills-sync CLI to publish skills across Desktop, Codex, and Claude Code | Claude Code | Python, skills-sync CLI |
 | **animation-builder** | Build short motion-graphic B-roll animations (HTML/CSS/SVG) and render to MP4 | Claude Code | Python, Playwright, ffmpeg |
-| **infographic-builder** | Build single-image infographics for social feeds (HTML) and render to 2x retina PNG | Claude Code | Python, headless Chrome |
+| **graphic-builder** | Build single-image graphics — social infographics and embedded figures (HTML) — and render to 2x retina PNG | Claude Code | Python, headless Chrome |
 | **keynote** | Read, create, and modify Apple Keynote presentations | Claude Code | macOS, Keynote app |
 | **training-proposal** | Draft training proposals and outlines from unstructured notes | Claude Code | Python, PDF tooling |
 | **video-editor** | Analyze raw recordings, propose cuts, and generate FCPXML for Final Cut Pro | Claude Code | Python, ffmpeg, AssemblyAI API |

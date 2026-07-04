@@ -45,7 +45,7 @@ their `Last Contact?` watermark (campaign-contact emails come from the trackers 
 
 1. `from:<email> OR to:<email>` — direct thread activity
 2. `<company domain>` — catches cc'd stakeholders from the same org (e.g., [Person] at [Company]
-   cc'd on the [Person] thread)
+   cc'd on the [Lead Name] thread)
 3. Name-based fallback for Calendly: `from:notifications@calendly.com "<first> <last>"` —
    catches bookings where the invitee email differs from the CRM email on file
 4. **Multi-participant client engagements:** when the CRM record is a client whose engagement
@@ -62,6 +62,18 @@ entry: `from:notifications@calendly.com subject:"New Event" after:<last-sync-dat
 Return a structured per-lead delta report: new messages, new bookings, stakeholders cc'd,
 and any orphan Calendly bookings that don't match an existing CRM record.
 
+**Before labeling a Calendly booking an orphan, match it against every known-contact table — Active
+Leads, Clients (Nurture), 🧊 Archived Leads (`collection://[page-id]`), *and*
+the Partners database (`collection://[database-id]`) — by email (then email
+domain for the Partners match), then name.** A Partners match means the booking belongs to a
+partner/peer, not a lead — report it as "matched in Partners" and don't propose a new lead. This mirrors Sub-agent B's ABA Calls orphan rule (step 3): a match in
+Archived Leads means the booking belongs to someone already triaged out (Lost / Disqualified) —
+it is **not** an orphan, so do not propose a new lead for it. Report it as "matched in Archived
+Leads (Lost / Disqualified)" with the archived record's last Notes line so the main agent can
+skip it cleanly. This matters most for brand-new-looking bookings with no ABA Calls page: those
+never reach Sub-agent B, so the global Calendly scan is the *only* place an already-disqualified
+re-booking gets caught.
+
 ### Sub-agent B — ABA Calls + ABA Trainings + Google Calendar Auditor
 
 Purpose: reconcile ABA Calls (sales calls), ABA Trainings (delivery sessions), and Google
@@ -72,9 +84,18 @@ section for the distinction.
 2. Pull Google Calendar events for the same window using `gcal_list_events`. Match each event
    against ABA Calls and ABA Trainings entries by attendee name. Flag any calendar events that
    have no corresponding Notion page — these are meetings that happened but were never logged.
+   Only flag meetings that look like a lead, client, or sales conversation. Do NOT flag peer,
+   colleague, partner, investor-friend, personal, or informal research/coffee chats — these
+   intentionally have no ABA Calls page. Skip anyone who matches a row in the Partners database
+   (`collection://[database-id]`) by email or email domain — that DB is the
+   source of truth for partners, affiliates, subcontractors, and peers who intentionally have no
+   ABA Calls page (see SKILL.md → "Do-not-flag contacts"); pull its rows up front so you can
+   domain-match against them. For a new ambiguous meeting, lean toward NOT flagging unless there's
+   a clear sales/lead signal — and when one turns out to be a partner/peer, add them to Partners
+   so future syncs skip them.
 3. For each ABA Calls entry, check whether a matching CRM record exists in **Active Leads,
-   Clients (Nurture), or 🧊 Archived Leads** (`collection://[page-id]`) —
-   match by email, then name, then company domain. An Archived Leads match means the lead was
+   Clients (Nurture), 🧊 Archived Leads, or the Partners database** (`collection://[database-id]` / `collection://[page-id]`) —
+   match by email, then name, then company domain. A Partners match means it's a partner/peer, not an orphan (report as "matched in Partners"). An Archived Leads match means the lead was
    previously triaged out (Lost / Disqualified, batch-archived) — it is **not an orphan**, just
    inactive. Do not flag Archived matches for new-lead creation; note them in the report as
    "matched in Archived Leads" so the main agent can skip them cleanly. Return true orphans (no
@@ -146,6 +167,8 @@ Workflow 7 for each, then continue with the steps below for everything else.
 Before acting on Sub-agent C's narrative, run a direct structured query against each data source — Active Leads, Clients (Nurture), and every active-campaign outreach tracker — for `Next Contact <= today`. Compare the result to Sub-agent C's Section 1/2/3. If counts differ or any record is missing, fetch the deltas yourself and add them to the working set.
 
 This step exists because sub-agent prose is lossy: a record can silently drop out of a long parallel-source report (real failure mode: a contact-form lead due for FU#1 today wasn't surfaced because Sub-agent C's "due today" section returned two records that weren't even due, while the genuinely due record was omitted). Treat the data source as truth and the sub-agent narrative as a hint. If Sub-agent C's "due today" section looks suspiciously short relative to the size of the pipeline, that's the signal to re-verify, not skip.
+
+**Querying Notion date fields:** Notion's SQL exposes a date property only as its *expanded* columns, not under the bare property name. Filter and select on `date:Next Contact:start` (and `date:Last Contact?:start` for context), never on `Next Contact` directly — the bare name fails with `no such column`. Fetch the data source schema once (via `fetch` on the `collection://` URL) if you're unsure of the exact expanded column names; the same expansion applies when you later *write* a date back.
 
 For each due record, also pull `Last Contact?`, `Status`, and the most recent line of `Notes` so the summary has enough context.
 

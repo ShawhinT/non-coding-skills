@@ -8,7 +8,7 @@ description: >
   "another session with X next Saturday", "follow-up call with X", "reschedule the X meeting",
   "move my X call to Friday", "cancel the X event", "delete that meeting", or any casual
   phrasing that implies adding/changing a calendar block (e.g., "let's do another one with
-  [Name]", "block off Wednesday morning for the workshop"). Even when Shaw doesn't say
+  [Client Name]", "block off Wednesday morning for the workshop"). Even when Shaw doesn't say
   "calendar" explicitly, this skill should fire if the request is about scheduling. This skill
   also creates a paired Notion page in ABA Calls or ABA Trainings when the event is a sales
   call or a delivery session and a paired page is part of the existing pattern.
@@ -73,8 +73,8 @@ ambiguity to surface in Step 5.
 Use `list_events` to search Shaw's calendar for past events that match the request. The right
 search depends on what's available:
 
-- **Attendee + topic** is the strongest signal. E.g., for "another session with [Name]", search
-  for past events with [Name]'s email on the attendee list.
+- **Attendee + topic** is the strongest signal. E.g., for "another session with [Client Name]", search
+  for past events with that client's email on the attendee list.
 - **Topic alone** if no attendee is named (e.g., "schedule the next podcast recording" →
   search for "podcast" in past event titles).
 - **Pure recurrence** (e.g., a weekly standup) may have no attendee and no topic keyword —
@@ -92,7 +92,7 @@ From the reference event, extract these defaults:
 - **Google Meet** (on/off — match the reference)
 - **Color** (`colorId`)
 - **Notification level** (default to `ALL` for events with attendees, `NONE` for solo blocks)
-- **Description** (copy verbatim if present; leave blank if not)
+- **Description** (copy verbatim if present; leave blank if not). Event descriptions are guest-visible — every attendee sees the same invite, so the description is an external-facing field, not a private scratchpad. Keep it to the shared purpose of the meeting (what it's for, what to expect). Never put internal notes in it: who to confirm timing with and when, internal reasoning, pricing, lead status, prep reminders, or anything you wouldn't say to the attendee's face. Those belong on the paired Notion page or a personal note. If a reference event's description carries an internal line, drop it when copying rather than propagating it.
 
 ### Step 3 — Check Notion for a paired page
 
@@ -107,8 +107,8 @@ Search the most likely database first based on event type:
 | Sales call (discovery, intro, qualifier) | `ABA Calls` | `[page-id]` |
 | Training / delivery / workshop / 1:1 session | `ABA Trainings` | `[page-id]` |
 
-Search query: combine attendee name + topic keywords (e.g., "[Name] skill building"
-or "[Name] training session"). Look at the top 1-3 matches and pick the one whose title most
+Search query: combine attendee name + topic keywords (e.g., "[Client Name] skill building"
+or "[Client Name] training session"). Look at the top 1-3 matches and pick the one whose title most
 closely mirrors the calendar event's title pattern.
 
 **Decision rule:**
@@ -125,9 +125,10 @@ above to decide whether a paired page is needed.
 
 ### Step 3.5 — Consult the matching event-type SOP
 
-For sales-call and training events, fetch the matching event-type SOP from `notion-helper`'s
-catalog → "Event-Type SOPs" (Discovery Call, 1:1 Claude Workshop, Check-in Call, Wrap-up Call,
-Group Claude Workshop). Read its **Setup** section — it's the authoritative recipe for
+For sales-call and training events, look up the matching event-type SOP on the SOPs page — find
+it by title (Discovery Call, 1:1 Claude Workshop, Check-in Call, Wrap-up Call, Group Claude
+Workshop). SOPs are discovered by title, not by hardcoded ID; see `notion-helper` → "Event-Type
+SOPs" for how to find them. Read the SOP's **Setup** section — it's the authoritative recipe for
 everything that happens around the calendar event in Notion. The SOP defines:
 
 - What the paired page's body should contain (usually a one-liner with the CRM link — not
@@ -138,6 +139,14 @@ everything that happens around the calendar event in Notion. The SOP defines:
 - Whether the page links to an Engagements row (when the call sits inside a paid engagement)
 
 In Step 4 you'll execute this Setup in full — not just the paired page.
+
+**Check-in Calls share one Setup across variants.** The Check-in Call SOP is a base plus three
+spokes — "Check-in Call" (the shared base: Setup, call bank, post-call mechanics),
+"Check-in Call (1:1 Claude Workshop)" (post-session 4Rs), "Check-in Call (Client Nurture)", and
+"Check-in Call (Lead Nurture)". The Setup mechanics are identical across all of them and live in
+the **base "Check-in Call"** SOP; the specific spoke governs only pre-call research + templates,
+not Setup. So for calendar setup, read the base "Check-in Call" Setup — the spoke doesn't change
+what gets created in Notion.
 
 **Discovery calls are the carve-out.** The Discovery Call SOP's execution layer is **CRM
 Workflow 7** (it orchestrates `pre-call-research`, `notion-helper`, and `email-helper` together
@@ -160,7 +169,9 @@ in Step 3.5), execute the SOP's Setup section in full. That typically means:
 
 - **Create the paired page** — title matching the calendar event's pattern (or a slightly
   trimmed version matching the destination DB's naming convention; sample 2-3 recent pages to
-  confirm). Date = the calendar event's date. **Body** = per the SOP's Setup — typically a
+  confirm). Date = the calendar event's date. **Icon** = `⭐` (the default for ABA Calls /
+  ABA Trainings pages — canonical icon conventions live in `notion-helper` → "Default icons
+  by page type"). **Body** = per the SOP's Setup — typically a
   one-line `CRM: <mention-page>` link plus a single short time-of-day line; not empty.
 - **Create the FU task** if the SOP calls for one (it usually does — `FU - [First Name]` in
   ABA, dated call date + 1).
@@ -210,7 +221,7 @@ to prevent — just report what got created. The discovery-call carve-out (Workf
 only exception.
 
 **Surface ambiguity via `AskUserQuestion`** when:
-- Multiple attendees match the name (which [Name]?)
+- Multiple attendees match the name (which [First Name]?)
 - Multiple reference events have conflicting patterns and no recent winner
 - Duration is undefined and no reference exists
 - Event type is unclear (sales call vs. training) and a Notion page might be needed
@@ -226,10 +237,10 @@ have safe defaults.
 Many of Shaw's recurring events use numbered patterns. Detect these and auto-increment.
 
 **Examples:**
-- `[Name] / Shaw - 1:1 Skill Building (Session 1)` → `(Session 2)`
-- `[Show] Recording — Episode 12` → `Episode 13`
+- `[First Name] / Shaw - 1:1 Skill Building (Session 1)` → `(Session 2)`
+- `LFC Recording — Episode 12` → `Episode 13`
 - `Cohort 3 Workshop, Week 4` → `Week 5`
-- `[Publication] Issue #47` → `#48`
+- `ABN Issue #47` → `#48`
 
 If the pattern increments, use the incremented title. If the pattern doesn't increment (a
 generic recurring meeting like "Weekly Sync"), reuse the same title.
@@ -244,25 +255,38 @@ exploring a collab (intro calls, discovery calls, exploratory chats with cold/wa
 we haven't worked with yet). Never `:`, `+`, `&`, `and`. When a lead converts to paid,
 the next event flips from `x` → `/`. Decide by relationship status (per CRM), not by
 what the reference event used — a stale `x` on a paid client's reference is the bug
-to avoid.
+to avoid. Relationship status also beats an SOP's title template: the Check-in Call
+SOP writes `[First Name] / Shaw - Check-in`, but a check-in with an unconverted lead
+still takes `x` — SOP templates assume the common (client) case and don't override
+the separator rule.
 
 **Name vs company in the title.** Use the attendee's first name when they're the only
-person on the other side (`[Client Name] / Shaw - 1:1 Claude Workshop`). Use the company
+person on the other side (`[First Name] / Shaw - 1:1 Claude Workshop`). Use the company
 name when multiple people from their side are attending (`[Company] / Shaw - Wrap-Up Call`,
 `[Company] / Shaw - Check-in`). This applies to any event type.
 
 **Spaces around `/` and `x` separators.** When a title joins two names with `/` or `x`,
-always include surrounding spaces: `[Person] / Shaw – Catch-up`, never `[Person]/Shaw`. Same for
-`x` collabs: `[Person] x Shaw`, never `[Person]xShaw`. This applies to any new title composition;
+always include surrounding spaces: `[First Name] / Shaw – Catch-up`, never `[First Name]/Shaw`. Same for
+`x` collabs: `[First Name] x Shaw`, never the names jammed together with no spaces. This applies to any new title composition;
 when mirroring an existing reference event, preserve its exact format.
 
 **Suffix the event type after the names.** Coffee chats, check-ins, workshops, and 1:1s
-all take an explicit suffix: `[Person] / Shaw - Coffee Chat`, `[Client Name] / Shaw - Check-in`,
-`[Client Name] / Shaw - 1:1 Claude Workshop`. A bare `Name / Shaw` (no suffix) is rare — only
+all take an explicit suffix: `[First Name] / Shaw - Coffee Chat`, `[First Name] / Shaw - Check-in`,
+`[First Name] / Shaw - 1:1 Claude Workshop`. A bare `Name / Shaw` (no suffix) is rare — only
 use it when the reference event also has none AND the type is genuinely ambiguous. When
 in doubt, infer the type from context (CRM status, email thread, prior call notes) and
 add the suffix. Older Calendly auto-imports often dropped suffixes — don't take that as
-license to drop them on manually scheduled events.
+license to drop them on manually scheduled events. When Shaw names the topic himself
+(a BAMFAM like "July 9 at 2:30 - AI Strategy"), his stated topic *is* the suffix —
+use it verbatim rather than substituting the SOP's generic type suffix; the SOP still
+governs which Setup runs, just not the title.
+
+**BAMFAM follow-ups booked right after a call.** When Shaw says "just finished a call
+with X, set up the follow-up", the just-ended call's paired ABA Calls page usually has
+the BAMFAM recorded in its Follow-up section — check it (and today's calendar) first to
+confirm which person/company X is and what the follow-up covers, before searching wider
+history. A same-day event with a matching attendee is a stronger identity signal than a
+name match on an older event.
 
 **Holds and tentative events.** When Shaw asks for a "hold" or a tentative placeholder,
 prefix the title with `[HOLD] ` — brackets, trailing space — e.g. `[HOLD] [Company] / Shaw -
@@ -280,19 +304,35 @@ suffix moves with it (a wrap-up call's next touchpoint is a `Check-in`, not anot
 When Shaw asks to move an event ("move my call with Y to Thursday", "push the training to
 next week", "reschedule X for 3pm"):
 
+**The calendar may already reflect the new time.** Many reschedules are externally driven —
+Calendly moves the event (and emails the attendees) before Shaw asks, so his request is really
+"sync the rest to the new date." A Calendly-moved event is recognizable by its description
+(reschedule/cancel links, "Rescheduled from connected calendar event") and often a
+freshly-canceled twin sitting at the old slot. So check the event's current state before
+touching it, and let what you find decide whether step 2 runs at all.
+
 1. **Find the event** with `list_events` (filter by attendee, title keyword, or date range).
    If multiple match, ask via `AskUserQuestion`.
 2. **Update the event** with `update_event` — change `startTime` / `endTime`, keep everything
-   else (attendees, Meet URL, description).
-3. **Consult the matching event-type SOP** — same hand-off as Step 3.5. A reschedule is
-   rarely just a calendar move: each event type has date-anchored infrastructure described
-   in the SOP's Setup section that breaks when the date changes. Typical cascades include
-   the `Precall - {First Name}` task (date − 1, only if not yet completed), the
-   `FU - {First Name}` task (date + 1 — create if missing, that's a common Setup gap), the
-   engagement body's `## Sessions` chronological order, and any day-of communication the SOP
-   prescribes. Read the SOP, identify what the new date breaks, and execute the cascade.
-   Discovery calls follow the same Workflow 7 carve-out as Step 3.5 — hand the Notion-side
-   cascade off there.
+   else (attendees, Meet URL, description). Skip this step entirely when the event already
+   sits at the target date/time (the Calendly case above) — there's nothing to write, and the
+   real work is the Notion cascade below.
+3. **Apply the reschedule cascade — SOP first when one exists.** A reschedule is rarely
+   just a calendar move: any paired call/session carries date-anchored infrastructure that
+   breaks when the date changes. As a general default, a call may have a
+   `Precall - {First Name}` (date − 1), an `FU - {First Name}` (date + 1, create if missing),
+   an engagement body `## Sessions` line to keep in chronological order, and any day-of
+   comms — shift each to the new date. When shifting a FU or Precall's date, also scan the
+   body text for inline date references (e.g., "Send follow-up email after 7/1…") and update
+   those too — the date property and the body can drift out of sync if only one changes.
+   If a Precall or FU task is already ✅ completed, leave it alone — don't reassign a
+   completed task to the new date. Flag it to Shaw and offer to create a fresh task for the
+   new date instead. **When the event type has a matching SOP, that SOP is
+   the highest-priority source** — read its Setup / reschedule-handling section and let it
+   override these defaults for that event type (e.g. whether a completed `Precall` shifts or
+   instead spawns a fresh task). Ad hoc events with a paired page but no SOP (e.g. a one-off
+   call) fall back to the general defaults above. Discovery calls follow the same Workflow 7
+   carve-out as Step 3.5 — hand the Notion-side cascade off there.
 4. **Execute the cascade.** Route through the right specialist for each piece: paired-page
    `Date` and dated-task shifts through `notion-helper`; engagement-body session-line updates
    through `engagements` workflow-3-link-session's "Handle reschedules"; reschedule emails
@@ -354,6 +394,12 @@ When manual proposal is the right call, don't just offer a generic afternoon win
 
 - **Empty days get a default spread.** When a day has no anchor meetings, fall back to a compact mid-afternoon window (e.g., 2/3/4 PM) rather than offering the entire 12–5 block.
 
+- **Respect Shaw's day shape.** Shaw works a focus block roughly 8 AM–1 PM CT, then takes a ~2-hour midday break (gym or music) before an open afternoon. Propose the slot right at the end of the focus block (around 12 PM CT) or anything in the afternoon (~3 PM CT onward). Avoid the midday break window itself — 1 PM CT lands at the start of the break and is a no. When two options are adjacent, the one that hugs the break boundary wins (12 PM over 1 PM).
+
+- **When rescheduling, re-offer the original time of day.** A call being moved already had a time both sides agreed to, so re-offering that same slot on the new day is familiar and low-friction. Include it among the options whenever it's open — e.g., a 10 AM call that moves keeps 10 AM as one of the proposed times.
+
+- **Narrow to the three best options.** After applying the principles above, propose the three strongest times, not every open slot. More than three turns an easy reply into a decision. Rank by fit (cluster + day-shape + original-slot match) and offer the top three.
+
 Once times are picked, invoke the `email-helper` skill to draft the email — don't reach for `create_draft` directly. This applies to *any* email that comes out of a calendar-helper workflow (time proposals, reschedule notices, post-create follow-ups), not just time-proposal emails. email-helper owns voice, HTML formatting, threading, and Gmail mechanics; calendar-helper stays in charge of the scheduling decision.
 
 ---
@@ -375,8 +421,8 @@ Use the data source ID when calling `notion-create-pages`.
 
 ## Edge Cases
 
-**Ambiguous attendee name** — "[Name]" could be multiple people. Search calendar for past
-events with anyone named [Name]; if there's exactly one frequent match, use it. If there
+**Ambiguous attendee name** — a first name could match multiple people. Search calendar for past
+events with anyone by that name; if there's exactly one frequent match, use it. If there
 are multiple, ask via `AskUserQuestion` and offer the top 2-3 by recency.
 
 **Multiple reference events with conflicting patterns** — last 3 sessions were 60 / 90 / 60

@@ -16,6 +16,9 @@
 //   only appears when LinkedIn chooses to surface it — most posts don't have
 //   one even when reposts > 0. The only reliable way to get a per-post repost
 //   count is to navigate to the post page itself.
+//
+// This scraper also captures the activity ID (from the link href) so the result
+// can be merged with the impressions view by a stable, unique key.
 
 (async () => {
   await new Promise(r => setTimeout(r, 3000));
@@ -23,18 +26,22 @@
   // Sanitize preview text — strip URLs and special chars that can trigger
   // Chrome tool content filters ([BLOCKED: Cookie/query string data])
   const sanitize = (text) =>
-    text.replace(/https?:\/\/\S+/g, '[url]').replace(/[^\w\s.,!?'"\-:;()@#]/g, '');
+    text.replace(/https?:\/\/\S+/g, '[url]').replace(/[^\w\s.,!?'\-:;@#]/g, '');
 
   const allLinks = document.querySelectorAll('main li > a[href*="/feed/update/"]');
   const data = [];
 
   allLinks.forEach(link => {
     const li = link.closest('li');
+    const href = link.getAttribute('href') || '';
+    const idMatch = href.match(/urn:li:activity:(\d+)/);
+    const activityId = idMatch ? idMatch[1] : null;
+
     const allSpans = li.querySelectorAll('span');
     const spanTexts = Array.from(allSpans).map(s => s.innerText.trim()).filter(t => t);
 
     const postText = Array.from(allSpans).find(s => s.innerText.length > 80);
-    const preview = postText ? sanitize(postText.innerText.substring(0, 50)) : 'N/A';
+    const preview = postText ? sanitize(postText.innerText.substring(0, 60)) : 'N/A';
 
     const metricSpans = spanTexts.filter(t =>
       t.length < 30 && (/^[\d,]+$/.test(t) || /^\d+\s+(comment|repost)/i.test(t))
@@ -52,8 +59,12 @@
     // Do NOT treat it as reposts.
     if (nums.length >= 2) totalEng = nums[1];
 
-    data.push({ preview, reactions, comments, repostsShown, totalEng });
+    data.push({ activityId, preview, reactions, comments, repostsShown, totalEng });
   });
+
+  // Persist so the merge can read it alongside the impressions data.
+  try { localStorage.setItem('__engData', JSON.stringify(data)); } catch (e) {}
+  window.__eng = data;
 
   // Format output. We report LinkedIn's totalEngagements directly — this is
   // the correct numerator for engagement rate (totalEng / impressions).

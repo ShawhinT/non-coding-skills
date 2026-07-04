@@ -50,11 +50,11 @@ The employer appears in the first ~5 lines of page text, immediately after the p
 Example:
 ```
 [Person]
-Sr. Manager, Cyber Analytics Platform
-[Company] · [University]
-[Location]
+Sr. Manager, Data Analytics
+Toyota North America · The Ohio State University
+Dallas-Fort Worth Metroplex
 ```
-→ employer = **[Company]**
+→ employer = **Toyota North America**
 
 ### 4. Look up company size
 

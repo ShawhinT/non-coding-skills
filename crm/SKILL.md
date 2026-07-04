@@ -34,12 +34,14 @@ CRM-specific sub-databases (sub-pages of the CRM page, not in the main database 
 | Active Leads database | Data source: `collection://[database-id]` |
 | Clients (Nurture) database | Data source: `collection://[database-id]` |
 | 🧊 Archived Leads database | Data source: `collection://[database-id]` (parent: CRM page) |
+| Partners database | Data source: `collection://[database-id]` (parent: ABA (Master) page) — non-lead network: partners, affiliates, subcontractors, peers |
 
 For **ABA Calls** (sales calls), **ABA Trainings** (delivery sessions: 1:1 workshops, trainings,
 ongoing engagements), and **ABA** (tasks, launches, events, outreach) — see the canonical
 catalog in `notion-helper/SKILL.md` → "Main Databases." Event-type SOPs (Discovery Call,
-Check-in Call, Wrap-up Call, 1:1 Claude Workshop) are catalogued in `notion-helper/SKILL.md` →
-"Event-Type SOPs."
+Check-in Call and its spokes, Wrap-up Call, 1:1 Claude Workshop) are discovered at runtime by
+`notion-helper` — it fetches the SOPs page and matches by title rather than relying on hardcoded
+IDs.
 
 **Gmail account:** `shaw@aibuilder.academy` (all outbound sales activity lives here)
 **Google Calendar:** Available via the `gcal_list_events` tool — use as an additional signal for recent meetings
@@ -74,9 +76,9 @@ need to be duplicated here.
 - `[Lead Name] (CFO/COO, [email]) replied accepting, sent next steps (6/1). Closed (6/1).` *(multi-person reply compressed to the lead actor)*
 
 **Bad examples:**
-- `Call w/ [Lead Name] & [Lead Name] (3/27). [Company] growth analytics, small team, already using MCP + agents. $[amount] L&D budget/person. Sending proposal (3/28).`
+- `Call w/ [Lead Name] & [Lead Name] (3/27). [Company] growth analytics, small team, already using MCP + agents. $2k L&D budget/person. Sending proposal (3/28).`
   *(business context belongs in the ABA Calls page, not Notes)*
-- `Booked ABA Intro Call 6/2 4pm CT (5/31). Saw Cowork for Execs video. Owns business, already using Claude. At [Company] ([Person] on LinkedIn — AI solutions exec).`
+- `Booked ABA Intro Call 6/2 4pm CT (5/31). Saw Cowork for Execs video. Owns business, already using Claude. At [Company] ([linkedin-url] — AI solutions exec).`
   *(everything after the booking line is background — that belongs in the page body's Context section)*
 - `[Lead Name] (CFO/COO, [email]) replied for [Lead Name] — accepted, moving forward w/ 4 participants ([Lead Name], [Lead Name], [Lead Name], [Lead Name]). cc'd [email] + [email] (6/1). Replied w/ next steps: kickoff email + invoice (6/1). Closed (6/1).`
   *(too verbose — don't list every cc'd person or unpack what "next steps" included)*
@@ -176,7 +178,7 @@ teammate touchpoint is the only recent activity, leave the point person's dates 
 *point-person* touchpoint put them.
 
 Example: for the [Company] account, only [Person] (CEO/champion) carries the dates —
-their teammates' sessions are captured by their linked session pages, and never reset their dates.
+his teammates' sessions are captured by their linked session pages, and never reset his dates.
 
 ### Client Lifecycle Stages
 
@@ -264,8 +266,10 @@ Shaw's leads and clients leave a trail across three databases. Keeping them stra
 because the sync workflow treats each one differently.
 
 - **ABA Calls** — *lead and client 1:1 conversations*. Discovery, follow-up, proposal review,
-  research chats, and check-ins — check-ins pair with leads (warm-but-not-converted nurture)
-  as well as clients (post-session and quarterly nurture); see the Check-in Call SOP.
+  research chats, and check-ins — check-ins follow the base **Check-in Call** SOP plus one of
+  three spokes: **Check-in Call (1:1 Claude Workshop)** (post-session 4Rs),
+  **Check-in Call (Client Nurture)** (periodic client nurture), and
+  **Check-in Call (Lead Nurture)** (warm-but-not-converted lead, no 4Rs).
   Workflow 1 reconciles this against the CRM in both directions, and Workflow 3 creates new
   entries when a brand-new sales call shows up in Gmail.
 - **ABA Trainings** — *delivery sessions only*. 1:1 workshops, trainings, ongoing engagements.
@@ -290,6 +294,22 @@ name, email, company name, and email domain — pages are sometimes filed under 
 and stakeholders get cc'd from the same domain.
 
 To reconcile ABA Calls against the CRM in both directions during a sync, see **Workflow 1**.
+
+## Do-not-flag contacts (calendar audit)
+
+Peers, partners, affiliates, and subcontractors intentionally have no ABA Calls page, so the
+Workflow 1 calendar audit must never surface their meetings as "unlogged." The source of truth
+for who they are is the **Partners database** (`collection://[database-id]`,
+under ABA (Master)) — one row per contact, `Type` = Partner / Affiliate / Subcontractor / Peer.
+
+The audit skips any calendar attendee that matches a Partners row **by email, or by email
+domain**. Domain matching is deliberate: one row (e.g. [Person] / [company-domain]) covers everyone
+at that org, not just the named person. This is why it's a database and not a static roster in
+this file — when a new peer/partner surfaces, add a Partners row and every future sync skips
+them automatically, with no skill edit or repackage.
+
+When the audit hits an ambiguous meeting that turns out to be a partner/peer rather than a
+lead, the fix is to file them in Partners — not to hand-maintain an exclusion list here.
 
 ## Active Campaigns
 
@@ -367,3 +387,4 @@ brief, the FU task, and the confirmation email in one pass.
 - **Default to action** — when follow-ups are due, create Gmail drafts directly rather than presenting options. For LinkedIn-only leads, flag them in the summary for DM follow-up instead
 - **Always invoke email-helper before drafting an email** — every Gmail draft created during a CRM workflow goes through email-helper first. Skills compose: CRM owns the *who/when/why* of the follow-up; email-helper owns the *voice, threading, and Gmail mechanics*. The failure mode to watch for is batching: once a workflow has several writes lined up (CRM record, ABA Calls page, FU task, *then* draft), the draft starts to feel like one more parallel tool call and gets composed inline. That's how off-template drafts, missed em-dash rules, and snippet-driven follow-ups slip through. The discipline isn't "remember the rule" — it's "if the next tool call is `create_draft` and email-helper isn't loaded in this turn, stop." This applies in Workflow 1's step 6, Workflow 2 follow-ups, Workflow 7's confirmation email, and any other CRM step that creates a draft.
 - **Every call deserves a follow-up email** — whenever a call or meeting is logged (via Workflow 2) or detected (via Workflow 1), check whether a follow-up email was sent. If not, prompt Shaw or flag it. Sources to check: ABA Calls, ABA Trainings, CRM notes, and Google Calendar
+- **Verify a page is live before writing to it** — before editing a Notion page that an SOP names or a search surfaces — especially anything that looks like a "parent" or "index" page — confirm it's current by checking its date and surrounding context. Stale one-off pages (a past cohort, an old campaign round) can look like living indexes but aren't; appending new records to them is noise. If a workflow instruction points you at a specific page that turns out to be stale, treat that as a skill bug to flag — not a step to force through.

@@ -100,3 +100,21 @@ When analyzing post performance, reference Shaw's `linkedin-post-writer` skill p
 - Post type mix → are the right types getting the right share of output?
 
 This closes the loop between analytics and content creation.
+
+## Top/bottom split analysis (interpreting the recurring report)
+
+The **procedure** for the recurring split report — window, the 50% top/bottom split (quartiles on request), engagement-rate definition, table columns, and presentation — lives in one place: the "Top/Bottom Split workflow" section of `SKILL.md`. Don't restate it here or in the scheduled task; follow it there. This section only covers how to *read* the contrast once you have the two tables.
+
+What to look at when contrasting the top vs bottom halves:
+- **Hook type** — POV/belief and status/FOMO openers vs abstract analogies or feature listicles.
+- **Audience** — does the post speak to the decision-maker (status/strategic) or the practitioner (how-to/governance)?
+- **Comments** — the biggest lever; bottom-half posts are usually comment deserts (0–1 each). Posts that end with a real question pull more.
+- **Format** — quantified case studies and belief posts tend to top; feature roundups and off-thesis posts tend to sink.
+
+### Reach and engagement rate are usually decoupled
+
+Across runs, top-by-reach posts and bottom-by-reach posts have landed at nearly the same average engagement rate, and the single widest-reach post is frequently the *lowest* rate (broad/curiosity bait travels but doesn't resonate). So treat reach and rate as two separate axes, and when bucketing by rate, always sanity-check whether the widest posts are dragging the bottom.
+
+### Recency distorts the bottom
+
+Impressions build over days. A post from the last 2–3 days will look like a bottom-half loser purely because its reach hasn't matured. Exclude or flag the most recent few days before drawing conclusions.

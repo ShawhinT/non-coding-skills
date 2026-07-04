@@ -35,6 +35,7 @@ EMAIL_ALLOWLIST = {
     "shaw@aibuilder.academy",
     "shawhintalebi@gmail.com",
     "notifications@calendly.com",
+    "billing@acme-invoices.net",  # fictional payload inside graphic-builder's prompt-injection example
 }
 # Domain-level allowlist for system / no-reply senders.
 EMAIL_DOMAIN_ALLOW_SUFFIXES = (

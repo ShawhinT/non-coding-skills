@@ -2,51 +2,53 @@
 
 Patterns for following up after a research call, expert network sync, or discovery call. These emails confirm alignment, provide next steps, and keep momentum.
 
-Read this file before drafting any post-call follow-up email. Most named follow-up templates now live in their Notion SOPs (single source of truth) — this file owns the cross-cutting **Structure**, the general fallback template, threading, and batch mechanics, and points to the SOP for each codified template.
+Read this file before drafting any post-call follow-up. The named follow-up templates — and their drafting notes — live in their Notion SOPs (single source of truth). This file owns only what no single SOP carries: the cross-cutting **Structure**, the general fallback template, and two formatting nuances that aren't in the SOP notes. Everything else is a pointer; draft the actual template from the SOP.
+
+---
+
+## Read the transcript before drafting
+
+For any post-call follow-up, read the meeting transcript, not just the Notion Call Notes. The transcript lives in Drive, titled like `[Name] x Shaw - ... - Transcript`; find it by searching the recipient's name. The Notion notes are a lossy summary — the shareable substance lives in the transcript: the framework or roadmap Shaw walked through on screen, the client's pains in their own words, and the one thing they explicitly asked to pick up next time. Drafting from the notes alone yields a generic nudge that misses what would actually land. This is the call-FU parallel to SKILL.md's "Find and read the actual thread before drafting" — the transcript is to a post-call FU what the Gmail thread is to a reply.
 
 ---
 
 ## Structure
 
-Shaw's call follow-ups tend to follow this shape, though the specifics vary by follow-up type:
+Shaw's call follow-ups tend to follow this shape, though the specifics vary by type:
 
 1. **Warm opener** — "Really enjoyed our call yesterday!" (or similar). Always genuine, never filler.
-2. **Reaction** — One sentence showing Shaw was present. This takes different forms depending on context: for talk/event follow-ups where someone pitched an idea, use "Loved your [concise 3-4 word description]." For post-training or post-workshop follow-ups, a genuine reaction to how the session went works better (e.g., "I'm glad we were able to make it through a full loop of the framework"). For proposal follow-ups, skip this entirely and go straight to the value.
-3. **Value / recap** — Provide something useful: a talk outline, a resource, a summary of what was agreed, or suggestions for next steps. This is the meat of the email.
-4. **Closing** — Match the closing to the situation:
-   - **Need a reply to move forward** (talk direction, proposal review): "What do you think?"
-   - **Next meeting already booked**: open door — "Let me know if any questions or blockers come up :)"
-   - **Multi-ask check-in FU**: one-line gracious wrap-up — see Check-in / Multi-Ask Follow-Up template for the two variants (forward-looking vs reciprocity).
+2. **Reaction** — One sentence showing Shaw was present (skip for proposal follow-ups; go straight to value).
+3. **Value / recap** — The useful thing: an outline, a resource, agreed next steps. The meat of the email.
+4. **Closing** — Match to the situation: "What do you think?" when you need a reply to move forward; an open door ("Let me know if any questions or blockers come up :)") when the next meeting is already booked.
 
 **Sign-off:** "Cheers, Shaw" (these are warm, peer-level relationships post-call).
 
 ---
 
-## Workshop/Talk Follow-Up
+## What to give: explicit items first, else the artifact you showed
 
-**When to use:** After a call where Shaw and an event-series partner agreed on a talk topic. Confirms the direction and shares a narrative outline structure.
+First look for explicit follow-up items — resources the client asked for, or next steps Shaw promised, whether listed on the Notion call page or surfaced in the transcript. Those drive the follow-up.
 
-**Template lives in the Event Series SOP** (below the `---` divider, "talk follow-up"). Draft from there — the SOP's drafting note covers the personalization rules: keep the compliment to a 3-4 word reaction to their *idea* (not their credentials), and name their specific domain in the status-quo parenthetical. The talk outline is a bulleted list — one of the allowed exceptions to the "no bullet points" rule.
+When there's no obvious item to hand off, the framework, roadmap, or diagram Shaw walked through live is the natural high-value give: attach that artifact and keep the body short rather than re-explaining it in prose bullets. The "resource" needn't be an external link or a formal one-pager — the thing shown on screen is the resource.
+
+Either way, lead the short body with a diagnostic line that mirrors the client's situation back in Shaw's framework (e.g. "most of your org is still at Stage 1, i.e., they need the aha moment"). That one sentence proves you listened and frames the offer at once — it's the highest-leverage line in the email.
 
 ---
 
-## Proposal Follow-Up
+## Named templates — draft from the SOP
 
-**When to use:** After a discovery/sales call where the next step is sending a proposal or outline PDF.
+Each of these lives, with its full drafting note, in a Notion SOP. Don't keep a second copy of the rules here. See SKILL.md "Check Notion SOPs for templated workflows" for the SOP→template map. Quick index:
 
-**Template lives in the Discovery Call SOP** as Variant A of the post-call FU. Draft from there.
-
-**Key principle:** Keep the email body short. The proposal PDF carries the detail — don't re-explain workshop content, use cases, or session breakdowns in the email. The bullets just convey the shape of the deal (format, delivery, price) before the recipient opens the attachment.
-
-**Bullet formatting (the bold exception).** The deal-shape bullets bold the leading category label — `**1:1 Claude Workshops**`, `**Virtual live sessions**`, `**Total investment**`. This is the one place the skill's blanket "no bold" rule does not apply, because each bullet covers a distinct deal facet and the bold label functions as a scan-anchor for the recipient. Bold only the label, not the value or the trailing clause. When drafting via `create_draft`, use HTML `<b>` tags inside `<li>` (Gmail renders them; plain Markdown `**...**` does not). The rest of the email — opener, intro line, wrap-up — stays plain.
-
-**Optional P.S. line:** If the recipient mentioned needing supporting docs for internal approval (e.g., a CV for L&D submission), add a `P.S.` noting the extra attachment.
+- **Workshop/Talk follow-up** → Event Series SOP ("talk follow-up").
+- **Proposal follow-up** → Discovery Call SOP (post-call FU Variant A). The deal-shape bullets bold the leading category label as scan-anchors — see SKILL.md Voice → "Exception: proposal/offer follow-ups" for that rule and its HTML mechanic.
+- **Post-workshop / post-training follow-up** → 1:1 Claude Workshop SOP ("1:1 Session Follow-up").
+- **Check-in / multi-ask follow-up** → Check-in Call (1:1 Claude Workshop) spoke (Variant A); lighter nurture-recap version in Check-in Call (Client Nurture) spoke (Variant B). *Wrap-up nuance not in the SOP:* for a **conditional next touchpoint** (next call is real but gated on the recipient doing X first — aligning a stakeholder, filling a form, reviewing the proposal), name the dependency in plain language, then propose one specific time anyway as a forcing function rather than open-ended "let me know when you're ready." Pattern: "Let's do another call after you [dependency]. How does [day] ([Mon DD]) look for you?" See SKILL.md "Single time inline" for the date format.
 
 ---
 
 ## Template: General Call Follow-Up
 
-**When to use:** The fallback skeleton for any call with no dedicated SOP template — sales, research, or an informal coffee chat. For discovery calls specifically, use the Discovery Call SOP's two post-call FU variants (proposal vs. resources) instead.
+**When to use:** The fallback skeleton for any call with no dedicated SOP template — research, informal coffee chat, etc. For discovery calls, use the Discovery Call SOP's two post-call FU variants instead.
 
 **Subject line:** "Call follow-up"
 
@@ -67,7 +69,7 @@ Cheers,
 Shaw
 ```
 
-**Two or more next steps → use bullets (the session-FU shape).** When the call leaves you with more than one concrete thing to hand off (book this, set up that, try this skill), put them in a short verb-first bulleted list instead of threading them through paragraphs. Buried action items are the failure mode — the reader should see the asks at a glance. This is the same shape as the Post-Workshop/Post-Training FU below, and it applies to informal calls too (e.g. a coffee chat where you're sending a booking link and a skill).
+**Two or more next steps → use bullets (the session-FU shape).** When the call leaves more than one concrete thing to hand off (book this, set up that, try this skill), put them in a short verb-first bulleted list instead of threading them through paragraphs. Buried action items are the failure mode — the reader should see the asks at a glance.
 
 ```
 Hey [First Name],
@@ -84,63 +86,11 @@ Cheers,
 Shaw
 ```
 
-Cap at ~3 bullets, each starting with a verb; skill names lowercase kebab-case and bolded (see Post-Workshop/Post-Training FU). One CTA still leads — the extra bullets are gives (resources), not competing asks.
+Cap at ~3 bullets, each starting with a verb; skill names lowercase kebab-case and bolded. One CTA still leads — the extra bullets are gives (resources), not competing asks.
 
 ---
 
-## Post-Workshop/Post-Training Follow-Up
+## Threading and batch
 
-**When to use:** After Shaw has delivered a 1:1 workshop or training session — recap what was covered, suggest what to build next, point to the upcoming check-in.
-
-**Template lives in the 1:1 Claude Workshop SOP** ("Call follow-up", below the `---` divider). Draft from there.
-
-**Key principles:**
-- Frame next steps as *suggestions*, not a committed plan. Peer tone, not PM tone.
-- Cap at ~3 items. Even if the session notes list more, pick the highest-leverage ones.
-- Every bullet starts with a verb: Create, Improve, Build, Try, Keep improving.
-- Skill names are lowercase kebab-case and bolded: *slack-helper*, *finance-reporting*, *weekly-summary*. Never Title Case or camelCase.
-- No session reaction line — go straight from the warm opener to the suggestions intro. (Shaw dropped the reaction line in his most recent sends; if session notes have a standout moment worth calling out, it can be fused into the opener.)
-- No "What do you think?" — the check-in is already on the calendar, so use an open door instead of forcing a reply.
-- Include the P.S. with the skill-helper Google Drive link.
-
-**Examples of what suggestion bullets look like (from real sent emails):**
-- "Improve the *lbo-model* skill by manually reviewing its output and giving Claude feedback"
-- "Create a *calendar-helper* skill based on the existing chat where Claude helped you prioritize your week"
-- "Create a *slack-helper* skill by having Claude research your Slack channels so it can navigate them more effectively in the future"
-
----
-
-## Check-in / Multi-Ask Follow-Up
-
-**When to use:** After a subsequent touchpoint in an ongoing engagement — a post-session check-in, or any post-engagement call carrying multiple distinct asks (next steps + review + referral).
-
-**Template lives in the Check-in Call SOP** as Variant A of the post-call FU (Variant B is the lighter nurture-recap version). Draft from there.
-
-**Key principles:**
-
-- **Section labels match the content.** Use *Next Steps* when committing to action, *New skill ideas* when offering options. Same shape, different label.
-- **Cap at 3 body sections by default, 5 max.** See SKILL.md "Shaw never pads for length."
-- **Skill bullets describe what Claude does** — "*fireflies* skill to have Claude help with workflows involving meeting transcripts" beats "Fireflies skill (auto-extract action items)." Verb- and value-first, not feature-first. Skill names are always lowercase kebab-case and bolded. Only relevant when the section is skill suggestions.
-- **Proposal sections pull the headlines inline.** When one of the asks is "share the outline" or "send the proposal," that section should use the Proposal Follow-Up bullet pattern — format, scope, investment — not just gesture at the attachment. The body has to be readable without opening the PDF. When the call notes prescribe a specific starting point ("start with rev function, pick 3 teams"), prefer surfacing it as flexibility ("can be company-wide or function-wide e.g. RevOps only") over pre-committing the recipient.
-- **The wrap-up matches whether the next touchpoint is locked in.** Pick one:
-  - **Next touchpoint scheduled:** "Thanks again for taking the time to go through this with me. Looking forward to our [call/session] [when]."
-  - **No next touchpoint scheduled:** "Thanks again for taking the time to go through this with me. Please let me know if there's ever any way I can support you or [Company]."
-  - **Conditional next touchpoint** (next call is real but gated on the recipient doing X first — aligning with a stakeholder, filling out a form, reviewing the proposal): name the dependency in plain language, then propose one specific time anyway as a forcing function. Don't default to open-ended "let me know when you're ready" — it slows the deal and puts scheduling work on the recipient. Pattern: "Let's do another call after you [dependency]. How does [day] ([Mon DD]) look for you?" See SKILL.md "Single time inline" for the date format.
-
----
-
-## Threading Rules
-
-- **Default:** Reply on the existing email thread — see SKILL.md "Drafting with `create_draft`" for the `replyToMessageId` mechanics.
-- **Emoji-reaction fallback:** See SKILL.md "Gmail emoji reactions break thread replies" — fresh thread when the live thread ends in a reaction.
-- **Subject line:** "Call follow-up" for first/standalone calls. "Check-in Follow-up" for subsequent touchpoints in an ongoing engagement (e.g., 30-day check-ins after a prior workshop). Same convention whether threaded or fresh.
-
----
-
-## Batch Follow-Ups
-
-When following up with multiple people after calls (e.g., after a day of back-to-back research calls):
-
-- **Use a consistent template.** Don't force variation across recipients. The same structure with swapped personalization is better than 5 different email styles.
-- **Only customize:** the greeting name, the compliment line, and the status quo parenthetical in the outline.
-- **Present the template to Shaw first** before creating drafts, so he can approve the structure and tweak wording. Then batch-create all drafts at once.
+- **Threading:** reply on the existing thread per SKILL.md "Drafting with `create_draft`"; fresh thread when the live thread ends in a reaction per SKILL.md "Gmail emoji reactions break thread replies." Subject: "Call follow-up" for first/standalone calls, "Check-in Follow-up" for subsequent touchpoints in an ongoing engagement.
+- **Batch:** see SKILL.md "Batch Outreach Workflow" — one consistent template, present it to Shaw before creating drafts, only customize the name + compliment + status-quo parenthetical.

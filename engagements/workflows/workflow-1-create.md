@@ -27,8 +27,10 @@ Get the Nurture page URL — you'll need it as a JSON array for the `Client` pro
 
 ### 2. Determine the next Engagement ID
 
-Query the Engagements data source sorted by Engagement ID descending, take the top row's ID,
-increment by 1, format as `E####`.
+Query the Engagements data source sorted by Engagement ID descending, take the top row's
+`E###` numeric prefix, increment by 1, and format the title as `E### - <Name>` — the name being
+the client's organization (or the person's name for a solo individual), pulled from the Client
+relation confirmed in Step 1.
 
 ```
 view URL: https://www.notion.so/[page-id]?v=<view-id>
@@ -72,7 +74,7 @@ Common sources: `LinkedIn`, `YouTube`, `Personal`, `ABB`, `ABA Contact`, `Homepa
 Use `notion-create-pages` with parent `data_source_id: [page-id]`.
 
 **Property keys (use these exact names):**
-- `Engagement ID` (NOT `ID` — Notion rejects it)
+- `Engagement ID` (NOT `ID` — Notion rejects it). Value is `E### - <Name>`, e.g. `E009 - [Company]`.
 - `Client` (JSON array of page URLs: `"[\"https://www.notion.so/<id>\"]"`)
 - `Offer` (JSON array: `"[\"30-Day Claude Intensive\"]"`)
 - `Source` (JSON array: `"[\"LinkedIn\"]"`)
@@ -86,6 +88,15 @@ Use `notion-create-pages` with parent `data_source_id: [page-id]`.
 
 ```markdown
 **Stripe link:** _paste invoice URL_
+
+## Program Scope
+
+**Deliverables:**
+- _one bullet per deliverable — start from the canonical list in `references/offer-scopes.md`_
+
+**Bonus:** _if any; omit the line if none_
+
+**Guarantee:** _if any; omit the line if none_
 
 ## Sessions
 
@@ -121,10 +132,31 @@ _TBD at wrap_
 Replace `_paste invoice URL_` with the real Stripe link if available (run **Workflow 4** in the
 same pass to fill it in).
 
-### 7. Confirm with Shaw
+**Program Scope is filled at creation, never left for later — and it starts from the canonical
+list.** Copy the deliverables for this offer from `references/offer-scopes.md`, then edit them to
+match the deal. When a deal customizes the format (grouped sessions, different counts), edit the
+canonical bullets rather than composing the list from scratch — that's how closing deliverables
+survive the rewrite. In particular, keep the canonical closing deliverable (the wrap-up call on
+team workshops, the Day-7 check-in on solo workshops) unless Shaw explicitly confirms it wasn't
+sold; ask before dropping it. A scope missing its closing deliverable makes the daily sync
+mis-time the `Active → Delivered` flip (E009: a custom grouped-session scope omitted the wrap-up
+call, and the sync repeatedly flagged a status decision that was really a scope gap).
+
+### 7. Open placeholder Testimonials rows
+
+Every participant in the engagement gets a Testimonials row at creation time, not at wrap.
+Placeholder rows opened now act as standing reminders so the ask never gets skipped later.
+
+For each participant (champion included only if they attend sessions): create a row with
+`Status: Not Asked`, the `Engagement` relation set to this new row, and `CRM` pointed at the
+champion's Clients (Nurture) page. Partial info is fine — tag unknown names with the company
+(e.g. `[Person] ([Company])`) and leave Email blank, then fill both in when the participant list
+arrives. Mechanics live in `testimonials/SKILL.md` (Workflow 1).
+
+### 8. Confirm with Shaw
 
 Reply with the Engagement ID, link, and a one-line summary:
 
-> Created [E0006](url) — [Client Name] · 1:1 Claude Workshop · Sold · $1,500 · Paid in Full.
+> Created [E009 - [Client Name]](url) — 1:1 Claude Workshop · Sold · $1,500 · Paid in Full.
 
 Flag any blanks (Price, Stripe link, projected End Date) so Shaw can fill them in.

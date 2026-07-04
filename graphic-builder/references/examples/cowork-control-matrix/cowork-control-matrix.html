@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Cowork control matrix</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Libre+Franklin:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAFAF7;
+    --surface: #FFFFFF;
+    --surface-alt: rgba(1,4,19,0.025);
+    --ink: rgba(1,4,19,1);
+    --ink-body: rgba(1,4,19,0.66);
+    --ink-muted: rgba(1,4,19,0.5);
+    --hair: rgba(1,4,19,0.08);
+    --accent: #087CA7;   /* ABA Cerulean */
+    --risk: #EE6352;     /* ABA coral — semantic: the risk column */
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 1640px;
+    background: var(--bg);
+    font-family: 'Libre Franklin', system-ui, sans-serif;
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    position: relative;
+  }
+
+  .canvas {
+    width: 1640px;
+    padding: 60px 80px 60px 80px;
+  }
+
+  /* white surface card on the cream canvas — matches the other blog graphics */
+  .card {
+    background: var(--surface);
+    border: 1.5px solid var(--hair);
+    border-radius: 24px;
+    overflow: hidden;
+  }
+
+  /* ---------- table ---------- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+  col.c-cap   { width: 282px; }
+  col.c-risk  { width: 248px; }
+  col.c-safe  { width: 320px; }
+  col.c-dir   { width: 336px; }
+  col.c-ind   { width: 294px; }
+
+  thead th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    text-align: left;
+    padding: 30px 20px 20px 20px;
+    vertical-align: bottom;
+  }
+  thead th.h-risk { color: var(--risk); }
+  thead th.h-dir  { color: var(--accent); }
+  thead th.h-cap  { color: var(--ink); }
+  thead th .sub { display: block; margin-top: 4px; color: var(--ink-muted); text-indent: -0.2em; }
+
+  thead tr { border-bottom: 2px solid rgba(1,4,19,0.16); }
+
+  tbody td {
+    padding: 28px 20px;
+    vertical-align: top;
+    border-bottom: 1px solid var(--hair);
+    font-size: 26px;
+    line-height: 1.34;
+    color: var(--ink-body);
+  }
+  tbody tr:nth-child(even) td { background: var(--surface-alt); }
+  tbody tr:last-child td { border-bottom: none; }
+
+  /* capability cell */
+  .cap {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .cap .ic {
+    width: 50px; height: 50px;
+    flex: 0 0 50px;
+    border-radius: 13px;
+    background: rgba(8,124,167,0.10);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent);
+  }
+  .cap .ic svg { width: 29px; height: 29px; display: block; }
+  .cap .name {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: 27px;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    line-height: 1.12;
+  }
+
+  td.risk   { color: var(--risk); font-weight: 500; }
+  td.dir    { color: var(--accent); font-weight: 500; }
+  .dash     { color: var(--ink-muted); font-style: italic; }
+
+  /* ---------- footer ---------- */
+  .footer {
+    margin-top: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .legend {
+    display: flex; gap: 26px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    color: var(--ink-muted);
+    letter-spacing: 0.02em;
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 8px; }
+  .legend .dot { width: 11px; height: 11px; border-radius: 50%; }
+  .brand {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    color: var(--ink-muted);
+    letter-spacing: 0.04em;
+    opacity: 0.75;
+  }
+</style>
+</head>
+<body>
+<div class="canvas">
+
+  <div class="card">
+  <table>
+    <colgroup>
+      <col class="c-cap"><col class="c-risk"><col class="c-safe"><col class="c-dir"><col class="c-ind">
+    </colgroup>
+    <thead>
+      <tr>
+        <th class="h-cap">Capability</th>
+        <th class="h-risk">Key risk</th>
+        <th>Built-in safeguard</th>
+        <th class="h-dir">Direct control<br><span class="sub">(admin sets)</span></th>
+        <th>Indirect control<br><span class="sub">(policy)</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <div class="cap">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none"><path stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 0h10.5a.75.75 0 0 1 .75.75v8.25a.75.75 0 0 1-.75.75H6.75a.75.75 0 0 1-.75-.75v-8.25a.75.75 0 0 1 .75-.75Z"/></svg></span>
+            <span class="name">Cowork access</span>
+          </div>
+        </td>
+        <td class="risk">Too-broad access</td>
+        <td>Off until enabled</td>
+        <td class="dir">Custom roles, groups, pilot enablement</td>
+        <td><span class="dash">none</span></td>
+      </tr>
+      <tr>
+        <td>
+          <div class="cap">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none"><path stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg></span>
+            <span class="name">Web search</span>
+          </div>
+        </td>
+        <td class="risk">Prompt injection</td>
+        <td>Read-only; Anthropic safeguards</td>
+        <td class="dir">Role-based access</td>
+        <td><span class="dash">none</span></td>
+      </tr>
+      <tr>
+        <td>
+          <div class="cap">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none"><path stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12a2.25 2.25 0 0 1 2.25-2.25h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z"/></svg></span>
+            <span class="name">Local files</span>
+          </div>
+        </td>
+        <td class="risk">Harmful filesystem actions</td>
+        <td>VM isolation; asks before deleting</td>
+        <td class="dir">MDM-approved folder paths</td>
+        <td>"Isolated folders only" guideline</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="cap">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none"><path stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418"/></svg></span>
+            <span class="name">Network egress</span>
+          </div>
+        </td>
+        <td class="risk">Data exfiltration</td>
+        <td>Restricted by default</td>
+        <td class="dir">Egress settings (off / allowlist / blocklist)</td>
+        <td><span class="dash">none</span></td>
+      </tr>
+      <tr>
+        <td>
+          <div class="cap">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none"><path stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M14.25 6.087c0-.355.186-.676.401-.959.221-.29.349-.634.349-1.003 0-1.036-1.007-1.875-2.25-1.875s-2.25.84-2.25 1.875c0 .369.128.713.349 1.003.215.283.401.604.401.959v0a.64.64 0 0 1-.657.643 48.39 48.39 0 0 1-4.163-.3c.186 1.613.293 3.25.315 4.907a.656.656 0 0 1-.658.663v0c-.355 0-.676-.186-.959-.401a1.647 1.647 0 0 0-1.003-.349c-1.036 0-1.875 1.007-1.875 2.25s.84 2.25 1.875 2.25c.369 0 .713-.128 1.003-.349.283-.215.604-.401.959-.401v0c.31 0 .555.26.532.57a48.039 48.039 0 0 1-.642 5.056c1.518.19 3.058.309 4.616.354a.64.64 0 0 0 .657-.643v0c0-.355-.186-.676-.401-.959a1.647 1.647 0 0 1-.349-1.003c0-1.035 1.008-1.875 2.25-1.875 1.243 0 2.25.84 2.25 1.875 0 .369-.128.713-.349 1.003-.215.283-.4.604-.4.959v0c0 .333.277.599.61.58a48.1 48.1 0 0 0 5.427-.63 48.05 48.05 0 0 0 .582-4.717.532.532 0 0 0-.533-.57v0c-.355 0-.676.186-.959.401-.29.221-.634.349-1.003.349-1.035 0-1.875-1.007-1.875-2.25s.84-2.25 1.875-2.25c.37 0 .713.128 1.003.349.283.215.604.401.96.401v0a.656.656 0 0 0 .658-.663 48.422 48.422 0 0 0-.37-5.36c-1.886.342-3.81.574-5.766.689a.578.578 0 0 1-.61-.58v0Z"/></svg></span>
+            <span class="name">Connectors</span>
+          </div>
+        </td>
+        <td class="risk">Harmful actions in apps</td>
+        <td>Asks before taking actions</td>
+        <td class="dir">Connector- &amp; tool-level toggles; approval</td>
+        <td>Trusted-source connectors only</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="cap">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none"><path stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/></svg></span>
+            <span class="name">Skills</span>
+          </div>
+        </td>
+        <td class="risk">Malicious skills</td>
+        <td>Sandboxed in VM</td>
+        <td class="dir">Skill mode (none / org / user)</td>
+        <td>Skill guidelines; trusted sourcing</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="cap">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C8.21 0 4.831 1.757 2.632 4.501l3.953 6.848A5.454 5.454 0 0 1 12 6.545h10.691A12 12 0 0 0 12 0zM1.931 5.47A11.943 11.943 0 0 0 0 12c0 6.012 4.42 10.991 10.189 11.864l3.953-6.847a5.45 5.45 0 0 1-6.865-2.29zm13.342 2.166a5.446 5.446 0 0 1 1.45 7.09l.002.001h-.002l-5.344 9.257c.206.01.413.016.621.016 6.627 0 12-5.373 12-12 0-1.54-.29-3.011-.818-4.364zM12 16.364a4.364 4.364 0 1 1 0-8.728 4.364 4.364 0 0 1 0 8.728Z"/></svg></span>
+            <span class="name">Claude in Chrome</span>
+          </div>
+        </td>
+        <td class="risk">Mistakes + prompt injection</td>
+        <td>Restricted web access by default</td>
+        <td class="dir">Role access; domain allowlist</td>
+        <td>Access-request process</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+</div>
+</body>
+</html>

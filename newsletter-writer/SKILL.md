@@ -55,6 +55,15 @@ Avoid emojis in subject lines (rare in his archive — they belong in the P.S. o
 
 When uncertain between two subject lines, offer both with reasoning rather than pre-selecting.
 
+## Kit tool caveat (subject + preview)
+
+The Kit `get_broadcast` API doesn't mirror what's actually in the Kit editor: its `preview_text`
+field goes stale (it returned a leftover placeholder that didn't match the real preview), and its
+`subject` field exposes only a single subject — an A/B subject test is invisible to the API. So
+when capturing a broadcast (e.g. onto its ABN page) or reasoning about what shipped, treat the
+subject lines and preview text **Shaw provides** as the source of truth, not the API fields. The
+broadcast body/content is reliable; the `subject` and `preview_text` metadata are not.
+
 ## The two templates
 
 ### 1. Framework email (most common)
@@ -209,6 +218,7 @@ This skill is the canonical newsletter skill. Lanes:
 - **LinkedIn posts (not newsletters)** → `linkedin-post-writer`.
 - **General email drafts (not list broadcasts)** → `email-helper`.
 - **Long-form sales letter for a paid offer** → `sales-letter-writer`.
+- **Storing a draft on its ABN Notion page** → see `notion-helper` ("Capturing a Kit/newsletter draft into an ABN page") for the page format.
 
 If Shaw asks to repurpose a LinkedIn post into a newsletter, this is the right skill — the source material is a post, but the deliverable is a newsletter, and the deliverable's voice and structure dominate.
 

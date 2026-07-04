@@ -2,7 +2,13 @@
 
 When in doubt, open one of these and read the HTML before authoring from scratch. Each one represents a pattern that worked in production. The full project — HTML + rendered PNG + any local assets — is bundled inside this skill under `references/examples/<slug>/`, so the references stay valid on any machine.
 
-## Landscape (1080×820)
+Examples are grouped by mode. See `references/modes/` for the packaging rules each mode follows.
+
+## Social infographic
+
+Standalone feed stills (LinkedIn). Self-contained packaging, social aspect presets. See `references/modes/social-infographic.md`.
+
+### Landscape (1080×820)
 
 - **`connectors-vs-skills`** — two-panel A vs B comparison.
   Path: `references/examples/connectors-vs-skills/connectors-vs-skills.html`
@@ -34,7 +40,7 @@ When in doubt, open one of these and read the HTML before authoring from scratch
     - Use whenever a graphic needs to *imply* a conversation without rendering legible text (e.g. "many messages distill into one document").
   - Use when the post is an ordered framework with N≤4 parallel steps and each step needs its own visual.
 
-## Portrait (1080×1350)
+### Portrait (1080×1350)
 
 - **`6-ways-claude-context`** — numbered vertical list.
   Path: `references/examples/6-ways-claude-context/6-ways-claude-context.html`
@@ -53,11 +59,11 @@ When in doubt, open one of these and read the HTML before authoring from scratch
   - **Frame-fill sizing:** scaled type/tiles up and sized the canvas to *measured* content (~1080×1555) instead of a fixed 1350; footer sits in normal flow (no `margin-top: auto`). See SKILL.md § "Composition principles — Fill the frame" and § "Iterative height tuning for tall composites."
   - Use for a flat catalog/list of N items (tools, skills, features) where each item is one icon + name + one-line description and order doesn't imply sequence.
 
-## Square (1080×1080)
+### Square (1080×1080)
 
 _(none yet — add when one ships.)_
 
-## Composite cheatsheet (tall portrait, 1080×~2000)
+### Composite cheatsheet (tall portrait, 1080×~2000)
 
 - **`claude-skill-cheatsheet`** — multi-section educational summary bundling several standalone topics into one shareable artifact.
   Path: `references/examples/claude-skill-cheatsheet/claude-skill-cheatsheet.html`
@@ -72,3 +78,45 @@ _(none yet — add when one ships.)_
     Reusable for any "X works on Y" availability matrix without resorting to a full grid.
   - **Section-flow notes:** every card uses `1.5px solid var(--border)` with `border-radius` 14–22px depending on density. Card edges *are* the section breaks — no decorative dividers between sections.
   - Use when the brief is a "cheatsheet," "guide," or "everything-you-need" piece summarizing 3–6 topics already proven as individual graphics. See SKILL.md § "What this skill is for — Recognized exception" for when composite cheatsheets justify the multi-idea format.
+
+## Embedded graphic
+
+Figures that live inside a blog post, slide, or doc. Bare diagram, no social packaging (no title/subtitle/takeaway/footer by default), canvas sized tight to content. See `references/modes/embedded-graphic.md`.
+
+### Horizontal flow / pipeline
+
+- **`prompt-injection-pipeline`** — left-to-right cause-and-effect flow (the canonical embedded-mode example).
+  Path: `references/examples/prompt-injection-pipeline/prompt-injection-pipeline.html`
+  - Three columns connected by labeled arrows: a "what X can see" source card → a centered subject node (Claude logo in a `118px` disc) → a "what X can do" action list. Layout is `.flow { display: flex; align-items: center; justify-content: space-between }` with fixed-width `.col-source` / `.col-claude` / `.col-actions` and slim `.col-arrow` columns between them.
+  - **Connector arrows** are Heroicons `arrow-right` at `stroke-width: 2.75` with a mono caption beneath each (`reads` / `acts`) — the two arrows carry the two-condition logic.
+  - **`.action` rows** = icon chip (`42px` rounded, hairline) + verb. Built-in capabilities use inline Heroicons (folder, globe); a real connector uses its brand logo (`gmail.png`). The mix reads as "built-in vs connector" without a legend.
+  - **`.action.contained`** is the highlighted/focal row: accent border + faint accent tint + a two-line text block (verb + a mono sub-note with a lock icon, e.g. "Drafts it, cannot send"). Use to single out one row as the resolved outcome.
+  - **Malicious-instruction callout** (`.mal`): a tinted, bordered block in a semantic danger color (cardinal red `#B80C09`) embedded among grey skeleton-text bars in a browser-card, so the injected line reads as hidden-in-content.
+  - **Two semantic colors** coexist (danger red for the malicious line, cerulean for the contained-safe outcome) plus a brand logo's native color — allowed because each carries meaning, not decoration.
+  - Title was added at the user's explicit request (centered Manrope 800); it is NOT a default for embedded figures.
+  - Content-fit canvas: `width: 1080px`, no fixed height, `~56px 60px 34px` padding; rendered tall then trimmed (final ~1080×512).
+  - Use for any "input → actor → output" or "A causes B causes C" idea where the arrows themselves carry meaning.
+
+### Two-zone comparison
+
+- **`roles-and-groups`** — two labeled zones side by side.
+  Path: `references/examples/roles-and-groups/roles-and-groups.html`
+  - `.columns { display: flex }` with a fixed-width left zone (`flex: 0 0 452px`) and a flexible right zone (`flex: 1; min-width: 0`), each under a Manrope 800 zone heading.
+  - Left zone stacks labeled chip groups (mono `DEFAULTS` / `CUSTOM ROLES` captions + permission cards with check/x rows); right zone holds two parallel `rounded-2xl` group cards with assigned-role chips and a status line.
+  - **One accent (cerulean) used semantically** as a single thread — the same accent marks the granting role chip, the granted-permission checks, and the "on" status — so it functions as a key without a legend.
+  - **Centered summary note** (`.note`, mono, muted) under the right zone states the rule the diagram teaches.
+  - Content-fit canvas: `width: 1080px`, no fixed height, rendered tall then trimmed (final ~1080×560).
+  - Use to contrast two related structures (categories, before/after, two configurations) where each side is a labeled container of items.
+
+### Comparison matrix / table
+
+- **`cowork-control-matrix`** — N capabilities × several labeled dimensions, as a table on a white card.
+  Path: `references/examples/cowork-control-matrix/cowork-control-matrix.html`
+  - **White `--surface` card on the cream canvas** (`.card { background: var(--surface); border: 1.5px solid var(--hair); border-radius: 24px; overflow: hidden }`). The `overflow: hidden` clips the row tints to the rounded corners; the cream canvas shows as a margin so the background reads as warm, not white. See SKILL.md § "Type & color — Cream reads as warm only against white."
+  - `table-layout: fixed` + a `<colgroup>` of fixed column widths. Header row = column *roles* (JetBrains Mono, uppercase, `--ink-muted`), color-coded per column: risk = coral `--risk #EE6352`, direct control = cerulean `--accent #087CA7`.
+  - Each row's first cell = `50px` icon tile (accent-tinted) + Manrope name; body cells get alternating `--surface-alt` row tint + a hairline bottom border. The risk column's text is coral, the direct-control column's is cerulean — the column color *is* the legend.
+  - **Stacked column sub-labels** (`DIRECT CONTROL` over `(admin sets)`, `INDIRECT CONTROL` over `(policy)`) use `text-indent: -0.2em` so the mono `(` aligns under the heading rather than looking inset. See SKILL.md § "Gotchas" #12.
+  - **Brand logo in a monochrome set:** the Chrome row uses the single-path simpleicons `chrome.svg` with `fill="currentColor"`, tinted to the accent, sitting in an icon tile beside Heroicons — not a full-color PNG. See SKILL.md § "Icons."
+  - **Two semantic colors** (risk coral vs. control cerulean) coexist — the allowed semantic-role exception, a danger/safe key, not decoration.
+  - Content-fit canvas: `width: 1640px` (wide table figure), no fixed height, measured then rendered (final ~1640×1112 logical).
+  - Use when comparing N items across several labeled dimensions — a capability / decision / responsibility matrix.

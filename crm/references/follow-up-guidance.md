@@ -113,6 +113,19 @@ naturally from these conversations when the timing is right.
 Also flag any client whose `Last Contact?` is more than 4 months ago, regardless of
 `Next Contact` — this catches clients where a check-in may have been missed.
 
+**Long-gap reconnect (lapsed past clients):**
+When a past client (`Nurturing` or `Churned`, engagement closed) comes due with `Last Contact?`
+~6-12 weeks back or more, treat it as a re-warm from cold rather than a continuation of an active
+rhythm — the gap itself shapes the touch. This is the play the ">4 months ago" flag above should
+trigger. Keep the cadence here; the message lives in the **Check-in Call (Client Nurture)** SOP
+("Checking in" outreach) and is drafted via email-helper — anchor on one specific detail from the
+last real conversation, lead with genuine curiosity, no pitch, no calendar ask.
+
+Set `Next Contact` on an escalating ladder after each reconnect — ~6wk → 3mo → 6mo → 12mo — so the
+next one auto-surfaces in the sync. No response just lengthens the next interval; it doesn't end
+the relationship. (Distinct from "Lost lead re-engagement" above, which is for unconverted *leads*,
+not past *clients*.)
+
 **Expansion signals to watch for during nurture review:**
 
 - Client asking about new use cases, new teams, or new departments

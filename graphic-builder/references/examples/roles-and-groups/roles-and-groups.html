@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Libre+Franklin:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAFAF7;
+    --ink:rgba(1,4,19,1);
+    --ink-85:rgba(1,4,19,0.85);
+    --body:rgba(1,4,19,0.65);
+    --muted:rgba(1,4,19,0.48);
+    --hair:rgba(1,4,19,0.10);
+    --hair-soft:rgba(1,4,19,0.06);
+    --surface:#FFFFFF;
+    --accent:#087CA7;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    font-family:'Libre Franklin',sans-serif;
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+  .canvas{
+    width:1080px;
+    padding:60px 64px 36px;
+    display:flex;
+    flex-direction:column;
+  }
+
+  .columns{
+    display:flex;
+    gap:60px;
+    align-items:flex-start;
+  }
+  .zone-roles{flex:0 0 452px; min-width:0;}
+  .zone-groups{flex:1; min-width:0;}
+
+  .zone-title{
+    font-family:'Manrope',sans-serif;
+    font-weight:800;
+    font-size:46px;
+    letter-spacing:-0.02em;
+    line-height:1;
+    color:var(--ink);
+    margin-bottom:30px;
+  }
+
+  .label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:14px;
+  }
+
+  /* defaults chips row */
+  .chip-row{display:flex; flex-wrap:wrap; gap:10px;}
+  .chip{
+    display:inline-flex;
+    align-items:center;
+    padding:9px 18px;
+    border-radius:2rem;
+    font-family:'Libre Franklin',sans-serif;
+    font-weight:600;
+    font-size:19px;
+    line-height:1;
+    background:var(--surface);
+    border:1.5px solid var(--hair);
+    color:var(--ink-85);
+    white-space:nowrap;
+  }
+  .chip.accent{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:#fff;
+  }
+
+  .block{margin-bottom:32px;}
+  .block:last-child{margin-bottom:0;}
+
+  /* custom role permission cards */
+  .role-grid{display:flex; gap:18px;}
+  .role-card{
+    flex:1; min-width:0;
+    background:var(--surface);
+    border:1.5px solid var(--hair);
+    border-radius:1rem;
+    padding:22px 22px 24px;
+  }
+  .role-card .rname{
+    font-family:'Manrope',sans-serif;
+    font-weight:800;
+    font-size:24px;
+    letter-spacing:-0.01em;
+    margin-bottom:16px;
+  }
+  .role-card.cowork .rname{color:var(--accent);}
+  .perm{
+    display:flex;
+    align-items:center;
+    gap:11px;
+    margin-top:13px;
+    font-size:18px;
+    font-weight:500;
+    color:var(--body);
+  }
+  .perm:first-of-type{margin-top:0;}
+  .perm.off{color:var(--muted);}
+  .perm svg{width:21px; height:21px; flex:0 0 21px;}
+  .ic-on{color:var(--accent);}
+  .ic-off{color:var(--muted);}
+
+  /* group cards */
+  .group-grid{display:flex; gap:22px; align-items:stretch;}
+  .group-card{
+    flex:1; min-width:0;
+    background:var(--surface);
+    border:1.5px solid var(--hair);
+    border-radius:1rem;
+    padding:26px 26px 24px;
+    display:flex;
+    flex-direction:column;
+  }
+  .group-card .gname{
+    font-family:'Manrope',sans-serif;
+    font-weight:800;
+    font-size:26px;
+    letter-spacing:-0.01em;
+    margin-bottom:20px;
+  }
+  .group-card .glabel{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:12px;
+  }
+  .group-card .chip-row{flex:1; align-content:flex-start;}
+  .gdivider{
+    height:1px;
+    background:var(--hair);
+    margin:22px 0 16px;
+  }
+  .status{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:16px;
+    font-weight:600;
+    letter-spacing:0.01em;
+  }
+  .status svg{width:20px; height:20px; flex:0 0 20px;}
+  .status.on{color:var(--accent);}
+  .status.off{color:var(--muted);}
+
+  .note{
+    margin-top:22px;
+    text-align:center;
+    font-family:'JetBrains Mono',monospace;
+    font-size:15px;
+    letter-spacing:0.02em;
+    color:var(--muted);
+  }
+  .note b{color:var(--ink-85); font-weight:600;}
+
+  .footer{
+    margin-top:48px;
+    padding-top:0;
+    text-align:center;
+    font-family:'JetBrains Mono',monospace;
+    font-size:14px;
+    letter-spacing:0.04em;
+    color:var(--muted);
+  }
+</style>
+</head>
+<body>
+  <div class="canvas">
+    <div class="columns">
+
+      <!-- ROLES -->
+      <div class="zone-roles">
+        <div class="zone-title">Roles</div>
+
+        <div class="block">
+          <div class="label">Defaults</div>
+          <div class="chip-row">
+            <span class="chip">User</span>
+            <span class="chip">Admin</span>
+            <span class="chip">Owner</span>
+          </div>
+        </div>
+
+        <div class="block">
+          <div class="label">Custom roles</div>
+          <div class="role-grid">
+
+            <div class="role-card general">
+              <div class="rname">General</div>
+              <div class="perm">
+                <svg viewBox="0 0 24 24" fill="none"><path class="ic-on" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                Claude chat
+              </div>
+              <div class="perm">
+                <svg viewBox="0 0 24 24" fill="none"><path class="ic-on" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                Web search
+              </div>
+              <div class="perm off">
+                <svg viewBox="0 0 24 24" fill="none"><path class="ic-off" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                Cowork
+              </div>
+            </div>
+
+            <div class="role-card cowork">
+              <div class="rname">Cowork</div>
+              <div class="perm">
+                <svg viewBox="0 0 24 24" fill="none"><path class="ic-on" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                Cowork
+              </div>
+              <div class="perm">
+                <svg viewBox="0 0 24 24" fill="none"><path class="ic-on" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                Connectors
+              </div>
+              <div class="perm">
+                <svg viewBox="0 0 24 24" fill="none"><path class="ic-on" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                Skills
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- GROUPS -->
+      <div class="zone-groups">
+        <div class="zone-title">Groups</div>
+
+        <div class="group-grid">
+
+          <div class="group-card">
+            <div class="gname">Default Group</div>
+            <div class="glabel">Assigned roles</div>
+            <div class="chip-row">
+              <span class="chip">General</span>
+            </div>
+            <div class="gdivider"></div>
+            <div class="status off">
+              <svg viewBox="0 0 24 24" fill="none"><path stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+              Cowork off
+            </div>
+          </div>
+
+          <div class="group-card">
+            <div class="gname">Cowork Pilot</div>
+            <div class="glabel">Assigned roles</div>
+            <div class="chip-row">
+              <span class="chip">General</span>
+              <span class="chip accent">Cowork</span>
+            </div>
+            <div class="gdivider"></div>
+            <div class="status on">
+              <svg viewBox="0 0 24 24" fill="none"><path stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+              Cowork on
+            </div>
+          </div>
+
+        </div>
+
+        <div class="note">Roles are additive. <b>Most permissive wins.</b></div>
+      </div>
+
+    </div>
+
+    <div class="footer">aibuilder.academy</div>
+  </div>
+</body>
+</html>

@@ -3,7 +3,7 @@
 **Triggers:**
 - A new ABA Trainings page is created for an active client
 - A new ABA Calls page is created for an active client (mid-engagement check-in, etc.)
-- Shaw says "log [Name]'s session for X" / "add this call to E#### body"
+- Shaw says "log [Person]'s session for X" / "add this call to E### body"
 - A session gets rescheduled and the body needs updating
 
 **Goal:** Keep the engagement's `## Sessions` and `## Calls` body sections current as new
@@ -45,13 +45,13 @@ both lines (existing + new) in chronological order.
 
 ```
 old_str:
-- <mention-page url="https://www.notion.so/page-A"/> (Apr 21 — [Name 1])
-- <mention-page url="https://www.notion.so/page-C"/> (Apr 24 — [Name 3])
+- <mention-page url="https://www.notion.so/page-A"/> (Apr 21 — [Person A])
+- <mention-page url="https://www.notion.so/page-C"/> (Apr 24 — [Person C])
 
 new_str:
-- <mention-page url="https://www.notion.so/page-A"/> (Apr 21 — [Name 1])
-- <mention-page url="https://www.notion.so/page-B"/> (Apr 22 — [Name 2])
-- <mention-page url="https://www.notion.so/page-C"/> (Apr 24 — [Name 3])
+- <mention-page url="https://www.notion.so/page-A"/> (Apr 21 — [Person A])
+- <mention-page url="https://www.notion.so/page-B"/> (Apr 22 — [Person B])
+- <mention-page url="https://www.notion.so/page-C"/> (Apr 24 — [Person C])
 ```
 
 **Example — appending to the end of Sessions section:**
@@ -97,18 +97,18 @@ When a session moves to a different date:
 
 ```
 old_str:
-- <mention-page url="https://www.notion.so/page-X"/> (Apr 22 — [Name] #1)
+- <mention-page url="https://www.notion.so/page-X"/> (Apr 22 — [Person] #1)
 
 new_str:
-- <mention-page url="https://www.notion.so/page-X"/> (May 6 — [Name], rescheduled from 4/22)
+- <mention-page url="https://www.notion.so/page-X"/> (May 6 — [Person], rescheduled from 4/22)
 ```
 
-If the reschedule consolidates two previously-separate sessions into one (e.g., "[Name] #1" and
-"[Name] #2" turn out to be the same session that just moved), remove the duplicate line entirely
+If the reschedule consolidates two previously-separate sessions into one (e.g., "[Person] #1" and
+"[Person] #2" turn out to be the same session that just moved), remove the duplicate line entirely
 in the same `update_content` call.
 
 ### 6. Confirm with Shaw
 
 Reply with a one-line summary:
 
-> Linked May 6 [Name] session to [E0003](url). Sessions section now has 5 entries.
+> Linked May 6 [Person] session to [E003](url). Sessions section now has 5 entries.

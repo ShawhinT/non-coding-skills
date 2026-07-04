@@ -34,6 +34,15 @@ When you change a value that appears in more than one place — durations, sessi
 
 ## Drafting a Proposal
 
+**First, find the best base to start from.** Before writing anything, look across *all* client folders in your proposals directory, not just the current client's, and pick the **most recent proposal of the same offering type** to use as the template. The newest proposal of a given type carries the latest copy refinements (wording, structure, section names), so starting there beats both the current client's older draft and the content-free `references/format-reference.md` (which is for format, not copy).
+
+To do this:
+1. List the proposal folders and their `.md` files with timestamps. Filenames vary: most follow `ai-training-outline_<client>_<variant>.md` (variant `_1on1`/`_team`, version `_v2`), but some are named descriptively after the offering (e.g. `team-claude-workshops_acme.md`). Glob *all* proposal markdown, not a single prefix: `ls -lt **/*.md`. Read the offering type from filename keywords (`team`/`cohort` vs `1on1`/`1:1`) or by opening the file. Don't filter on the `ai-training-outline_` prefix, or you'll silently miss the most recent base when it was renamed.
+2. Match on offering type: a 1:1/2:1 workshop request should clone the most recent `_1on1` outline (e.g., [Company A]'s was the freshest when drafting [Company B]'s), a cohort/team rollout the most recent `_team`, and so on.
+3. Read that file, then adapt it to the new client: swap names, participant groupings, delivery method, dates, and pricing. Preserve its refined copy unless the new engagement calls for different wording.
+
+Confirm the chosen base with the user if it's ambiguous which prior proposal is the closest match.
+
 Gather these details from the user (ask for anything missing):
 
 - **Client name**
@@ -57,14 +66,15 @@ Gather these details from the user (ask for anything missing):
 
 **Structure:** Engagements can be multiple sessions or a single session with multiple parts (using `### Part 1:`, `### Part 2:`). The syllabus Duration field should reflect this (e.g., "1 session (3.5 hours total)" or "4 sessions (90 min each)").
 
-Follow the structure in the reference examples and adapt to match the client's needs:
-- `references/example-proposal.md` — Acme Corp: multi-session engagement with lecture and breakout sessions
-- `references/example-proposal-techstart.md` — TechStart: single session with 2 parts, discount row, upfront payment
-- `references/example-proposal-globex.md` — Globex: cohort onboarding engagement with non-session sections (Intake Form, Logistics/Prerequisites, Additional Deliverables) and a Qty-column Investment table that collapses repeated sessions (`N | $total ($unit ea)`) and uses `Included` for no-charge items
+**Flexible-scope pricing (count or timing undecided).** When the engagement's exact scope is still open, don't pin a single headline Total. Price by building block: an Investment table that lists each unit (a workshop, a 1:1 prep, a follow-up) at its unit price, followed by two anchored *example scopes*, a smaller and a larger configuration, each with its own reconciled Total. Two anchors let the reader infer the in-between cost without you enumerating every option. If a unit price hinges on a term that could be read two ways (per-team vs per-session), define that term in plain language right before the table (e.g. "a *team* is a function. a *group* is a scheduled session of that team."). See the most recent flexible-scope proposal for a worked example.
 
-Save to a consistent location for your client files (e.g., `clients/<client>/ai-training-outline_<client>.md`).
+Two sources, two jobs:
+- **Content/copy** comes from the most recent live proposal of the matching offering type (the "find the best base" step above). Clone its wording and structure.
+- **Format/structure** is defined once in `references/format-reference.md`, a content-free skeleton that demonstrates every pattern with inline notes: both syllabus headings, the spacer row, multi-session vs single-session-with-parts headers, timed segments, optional/unbilled segments, the page break, both Investment table shapes (simple 3-column and Qty-column collapse `N | $total ($unit ea)`), `Included` and `n/a` cells, the green discount row, and the payment-term variants. Consult it whenever you're unsure how a structural element should be written. It is the fallback base when no live proposal of the needed type exists yet.
 
-When a client gets multiple offering variants or revisions, suffix the filename — variant first, then version: `ai-training-outline_<client>_<variant>.md` (e.g., `_team`, `_1on1`), and `_v2`, `_v3` for major revisions (e.g., `ai-training-outline_globex_team_v2.md`).
+Save to: `<proposals-directory>/<client>/ai-training-outline_<client>.md`
+
+When a client gets multiple offering variants or revisions, suffix the filename — variant first, then version: `ai-training-outline_<client>_<variant>.md` (e.g., `_team`, `_1on1`), and `_v2`, `_v3` for major revisions (e.g., `ai-training-outline_acme_team_v2.md`). Shaw sometimes renames a proposal to a descriptive, offering-led name (e.g. `team-claude-workshops_acme.md`). That's fine, and it's why the discovery step globs all `.md` rather than a fixed prefix.
 
 Tell the user to review the markdown before PDF generation.
 
@@ -78,7 +88,7 @@ A proposal is a spec, not a pitch. The deal sells itself through clear structure
 - **Cut rationale and framing.** A well-ordered agenda argues for itself. Don't narrate why it's structured that way ("no demos here, those come later") or add an "Our Approach" essay. Meta-commentary reads as insecurity about the structure.
 - **The client is the hero, not the instructor.** Demote yourself as the actor, promote the team as the one who acts and benefits. You get the work verbs (instruct, demo); they get the outcome verbs (learn, build, share). Prefer "skills the team can build" over "skills to build," and "Instructor builds…" over "I build…".
 - **Don't tally or label-inflate.** Counts ("12 skills!") and marketing terms ("done-for-you") signal salesmanship and quietly commit you to numbers. Promise the minimum you can stand behind.
-- **Name things plainly.** Calm, true nouns over benefit-reaching labels: "Onboarding Claude to Globex" over "Delegating Work to Claude for Teams."
+- **Name things plainly.** Calm, true nouns over benefit-reaching labels: "Onboarding Claude to [Company]" over "Delegating Work to Claude for Teams."
 - **Say each thing once.** If info already lives in its natural place (the table, the body), don't echo it in the overview or repeat structural prefixes ("Session 1:") that the ordering already conveys.
 - **Spend words only where they're load-bearing.** Ruthless on adjectives, precise on commitments and logistics. Hard constraints like "filled out no later than 7 days prior" or "30-minute debrief" earn their length because they protect delivery.
 
@@ -89,8 +99,11 @@ Rhythm: short, present-tense, subject-verb-object declaratives. Modest active vo
 Before converting, verify:
 
 - Each session's timed segments sum to its stated duration.
-- The Investment table durations and quantities reconcile to the headline **Total** (both hours and price).
-- **Optional or unbilled segments** (e.g., "optional 15-min Q&A after the session") are excluded from billed durations and the Total. The same duration reads identically in the session header, the Investment row, and the Total.
+- The Investment table reconciles to the headline **Total** on both axes, and the two axes are independent:
+    - **Total Duration** = the sum of every stated duration in the Duration column, including rows priced **Included**. An `Included` deliverable with a real duration (e.g., a 30-min Check-In Call) is committed delivery time, so its minutes count toward the Total hours even though it contributes nothing to the price. Only rows with no stated duration (`n/a`) are skipped.
+    - **Total Price** = the sum of the dollar rows only. `Included` rows contribute nothing to the price.
+    - Worked example: 3 x 90-min workshops + a 30-min Included Check-In Call = **5 hours total** at the same workshop price (not 4.5 hours). The 4.5-hour answer is the classic mistake: don't drop an Included row's duration from the Total.
+- **Genuinely optional segments** (e.g., "optional 15-min Q&A after the session") are the only thing excluded from both the Total duration and price. "Optional" means the client can decline it. It is not the same as "Included" (committed, no extra charge). The same duration reads identically in the session header, the Investment row, and the Total.
 - Titles, durations, and structural terms read identically everywhere they appear.
 
 After the user approves the markdown:
@@ -112,6 +125,7 @@ These conventions aren't obvious from the example alone — follow them for corr
 - Use `---` horizontal rules between sessions
 - Use `<div class="page-break"></div>` before the Investment section to force a page break
 - Inline HTML like `<span style="color: #2E7D32">` works inside markdown table cells for colored text (e.g., discount rows)
+- For an asterisk note under a session (a caveat about how a segment works), wrap it in `<p class="footnote">...</p>`. The `.footnote` class in `style.css` renders it ~20% smaller and gray, so it reads as a subordinate note rather than body copy
 - Investment table goes at the end with a bold **Total** row — use consistent unit formatting across all rows
 - Prepared-by line format: `*Prepared on <date> by Shaw Talebi, PhD*` (italicized, includes date)
 - Payment terms go after the Investment table as a `### Payment terms` subsection with bold bullet labels

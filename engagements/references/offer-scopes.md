@@ -32,7 +32,8 @@ Source: [1:1 Claude Workshop one-pager](https://www.notion.so/[page-id]).
 - 1 × wrap-up call with AI champion / company contact (the payer or designated lead)
 
 No per-attendee bonus or guarantee bundled at the current price point — confirm with Shaw before
-adding one to a specific deal. Verified against two past team engagements (5 attendees each at $7,500).
+adding one to a specific deal. Verified against [Company] (5 attendees) and [Company]
+(5 attendees) at $7,500 each.
 
 ---
 
@@ -52,15 +53,16 @@ Source: [30-Day 1:1 Claude Intensive one-pager](https://www.notion.so/[page-id])
 
 **Prior format (pre-April 2026):** 2 × half-day in-person sessions, $8k. Pre-dates the
 productized 30-Day Intensive — log under `Custom AI Training` if encountered in a backfill (see
-E0002).
+[Client Name] E002).
 
 ---
 
 ## Custom AI Training / AI Advisory / Ad Hoc Consulting
 
 Variable by deal. No canonical scope — ask Shaw and describe per engagement. Examples on record:
-- E0001: 1 × 60-min strategy call, $1,000, no guarantees.
-- E0002 (pre-April): 2 × half-day in-person 1:1 AI Coaching sessions, $8,000, no guarantees.
+- [Person] / [Company] (E001): 1 × 60-min strategy call, $1,000, no guarantees.
+- [Client Name] / pre-April (E002): 2 × half-day in-person 1:1 AI Coaching sessions, $8,000,
+  no guarantees.
 
 ---
 
