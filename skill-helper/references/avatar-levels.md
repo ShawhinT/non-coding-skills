@@ -14,13 +14,13 @@ The point of the avatar isn't labeling the user — it's calibrating *how you ta
 
 **What to assume:** They don't know what's possible yet. Their "what's worth automating" instincts will be off, because they don't know what Claude can do. Lean heavier on *your* suggestions; lean lighter on asking *them* what they want.
 
-**Skills that land — almost always tool skills:**
-- A single tool skill built on whatever connector got wired up in Phase 1.5 — `gmail-helper`, `notion-helper`, `calendar-helper`. The user needs to feel the daily win of a skill that tames one tool before anything else.
+**Skills that land — almost always tool-specific skills:**
+- A single tool-specific skill built on whatever connector got wired up in Phase 1.5 — `gmail-helper`, `notion-helper`, `calendar-helper`. The user needs to feel the daily win of a skill that tames one tool before anything else.
 - Things they can demo to a friend in under a minute.
 - If no connector yet: a zero-connector utility like "summarize this PDF in plain English."
 
 **Skills that don't land yet:**
-- Process skills (multi-step, multi-tool) — too much orchestration before they trust the building blocks.
+- Process-specific skills (multi-step, multi-tool) — too much orchestration before they trust the building blocks.
 - Anything where the value depends on existing infrastructure they haven't built.
 
 ---
@@ -33,8 +33,8 @@ The point of the avatar isn't labeling the user — it's calibrating *how you ta
 
 **What to assume:** They have intuitions about what's repetitive in their work. They just haven't connected the dots between "Claude" and "actually doing the thing." Their first skill is often a wedge built on whatever got connected in Phase 1.5.
 
-**Skills that land — tool skills, same as L0:**
-- A single tool skill tied to whichever connector got wired up in Phase 1.5 — `gmail-helper`, `notion-helper`, `slack-digest`. The skill should *demand* the connector; that's what makes it stick.
+**Skills that land — tool-specific skills, same as L0:**
+- A single tool-specific skill tied to whichever connector got wired up in Phase 1.5 — `gmail-helper`, `notion-helper`, `slack-digest`. The skill should *demand* the connector; that's what makes it stick.
 - Pick the connector with the lowest setup friction relative to value.
 
 ---
@@ -47,9 +47,10 @@ The point of the avatar isn't labeling the user — it's calibrating *how you ta
 
 **What to assume:** They've felt the pain of repeating the same prompt structure. Ask about workflows where they've found themselves typing roughly the same instructions multiple weeks in a row. That's the skill.
 
-**Skills that land — either type, matched to pain:**
-- **Tool skill** if the pain is a single connector they fight with daily — repeated preambles, awkward queries, working around the same quirks every time. Formalize that into a helper.
-- **Process skill** if the pain is a manual checklist they run weekly — a repeated prompt sequence across 1-2 connectors. The win is *consistency*: always do X, in this order, with this output format.
+**Skills that land — any type, matched to pain:**
+- **Tool-specific skill** if the pain is a single connector they fight with daily — repeated preambles, awkward queries, working around the same quirks every time. Formalize that into a helper.
+- **Process-specific skill** if the pain is a manual checklist they run weekly — a repeated prompt sequence across 1-2 connectors. The win is *consistency*: always do X, in this order, with this output format.
+- **Domain-specific skill** if they keep re-explaining the same business, brand, or industry context at the start of every chat. Encoding it once is near-zero build complexity and makes everything else they do with Claude sharper.
 - The first skill should formalize an existing habit, not introduce a new one. Don't suggest something fancier than what they're already doing manually.
 
 ---
@@ -62,10 +63,11 @@ The point of the avatar isn't labeling the user — it's calibrating *how you ta
 
 **What to assume:** They have taste. They know what a good skill feels like. The friction is identifying the next-best target, not building it.
 
-**Skills that land — process skills start to dominate:**
-- **Process skills** are the natural next step — multi-connector orchestrations they've been doing manually because the wiring felt fiddly. Think `pre-call-research`, `weekly-client-rollup`, `outreach-triage`. The value is replacing a manual checklist with a single invocation.
+**Skills that land — process-specific skills start to dominate:**
+- **Process-specific skills** are the natural next step — multi-connector orchestrations they've been doing manually because the wiring felt fiddly. Think `pre-call-research`, `weekly-client-rollup`, `outreach-triage`. The value is replacing a manual checklist with a single invocation.
 - Skills that compose with their existing tool skills (e.g., `executive-briefing` calls their existing `notion-helper` and `calendar-helper` under the hood).
-- **Tool skills** still land if there's a connector they use daily but haven't wrapped yet — but most L3s have already built the obvious ones.
+- **Tool-specific skills** still land if there's a connector they use daily but haven't wrapped yet — but most L3s have already built the obvious ones.
+- **Domain-specific skills** are high-leverage here: L3s carry the most un-encoded context in their heads, and a domain skill multiplies the output quality of every skill they've already built.
 
 **What to flag:**
 - Watch for over-engineering. L3s sometimes want to build the most clever skill, not the most useful one.
@@ -80,10 +82,10 @@ The point of the avatar isn't labeling the user — it's calibrating *how you ta
 
 **What to assume:** They've already built the obvious stuff. The remaining leverage is in: skills that compose other skills, skills that target higher-stakes / lower-frequency work, skills for parts of their work they've been ignoring because "it's too messy to automate."
 
-**Skills that land — almost entirely process skills (and meta-skills):**
-- **Process skills** targeting strategic, high-stakes work — `weekly-strategic-review`, `quarterly-planning`, `client-engagement-wrap`. The remaining leverage at L4 is in multi-step workflows the user has been doing manually because "it's too messy to automate."
+**Skills that land — almost entirely process-specific skills (and meta-skills):**
+- **Process-specific skills** targeting strategic, high-stakes work — `weekly-strategic-review`, `quarterly-planning`, `client-engagement-wrap`. The remaining leverage at L4 is in multi-step workflows the user has been doing manually because "it's too messy to automate."
 - **Meta-skills** that orchestrate existing tool and process skills — a morning routine that chains `executive-briefing` → `inbox-triage` → `calendar-review`.
-- Skills that capture judgment they currently hold in their head and want to externalize.
+- Skills that capture judgment they currently hold in their head and want to externalize — often a domain-specific skill (brand system, strategy context, industry knowledge) rather than another workflow.
 - **Optimization candidates** — merging two overlapping skills, splitting a bloated one, trimming dead weight. Sometimes the leverage is in tightening existing skills rather than building new ones. The mechanics live in `skill-updater`.
 
 **The L4 plateau — when skill candidates stop landing.**

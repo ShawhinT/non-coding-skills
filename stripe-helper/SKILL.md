@@ -14,28 +14,53 @@ Workflow skill for Shaw's Stripe account. Covers three things:
 
 Shaw's Stripe MCP is connected to his live account, not test mode. Real money moves. Always confirm with Shaw before finalizing anything that touches a real customer.
 
-## Shaw's offers (default product/price IDs)
+## Shaw's offers — read them live, don't trust a list
 
-These are the canonical paid offers. When Shaw says "1-on-1 Claude workshop" or similar, default to the matching price below — confirm the choice if there's any ambiguity.
+**Start every invoice by pulling the live catalog** (`GetProducts` with `active: true`, one call,
+returns everything). Do not work from product/price IDs written down in this skill.
 
-| Offer | Product ID | Price ID | Amount |
-|---|---|---|---|
-| 1:1 Claude Workshop (90-min) | `prod_UN9DVm0Oac8U3V` | `price_1TOOuyDfJnJi0xPA172irITu` | $1,500 |
-| 1:1 AI Coaching (90 min) | `prod_ULBsLf0npIr8Wc` | `price_1TMVV9DfJnJi0xPAPJAd0a3m` | $1,500 |
-| 1:1 AI Coaching (1 hr) | `prod_ULBr6TCqolpxX4` | `price_1TMVUbDfJnJi0xPAYSHVeNHe` | $1,500 |
-| 1:1 AI Coaching (1 hr, discounted) | `prod_ULBr6TCqolpxX4` | `price_1TMVTkDfJnJi0xPAe6TV0xjz` | $1,000 |
+This section used to hold a table of four products and prices. It went stale: by the time it was
+next used, the account had products the table didn't list, one of the products it *did* list had
+been archived, and the model had to do the lookup anyway — so the table's only effect was to
+supply a wrong prior. Offers change often enough that any cached copy is wrong within weeks.
 
-For custom engagements (training contracts, retainers, etc.), Shaw's pattern is one-off invoices in the $1,500–$7,500 range with a custom line item — not always tied to a product. Ask him for the amount and a short description.
+What's stable and worth knowing:
+
+- Everything is **one-off invoicing**. No subscriptions, no coupons — don't check them unless
+  Shaw asks.
+- Products are **services** (`type: service`, tax code `txcd_20030000`) with a single one-time
+  price attached.
+- Product names encode the format and duration, e.g. `1:1 Claude Workshop (90-min)`,
+  `Office Hour (30 min)`. Match on that when picking a price.
+- Older products linger as `active` after Shaw stops selling them. Presence in the catalog is not
+  evidence an offer is current — if the name doesn't match what the deal actually was, ask.
+
+### When the amount has no matching price
+
+If the total doesn't equal a catalog price × a whole-number quantity, **stop and ask Shaw** before
+improvising. This guardrail is the reason the price table wasn't needed: checked against live
+Stripe, it catches both a mistyped amount and a genuinely new offer, and it distinguishes them by
+asking rather than guessing.
+
+The two resolutions look different:
+
+- **A new offer** (Shaw sold a format that doesn't exist yet) — create the product and price
+  deliberately, named for its format and duration. Confirm with Shaw first; a new SKU is
+  permanent and lands in the live catalog. Then tell the `engagements` skill it needs a matching
+  `Offer` multi-select option.
+- **A one-off deviation** (courtesy rate, bundled favor) — don't mint a price for it. Never
+  create a price purely to make a total come out right, e.g. a $6,000 price when the deal is
+  4 × the $1,500 workshop. Shaw builds that line item in the dashboard.
 
 ## Sending an invoice (the standard workflow)
 
 Stripe doesn't have a single "send invoice" action — follow this order:
 
-0. **Ground the amount in the agreement, not a summary.** Before touching Stripe, confirm what was actually agreed from the source — the email thread with the client, not CRM notes (notes lag and compress; a restructured deal can change the total). If the total doesn't equal a catalog price × a whole-number quantity, stop and ask Shaw before improvising.
+0. **Ground the amount in the agreement, not a summary.** Before touching Stripe, confirm what was actually agreed from the source — the email thread with the client, not CRM notes (notes lag and compress; a restructured deal can change the total). Watch for a price the client never restated in writing: if they replied "let's do it" to a two-option email, the number is implied, not confirmed, and the invoice line is what pins it down. Then reconcile against the live catalog per the section above.
 1. **Find or create the customer.** Search by email first to avoid duplicates (`search_stripe_resources` with `customers:email~"domain.com"`). Only call `create_customer` if no match.
 2. **Create a draft invoice** with `create_invoice` (sets `customer` and `days_until_due`).
-3. **Attach ONE line item** with `create_invoice_item` using the existing price ID from the offers table. The MCP can't set quantity, so for multi-unit invoices create a single line item and tell Shaw what quantity to set in the dashboard — do NOT create N duplicate line items, and never create a new price to fake a total (e.g. don't mint a $6,000 price when the deal is 4 × the $1,500 workshop price).
-4. **Remind Shaw about ACH.** The MCP can't set payment methods. If the client should be able to pay by bank transfer, remind Shaw to check **ACH Direct Debit** under Payment options in the dashboard before finalizing.
+3. **Attach ONE line item** with `create_invoice_item` using a price ID from the live catalog you pulled above. The MCP can't set quantity, so for multi-unit invoices create a single line item and tell Shaw what quantity to set in the dashboard — do NOT create N duplicate line items, and never create a new price to fake a total (e.g. don't mint a $6,000 price when the deal is 4 × the $1,500 workshop price).
+4. **Remind Shaw about ACH and the due date.** The MCP can't set payment methods, and `days_until_due` is fixed at creation on a draft that can't be edited afterward. Shaw's policy is **due ~7 days before the session** — compute from the session date rather than defaulting to net-14, and if the session is too near for that, say so instead of silently picking a longer term. If the client has paid by bank transfer before (most companies do), remind him to check **ACH Direct Debit** under Payment options before finalizing.
 5. **Pause and confirm with Shaw.** Show the summary — customer, line item, quantity to set, amount, due date — and wait for explicit OK before finalizing. This is the rule, even when the request feels obvious.
 6. **Finalize** with `finalize_invoice` after Shaw has made his dashboard tweaks (quantity, ACH). This locks the invoice and triggers Stripe to email the hosted invoice link to the customer.
 

@@ -34,6 +34,15 @@ is especially prone to entity conflation across long parallel-source reports (e.
 one lead's notes to another, fabricating a Status from an unrelated mention). Opus is the floor
 — don't downshift to Sonnet or Haiku for the read phase.
 
+**A sub-agent that dies is not a sub-agent that reported.** Long parallel reads fail mid-run
+(two of three did on 7/27/26), and a killed agent returns partial prose that reads like a real
+report — a few tool calls' worth of findings with no section headers and no closing summary.
+Treat truncated or error-terminated output as *absent*, not as partial data to reconcile: the
+missing part is silent, so proceeding on it produces a sync that looks complete and isn't.
+Recovery is to re-run that agent's scope before reconciling. There's no resume path once a run
+ends, so the choice is a fresh narrowed dispatch or doing the queries inline in the main agent
+— inline is usually faster, since by then you already know exactly which queries you need.
+
 **All sub-agents must be dispatched in a single message with multiple Task calls.** Wall time = max(A, B, C, D), not sum. Serial dispatch — firing one, waiting for it, then firing the next — defeats the architecture and roughly N-multiplies the read phase. If you find yourself reaching for a second Task call after the first one has already returned, stop and fire the rest together.
 
 ### Sub-agent A — Gmail Scanner
@@ -64,9 +73,9 @@ and any orphan Calendly bookings that don't match an existing CRM record.
 
 **Before labeling a Calendly booking an orphan, match it against every known-contact table — Active
 Leads, Clients (Nurture), 🧊 Archived Leads (`collection://[page-id]`), *and*
-the Partners database (`collection://[database-id]`) — by email (then email
-domain for the Partners match), then name.** A Partners match means the booking belongs to a
-partner/peer, not a lead — report it as "matched in Partners" and don't propose a new lead. This mirrors Sub-agent B's ABA Calls orphan rule (step 3): a match in
+the Friends database (`collection://[database-id]`) — by email (then email
+domain for the Friends match), then name.** A Friends match means the booking belongs to someone in
+the non-lead network, not a lead — report it as "matched in Friends" and do not propose a new lead. This mirrors Sub-agent B's ABA Calls orphan rule (step 3): a match in
 Archived Leads means the booking belongs to someone already triaged out (Lost / Disqualified) —
 it is **not** an orphan, so do not propose a new lead for it. Report it as "matched in Archived
 Leads (Lost / Disqualified)" with the archived record's last Notes line so the main agent can
@@ -86,16 +95,21 @@ section for the distinction.
    have no corresponding Notion page — these are meetings that happened but were never logged.
    Only flag meetings that look like a lead, client, or sales conversation. Do NOT flag peer,
    colleague, partner, investor-friend, personal, or informal research/coffee chats — these
-   intentionally have no ABA Calls page. Skip anyone who matches a row in the Partners database
+   intentionally have no ABA Calls page. Skip anyone who matches a row in the Friends database
    (`collection://[database-id]`) by email or email domain — that DB is the
-   source of truth for partners, affiliates, subcontractors, and peers who intentionally have no
-   ABA Calls page (see SKILL.md → "Do-not-flag contacts"); pull its rows up front so you can
+   source of truth for the non-lead network — friends, affiliates, channels, partners, and
+   subcontractors — who intentionally have no ABA Calls page (see SKILL.md → "The Friends
+   database"); pull its rows up front so you can
    domain-match against them. For a new ambiguous meeting, lean toward NOT flagging unless there's
-   a clear sales/lead signal — and when one turns out to be a partner/peer, add them to Partners
-   so future syncs skip them.
+   a clear sales/lead signal — and when one turns out to be a partner or peer, add them to Friends
+   so future syncs skip them. Before flagging a delivered session (a workshop or
+   training) as having no CRM record, also check whether its session page is already **linked on an
+   existing CRM page** — a teammate's or an assistant's session often sits under the buyer's account
+   with a different email domain (e.g. a client's EA at another org attending under his engagement),
+   so matching only on the attendee's email/domain will false-positive.
 3. For each ABA Calls entry, check whether a matching CRM record exists in **Active Leads,
-   Clients (Nurture), 🧊 Archived Leads, or the Partners database** (`collection://[database-id]` / `collection://[page-id]`) —
-   match by email, then name, then company domain. A Partners match means it's a partner/peer, not an orphan (report as "matched in Partners"). An Archived Leads match means the lead was
+   Clients (Nurture), 🧊 Archived Leads, or the Friends database** (`collection://[database-id]` / `collection://[page-id]`) —
+   match by email, then name, then company domain. A Friends match means it is someone in the non-lead network, not an orphan (report as "matched in Friends"). An Archived Leads match means the lead was
    previously triaged out (Lost / Disqualified, batch-archived) — it is **not an orphan**, just
    inactive. Do not flag Archived matches for new-lead creation; note them in the report as
    "matched in Archived Leads" so the main agent can skip them cleanly. Return true orphans (no
@@ -168,7 +182,7 @@ Before acting on Sub-agent C's narrative, run a direct structured query against 
 
 This step exists because sub-agent prose is lossy: a record can silently drop out of a long parallel-source report (real failure mode: a contact-form lead due for FU#1 today wasn't surfaced because Sub-agent C's "due today" section returned two records that weren't even due, while the genuinely due record was omitted). Treat the data source as truth and the sub-agent narrative as a hint. If Sub-agent C's "due today" section looks suspiciously short relative to the size of the pipeline, that's the signal to re-verify, not skip.
 
-**Querying Notion date fields:** Notion's SQL exposes a date property only as its *expanded* columns, not under the bare property name. Filter and select on `date:Next Contact:start` (and `date:Last Contact?:start` for context), never on `Next Contact` directly — the bare name fails with `no such column`. Fetch the data source schema once (via `fetch` on the `collection://` URL) if you're unsure of the exact expanded column names; the same expansion applies when you later *write* a date back.
+**Querying Notion date fields:** Notion's SQL exposes a date property only as its *expanded* columns, not under the bare property name. Filter and select on `date:Next Contact:start` (and `date:Last Contact?:start` for context), never on `Next Contact` directly — the bare name fails with `no such column`. Fetch the data source schema once (via `fetch` on the `collection://` URL) if you're unsure of the exact expanded column names; the same expansion applies when you later *write* a date back. When writing a date back via `update_properties`, the `:start`/`:end` values are ISO date strings but `:is_datetime` must be a bare number (`0` or `1`), not a quoted string — passing `"0"` is rejected with a validation error.
 
 For each due record, also pull `Last Contact?`, `Status`, and the most recent line of `Notes` so the summary has enough context.
 
@@ -281,8 +295,10 @@ empty bucket. Do not include a "quiet / waiting on others" / "looks up to date" 
 
 Bulleted list of leads/clients/campaign contacts who are *due right now*. For each bullet where
 you created a Gmail draft, link the draft inline using
-`https://mail.google.com/mail/u/1/#drafts/<draftId>` (the `<draftId>` is the `id` returned by
-`create_draft`, including the `r` or `r-` prefix). LinkedIn-only DM follow-ups go here too —
+`https://mail.google.com/mail/u/1/#drafts/<draftId>`. Get `<draftId>` from `list_drafts`, not
+from `create_draft` — the ID `create_draft` returns is neither the draft's real ID nor proof it
+persisted, so linking straight from it yields dead links and can report drafts that don't exist.
+See email-helper → "Drafting with `create_draft`". LinkedIn-only DM follow-ups go here too —
 flag the channel inline instead of linking.
 
 ```

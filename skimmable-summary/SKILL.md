@@ -58,7 +58,7 @@ a narrative report of the same plan is not.
 - …
 
 🔴 Needs Your Attention
-- <thing that needs Shaw: a decision, a draft to review, a message to send, a flag>
+- <linked name — short context clause — **one decision-ready question?**>
 - ✅ Nothing needs attention
 ```
 
@@ -86,6 +86,15 @@ These hold no matter what the sections are. They're what make every summary feel
   point to a source that *exists* — in a plan or roadmap the items are considerations and
   next-actions with no underlying record, so they stand on their own rather than getting a
   fabricated link. The never-bold part still holds; use ⚠️ to flag judgment calls inline.
+- **Closer items are asks, not findings.** Every 🔴 item reads: linked name → short context
+  clause → **the one concrete question**, bolded, at the end of the line. The question is
+  decision-ready — answerable in one sentence ("send the nudge?", "book it for next week?",
+  "which convention should both follow?"). The diagnosis that *led* to the question belongs
+  in the record sections or the brief context clause, never as the payload — a finding
+  description that leaves Shaw to derive the ask himself defeats the closer's purpose. If an
+  item can't be phrased as a question (or a direct approval ask), it's an FYI, not an
+  attention item: move it to a record section. Bolding the question is the one deliberate
+  exception to the never-bold rule — bold marks the ask, and only the ask.
 - **Every section always renders, with an explicit empty-state line.** A quiet day must read
   as cleanly as a busy one — never drop a section just because it's empty. The empty-state is
   one short line (see each component for its wording).
@@ -121,10 +130,10 @@ the legend above is only for the status markers that recur across summaries.
 Most summaries are just sections + the closer. A few need extra pieces. These are named so a
 task can ask for them by name:
 
-- **`[closer]`** — the `🔴 Needs Your Attention` section. Always present, always last. Lists
-  every item needing Shaw's input (decisions, drafts to review, messages to send, flags),
-  one linked line each. Empty-state: collapse the whole section to the single line
-  `✅ Nothing needs attention` (no header, no bullets).
+- **`[closer]`** — the `🔴 Needs Your Attention` section. Always present, always last. One
+  line per item needing Shaw's input, each shaped per the asks-not-findings rule: linked
+  name — context clause — **bolded decision-ready question**. Empty-state: collapse the
+  whole section to the single line `✅ Nothing needs attention` (no header, no bullets).
 - **`[consolidated-link-line]`** — when several items share one kind of follow-up link (e.g.
   Gmail drafts to review), collapse them into one line inside the closer rather than a link
   per item: `Review drafts: [Name](url), [Name](url)`.
@@ -142,7 +151,9 @@ task can ask for them by name:
 
 A scheduled task or workflow shouldn't restate any of the rules above — it should point here
 and declare only **its sections**. That keeps the house style in one place: change it here,
-every task inherits it.
+every task inherits it. Restating format rules inside a task prompt does worse than
+duplicate — it invites drift and makes it likely the renderer pattern-matches the inlined
+spec instead of loading this skill at all. Declare sections, nothing more.
 
 A task declares, in order, each section as: **emoji + label · what populates it ·
 empty-state line**, plus which **stat-line tokens** to show and any **components** it uses.
@@ -195,7 +206,7 @@ code.
 - Fri Jun 12 — [[Client Name]](https://notion.so/…) (1:1 Claude Workshop, 11:30 CT).
 
 🔴 **Needs Your Attention**
-- [[Person]](https://notion.so/…) — wants 3 grouped 1:1s; approve the updated scope before I send.
+- [[Person]](https://notion.so/…) — wants 3 grouped 1:1s — **approve the updated scope before I send?**
 
 ✓ Verification: clean — cross-checked Stripe, ABA Calls, and Nurture; 5 writes made.
 ```

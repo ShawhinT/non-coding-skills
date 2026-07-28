@@ -51,10 +51,10 @@ Example:
 ```
 [Person]
 Sr. Manager, Data Analytics
-Toyota North America · The Ohio State University
+[Company] · [School]
 Dallas-Fort Worth Metroplex
 ```
-→ employer = **Toyota North America**
+→ employer = **[Company]**
 
 ### 4. Look up company size
 

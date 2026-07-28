@@ -31,8 +31,7 @@ on run argv
 	-- Destructive-action guardrail
 	set fileRef to (POSIX file filePath) as alias
 	tell application "Keynote"
-		open fileRef
-		set theDoc to front document
+		set theDoc to helpers's docForPath(filePath)
 		set existingSlides to count of slides of theDoc
 		close theDoc saving no
 	end tell
@@ -45,8 +44,7 @@ on run argv
 	set fileRef to (POSIX file filePath) as alias
 	tell application "Keynote"
 		with timeout of 300 seconds
-			open fileRef
-			set theDoc to front document
+			set theDoc to helpers's docForPath(filePath)
 
 			set masterName1 to do shell script "python3 -c \"import json,sys; data=json.load(open(sys.argv[1])); print(data[0].get('master','Title Only'))\" " & quoted form of jsonPath
 			set base slide of slide 1 of theDoc to master slide masterName1 of theDoc
@@ -88,8 +86,7 @@ on run argv
 		set fileRef to (POSIX file filePath) as alias
 		tell application "Keynote"
 			with timeout of 300 seconds
-				open fileRef
-				set theDoc to front document
+				set theDoc to helpers's docForPath(filePath)
 
 				repeat with i from batchStart to batchEnd
 					set batchIdx to i - batchStart + 1

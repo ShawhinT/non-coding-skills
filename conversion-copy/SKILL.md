@@ -1,7 +1,7 @@
 ---
 name: conversion-copy
 description: >-
-  Draft, sharpen, or diagnose copy whose job is conversion — landing pages, event registration pages (Luma), one-pagers, LinkedIn posts meant to sell, newsletters meant to sell, sales emails, and cold outreach DMs. Use whenever Shaw asks to write, rewrite, review, tighten, or critique conversion-focused copy. Triggers include "write the landing page", "draft the one-pager", "sharpen this headline", "tighten this newsletter", "rewrite this CTA", "write me a cold email", "outreach DM", "review this copy", "make this hit harder", "sounds like a brand wrote it". Also trigger when Shaw shares a copy draft and asks for review or rewrite, or casual phrasing like "help me write the promo". Applies Harry Dry's 3-question filter plus universal and channel-specific frameworks. Do NOT use for general LinkedIn posts (→ linkedin-post-writer), top-of-funnel essays (→ linkedin-post-writer or newsletter-writer), full sales letter structure (→ sales-letter-writer), or emails without conversion intent (→ email-helper).
+  Draft, sharpen, or diagnose copy whose job is conversion — landing pages, event registration pages (Luma), one-pagers, LinkedIn posts meant to sell, newsletters meant to sell, sales emails, and cold outreach DMs. Use whenever Shaw asks to write, rewrite, review, tighten, or critique conversion-focused copy. Triggers include "write the landing page", "draft the one-pager", "sharpen this headline", "tighten this newsletter", "rewrite this CTA", "write me a cold email", "outreach DM", "review this copy", "make this hit harder", "sounds like a brand wrote it". Also trigger when Shaw shares a copy draft and asks for review or rewrite, or casual phrasing like "help me write the promo". Applies Harry Dry's 3-question filter plus universal and channel-specific frameworks. Do NOT use for general LinkedIn posts (→ linkedin-voice), top-of-funnel essays (→ linkedin-voice or newsletter-writer), full sales letter structure (→ sales-letter-writer), or emails without conversion intent (→ email-helper).
 ---
 
 # Conversion Copy
@@ -113,7 +113,9 @@ Workflow:
 4. State your top pick with reasoning.
 5. Iterate section by section for long-form work (landing pages, one-pagers). Don't one-shot a full landing page — lock the headline first, then the subhead, etc.
 
-## Voice and style (Shaw-specific)
+### Propagate winners across surfaces
+
+When a line gets locked on one funnel surface, ask which sibling surfaces carry the same promise (YouTube description CTA, event/playback page CTA, homepage hero, Calendly page) and flag them for the same update. A reader who hits the promise twice in the same words experiences one voice; a funnel where each surface phrases the offer differently reads as three different pitches. This also keeps A/B attribution clean — one promise change at a time, everywhere it appears, beats surfaces drifting independently.
 
 Non-negotiable for Shaw's voice:
 
@@ -129,8 +131,8 @@ Non-negotiable for Shaw's voice:
 This skill complements others. Clear lanes:
 
 - **Full sales-letter structure** → `sales-letter-writer` owns the 7-section skeleton (header, qualifier, promise, deliverables+bonuses, process, guarantee, investment+CTA). This skill gets invoked *inside* that workflow to sharpen individual sections at the sentence level.
-- **General LinkedIn posts without a selling goal** → `linkedin-post-writer`.
-- **Top-of-funnel essays/newsletters that aren't selling an offer** → `linkedin-post-writer` or `newsletter-writer`. For the Mozi Minute structure (one idea + stories + reasons + soft CTA), see the Hormozi Content Framework resource in Notion: https://www.notion.so/[page-id]
+- **General LinkedIn posts without a selling goal** → `linkedin-voice`.
+- **Top-of-funnel essays/newsletters that aren't selling an offer** → `linkedin-voice` or `newsletter-writer`. For the Mozi Minute structure (one idea + stories + reasons + soft CTA), see the Hormozi Content Framework resource in Notion: https://www.notion.so/[page-id]
 - **General email drafts without a conversion goal** → `email-helper`.
 
 If Shaw is clearly in the wrong skill, say so and suggest the right one. Don't try to do a neighboring skill's job.

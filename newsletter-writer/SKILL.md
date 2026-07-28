@@ -215,10 +215,10 @@ This skill is the canonical newsletter skill. Lanes:
 
 - **Deep diagnosis on a sell newsletter** → after drafting, hand off to `conversion-copy` (newsletter channel) for line-by-line filter checks (visualize / falsify / unsignable).
 - **Hormozi-style / Mozi Minute newsletters** → still this skill. If Shaw explicitly wants the Mozi Minute structure (one idea + stories + reasons + soft CTA), pull the framework from the Hormozi Content Framework resource in Notion (https://www.notion.so/[page-id]) and apply it here. Most of Shaw's newsletters are not Mozi-style — they're frameworks or observations.
-- **LinkedIn posts (not newsletters)** → `linkedin-post-writer`.
+- **LinkedIn posts (not newsletters)** → `linkedin-voice`.
 - **General email drafts (not list broadcasts)** → `email-helper`.
 - **Long-form sales letter for a paid offer** → `sales-letter-writer`.
-- **Storing a draft on its ABN Notion page** → see `notion-helper` ("Capturing a Kit/newsletter draft into an ABN page") for the page format.
+- **Storing a draft on its ABN Notion page** → see `notion-helper` → `references/abn-capture.md` for the page format.
 
 If Shaw asks to repurpose a LinkedIn post into a newsletter, this is the right skill — the source material is a post, but the deliverable is a newsletter, and the deliverable's voice and structure dominate.
 

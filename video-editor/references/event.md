@@ -21,6 +21,18 @@ The speaker rarely retakes anything deliberately, but they often self-correct in
 
 **If your kept segments for a chunk exceed ~75% of the chunk runtime and the chunk is not pure demo/screenshare, you are almost certainly under-cutting pacing.** Re-scan for restatements, slide-hunting, and filler clusters before returning. A single "keep everything" segment for a 10-minute chunk is almost always wrong.
 
+## Pipeline parameters for events
+
+Events are single-take live talks — a cadence between voiceover's tight sentence-by-sentence delivery and talking-head's multi-second retake pauses. Preprocess with the default `--silence-gap 0.35` (no override). Assemble with `--transcript` (for interior dead-air tightening) plus:
+
+`assemble_edl.py --merge-gap 0.5 --lead-in 0.12 --tail-pad 0.20 --max-internal-gap 0.8`
+
+- `--merge-gap 0.5` bridges natural speaking breaths so continuous speech stays whole, while still breaking at the longer pauses between thoughts.
+- `--lead-in 0.12 / --tail-pad 0.20` give a live speaker's cuts a bit more room to breathe than voiceover's tight `0.08 / 0.15`, so trims don't feel clipped.
+- `--max-internal-gap 0.8` matches this guide's "trim inter-sentence pauses longer than ~0.8 s" rule — interior pauses above that get closed, shorter ones stay for natural rhythm.
+
+These are starting points. Raise `--max-internal-gap` toward `1.0` if the cut feels breathless; lower it toward `0.6` for a tighter edit.
+
 ## What to cut
 
 ### Structural overhead
@@ -132,3 +144,24 @@ Each chunk sub-agent should make **two passes**:
 Before returning, compute retention for your chunk. If it's above ~75% and the chunk isn't pure demo, go back and look harder for pacing cuts — you are almost certainly returning a slack edit.
 
 Flag rather than cut only when genuinely ambiguous. "When in doubt, keep" is the wrong default — the more common failure mode is leaving pacing untouched, not over-cutting.
+
+## Q&A pair review gate (interactive; runs before assembly)
+
+The chunk pass protects each answer's *substance*, but it cannot decide *which whole questions belong in the published recording* — that call depends on the audience and the video's purpose, not on take quality. Some pairs are near-always noise on replay (a viewer asking "will you share the recording?", an off-topic personal ask, a re-ask of something already covered), and the editor wants to prune them as whole units before importing to Final Cut. So for any event with a Q&A portion, the pipeline pauses after the dedup pass and before Step 6 assembly to enumerate the pairs and let the user prune them. Skip only when the event has no Q&A or the user waives it.
+
+1. **Extract the pairs.** Spawn a Sonnet sub-agent over the *kept* Q&A segments (the Q&A chunks' entries in `all_segments_validated.json`) plus the word-level transcript. It writes `<project_dir>/chunks/qa_pairs.json`: a list of `{"id", "start", "end", "asker", "question_summary", "answer_gist", "suggested_action": "keep"|"drop", "reason"}`. `start`/`end` bound the whole pair — from the question read-out through the end of the answer — on real segment boundaries, so a dropped pair maps straight to a drop range. `asker` is a name only if the transcript or chat names it, else `null`. The agent sets `suggested_action` per the drop candidates below.
+
+2. **Present and wait.** Show the user a skimmable table — `# | time | asker | question | 🟢 keep / 🔴 drop + reason` — and ask which to drop. This is a real pause: do not assemble until they answer. (Include the 🟢/🔴 recommendation column by default; drop it for a neutral list if the user prefers to decide every pair from scratch.)
+
+3. **Apply.** Append the user's chosen pairs' `{start, end, reason}` to `<project_dir>/chunks/dedup_drops.json` (Step 6 removes everything in that file), then assemble. The drop ranges land on segment boundaries, so no re-validation is needed. Assembly and FCPXML are cheap, so if the user changes their mind they can edit `dedup_drops.json` and re-run Step 6 without re-editing chunks.
+
+### Whole-pair drop candidates
+
+Trimming the *meta around* a question (see "Q&A and chat-check preambles" above) is different from dropping a *whole* pair. Some pairs, even with a clean substantive answer, rarely earn their place on replay — flag these as suggested drops (the human still decides):
+
+- **Logistics / housekeeping asks** — "will you share the recording?", "will you send the slides?", "is this recorded?". The answer is identical each time and belongs in a follow-up email, not the video. These recur because different attendees ask live throughout — flag every instance.
+- **Off-topic or personal asks** — internship/hiring requests, "how can I contact you?", questions aimed at the speaker personally rather than the topic. Interesting live, dead weight on replay.
+- **Re-asks of an already-answered question** — a later attendee asks what the talk or an earlier answer already covered; the repeat adds nothing.
+- **Pure preamble/transition pairs** — "let me check the chat… no questions yet", "happy to stick around for another 30 minutes", "any other questions?" with no real question attached.
+
+Everything else — a substantive, on-topic question with a real answer — defaults to keep. The gate exists to prune the housekeeping and off-topic pairs an automatic pass leaves in, not to thin genuine content. Suggest, don't decide.

@@ -1,13 +1,15 @@
 ---
 name: skill-helper
 description: Walk someone through building their first (or next) high-leverage Claude skill, end-to-end. Gather context silently, diagnose their level, run a time study, score time-vs-complexity for their level, suggest 3-5 candidate skills, hand off to skill-creator, and close with a one-line opt-in CTA to share what they built with Shaw. Use whenever someone is figuring out what skill to build, what to automate, or where to start with skills. Triggers include "help me build a skill", "what should I automate", "where do I start with skills", "I don't know what to build", "walk me through my first skill", "help me find a skill to build", "what's worth automating", "give me skill ideas", "what's a good first skill". Also fires when someone shares a calendar or workflow and asks what's automatable, when a new Claude user wants guided onboarding to skill-building, or when an experienced builder is hunting higher-leverage targets. Casual phrasing like "I should probably automate something" counts too.
+metadata:
+  author: Shaw Talebi (aibuilder.academy)
 ---
 
 # skill-helper
 
-Walk a person through building their first (or next) high-leverage Claude skill — the same shape as Shaw's 1:1 skill-building workshop, but scalable.
+Walk a person through building their first (or next) high-leverage Claude skill.
 
-The job is to get them from "I should probably automate something" to a working skill in their hands, plus a one-line invitation to tell Shaw what they built. Every step adapts to where the person actually is — a brand-new Claude user gets a different ride than a seasoned skill builder.
+The job is to get them from "I should probably automate something" to a working skill in their hands, plus a one-line invitation to share what they built. Every step adapts to where the person actually is — a brand-new Claude user gets a different ride than a seasoned skill builder.
 
 ## What to do at the very start
 
@@ -32,27 +34,33 @@ These four tasks map to the internal phases (research = Phase 0+1+1.5, interview
 
 Move through the phases in order, but don't announce them — this should feel like a conversation, not a checklist. Phase 1.5 only fires for L0/L1 users with no connectors; everyone else skips straight from Phase 1 to Phase 2.
 
-## Two types of skills
+## Three types of skills
 
-Every skill falls into one of two categories. Knowing the type sharpens your recommendations — the two types have different profiles, different sweet spots by avatar level, and different build patterns.
+Every skill falls into one of three categories. Knowing the type sharpens your recommendations — the types have different profiles, different sweet spots by avatar level, and different build patterns.
 
-**Tool skills** wrap a single connector and make it reliable and pleasant to use. They tame a tool's quirks so the user stops fighting the interface and starts getting answers. High frequency (often daily), low-to-moderate complexity, single-connector footprint.
+**Tool-specific skills** wrap a single connector and make it reliable and pleasant to use. They tame a tool's quirks so the user stops fighting the interface and starts getting answers. High frequency (often daily), low-to-moderate complexity, single-connector footprint.
 
-Examples from Shaw's library: `email-helper` (Gmail), `google-drive-helper` (Drive), `calendar-helper` (Google Calendar), `stripe-helper` (Stripe), `notion-helper` (Notion).
+Examples: `email-helper` (Gmail), `google-drive-helper` (Drive), `calendar-helper` (Google Calendar), `stripe-helper` (Stripe), `notion-helper` (Notion).
 
 The pattern: the skill knows the connector's data model, common gotchas, and the user's preferences. It turns a raw connector into a tool that feels like it was built for them.
 
-**Process skills** encode a repeatable multi-step sequence — often pulling from multiple tools, applying judgment or a framework, and producing a deliverable. Lower frequency per run (weekly, per-event, per-call), but higher value per execution. Moderate-to-high complexity.
+**Process-specific skills** encode procedural knowledge — a repeatable multi-step sequence — often pulling from multiple tools, applying judgment or a framework, and producing a deliverable. Lower frequency per run (weekly, per-event, per-call), but higher value per execution. Moderate-to-high complexity.
 
-Examples from Shaw's library: `pre-call-research` (research a person before a call), `executive-briefing` (pull tasks across Notion databases into a morning rundown), `linkedin-post-analytics` (scrape and analyze post performance), `outreach` (source → enrich → triage → track → message).
+Examples: `pre-call-research` (research a person before a call), `executive-briefing` (pull tasks across Notion databases into a morning rundown), `linkedin-post-analytics` (scrape and analyze post performance), `outreach` (source → enrich → triage → track → message).
 
 The pattern: the skill replaces a checklist the user runs manually. Without it, they either skip steps or spend 30+ minutes on a process that should take 2.
 
+**Domain-specific skills** teach Claude a domain — an industry, a business context, a brand system, a body of frameworks. They're mostly reference material: the facts, vocabulary, and judgment criteria Claude needs to produce work that sounds like it came from inside the domain. Low build complexity (often no connectors at all), and their value shows up *through* other work — they compose with tool- and process-specific skills rather than running standalone.
+
+Examples: `aba-brand-system` (brand and design system), `business-strategy` (business context and strategic frameworks).
+
+The pattern: the skill captures context the user currently re-explains every session — who the customers are, what the brand sounds like, how the industry works. Once encoded, every other skill and ad hoc request gets smarter for free.
+
 **Why this matters for recommendations:**
 
-- **L0–L1:** Start with a tool skill. One connector, visible daily win, low build complexity. The user needs to feel the value of a skill before tackling multi-step orchestration.
-- **L2:** Either type works. If they're repeating the same prompt pattern against one tool, that's a tool skill. If they're running a manual checklist across tools, that's a process skill. Match the type to the pain they described.
-- **L3–L4:** Lean toward process skills — the high-leverage targets at this level are almost always multi-step workflows the user has been doing manually because "it's complicated." Tool skills at this level are usually already built or trivial to add.
+- **L0–L1:** Start with a tool-specific skill. One connector, visible daily win, low build complexity. The user needs to feel the value of a skill before tackling multi-step orchestration. A domain-specific skill makes a fine second build — near-zero complexity — but the first win should be visibly *doing* something.
+- **L2:** Tool- or process-specific, matched to pain. If they're repeating the same prompt pattern against one tool, that's a tool skill. If they're running a manual checklist across tools, that's a process skill. If they keep re-explaining the same business or brand context in every chat, that's a domain skill.
+- **L3–L4:** Lean toward process-specific skills — the high-leverage targets at this level are almost always multi-step workflows the user has been doing manually because "it's complicated." Tool-specific skills at this level are usually already built or trivial to add. Domain-specific skills are high-leverage here for a different reason: they multiply the output quality of every skill the user already has, and L3–L4 users typically carry the most un-encoded context in their heads.
 
 Use this framing when synthesizing candidates in Phase 2, scoring in Phase 3, and presenting suggestions in Phase 4. Tag each candidate by type so the user builds intuition about the distinction.
 
@@ -136,9 +144,9 @@ Roll the calendar, sessions, inbox, and connector signals into a tight read of h
 
 The point isn't to be precise — it's to demonstrate you've done the homework and to give the user a concrete artifact to react to. Reactions surface the truth faster than open-ended questions do. The skimmable format also avoids a failure mode where the user has to re-read dense paragraphs just to confirm basic facts — bullets let them nod along or push back immediately.
 
-**Do not suggest automation candidates or skill ideas in Phase 2.** The goal here is to confirm you understand how the user works — not to preview what you think they should build. Listing candidates at this stage biases the conversation: the user starts reacting to your suggestions instead of filling in the gaps you need filled. Observations like "I see a lot of time going to X" are fine — they invite correction. Framing those same observations as "automation candidates" or tagging them by skill type crosses into Phase 4 territory. Save candidate suggestions, skill names, type labels (tool/process), and hours-saved estimates for Phase 4, where they belong.
+**Do not suggest automation candidates or skill ideas in Phase 2.** The goal here is to confirm you understand how the user works — not to preview what you think they should build. Listing candidates at this stage biases the conversation: the user starts reacting to your suggestions instead of filling in the gaps you need filled. Observations like "I see a lot of time going to X" are fine — they invite correction. Framing those same observations as "automation candidates" or tagging them by skill type crosses into Phase 4 territory. Save candidate suggestions, skill names, type labels (tool/process/domain), and hours-saved estimates for Phase 4, where they belong.
 
-Internally, note which signals point toward tool skills vs. process skills — that thinking will feed Phase 3 scoring. Just don't surface it to the user yet.
+Internally, note which signals point toward tool-, process-, or domain-specific skills — that thinking will feed Phase 3 scoring. Just don't surface it to the user yet.
 
 **2. Ask Mom Test–style targeted gap-fill questions via `AskUserQuestion`.**
 
@@ -179,7 +187,7 @@ Output a small ranked table — 3-5 rows, no more. Don't show the math; show the
 
 Each suggestion is a one-liner with four pieces:
 1. **Name** (kebab-case, evocative)
-2. **Type** — `tool` or `process`
+2. **Type** — `tool`, `process`, or `domain`
 3. **What it does** (one sentence)
 4. **Why it's a fit** (hours saved + connectors needed + whether they're already wired)
 
@@ -189,9 +197,11 @@ Examples:
 
 > **`pre-call-research`** *(process)* — before any sales call, pull the person's LinkedIn, CRM history, and past emails into a one-page brief. Saves ~45 min/call × 4 calls/week. Uses Gmail + Notion + LinkedIn (Gmail and Notion connected; LinkedIn via Chrome).
 
+> **`acme-brand-system`** *(domain)* — encode Acme's voice, visual identity, and positioning so every draft, deck, and reply comes out on-brand without re-explaining. Saves the rework loop on nearly every content task. No connectors needed.
+
 Three to five candidates is the sweet spot. Fewer feels thin; more is paralyzing.
 
-**Calibrate the type mix to the avatar level.** L0–L1 suggestions should be mostly tool skills (low complexity, single connector, daily wins). L2 gets a mix — match to whatever pain they described. L3–L4 suggestions should lean process-heavy — the remaining leverage at that level is almost always in multi-step workflows. See "Two types of skills" above for the full rationale.
+**Calibrate the type mix to the avatar level.** L0–L1 suggestions should be mostly tool skills (low complexity, single connector, daily wins). L2 gets a mix — match to whatever pain they described. L3–L4 suggestions should lean process-heavy — the remaining leverage at that level is almost always in multi-step workflows. Domain-specific skills can earn a slot at any level since they're low-complexity — but only when you've actually observed the user re-explaining the same context repeatedly; don't pad the list with one for coverage. See "Three types of skills" above for the full rationale.
 
 **For L4 users especially: a "new skill" isn't always the right answer.** If the user has overlapping skills, a bloated one, or a skill that's been superseded, surface optimization candidates alongside new builds — *"merge `crm` and `lead-intake`," "split `outreach` into sourcing + messaging," "trim dead weight from `notion-helper`."* The mechanics for cleanup live in `skill-updater`; here you're just naming that the option exists. Don't default to new — sometimes the leverage is in tightening what's there.
 

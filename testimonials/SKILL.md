@@ -1,7 +1,7 @@
 ---
 name: testimonials
 description: >-
-  Manage Shaw's testimonial workflow — create rows in the Testimonials database, polish form submissions into pull-quotes, advance status through the lifecycle (Asked → Form Submitted → Approved → Published), and surface rows that need a follow-up nudge. Use this skill whenever Shaw mentions a testimonial — "did [Client Name] approve?", "polish [Client Name]'s response", "draft a testimonial from [Client Name]'s form submission", "kick off testimonial asks for the [Company] team", "check which testimonials are stuck", "publish [Client Name]'s quote on the site", "process the new form submissions". Also fires when a training wraps and a testimonial ask should be queued, or when Shaw says he's ready to publish. Trigger words: testimonial, pull-quote, review, social proof, form response from a client. Do NOT use for the SOP itself (sop-helper), generic CRM work (crm), pre-call context (pre-call-research), or referral asks (the Referral Ask SOP covers that).
+  Manage Shaw's testimonial workflow — create rows in the Testimonials database, polish form submissions into pull-quotes, advance status through the lifecycle (Asked → Form Submitted → Approved → Published), and surface rows that need a follow-up nudge. Use this skill whenever Shaw mentions a testimonial — "did [Client Name] approve?", "polish [Client Name 2]'s response", "draft a testimonial from [Client Name 3]'s form submission", "kick off testimonial asks for the [Company] team", "check which testimonials are stuck", "publish [Client Name]'s quote on the site", "process the new form submissions". Also fires when a training wraps and a testimonial ask should be queued, or when Shaw says he's ready to publish. Trigger words: testimonial, pull-quote, review, social proof, form response from a client. Do NOT use for the SOP itself (sop-helper), generic CRM work (crm), pre-call context (pre-call-research), or referral asks (the Referral Ask SOP covers that).
 ---
 
 # Testimonials Skill
@@ -92,8 +92,8 @@ list arrives.
    - **Multi-attendee engagements.** When the engagement covers a team (group
      training, multi-attendee 1:1s), individual attendees usually don't have their
      own CRM rows. Every attendee's Testimonials row points to the same CRM page:
-     the payer/champion's Clients (Nurture) record. Examples: [Person A] + [Person B]
-     ([Company]) → [Person]'s page; [Person C] + [Person D] + [Person E] + [Person F]
+     the payer/champion's Clients (Nurture) record. Examples: [Person 2] + [Person 3]
+     ([Company]) → [Person]'s page; [Person 4] + [Person 5] + [Person 6] + [Person 7]
      ([Company]) → the [Company] team page.
 2. **Find their Engagement, if one exists.** Search the Engagements DB by name.
    Engagements only exist for paid work — unpaid sessions don't have a row, leave
@@ -111,6 +111,13 @@ list arrives.
    Testimonials row URL and the Form URL as context.
 5. **After the email sends:** update the row — `Status` → `Asked`,
    `Last Contact` = today, `Next Contact` = today + 3.
+6. **Take the next touch.** The testimonial sequence is now the live one, so this row
+   owns the person's next outbound. Open the linked `CRM` record, clear its
+   `Next Contact`, and append a pointer to its Notes: `Next touch owned by
+   Testimonials, due M/D.` Do the same on their Referrals row if one exists. This step
+   is what actually creates the state "One person, one next touch" describes — without
+   it the convention never takes effect and the sweep's collision check (Workflow 6)
+   is only a backstop for rows that predate it.
 
 ### 2. Process a form submission
 
@@ -156,7 +163,7 @@ testimonial]".
 ### 4. Publish
 
 **Trigger:** Shaw says "I published X's quote on the website", "[Client Name]'s testimonial is
-live", or "added [Client Name]'s to the landing page".
+live", or "added [Client Name 2]'s to the landing page".
 
 **Steps:**
 
@@ -167,6 +174,12 @@ live", or "added [Client Name]'s to the landing page".
    for a Referral Ask. Surface this to Shaw — either offer to create a
    `FU - [Name] (referral)` task in ABA via `notion-helper`, or just suggest he run
    the referral ask flow. Don't create the task silently; surface and confirm first.
+4. **Hand the touch back.** `Published` is terminal here, so this row stops owning the
+   person's next outbound. Pass ownership to whatever sequence is live next — the
+   Referrals row if the post-greenlight on-ramp is starting, otherwise the CRM record.
+   Set that row's `Next Contact` per its own cadence and strip the
+   `Next touch owned by Testimonials` pointer from its Notes. Skipping this leaves the
+   person scheduled nowhere, which reads as handled and isn't.
 
 ### 5. Decline cleanup
 
@@ -177,6 +190,10 @@ mark them declined" (the SOP's end-of-cadence outcome).
 
 1. `notion-update-page`: `Status` → `Declined`. Clear `Next Contact`.
 2. Add a Notes line with the reason (active decline vs. ghosted post-FU3).
+3. **Hand the touch back**, same as Workflow 4 step 4 — `Declined` is terminal, so
+   ownership returns to the CRM record (or Referrals, if a referral sequence is live).
+   Set that row's `Next Contact` per its own cadence and remove the pointer from its
+   Notes.
 
 ### 6. Sweep — who needs a nudge?
 
@@ -185,7 +202,7 @@ mark them declined" (the SOP's end-of-cadence outcome).
 
 **Steps:**
 
-**Reconcile first** — run Workflow 7 (Reconcile submissions) against the response sheet so
+**Reconcile first** — run Workflow 7 (Reconcile) against both the response sheets and Gmail so
 the sweep acts on current Status, not stale Status. A freshly-detected submission is processed
 (Workflow 2), not nudged. Then:
 
@@ -201,16 +218,32 @@ the sweep acts on current Status, not stale Status. A freshly-detected submissio
    - `Asked` + Next Contact past, days since Last Contact maps to FU1 / FU2 / FU3
      per the SOP cadence
    - `Form Submitted` + Next Contact past → approval-ask follow-up needed
-4. Surface to Shaw per row: name, current status, days since Last Contact, which FU
+4. **Check the sibling row before drafting.** For each due row, open the linked `CRM` record
+   (and the person's Referrals row, if any) and read its `Next Contact`. If another row is also
+   live, both databases are about to contact the same person. What to do next depends on
+   whether ownership is actually in question:
+   - **Unambiguous — repair it.** If this row's own sequence is mid-cadence (an ask is out,
+     FUs are running) and the sibling is just a stale date nobody took, that's drift from a
+     row created before the take-ownership step existed, not a real decision. Blank the
+     sibling, add the pointer, draft normally, and report the repair in the sweep summary.
+   - **Ambiguous — surface it.** If both sequences are genuinely live and neither obviously
+     started later, don't pick a winner; hand it to Shaw as a decision, per "One person, one
+     next touch" in the `crm` skill.
+
+   Once Workflow 1 step 6 is running on new rows, this check should mostly stop firing —
+   treat a collision as a signal that a row predates the convention.
+5. Surface to Shaw per row: name, current status, days since Last Contact, which FU
    stage is due. Then hand each off to `email-helper` for the appropriate FU draft
    per the SOP template.
 
-### 7. Reconcile submissions (sync against the form sheet)
+### 7. Reconcile (sync against the form sheets and Gmail)
 
-The Testimonials DB lags its source channel: a client fills out the form and the row isn't
-flipped, so `Status` is not a reliable answer to "did they submit?". This is the testimonial
-analog of the CRM's three-source sync (`crm/workflows/workflow-1-sync.md`) — reconcile the
-database against the response sheet (the source of truth) before acting on Status. Run it at
+The Testimonials DB lags its source channels: a client fills out the form and the row isn't
+flipped, or they reply "yes, go ahead" and the row still says `Form Submitted`. So `Status` is
+not a reliable answer to either "did they submit?" or "did they approve?". This is the
+testimonial analog of the CRM's three-source sync (`crm/workflows/workflow-1-sync.md`) —
+reconcile the database against the response sheets (truth for submissions) and Gmail (truth for
+everything after) before acting on Status. Run it at
 the start of every sweep (Workflow 6) and before writing any FU2 pre-draft.
 
 **Steps:**
@@ -225,10 +258,24 @@ the start of every sweep (Workflow 6) and before writing any FU2 pre-draft.
    `Status` → `Form Submitted`, `Last Contact` = the submission Timestamp, pull the verbatim
    into the body, polish, and queue the approval ask. A submission supersedes any pending nudge
    or pre-draft for that person, so process it instead of drafting one.
-4. **Orphan detection.** A submission with no matching row means someone submitted who isn't
-   tracked (a name typo, or a participant whose row was never opened). Surface it and open a row
-   via Workflow 1 rather than silently dropping it.
-5. **Then** run the sweep / drafting on the now-current data.
+4. **Orphan detection.** A submission that matches no row is ambiguous: it's either an
+   already-finished testimonial (a `Published`/`Declined` row, which a live-rows-only query
+   excludes) or a genuine orphan (a name typo, or a participant whose row was never opened).
+   Resolve it before acting: match each unmatched submission against the *full* database
+   including terminal rows, not just the `Asked`/`Form Submitted`/`Approved` set. A hit in
+   `Published`/`Declined` means it's already handled, leave it. Only a name that appears nowhere
+   is a true orphan, surface it and open a row via Workflow 1, rather than silently dropping it
+   or assuming it was published.
+5. **Reconcile against Gmail too, for every non-terminal row.** The response sheet only answers
+   "did they submit?" Approvals, edits, declines, and anonymity requests arrive as email, so a
+   row can be just as stale for reasons the sheet can't see. Sweep Gmail for *every* row that
+   isn't `Published` or `Declined` (`from:<email> OR to:<email>` since Last Contact), not the
+   subset you expect replies from. The temptation is to check only the rows with a pending ask
+   and skip the ones that look settled, but those are exactly where stale Status hides: a row
+   whose approval ask already went out and was already answered looks quiet from the database
+   side and reads as "nothing due." Where a reply advanced the stage, apply Workflow 3
+   (approval) or Workflow 5 (decline) before deciding on any nudge.
+6. **Then** run the sweep / drafting on the now-current data.
 
 This is detection-and-update, not drafting: advancing a row to `Form Submitted` records an
 event that actually happened (they submitted). The approval-ask email is still a draft and
@@ -280,8 +327,8 @@ promotes straight to Approved without reconstructing the quote.
 → See [references/polish-framework.md](references/polish-framework.md)
 
 The HOW of turning raw form responses into pull-quotes. Includes the 3-variant
-default, voice rules, attribution by permission level, and worked examples from
-three real client submissions.
+default, voice rules, attribution by permission level, and three worked examples
+from real client submissions.
 
 ## Composition with Other Skills
 
@@ -312,8 +359,20 @@ three real client submissions.
   FU2 case (where no form submission exists) pulls from call notes / Engagement
   Results, not from imagination.
 - **Reconcile before acting on Status.** The response sheet is the source of truth for
-  whether someone submitted; the row's `Status` can lag it. Run Workflow 7 at the start of
+  whether someone submitted, and Gmail is the source of truth for whether they approved,
+  edited, or declined; the row's `Status` lags both. Run Workflow 7 at the start of
   any sweep and before any pre-draft, so a submitted form gets processed rather than nudged.
+- **One person, one next touch.** A client tracked here is usually tracked in the CRM (and
+  sometimes Referrals) too, each with its own `Next Contact` and its own sync. Only one row
+  owns the next outbound touch at a time; the others stay blank with a Notes pointer. The
+  testimonial FU cadence is the fastest of the three, so this database is where collisions
+  surface first. The full rule, and why mirroring the dates is the wrong fix, lives in the
+  `crm` skill under "One person, one next touch".
+  **Ownership is something this skill takes and hands back, not just something it checks.**
+  Workflow 1 takes it when the ask goes out; Workflows 4 and 5 hand it back at `Published`
+  and `Declined`. A skill that only detects collisions and never resolves them leaves the
+  invariant to be maintained by hand, which is how a person ends up live in two databases
+  at once.
 - **Status flips and body updates are atomic.** When advancing to Form Submitted /
   Approved / Published, update both properties AND body together — don't leave the
   row inconsistent.

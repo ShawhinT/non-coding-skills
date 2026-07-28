@@ -29,9 +29,9 @@ Social stills use fixed feed presets. Embedded figures are sized tight to their 
 
 ## Project folder convention
 
-Same `<slug>/<slug>.html` + `<slug>.png` + optional `assets/` layout as the social mode, but the folder **lives with its project, not under `_SFC/linkedin/`.**
+Same `<slug>/<slug>.html` + `<slug>.png` + optional `assets/` layout as the social mode, but the folder **lives with its project, not under the social mode's `linkedin/` content root.**
 
-- Put it alongside the content it illustrates — e.g. a blog post's working directory: `~/Documents/_stv/_content/_LFC/medium/<post-slug>/<figure-slug>/`.
+- Put it alongside the content it illustrates — e.g. a blog post's working directory: `<content-root>/medium/<post-slug>/<figure-slug>/`.
 - Relative `assets/` paths keep the folder portable so it can be zipped and handed off with the post.
 - If the destination directory isn't obvious from the brief, ask where the figure should live.
 

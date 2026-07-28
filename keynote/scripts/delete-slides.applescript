@@ -25,8 +25,7 @@ on run argv
 	set deletedCount to 0
 
 	tell application "Keynote"
-		open fileRef
-		set theDocument to front document
+		set theDocument to helpers's docForPath(filePath)
 		set slideCount to count of slides of theDocument
 
 		repeat with slideNumStr in slideList

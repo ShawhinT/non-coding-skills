@@ -137,6 +137,7 @@ p {
 .footnote {
     font-size: 0.8em;
     color: #555;
+    margin-top: 1.5em;
 }
 
 /* Borderless syllabus info table */

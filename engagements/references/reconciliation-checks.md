@@ -85,7 +85,11 @@ never change money. Re-running the same day must be a no-op.
   attendee whose identity is ambiguous.
 - **Traps:** the **notion-fetch stale-cache glitch** — the fetch tool sometimes returns a wrong or
   old page for a valid ID. Re-fetch by clean UUID and verify before concluding a mention-link is
-  broken. Never "fix" a link that is actually correct.
+  broken. Never "fix" a link that is actually correct. **Free workshops are not orphans:** a
+  delivered workshop with no engagement row is only a finding if it was *paid*. Open the attendee's
+  CRM page during the sweep and judge by what the note means, not by a specific phrase — any clear
+  signal it was free or unbilled (e.g. "booked free 1:1 Claude Workshop", "comp'd", "no invoice")
+  counts as documented, so skip it silently rather than deferring a "verify" ask to Shaw.
 
 ### 5. Calls ↔ ABA Calls — AUTO (clear) / SURFACE (ambiguous)
 - Same shape as Sessions, for `## Calls` and the ABA Calls DB. e.g. a wrap-up call that exists in
@@ -100,8 +104,16 @@ never change money. Re-running the same day must be a no-op.
 
 ### 7. Paid Status ↔ Stripe — SURFACE (always)
 - **Rule:** `Paid Status` reflects the real Stripe state and `Price` matches the invoice total.
-- **Fix:** never auto-change money. Surface any mismatch with the invoice ID + amount. See
-  `workflow-4-stripe-fill.md` for the lookup.
+- **Read the money axis from Stripe, not from Notion.** The recorded `Paid Status` (and the
+  body's Stripe-line note) is a snapshot that goes stale between runs — payments routinely land
+  in the gap, often the day before a `Sold` engagement's first session. So the source of truth
+  for this check is a **live Stripe read**, not the cached status. Any engagement that is
+  `Unpaid`/`Partial`, or `Sold`/`Active` with an outstanding invoice on file, gets its invoice(s)
+  pulled from Stripe each run and compared to Notion. A body-only pass that trusts the recorded
+  "Unpaid" will silently miss real payments.
+- **Fix:** never auto-change money. Surface any mismatch (including "invoice now paid, Paid Status
+  still Unpaid") with the invoice ID + amount + paid date. See `workflow-4-stripe-fill.md` for the
+  lookup.
 - **Traps:** proxy / vendor-portal payers ([Company], [Company], [Company] procurement) —
   search by **company domain**, not just the contact email. Payment may land in a different Stripe
   account/org, so "Paid in Full" can be true but unverifiable from the main account; a **voided

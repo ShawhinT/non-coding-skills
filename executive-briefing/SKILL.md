@@ -25,9 +25,9 @@ items from prior days, no upcoming items beyond today's window, no backlog.
 
 ## Databases in Scope
 
-The canonical database catalog (IDs, icons, descriptions, and view URLs) lives in
-`notion-helper/SKILL.md` under "Main Databases" and "Today Views (executive-briefing)."
-This skill queries **all main databases listed there**:
+The canonical database catalog (IDs, icons, descriptions) lives in `notion-helper/SKILL.md`
+under "Main Databases." The Today / Tomorrow **view URLs** this briefing runs on live here, in
+the "View URLs" section below. This skill queries **all main databases**:
 
 Dated work:
 
@@ -44,43 +44,134 @@ Follow-ups due (filtered by `Next Contact`):
 - 🌱 **Clients (Nurture)** — active/nurturing client check-ins coming up
 - ⭐ **Testimonials** — testimonial asks where the next nudge is due
 
-If a new database is added, update `notion-helper/SKILL.md` and it will flow through here
-automatically.
+If a new database is added, update `notion-helper/SKILL.md` (catalog) and add its view rows to
+the "View URLs" section below.
+
+---
+
+## View URLs
+
+The precomputed server-side-filtered views this briefing runs on. Today views filter the
+dated-work DBs on `Date is Today` and the relationship DBs on `Next Contact` due; Tomorrow views
+mirror them one day forward. All are relative filters set in the Notion UI (the view DSL can't
+write relative dates), so they update automatically each day. The six dated views live on the
+database itself; the three relationship views live on their *source* database (note the
+different page IDs).
+
+### Today Views
+
+| DB | View URL |
+|---|---|
+| ABA | `https://www.notion.so/[page-id]?v=[page-id]` |
+| ABA Trainings | `https://www.notion.so/[page-id]?v=[page-id]` |
+| ABA Calls | `https://www.notion.so/[page-id]?v=[page-id]` |
+| LFC | `https://www.notion.so/[page-id]?v=[page-id]` |
+| SFC | `https://www.notion.so/[page-id]?v=[page-id]` |
+| ABN | `https://www.notion.so/[page-id]?v=[page-id]` |
+| Active Leads | `https://www.notion.so/[page-id]?v=[page-id]` |
+| Clients (Nurture) | `https://www.notion.so/[page-id]?v=[page-id]` |
+| Testimonials | `https://www.notion.so/[page-id]?v=[page-id]` |
+
+### Tomorrow Views
+
+| DB | View URL |
+|---|---|
+| ABA | `https://www.notion.so/[page-id]?v=[page-id]` |
+| ABA Trainings | `https://www.notion.so/[page-id]?v=[page-id]` |
+| ABA Calls | `https://www.notion.so/[page-id]?v=[page-id]` |
+| LFC | `https://www.notion.so/[page-id]?v=[page-id]` |
+| SFC | `https://www.notion.so/[page-id]?v=[page-id]` |
+| ABN | `https://www.notion.so/[page-id]?v=[page-id]` |
+| Active Leads | `https://www.notion.so/[page-id]?v=[page-id]` |
+| Clients (Nurture) | `https://www.notion.so/[page-id]?v=[page-id]` |
+| Testimonials | `https://www.notion.so/[page-id]?v=[page-id]` |
+
+(Referrals also has Today + Tomorrow views on its source database, but it's handled by the
+`referrals` skill and is intentionally **not** part of the executive briefing.)
 
 ---
 
 ## Workflow
 
-### Step 1: Query all databases
+### Step 1: Resolve the date (in Shaw's current timezone), then query all databases
 
-Use `notion-query-database-view` on each view URL listed in `notion-helper/SKILL.md` →
-"Today Views (executive-briefing)." Each view is filtered server-side, so the result set
-is already the items you need — no client-side date filtering required. Run all nine
-queries in parallel in a single tool-call batch.
+**Resolve "today"/"tomorrow"/"Friday" in Shaw's *current* timezone — never UTC, never a
+hardcoded zone.** The client passes his timezone into the session context (a system reminder
+like "The user's timezone is America/Chicago (currently UTC-5)"); read it from there each run
+and use it, because he travels and it changes. This matters because the environment clock
+runs in UTC, so a bare `date` is already the *next* calendar day during his evening —
+resolving the date from it silently gives the wrong day's briefing. Stamp the dates in his
+zone (substitute the zone from the session context for `<TZ>`):
 
-#### Other-day briefings (tomorrow, Monday, a specific date)
+**No timezone reminder this session? Don't trust the env prompt's `Today's date` header — it
+tracks UTC and reads as the next day during his evening. Default to `America/Chicago`, resolve
+via bash (`TZ=America/Chicago date +%F`). The UTC header lands a *tomorrow* briefing a day late.**
 
-The Today Views are filtered server-side on a *relative* `Today` — they only ever return
-today's items, so they can't serve a briefing for any other day. When Shaw asks for a
-different day ("tomorrow briefing", "what's on my plate Friday", a specific date), skip the
-Today Views and query the **data sources** directly with an explicit date.
+```
+TZ="<TZ>" date +%F                     # his local today
+TZ="<TZ>" date -d tomorrow +%F         # his local tomorrow
+TZ="<TZ>" date -d "next Monday" +%F    # a named day
+date -u +%F                            # what the connector's relative filters treat as "today"
+```
 
-1. Resolve the target day to an ISO date (`YYYY-MM-DD`) — use `bash` for relative phrasing
-   like "tomorrow" or "next Monday" so you're not guessing the calendar.
-2. Pull the nine data source IDs from `notion-helper/SKILL.md` → "Main Databases" (don't
-   restate them here — that table is the single source of truth).
-3. Query with `notion-query-data-sources` (SQL mode). The six dated sources filter on the
-   day; the three relationship sources surface anything due on or before it:
-   - Dated work: `WHERE "date:Date:start" >= '<date>' AND "date:Date:start" < '<next-day>'`
-   - Relationship: `WHERE "date:Next Contact:start" <= '<date>'`
+**Prefer the fast saved views — the precomputed Today/Tomorrow views are the default path,
+and SQL is a rare fallback.** All nine databases have both a Today and a Tomorrow view (six
+dated views on the database itself; three relationship views on their *source* database —
+URLs in the "View URLs" section above). They're server-side filtered and quick.
 
-   Two gotchas worth remembering: the SQL columns are the expanded
-   `date:Date:start` / `date:Next Contact:start` (querying bare `Date` / `Next Contact`
-   errors with "no such column"), and Notion rate-limits a burst of all nine at once — fire
-   them in batches of ~3 rather than one big parallel block.
+**Pick the view set from one comparison: does UTC's date (`date -u +%F`) equal Shaw's local
+today or his local tomorrow?** The connector resolves every view's relative filter
+("today"/"Next day") in **UTC**, so which UTC calendar day it currently is decides which
+precomputed view already points at the day you want. This holds for both today and tomorrow
+briefings:
 
-Everything downstream (Step 2 page fetch, Step 3 formatting) is identical — only the date
-label in the output header changes.
+| Briefing for | UTC == local today (his daytime) | UTC == local tomorrow (his evening) |
+|---|---|---|
+| **Today** | **Today** views | explicit-date SQL fallback |
+| **Tomorrow** | **Tomorrow** views | **Today** views (they already resolve to tomorrow) |
+
+The case that's easy to miss: during Shaw's evening UTC has already rolled to his tomorrow,
+so for a *tomorrow* briefing the **Today** views are the correct one-shot source — don't drop
+to SQL. Only fall to SQL when the table sends you there (a today briefing in his evening) or
+the target isn't today/tomorrow (a named weekday).
+
+- **Fire the view queries in parallel — one batch, all the views you need.** `mode:view`
+  queries are cheap; the parallel-timeout warning below is SQL-only and does not apply to
+  views.
+- **After reading a view, narrow its rows to the resolved day yourself** — dated: keep rows
+  whose `Date` falls on the target date; relationship: keep rows whose `Next Contact` is on
+  or before it. This makes the briefing correct no matter how tightly each view happens to be
+  filtered (some carry a single "after today" rule that also lets later items through), so you
+  never have to audit the views. The view rows already carry `url` (and status/notes for
+  relationship rows), so you have everything Step 2 needs without re-querying.
+
+**Fall back to explicit ISO dates** only when the table above sends you there (a today
+briefing in his evening, or a named day that isn't today/tomorrow). Comparing the stored ISO
+date strings is timezone-safe — plain text, matched literally, no relative-"today" resolution
+in play. Query the data sources with `notion-query-data-sources` (SQL mode), IDs from
+`notion-helper/SKILL.md` → "Main Databases":
+
+- Dated work (6): `WHERE "date:Date:start" >= '<date>' AND "date:Date:start" < '<next-day>'`
+- Relationship (3): `WHERE "date:Next Contact:start" <= '<date>'`
+
+SQL gotchas, learned the hard way:
+
+- **Cap parallel SQL queries at 4** (see `notion-helper` → "Connector quirks"). Up to 4
+  `query_data_sources` calls batch fine; a 5th trips a 429. With nine databases, run them in
+  batches of ≤4 with a brief gap, and wrap each in a retry-once — a throttled query recovers in
+  ~30–60s. (SQL-only — `mode:view` queries batch freely.)
+- **Select `url` and the display columns you'll show in the first query** — not just `Name`
+  and the date. Re-querying a database just to pick up `url` for the links doubles the
+  round-trips. Dated work: `SELECT "Name", "url", "date:Date:start"`. Relationship rows also
+  grab `"Status"`, `"Notes"` (and `"date:Next Contact:start"`) so the Notes are in hand
+  without a page fetch.
+- Use the expanded SQL columns `date:Date:start` / `date:Next Contact:start` (bare `Date` /
+  `Next Contact` errors with "no such column").
+- Avoid `SELECT *` — some sources (ABA Calls) carry dozens of columns per row; list the
+  columns you need.
+
+Either way, everything downstream (Step 2 page fetch, Step 3 formatting) is identical — only
+the resolved date and the date label in the output header change.
 
 ### Step 2: Fetch page content for each matching item
 

@@ -81,9 +81,7 @@ Pick the reference file(s) based on `video_type`:
 - `talking-head` → `video-editor-v3/references/talking-head.md` **and** `video-editor-v3/references/voiceover.md` (talking-head layers on the voiceover core; sub-agents must read both)
 - `event` → `video-editor-v3/references/event.md`
 
-The reference file tells you what to cut, what to protect, and how to think about the content type. This SKILL.md only describes the mechanical pipeline — editorial judgment lives in references.
-
-`talking-head` also adjusts pipeline parameters — see the per-step notes below.
+The reference file tells you what to cut, what to protect, and how to think about the content type. This SKILL.md only describes the **type-agnostic mechanical pipeline** — anything that varies by video type lives in the routed reference, not here. That includes: editorial judgment (what to cut/protect), **pacing-parameter overrides** for the scripts (e.g. `preprocess.py --silence-gap`, the `assemble_edl.py` knobs), and any **extra pipeline step** a type needs (e.g. the event Q&A review gate). Where a step's parameters or sequence depend on the type, the step below points to the reference rather than naming a type — so read the routed reference before running the pipeline and apply the parameters and steps it specifies. If you're adding type-specific guidance, it belongs in the reference file, never in a step description here.
 
 ## Pipeline
 
@@ -111,7 +109,7 @@ Before Step 1, confirm the brief with the user in one short message. Skim the tr
 - **Output destination** — confirm `<project_root>/claude-edits/` and the FCPXML project name (auto-generated names like `<video_stem>_edit` rarely match what the user wants in Final Cut).
 - **Editorial intensity** — minimum cuts, standard pacing, or aggressive trim. The reference files default to standard pacing; a "minimum cuts" brief overrides them.
 - **Audience and narrative priority** — who is this for, and how self-explanatory must the result be? For a non-expert audience (e.g. business users), transitions, topic introductions, and a term's first definition are load-bearing and must survive even an aggressive cut — "aggressive" then means *remove drafts and redundancy*, not *remove connective tissue*. Pass this to the chunk agents so "tight" is never read as "skip the narrative scaffolding."
-- **Mandatory drops or keeps** — Q&A blocks, sponsor reads, dead segments, specific stories the user wants protected. Resolve any rough timestamps against the transcript so the brief carries word-boundary numbers.
+- **Mandatory drops or keeps** — sponsor reads, dead segments, specific stories the user wants protected. Resolve any rough timestamps against the transcript so the brief carries word-boundary numbers. (Don't resolve *which individual Q&A questions* to cut here if a routed reference defines a review gate for that — e.g. `event.md` enumerates the pairs for the user to prune later. Here just confirm whether the Q&A stays in at all.)
 - **Anything you noticed in the transcript** — flag specific moments (tech-check, mispronunciation, abandoned tangent, verbal directives like "scratch previous line") and ask whether to cut. The transcript almost always contains a judgment call the caller's initial request didn't anticipate. When surfacing ambiguous moments to the user, paste a raw transcript window (timestamps + verbatim words), not a Claude paraphrase — the framing of the question determines the answer.
 
 Recommend a default for each item so the user can answer "ok" rather than write paragraphs. The user's response is the editorial brief that gets passed verbatim into chunk sub-agents (Step 3) and the dedup pass (Step 5b) — the existing rule that an explicit brief overrides conflicting generic rules depends on this step having actually happened.
@@ -124,7 +122,7 @@ Convert the word-level transcript into segment-level JSON. Segments are groups o
 uv run scripts/preprocess.py <transcript_path> -o <project_dir>/segments.json
 ```
 
-For `talking-head`, pass `--silence-gap 0.20` — the tighter threshold separates fast false-start/restart pairs that would otherwise fuse into one segment.
+The default `--silence-gap` is `0.35`. If the routed reference specifies a different value for its type, use that — the reference carries the value and the rationale.
 
 Output: `{"segments": [{"text", "start", "end"}, ...]}`. Prints `{n_words, n_segments, total_chars}` to stdout.
 
@@ -241,6 +239,8 @@ Then spawn a dedup sub-agent (Sonnet). Pass it:
 - Instructions to output a JSON list of `{start, end, reason}` entries to drop, written to `<project_dir>/chunks/dedup_drops.json`.
 - A continuity lens alongside the dedup mandate: reading the full sequence in order, flag any *cross-chunk* break — a term used before it is introduced, a section starting with no transition, an examples block with no payoff — back to the parent session. This pass can only *remove*, so it cannot fix a break itself; surface it so the parent can re-dispatch the relevant chunk (which still can restore the missing keep).
 
+> **Reference-inserted steps.** A routed reference may define an extra step that runs here, before assembly — e.g. `event.md` specifies an interactive **Q&A pair review gate** that pauses to let the user prune whole question/answer pairs. Consult the routed reference and run any step it inserts (its output feeds `dedup_drops.json`, which Step 6 already consumes) before continuing.
+
 ### Step 6 — Assemble the final EDL
 
 ```
@@ -248,12 +248,15 @@ uv run scripts/assemble_edl.py \
     <project_dir>/chunks/all_segments_validated.json \
     <project_dir>/chunks/dedup_drops.json \
     --source-file <source_file> --parent-file <parent_file> --source-duration <source_duration> \
+    --transcript <transcript_path> \
     -o <project_dir>/edl.json
 ```
 
-Removes dedup drops, merges segments with small gaps, applies lead-in/tail pad, drops sub-second keeps, clamps, and validates the schema before writing. Prints `{edl, n_segments, retention_pct}`.
+Removes dedup drops, merges segments with small gaps, tightens interior dead air, applies lead-in/tail pad, drops sub-second keeps, clamps, and validates the schema before writing. Prints `{edl, n_segments, n_internal_splits, retention_pct}`.
 
-Three knobs control how aggressively the assembler stitches and pads: `--merge-gap` (merge two adjacent kept segments separated by less than this many seconds), `--lead-in` (audio padding before each segment), `--tail-pad` (after). Defaults `0.3 / 0.08 / 0.15` are tuned for pure voiceover. For `talking-head`, pass `--merge-gap 1.0 --lead-in 0.12 --tail-pad 0.20` — see `references/talking-head.md` for the rationale.
+Four knobs control how aggressively the assembler stitches, tightens, and pads: `--merge-gap` (merge two adjacent kept segments separated by less than this many seconds), `--lead-in` (audio padding before each segment), `--tail-pad` (after), and `--max-internal-gap` (split a kept segment wherever an interior word-gap exceeds this many seconds). The defaults `0.3 / 0.08 / 0.15 / 0.6` are the type-agnostic starting point (tuned on voiceover). The routed reference specifies the override values for its type and the rationale — use those when editing that type.
+
+**Interior dead-air tightening.** Merge/pad only close gaps *between* kept segments; a breath or thinking-pause *inside* a multi-sentence keep range survives untouched, and the viewer hears it as dead air. Pass `--transcript` so the assembler splits each kept range at interior word-gaps over `--max-internal-gap`, dropping the silence while landing every cut on a real word boundary. This automates a human editor's single most common tightening move — closing pauses inside otherwise-good takes — so `n_internal_splits` will normally be well above zero on a real edit. Omitting `--transcript` reverts to the old between-segment-only behavior. Raise `--max-internal-gap` toward `1.0` if the cut starts to feel clipped/breathless, lower it toward `0.4` for tighter pacing.
 
 Check `retention_pct` against the expected range in the routed reference file. If out of range, revisit the cuts (drop more in `dedup_drops.json`, or re-dispatch a chunk) and re-run the assembler — do not ship a misaligned edit.
 
@@ -328,6 +331,8 @@ uv run scripts/place_overlays.py <cut>.mp4 <project_dir>/placements.json -o <pro
 The reason this matters: FCPXML durations are frame-aligned rationals like `19134115/30000s` that look like arbitrary numerators. A single transposed digit produces a project that's sub-second-off — small enough to look right at a glance, large enough to drift every overlay placement past its VO line. The emitter's wrapper computes those rationals via `to_frame_str`; bypassing it by hand-authoring a wrapper FCPXML re-introduces the typo class. Reach for the script, not the keyboard.
 
 See `references/fcpxml-format.md` ("Connected Clips and Lanes", "DTD Content Order", "Mixed Formats") for the structural rules the emitter enforces.
+
+**Redaction (on request only).** When the user asks to obscure something visible on screen — emails, PII, keys — follow **`references/redaction.md`**: exposure mapping, patch/blur design, the still-image→ProRes-alpha detour (the emitter takes video assets only), spine micro-cuts, and FCPXML round-trip gotchas all live there. Never run it as a default step.
 
 ### Step 7-alt — Dual-source picture-in-picture (rare)
 

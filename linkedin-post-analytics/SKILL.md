@@ -38,7 +38,7 @@ Run `scripts/scrape-feed-api.js` on `https://www.linkedin.com/in/me/recent-activ
 - **Auth:** the `csrf-token` header is the `JSESSIONID` cookie value; the profile URN is in the page HTML (`urn:li:fsd_profile:...`); the queryId is `voyagerFeedDashProfileUpdates.<hash>`. If the call 404s the hash has rotated — capture a live one from the network log (see troubleshooting).
 - **Token-based pagination.** `start` alone does nothing; pass the `paginationToken` from the previous response (`data.data.feedDashProfileUpdatesByMemberShareFeed.metadata.paginationToken`). Page until the oldest post predates the window.
 - **Per-post metrics** are in `SocialActivityCounts` entities in `included[]`, keyed by activity URN: `numImpressions`, `numLikes`, `numComments`, `numShares`.
-- **Verbatim copy + media type, same response.** Each update's full post text is in `commentary.text.text` (the complete body, not just the preview), and any attached media shows up as the populated component under `content` — `imageComponent`, `linkedInVideoComponent`, `articleComponent`, or `documentComponent`. Handy when repurposing a post to another channel: carry the exact wording and flag whether the post needs its image re-attached.
+- **Verbatim copy + media type, same response.** Each update's full post text is in `commentary.text.text` (the complete body, not just the preview), and any attached media shows up as the populated component under `content` — `imageComponent`, `linkedInVideoComponent`, `articleComponent`, or `documentComponent`. Handy when repurposing a post to another channel: carry the exact wording and flag whether the post needs its image re-attached. The scraper returns this as `media` on every row and rolls it up as `byMedia` in the summary, so format is something you aggregate, not something you eyeball.
 - **Exact dates, no age-string parsing.** Creation time is encoded in the activity ID: `new Date(Number(BigInt(id) >> 22n))`. This replaces the fragile "2w/3mo" byline parsing the dashboard scrapers need.
 - **Original vs. repost.** A repost of someone else's content has no matching `SocialActivityCounts` (null counts) — filter those out, they aren't your posts.
 
@@ -155,13 +155,34 @@ This section is the one definition of the recurring report. The Saturday schedul
 1. **Window:** trailing 28 days, ending today (Shaw's local timezone).
 2. **Pull all posts** via the feed API (`scrape-feed-api.js`). Original posts only; date each from its activity-ID timestamp; keep those created inside the 28 days.
 3. **Compute** engagement rate = (reactions + comments + shares) / impressions per post.
-4. **Bucket:** sort by rate; split into the top 50% and bottom 50% — the two halves, split at the median (with an odd count, note where the middle post lands). This is the default. Quartiles (top/bottom 25%) are a tighter-contrast alternative when Shaw asks for one.
-5. **Present:**
-   - One-line summary: N posts, top-half avg rate vs bottom-half avg.
-   - Two tables (top, bottom): date, eng %, impressions, reactions, comments, shares, preview linked to `https://www.linkedin.com/feed/update/urn:li:activity:<id>/`.
-   - A short "what separates them" read — hook type, audience, governance, format — grounded in the actual posts, never generic.
-   - The **reach-vs-rate check**: is high reach correlated with high engagement rate or decoupled? (In practice nearly decoupled — the single widest post is often the lowest-rate.)
+4. **Bucket twice — both splits run every time.** The report is not complete with one of them.
+   - **Split A — by engagement rate.** Sort by rate, halve at the median.
+   - **Split B — by reach.** Sort by impressions, halve at the median.
+
+   Run both because they answer different questions and, on Shaw's account, tend to come out close to inverse: sorting by reach roughly sorts *against* rate. Presenting only Split A hides which posts actually got seen; only Split B hides which posts actually landed. The gap between the two orderings is itself the finding — it says reach and resonance are being produced by different kinds of post, and a single leaderboard would blur them into a ranking that recommends nothing. Quartiles are a tighter-contrast alternative for either split when Shaw asks.
+5. **Present** — both splits, Split A first:
+   - One-line summary per split. For rate, the top-half vs bottom-half average is fine (a rate is a bounded ratio, so its mean is meaningful). For reach, lead with **median, max, and the top post's share of total impressions** — see the fat-tail section below before you write an average.
+   - Two tables per split: date, eng %, impressions, reactions, comments, shares, format, preview linked to `https://www.linkedin.com/feed/update/urn:li:activity:<id>/`. Order the columns so the split's sort key comes first.
+   - A short "what separates them" read — hook type, audience, governance, format — grounded in the actual posts, never generic. Format is the one dimension you get for free: quote the `byMedia` rollup (avg rate by image/video/article/text) rather than asserting a format effect from impression.
+   - The **reach-vs-rate check**: is high reach correlated with high engagement rate or decoupled? (In practice nearly decoupled — the single widest post is often the lowest-rate.) When a post's reach is an order of magnitude above the median, report its **absolute** engagement next to its rate and say which one you're reading. A post that escapes the immediate network is being shown to a colder audience, so a low rate there is measuring audience fit, not post quality — it can be the month's worst by rate while carrying more raw interactions than the entire top half. Ranking it last without that caveat is a wrong call dressed as a number.
+   - A cross-read of the two splits: which posts changed halves, and what that says about which mechanism produced their numbers.
    - Apply the recency caveat: flag any last-2–3-day posts whose reach is still maturing.
+
+### Reach is fat-tailed — investigate outliers, never strip them
+
+Impressions are not normally distributed. A single post routinely takes 40-50% of a month's total reach, and max-over-median ratios of 30x+ are ordinary. That shape has a hard consequence for how you report:
+
+**Never write "excluding the outlier, the average is X."** In a fat-tailed distribution the outlier is not contamination of the average — it *is* the month. Removing it deletes the only observation carrying information about the tail, and the tail is where nearly all the value sits. A sentence like "strip out the top post and average reach drops to 2,174" reads as rigor but is precisely backwards: it discards the signal and reports the noise. The same reflex to distrust the mean is right; the fix is to stop using the mean, not to trim the data until the mean behaves.
+
+**Report the shape instead of the center.** For reach, give median (the typical post), max (the tail event), the top post's and top three's share of total impressions, and max/median. These describe a fat-tailed sample honestly; a mean does not. Rate is different — it's bounded above and much thinner-tailed, so averaging halves is fine there.
+
+**Then interrogate the tail post rather than averaging it away.** Pull its full text (`commentary.text.text`) and ask:
+- What belief did it contradict, and whose? Tail posts usually take a position the reader already holds an opposing view on — a decade of "SaaS beats services," a norm like "stuff your CLAUDE.md with rules" — and make the contradiction specific and falsifiable with a number or an artifact.
+- Which mechanism carried it? Disagreement (people reply to argue) and utility (people tag someone who needs it, e.g. a job posting) are different generators that both produce tail reach. Don't merge them into one lesson.
+- What's its comment-to-reaction ratio against the corpus baseline? Comments are the strongest distribution signal on LinkedIn, so a tail post running well above the month's baseline tells you the reach came from replies rather than passive impressions.
+- Has this shape hit before? One tail event is an anecdote; the same shape twice is a repeatable format.
+
+**Frame the strategy question correctly.** With fat tails the goal isn't raising the average post — most posts contribute almost nothing by construction and that is not a failure. It's how many genuine tail attempts were taken, and what the hits had in common. Report the count of tail-shaped posts, not just their outcomes.
 
 For the deeper "why did these win/lose" content lens (sponsor vs champion, the barbell) and for turning findings into post ideas, that lives with Shaw's content strategy and the `sfc-helper` skill. This skill produces the numbers and the first-order read; idea generation is `sfc-helper`'s job.
 

@@ -18,14 +18,19 @@
 //
 // Reposts of OTHER people's content come back with no SocialActivityCounts
 // (null impressions) and are filtered out — they aren't your posts.
+//
+// The trailing IIFE MUST be awaited. javascript_tool serializes an un-awaited
+// Promise as `{}` — no error, just an empty object, so the run looks like it
+// returned nothing when it actually succeeded. The `await` below is
+// load-bearing; keep it if you adapt or inline this script.
 
-(async () => {
+await (async () => {
   const END = window.__END || new Date().toISOString().slice(0,10);
   const startMs = window.__START ? Date.parse(window.__START + 'T00:00:00') : (Date.now() - 28*864e5);
   const endMs   = Date.parse(END + 'T23:59:59');
   const csrf = (document.cookie.match(/JSESSIONID="?([^";]+)"?/) || [])[1];
   const prof = (document.documentElement.innerHTML.match(/urn:li:fsd_profile:[A-Za-z0-9_-]+/) || [])[0];
-  const qid  = window.__QID || 'voyagerFeedDashProfileUpdates.[page-id]';
+  const qid  = window.__QID || 'voyagerFeedDashProfileUpdates.<queryId-hash>';
   if (!csrf || !prof) return JSON.stringify({ error: 'missing csrf or profileUrn — open /in/me/recent-activity/all/ while logged in' });
 
   const tsOf = id => Number(BigInt(id) >> 22n);             // activity ID -> creation ms
@@ -55,7 +60,13 @@
       const m = bu.match(/urn:li:activity:(\d+)/); if (!m) return;
       const id = m[1], c = counts[id] || {};
       const comm = (e.commentary && e.commentary.text && e.commentary.text.text) ? sani(e.commentary.text.text).slice(0, 80) : '';
-      acc[id] = { id, ts: tsOf(id), isReshare: !!e.resharedUpdate, im: c.im ?? null, re: c.re ?? null, co: c.co ?? null, sh: c.sh ?? null, preview: comm };
+      // Format = whichever component is populated under `content`. Cheap to grab
+      // here and usually the sharpest single explanatory variable in the split,
+      // so it ships on every row rather than being re-derived by eye later.
+      const ct = e.content || {};
+      const media = ct.imageComponent ? 'image' : ct.linkedInVideoComponent ? 'video'
+                  : ct.articleComponent ? 'article' : ct.documentComponent ? 'document' : 'text';
+      acc[id] = { id, ts: tsOf(id), isReshare: !!e.resharedUpdate, media, im: c.im ?? null, re: c.re ?? null, co: c.co ?? null, sh: c.sh ?? null, preview: comm };
     });
     // next-page token lives in the response metadata
     return (((((j.data || {}).data || {}).feedDashProfileUpdatesByMemberShareFeed || {}).metadata) || {}).paginationToken || null;
@@ -83,10 +94,15 @@
   window.__feed = rows;
 
   // Output is just a summary — the full rows can exceed tool limits.
-  // Dump in slices: JSON.stringify(window.__feed.slice(0,10))
+  // Dump in slices, capping preview length: it is the previews, not the row
+  // count, that blows the output budget.
+  //   JSON.stringify(window.__feed.slice(0,10).map(r => [r.date,r.er,r.im,r.re,r.co,r.sh,r.media,r.id,r.preview.slice(0,50)]))
+  const byMedia = Object.entries(rows.reduce((o, r) => { (o[r.media] = o[r.media] || []).push(r.er); return o; }, {}))
+    .map(([k, v]) => [k, v.length, +(v.reduce((a, b) => a + b, 0) / v.length).toFixed(2)]);
   return JSON.stringify({
     count: rows.length,
     window: [new Date(startMs).toISOString().slice(0, 10), END],
-    note: 'rows saved to window.__feed and localStorage.__feedData — read them back in slices to avoid truncation'
+    byMedia,   // [format, n, avg engagement rate %]
+    note: 'rows saved to window.__feed and localStorage.__feedData — dump in slices of ~10 with previews capped to ~50 chars'
   });
 })();

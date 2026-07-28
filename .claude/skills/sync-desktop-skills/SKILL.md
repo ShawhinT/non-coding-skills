@@ -27,16 +27,16 @@ Note: Code-native skills (animation-builder, graphic-builder, keynote, skill-syn
 The canonical skills repo lives at:
 
 ```
-/Users/shaw/agents/skills/
+~/agents/skills/
 ```
 
 It's a regular git repo — one directory per skill, no session/instance hunting needed. List contents with:
 
 ```bash
-ls /Users/shaw/agents/skills/
+ls ~/agents/skills/
 ```
 
-Target is always this repo's root: `/Users/shaw/Documents/_code/_stv/_repos/non-coding-skills/`.
+Target is always this repo's root (the directory this `.claude/skills/` dir lives in).
 
 ### Second source — Code-native skills (`~/.claude/skills/`)
 
@@ -54,7 +54,7 @@ For the canonical set, compare against `~/agents/skills/`. For the six Code-nati
 - **Protect repo adaptations from `--delete`** by also `--exclude`-ing them (so they're neither overwritten nor removed), then reconcile by hand:
   - `keynote/` — repo renamed `shaw-style-guide.md` → `style-guide.md` and de-personalizes ("Shaw" → "your", `"author": "Shaw Talebi"` → `"Your Name"`, etc.). Port new style-guide bullets into the renamed file; fix the SKILL.md reference to `style-guide.md`. (The `shawhintalebi@gmail.com` curl-UA contact is KEEP — allowlisted + matches the committed infographic-builder precedent.)
   - `video-editor/` — keep the sanitized `.env.example`, `README.md`, `.gitignore`; never copy the real `.env`.
-  - `training-proposal/` — keep `scripts/LOGO-README.md` (placeholder for the gitignored `logo-square.png`); skip `evals/` and the real logo binary. As of July 2026 upstream dropped the example proposals entirely in favor of the content-free `references/format-reference.md` (the repo's fictional Acme/TechStart/Globex examples were deleted to match). Upstream SKILL.md prose embeds **real client names** (filename examples, "freshest proposal" anecdotes) and points at Shaw's local proposals folder — scrub names to `[Company]`/fictional placeholders and genericize personal absolute paths (`/Users/shaw/...` → `~/...` or "your proposals directory"); also strip personal-website logo links from `md-to-pdf.py`. Grep case-insensitively: one run missed `CyberCube` by grepping lowercase.
+  - `training-proposal/` — keep `scripts/LOGO-README.md` (placeholder for the gitignored `logo-square.png`); skip `evals/` and the real logo binary. As of July 2026 upstream dropped the example proposals entirely in favor of the content-free `references/format-reference.md` (the repo's fictional Acme/TechStart/Globex examples were deleted to match). Upstream SKILL.md prose embeds **real client names** (filename examples, "freshest proposal" anecdotes) and points at Shaw's local proposals folder — scrub names to `[Company]`/fictional placeholders and genericize personal absolute paths (`/Users/shaw/...` → `~/...` or "your proposals directory"); also strip personal-website logo links from `md-to-pdf.py`. Grep case-insensitively: one run missed a CamelCase client name by grepping lowercase.
   - `graphic-builder/` (renamed from `infographic-builder` in July 2026) — `@shawhintalebi` footer handle, `shawhintalebi@gmail.com` curl-UA, and `aibuilder.academy` are KEEP (public). Genericize personal folder paths (`/Users/shaw/...` → `~/...`). The `billing@acme-invoices.net` in the prompt-injection example graphic is fictional payload — allowlisted in scrub.py.
 
 **Heads-up — prior-pass misses surface here.** Earlier syncs left some PII in the *committed* repo (e.g. `crm/workflows/workflow-4-link-calls.md` and `workflow-1-sync.md` had real lead/company names; `pre-call-research/SKILL.md` had a private Google Sheets ID; `crm/SKILL.md` had a bare first-name example). Re-scan the whole file even when a name appears unchanged vs HEAD, and scrub for consistency. The `report-pii` mode + the private denylist exist to catch exactly these — run it after every sync. Note: the deterministic overwrite *reintroduces* real names where the committed repo had placeholders — check each name against the committed version and restore its placeholder.
@@ -111,7 +111,7 @@ Present the plan to Shaw **before** writing anything. Include:
 
 Before spawning agents, run the regex scrubber at `scripts/scrub.py`. It copies source → target while replacing the deterministic categories: Notion IDs (32-char hex + UUID), emails (with allowlist for `shaw@aibuilder.academy`, `notifications@calendly.com`, placeholder/system addresses), phone numbers, Calendly + Google Doc/Sheet URLs, and `forms.gle` links. This handles the bulk of replacements (~70+ per full sync) with no agent tokens.
 
-It also applies the **private name/company denylist** at `pii-denylist.local.json` (gitignored, never committed — see "Second source" above for why and how it's stored). Known real names/companies/IDs are auto-replaced (longest-match-first, possessive-safe); `risky: true` entries (bare first names) are report-only. An entry can carry `allow_in: ["path/prefix", ...]` — paths where that name is deliberately public and `report-pii` won't flag it (e.g. `Toyota` is allowed in the aba-brand-system "Ex-Toyota Data Scientist" bio line and proposal-deck-creator's Toyota/A3-methodology reference; `Matt` is allowed in `sfc-helper/SKILL.md` where it's public creator Matt Gray). Use `allow_in` instead of deleting an entry when a name is KEEP in some files but PII elsewhere. Keep-verbatim files (`linkedin-post-writer/references/examples-*`) are copied without scrubbing so public-figure names survive. When you scrub a NEW name by hand during a sync, **add it to the denylist** so it's caught automatically next time. Full-name entries don't catch bare-first-name uses of the same person (e.g. `Niraiventhi Mareesan` missed a bare `Niraiventhi`) — add distinctive bare names as separate entries.
+It also applies the **private name/company denylist** at `pii-denylist.local.json` (gitignored, never committed — see "Second source" above for why and how it's stored). Known real names/companies/IDs are auto-replaced (longest-match-first, possessive-safe); `risky: true` entries (bare first names) are report-only. An entry can carry `allow_in: ["path/prefix", ...]` — paths where that name is deliberately public and `report-pii` won't flag it (e.g. `Toyota` is allowed in the aba-brand-system "Ex-Toyota Data Scientist" bio line and proposal-deck-creator's Toyota/A3-methodology reference; `Matt` is allowed in `sfc-helper/SKILL.md` where it's public creator Matt Gray). Use `allow_in` instead of deleting an entry when a name is KEEP in some files but PII elsewhere. Keep-verbatim files (`linkedin-post-writer/references/examples-*`) are copied without scrubbing so public-figure names survive. When you scrub a NEW name by hand during a sync, **add it to the denylist** so it's caught automatically next time. Full-name entries don't catch bare-first-name uses of the same person (a `First Last` entry sailed right past a bare `First` in another file) — add distinctive bare names as separate entries.
 
 ```bash
 # Copy + scrub
@@ -139,7 +139,7 @@ After the script runs, spawn ~3 `general-purpose` sub-agents in parallel for jud
 Typical batches (rough volume balance):
 - **Batch A — Notion-heavy:** crm, outreach, notion-helper, executive-briefing, sop-helper, engagements, referrals, testimonials, stripe-helper (most names live here)
 - **Batch B — voice + people-heavy:** email-helper (three-way-intros template carve-out), calendar-helper, pre-call-research, google-drive-helper, sfc-helper (sfc-helper is built from client-call research — read every line)
-- **Batch C — copy-heavy + Code-native:** business-strategy, conversion-copy, linkedin-post-writer, linkedin-post-analytics, sales-letter-writer, workshop-use-case-researcher, youtube-strategy, aba-brand-system, skimmable-summary, proposal-deck-creator, plus the Code-native set (historically near-zero edits — but freshly synced upstream prose DOES reintroduce real client names, e.g. CyberCube/Evolution Equity in training-proposal, so still read everything)
+- **Batch C — copy-heavy + Code-native:** business-strategy, conversion-copy, linkedin-post-writer, linkedin-post-analytics, sales-letter-writer, workshop-use-case-researcher, youtube-strategy, aba-brand-system, skimmable-summary, proposal-deck-creator, plus the Code-native set (historically near-zero edits — but freshly synced upstream prose DOES reintroduce real client names in training-proposal, so still read everything)
 
 Each sub-agent prompt must include:
 1. Repo root (target only — script already did the copy)

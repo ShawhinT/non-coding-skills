@@ -25,7 +25,7 @@ Canonical Notion IDs for the main databases live in `notion-helper/SKILL.md` →
 - **Active Leads database** — CRM entries with status, notes, email, source
 - **Clients (Nurture) database** — past clients with engagement history, check-in cadence, and expansion signals
 - **ABA Calls database** — call pages where pre-call briefs and notes live (Discovery, Check-in, Wrap-up)
-- **ABA Trainings database** — delivery sessions (1:1 workshops, trainings, ongoing engagements) with session content and notes
+- **ABA Trainings database** — delivery sessions (1:1 workshops, trainings, engagements) with session content and notes
 - **Engagements database** — won-deal project ledger; a client's engagement row links the ABA Trainings pages that hold prior session context
 - **Gmail** — shaw@aibuilder.academy, where all email threads with leads and clients live
 
@@ -55,7 +55,7 @@ Search the ABA Calls database (or ABA Trainings, for a 1:1 Claude Workshop) for 
 
 ### 3. Check for previous call notes
 
-If the CRM notes reference earlier calls, or earlier ABA Calls / ABA Trainings pages exist for this person, read them. Previous call context is valuable — it means this isn't a cold conversation and you should understand what was discussed before so Shaw doesn't re-tread old ground. For client calls, the engagement row's linked ABA Trainings pages are the canonical record of what Shaw actually delivered.
+If the CRM notes reference earlier calls, or earlier ABA Calls / ABA Trainings pages exist for this person, read them. Previous call context is valuable — it means this isn't a cold conversation and you should understand what was discussed before so Shaw doesn't re-tread old ground. For client calls, the engagement row's linked ABA Trainings pages are the canonical record of what Shaw actually delivered. When those pages link call transcripts (Google Docs), read the transcripts, not just the page notes — for results-driven calls like wrap-ups and check-ins, the honest per-use-case numbers and quotable lines live in the transcript, while the notes only carry the gist.
 
 ### 4. Pull the Gmail thread
 
@@ -76,7 +76,7 @@ Don't try to draw deep conclusions from web research. The goal is factual backgr
 
 ### 6. Write the brief to the call page
 
-**First, check whether the page already carries a complete, current brief — if it does, don't regenerate it.** This skill can run against the same page more than once: CRM Workflow 7 writes the brief at booking, and a morning call-research sweep can hit the same page again hours later. When the Pre-Call Research and Prioritized Questions are already present and still accurate, leave them in place and report the page as ready. Only refresh a section when something material changed since it was written — a new email thread, a reschedule, an added attendee, a corrected role. Reproducing near-identical content wastes effort and risks clobbering hand-edits Shaw made on the page; this restraint is what makes a scheduled or repeat run safe.
+**First, check whether the page already carries a complete, current brief — if it does, don't regenerate it.** This skill can run against the same page more than once: CRM Workflow 7 writes the brief at booking, and a morning call-research sweep can hit the same page again hours later. When the Pre-Call Research and Prioritized Questions are already present and still accurate, leave them in place and report the page as ready. Only refresh a section when something material changed since it was written — a new email thread, a reschedule, an added attendee, a corrected role, or — for a 1:1 Claude Workshop — a newly-submitted intake form (the page's use-case list and Read call depend on it, so a stale "intake not submitted" line is a strong signal to re-check the responses Sheet). Reproducing near-identical content wastes effort and risks clobbering hand-edits Shaw made on the page; this restraint is what makes a scheduled or repeat run safe.
 
 Write the pre-call brief directly to the person's call page in Notion. The brief has two sections:
 

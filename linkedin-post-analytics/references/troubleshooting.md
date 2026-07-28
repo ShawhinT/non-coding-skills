@@ -114,8 +114,18 @@ Array.from(li.querySelectorAll('span')).map(s => s.innerText.trim()).filter(t =>
 
 **Fix:** Don't return the whole array. Persist it (the feed scraper writes `window.__feed` and `localStorage.__feedData`) and dump it in slices: `JSON.stringify(window.__feed.slice(0,10))`, then `slice(10,20)`, etc. Same trick for any large in-page computation.
 
+Preview text, not row count, is what actually blows the budget — a row is a handful of small numbers plus a string that can run 100+ characters. Cap the preview in the projection rather than shrinking the slice: `.map(r => [r.date, r.er, r.im, r.re, r.co, r.sh, r.media, r.id, r.preview.slice(0,50)])` reliably fits ~10 rows, where the same 10 rows at full preview length truncate.
+
 ## javascript_tool returns `undefined` (bare top-level `return`)
 
 **Cause:** `javascript_tool` runs with REPL semantics — it returns the value of the last *expression*, and a top-level `return` statement throws in that context, so the tool silently yields `undefined` instead of your result. This bites when you inline or adapt a scraper by hand instead of pasting it whole, because the bundled scripts' output lives inside `return` statements.
 
-**Fix:** Keep the `(async () => { ... })()` wrapper (the bundled `scrape-feed-api.js` already has it) so the `return`s sit inside a function and the IIFE itself is the trailing expression. If you paste only a fragment, either restore the wrapper or end with a bare expression (e.g. `JSON.stringify(result)`) rather than `return ...`.
+**Fix:** Keep the `(async () => { ... })()` wrapper (the bundled `scrape-feed-api.js` already has it) so the `return`s sit inside a function and the IIFE itself is the trailing expression. If you paste only a fragment, either restore the wrapper or end with a bare expression (e.g. `JSON.stringify(result)`) rather than `return ...`. The wrapper is necessary but not sufficient — see the next entry for the `await` it also needs.
+
+## javascript_tool returns `{}` (un-awaited async IIFE)
+
+**Cause:** An `async` IIFE evaluates to a *Promise*, and `javascript_tool` serializes an un-awaited Promise as `{}`. There's no error and no timeout — the call looks like it ran and returned an empty object, so the natural next move is to re-run it or start debugging the scrape logic, when in fact the scrape already succeeded and its result is sitting in `window.__feed`.
+
+This is the twin of the entry above and they pull in opposite directions: that one tells you to keep the `(async () => {...})()` wrapper, which is correct, but the wrapper alone still yields `{}`.
+
+**Fix:** Await it — `await (async () => { ... })();`. Verified directly: `(async () => 42)()` returns `{}` while `await (async () => 42)()` returns `42`. The bundled `scrape-feed-api.js` now ships with the `await`; keep it when adapting or inlining the script. If you hit a `{}` from a script you've already run, don't re-run it — read the result back out of `window.__feed` / `localStorage.__feedData` first.

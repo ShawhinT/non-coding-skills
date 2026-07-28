@@ -34,8 +34,8 @@ Try in order:
 - **Company domain substring:** `search_stripe_resources(query='customers:email~"<domain>"')`
   e.g., `email~"[company-domain]"` finds anyone billed at that company
 
-If a customer matches but the name/email looks like a different person (e.g., "[Person A] at
-[Company]" instead of "[Person B]"), that's likely the **proxy payer** — a
+If a customer matches but the name/email looks like a different person (e.g., "[Person] at
+[Company]" instead of "[Person]"), that's likely the **proxy payer** — a
 procurement contact at the client's company. Use that customer.
 
 ### 3. Handle voided/replaced invoices
@@ -104,11 +104,11 @@ new_str:
 
 ### 5. Special case: Team workshops
 
-For `1:1 Claude Workshops — Team` engagements, the invoice should equal `$1,500 × N attendees`
+For team/group workshop engagements, the invoice should equal the per-seat rate × N attendees
 (no team discount currently). If the invoice amount doesn't match the expected count, flag it:
 
-> [Person A]'s invoice was $7,500 = 5 × $1,500. ✓
-> [Person B]'s invoice was $7,500 but I counted 5 attendees in the body — confirms 5 × $1,500.
+> [Person]'s invoice was $[amount] = 5 × $[seat rate]. ✓
+> [Person 2]'s invoice was $[amount] but I counted 5 attendees in the body — confirms 5 × $[seat rate].
 
 If the amount and attendee count don't match, ask Shaw.
 
@@ -116,7 +116,7 @@ If the amount and attendee count don't match, ask Shaw.
 
 Reply with what you found and what you couldn't:
 
-> Filled in [E003](url) — $7,500, Paid in Full, billed to [email] (4/20).
+> Filled in [E003](url) — $[amount], Paid in Full, billed to [email] (4/20).
 >
 > [E001](url) — no Stripe record under any email or name search. Likely paid via [Company]'s
 > vendor portal. Need you to confirm the price.
@@ -133,7 +133,7 @@ Document any new proxy patterns encountered to make future lookups faster:
   The original invoice on Shaw's account gets voided.
 - **[Company]** ([Person]) — pays via internal vendor service, no Stripe record on Shaw's
   account at all.
-- **[Company]** ([Client Name]) — billed via [Person] (procurement),
+- **[Company]** ([Person]) — billed via [Person] (procurement),
   `[email]`. Search by company domain.
 
 When a new proxy pattern is discovered, suggest adding it to this list.

@@ -48,8 +48,7 @@ on run argv
 	set imgRef to POSIX file imagePath
 
 	tell application "Keynote"
-		open fileRef
-		set theDoc to front document
+		set theDoc to helpers's docForPath(filePath)
 		set sw to width of theDoc
 		set sh to height of theDoc
 

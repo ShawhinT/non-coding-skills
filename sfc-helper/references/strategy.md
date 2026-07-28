@@ -24,16 +24,17 @@ Put weight on two ends, starve the mediocre middle.
 
 - **Reach and engagement rate are nearly decoupled.** The widest-reach post is often the lowest-rate. So a reach play doesn't cost engagement quality — but pick *qualified* reach (ICP emotion/status), not random virality.
 - **The best single archetype is broad-hook + real substance** — it wins on reach *and* rate. Make it the heaviest slice.
-- **Comments are the #1 lever** and the most underused. End posts with one low-friction question; the data shows comment-driving posts pull far ahead.
+- **Comments are the #1 lever** — posts that draw comments pull far ahead on distribution.
 - **Losers:** feature listicles, abstract analogies, off-thesis topics, generic memes.
 
-## Cadence and sequencing (~5 posts/week)
+## Cadence and sequencing
 
-- Rough mix: ~2 sponsor / ~2 champion / ~1 reach satellite.
-- **Front-load reach** (Mon–Wed) so early engagers prime the algorithm to surface later posts to them; put authority and any hard CTA later in the week.
-- **Soft-CTA** the AI Rollout Audit inside high-performing value posts; run a **hard CTA every 2–4 weeks**, timed to a week that's already hot.
-- For event promos, **double up** on a day rather than displacing a CTA, and keep the two asks on separate days.
+**Laying out a week lives in `references/scheduling-principles.md`** — volume, reach/engagement alternation, tee-up spacing, format, CTA handling, and what earns a slot. Read it before proposing or rescheduling a week; don't re-derive cadence from this file.
+
+Two things that changed and are worth naming so old advice doesn't resurface: reach posts are **alternated** through the week rather than front-loaded Mon–Wed (the priming effect works pairwise, not as a block), and there is **no soft CTA** — a post either carries an ask or it doesn't.
 
 ## The "what separates winners" lens (for the brainstorm gap-check)
 
-When generating and pruning, contrast against what's worked: belief/POV + substance and status/FOMO openers win; abstract analogies, feature roundups, and off-thesis posts sink. Every proposed week should have at least one governance post and one quantified-proof post, and every post should have a closing-question idea.
+When generating and pruning, contrast against what's worked: belief/POV + substance and status/FOMO openers win; abstract analogies, feature roundups, and off-thesis posts sink.
+
+The sponsor/champion mix is a judgment about what a given week is doing, not a count. What does hold per-post: **one post, one role** — a post targets the sponsor or the champion, never both.

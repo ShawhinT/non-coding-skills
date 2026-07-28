@@ -183,7 +183,11 @@ last = next(y for y in range(h - 1, -1, -1) if has_content(y))
 print('content ends at', last / 2, 'logical px')   # /2 because render is 2x retina
 ```
 
-Then re-render at `content-end + ~40px`. Two things to keep right: the PNG is 2x, so divide the pixel row by 2 to get logical px; and `bg` must match the canvas background (the off-white default or the brand bg) or every row reads as "content."
+Then re-render at `content-end + <bottom-margin>`. Two things to keep right: the PNG is 2x, so divide the pixel row by 2 to get logical px; and `bg` must match the canvas background (the off-white default or the brand bg) or every row reads as "content."
+
+**The render height sets the bottom margin, not CSS.** The PIL scan lands on the *last painted pixel* — a card's bottom border, the last row of text — so anything below it (canvas `padding-bottom`, a trailing margin) is invisible cream that the content-fit render simply excludes. Editing `padding-bottom` to "add breathing room" does nothing once you refit height to content; the only lever is `content-end + <margin>` in the render command. Set the margin there.
+
+**Don't trim flush — match an existing internal gap.** "Kill the dead space below the table" rarely means *flush* (a figure whose content touches the bottom edge looks cramped and cropped). It means make the bottom margin echo a gap the composition already establishes — most often the title→content gap. Read that gap (e.g. the title's `margin-bottom`, 36px) and render at `content-end + that-value` so top and bottom breathing room are symmetric. Bit us on `cowork-control-matrix-titled`: trimmed to ~12px, then re-did it at 36px to match the title gap.
 
 ### Why not Playwright MCP
 

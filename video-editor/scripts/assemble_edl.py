@@ -7,7 +7,8 @@ so this script stays portable across projects.
 Usage:
     assemble_edl.py <validated_segments.json> <dedup_drops.json> \\
         --source-file <src> --parent-file <parent> --source-duration <dur> \\
-        -o <edl.json> [--merge-gap 0.3] [--lead-in 0.08] [--tail-pad 0.15]
+        -o <edl.json> [--merge-gap 0.3] [--lead-in 0.08] [--tail-pad 0.15] \\
+        [--transcript <words.json>] [--max-internal-gap 0.6]
 """
 
 import argparse
@@ -19,6 +20,33 @@ DEFAULT_MERGE_GAP_S = 0.3     # merge two segments if their gap is smaller than 
 DEFAULT_LEAD_IN_S = 0.08      # audio padding before each segment
 DEFAULT_TAIL_S = 0.15         # audio padding after each segment
 MIN_DURATION_S = 0.5          # drop segments shorter than this after padding
+DEFAULT_MAX_INTERNAL_GAP_S = 0.6  # split a kept segment at interior dead air longer than this
+
+
+def split_internal_gaps(seg, words, max_gap):
+    """Split one kept segment at interior word-gaps longer than max_gap.
+
+    A hand-authored keep range often spans several sentences, so a breath or
+    thinking-pause between them lives *inside* the range where merge/pad can't
+    reach it — the viewer hears dead air. Cutting there (a human editor's most
+    common tightening move) means ending the piece at the last word before the
+    gap and resuming at the first word after it. Segment boundaries stay on the
+    range's own start/end; only interior cuts move, and they land on real word
+    boundaries, so nothing is ever clipped mid-word.
+    """
+    ws = [w for w in words if w["end"] > seg["start"] + 1e-6 and w["start"] < seg["end"] - 1e-6]
+    if len(ws) < 2:
+        return [seg]
+    pieces = []
+    cur_start = seg["start"]
+    prev_end = ws[0]["end"]
+    for w in ws[1:]:
+        if w["start"] - prev_end > max_gap:
+            pieces.append({"start": cur_start, "end": prev_end})
+            cur_start = w["start"]
+        prev_end = w["end"]
+    pieces.append({"start": cur_start, "end": seg["end"]})
+    return pieces
 
 
 def validate_edl(edl):
@@ -64,6 +92,14 @@ def main():
     ap.add_argument("--tail-pad", type=float, default=DEFAULT_TAIL_S,
                     dest="tail_pad",
                     help=f"Audio pad after each segment, seconds (default {DEFAULT_TAIL_S}).")
+    ap.add_argument("--transcript", type=Path, default=None,
+                    help="Word-level transcript JSON. When given, kept segments are split "
+                         "at interior dead air (see --max-internal-gap) so pauses inside a "
+                         "multi-sentence keep range are tightened, not just gaps between ranges.")
+    ap.add_argument("--max-internal-gap", type=float, default=DEFAULT_MAX_INTERNAL_GAP_S,
+                    dest="max_internal_gap",
+                    help=f"Split a kept segment wherever an interior word-gap exceeds this many "
+                         f"seconds (default {DEFAULT_MAX_INTERNAL_GAP_S}). Needs --transcript.")
     args = ap.parse_args()
 
     segments = json.loads(args.validated.read_text())
@@ -86,6 +122,16 @@ def main():
             merged[-1]["end"] = seg["end"]
         else:
             merged.append(dict(start=seg["start"], end=seg["end"]))
+
+    n_internal_splits = 0
+    if args.transcript:
+        words = json.loads(args.transcript.read_text()).get("words", [])
+        tightened = []
+        for seg in merged:
+            pieces = split_internal_gaps(seg, words, args.max_internal_gap)
+            n_internal_splits += len(pieces) - 1
+            tightened.extend(pieces)
+        merged = tightened
 
     dur = args.source_duration
     padded = []
@@ -118,6 +164,7 @@ def main():
         "edl": str(args.out),
         "n_segments": len(final),
         "n_dropped_dedup": dropped,
+        "n_internal_splits": n_internal_splits,
         "retention_pct": round(retention_pct, 2),
     }))
 

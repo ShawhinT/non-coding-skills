@@ -22,8 +22,7 @@ on run argv
 	tell application "Keynote"
 		set wasRunning to running
 
-		open fileRef
-		set theDocument to front document
+		set theDocument to helpers's docForPath(filePath)
 		set docName to name of theDocument
 
 		export theDocument to file outputFolder as slide images with properties {image format:PNG, skipped slides:false}

@@ -36,12 +36,21 @@ All SOPs are child pages under the **SOPs** parent page in Shaw's ABA (Master) w
 | URL | https://www.notion.so/SOPs-[page-id] |
 | Parent (ABA Master) | `[page-id]` |
 
-The parent page is organized by category headers. As of this writing:
+The parent page is organized by category headers. As of this writing (confirm against the live
+page — titles drift as SOPs are added, split, or renamed):
 
-- **Acquisition** — Discovery Call, Event Series, Post Event
-- **Delivery** — 1:1 Claude Workshop, Group Claude Workshop, Check-in Call, Wrap-up Call
+- **Acquisition** — Discovery Call, Testimonial Ask, Referral Ask, AI Rollout Audit Call,
+  Event Series, Post Event
+- **Delivery** — 1:1 Claude Workshop, Group Claude Workshop, Wrap-up Call, and the **Check-in
+  Call family**: a shared base (**Check-in Call** — Setup, call bank, post-call mechanics) plus
+  three spokes carrying the agenda + templates — **Check-in Call (1:1 Claude Workshop)**
+  (post-session 4Rs), **Check-in Call (Client Nurture)** (periodic; 4Rs not forced), and
+  **Check-in Call (Lead Nurture)** (warm lead; no 4Rs)
 - **Resources** — reference pages rather than process SOPs (e.g. The 4Rs Framework, The
   Hormozi Content Framework); SOPs link to these instead of restating them
+
+The call/session SOPs follow a consistent **Trigger → Setup → Pre-call research → Call →
+Post-call** structure; delivery/acquisition SOPs follow their own order.
 
 All the entries above are real child pages. A category may also carry placeholder header
 bullets for SOPs Shaw hasn't written yet — promote those to real pages rather than

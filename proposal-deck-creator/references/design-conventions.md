@@ -39,7 +39,7 @@ An always-on band beneath the three stages: accounts, controls, governance, owne
 
 ## Typography
 
-Honor the client's specified font if there is one (e.g. Roboto for a [Company]-group deck). Otherwise use a clean, safe sans. Per the pptx skill, fonts outside the QA-safe list render approximately in the LibreOffice preview, so give text containers ~10% slack and rely on that slack rather than trusting the preview's exact fit for those fonts.
+Honor the client's specified font if there is one (e.g. Roboto for a Toyota-group deck). Otherwise use a clean, safe sans. Per the pptx skill, fonts outside the QA-safe list render approximately in the LibreOffice preview, so give text containers ~10% slack and rely on that slack rather than trusting the preview's exact fit for those fonts.
 
 ## Build helpers
 

@@ -2,8 +2,8 @@
 CANONICAL FORMAT REFERENCE (not a real proposal).
 This file demonstrates every structural/formatting pattern a proposal can use.
 It carries NO real copy. For the actual wording and content to start from, clone
-the most recent live proposal of the matching offering type under
-your proposals directory. Use THIS file only to get the
+the most recent live proposal of the matching offering type under your
+proposals directory. Use THIS file only to get the
 table shapes, table classes, spacers, page breaks, and table math right.
 Each <!-- ... --> note explains the pattern on the line(s) below it; delete all
 notes in a real proposal.

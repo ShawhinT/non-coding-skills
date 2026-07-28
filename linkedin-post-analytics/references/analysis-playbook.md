@@ -90,9 +90,9 @@ Lead with the key insight, not the raw data. Shaw wants to know what to do diffe
 
 Avoid vague advice like "post more engaging content" or "try different approaches." Ground everything in the actual data.
 
-## Cross-Referencing with linkedin-post-writer
+## Cross-Referencing with linkedin-voice
 
-When analyzing post performance, reference Shaw's `linkedin-post-writer` skill principles to connect data patterns to writing strategy:
+When analyzing post performance, reference Shaw's `linkedin-voice` skill principles to connect data patterns to writing strategy:
 
 - High-performing hooks → which hook archetypes work best?
 - Promo performance → does "lead with stance, bury the ask" hold up?

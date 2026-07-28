@@ -65,7 +65,7 @@ The won deal now needs a row in the Engagements DB so the project ledger has a r
 work. Hand off to the `engagements` skill's `workflow-1-create.md`, passing:
 
 - The new Clients (Nurture) page URL (for the `Client` relation)
-- The offer name (canonical option from `engagements/references/offer-pricing.md`)
+- The offer name (canonical option from `engagements/references/pricing-principles.md`)
 - The source (carry over from the lead)
 - Start Date (first scheduled session, or today if kickoff is now)
 - End Date (projected, if known)

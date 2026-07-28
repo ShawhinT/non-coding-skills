@@ -1,6 +1,6 @@
 ---
 name: aba-brand-system
-description: AI Builder Academy's brand and design system — colors, typography, voice/tone, components, icons, and copy patterns for aibuilder.academy and any ABA-branded surface (landing pages, decks, one-pagers, social graphics, emails, motion graphics). Use whenever Shaw is designing, mocking up, or reviewing anything that should look or sound like ABA. Triggers: "design a landing page for ABA", "make an ABA mockup", "one-pager for [ABA offer]", "what colors / font does ABA use", "ABA-ify this", "make this on brand", "what's the ABA voice", "design an ABA banner / hero / card / form", "slide template for ABA", "match the ABA homepage", "ABA infographic", "ABA animation". Also fire on any AI Builder Academy reference when the deliverable is a visual artifact (HTML, slide, image, mockup, SVG, React component, MP4, PNG) or copy that sits on an ABA surface. Casual mentions like "make it look like the ABA site" or "give this an aibuilder.academy feel" count too.
+description: AI Builder Academy's brand and design system — colors, typography, voice/tone, components, icons, and copy patterns for aibuilder.academy and any ABA-branded surface (landing pages, decks, one-pagers, social graphics, emails, motion graphics). Use whenever Shaw is designing, mocking up, or reviewing anything that should look or sound like ABA. Triggers: "design a landing page for ABA", "make an ABA mockup", "one-pager for [ABA offer]", "what colors / font does ABA use", "ABA-ify this", "make this on brand", "what's the ABA voice", "design an ABA banner / hero / card / form", "slide template for ABA", "match the ABA homepage", "ABA infographic", "ABA animation", "ABA event / sponsor slide". Also fire on any AI Builder Academy reference when the deliverable is a visual artifact (HTML, slide, image, mockup, SVG, React component, MP4, PNG) or copy that sits on an ABA surface. Casual mentions like "make it look like the ABA site" or "give this an aibuilder.academy feel" count too.
 ---
 
 # AI Builder Academy — Brand & Design System
@@ -21,6 +21,7 @@ This file is the **universal core** — colors, type, voice, icons, logos, the a
 | A still infographic (LinkedIn graphic, social-feed image, PNG one-pager, cheatsheet) | `references/infographic-composition.md` |
 | An embedded figure in an ABA blog post, slide, or doc | `references/infographic-composition.md` (same still-scale composition tokens; `graphic-builder`'s embedded-graphic mode strips the social packaging) |
 | A motion-graphic clip (B-roll, intro card, lower-third overlay, MP4 / `.mov`) | `references/animation-motion.md` |
+| An event / sponsor slide (QR + headshot, 16:9, often handed to a partner or exported to PPTX) | `references/event-slide-composition.md` |
 | Any voice/copy decision | `references/voice-and-tone.md` |
 
 **Same brand, different rhythms.** The website's hero stack (eyebrow → 2-line H1 → subhead → CTA) does not transfer to a 2-second LinkedIn still or a 4-second B-roll clip — the surface-specific files exist to make that clear.

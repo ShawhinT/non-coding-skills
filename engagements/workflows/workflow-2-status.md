@@ -39,9 +39,16 @@
 1. Fetch the engagement row
 2. Update `Status` to `Delivered`
 3. If `End Date` is blank, set it to the date of the last session
-4. Update the linked Clients (Nurture) row's `Status` to `Nurturing` (this is the handoff —
-   the client is now in the quarterly check-in rhythm). Set `Next Contact` to ~3 months out
-   per CRM follow-up guidance.
+4. Update the linked Clients (Nurture) row — **but only hand the account off to nurture if this
+   was the client's *last* open engagement.** Before flipping, check the Client relation for other
+   engagements still in `Sold`/`Active`:
+   - **No other open engagements** → set `Status` to `Nurturing` (the client enters the quarterly
+     check-in rhythm) and `Next Contact` ~3 months out per CRM follow-up guidance.
+   - **Other engagements still open** (a re-up already sold, a concurrent project, near-term
+     sessions still on the calendar) → keep `Status` at `Active` and set `Next Contact` to the
+     next real touchpoint (the next scheduled session or call), not ~3 months out. CRM Status
+     tracks the *account relationship*, not this one engagement, so a single Delivered project
+     doesn't put the whole account into nurture while other work is still live.
 5. Surface the 4Rs prompt to Shaw — ask whether to fill them in now (during the wrap call) or
    defer. Don't auto-fill 4Rs without Shaw's input.
 
@@ -114,7 +121,7 @@ Re-upped into 30-Day Intensive (E024) on 5/15.
 Names + outcomes:
 
 ```
-Referred 2 contacts: [Person A] (booked discovery 5/20), [Person B] (sent intro email 5/22, no reply).
+Referred 2 contacts: [Person] (booked discovery 5/20), [Person 2] (sent intro email 5/22, no reply).
 ```
 
 ### Reviews

@@ -45,13 +45,13 @@ both lines (existing + new) in chronological order.
 
 ```
 old_str:
-- <mention-page url="https://www.notion.so/page-A"/> (Apr 21 — [Person A])
-- <mention-page url="https://www.notion.so/page-C"/> (Apr 24 — [Person C])
+- <mention-page url="https://www.notion.so/page-A"/> (Apr 21 — [Person 2])
+- <mention-page url="https://www.notion.so/page-C"/> (Apr 24 — [Person 3])
 
 new_str:
-- <mention-page url="https://www.notion.so/page-A"/> (Apr 21 — [Person A])
-- <mention-page url="https://www.notion.so/page-B"/> (Apr 22 — [Person B])
-- <mention-page url="https://www.notion.so/page-C"/> (Apr 24 — [Person C])
+- <mention-page url="https://www.notion.so/page-A"/> (Apr 21 — [Person 2])
+- <mention-page url="https://www.notion.so/page-B"/> (Apr 22 — [Person])
+- <mention-page url="https://www.notion.so/page-C"/> (Apr 24 — [Person 3])
 ```
 
 **Example — appending to the end of Sessions section:**

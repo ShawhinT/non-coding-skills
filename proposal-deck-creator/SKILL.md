@@ -45,7 +45,7 @@ Gather (from the conversation, Notion, or by asking):
 
 - **Who is the client and audience?** Enterprise buyer, partner subcontract, the specific roles in the room (executives, AI champions, engineers). The audience drives the impact slide's segmentation.
 - **What's the offer?** 1:1 Claude workshops, team workshops, a multi-session engagement, a retainer. Pull the real session structure if it exists (e.g. an "AI Training Overview" or workshop outline page).
-- **Any client conventions?** Some enterprises (e.g. [Company]-group entities) expect a specific font or a purpose-first "A3" structure. Honor the client's font convention on the deck while keeping ABA's accent and voice. If the client specified fonts, use them; otherwise default to a safe, clean sans.
+- **Any client conventions?** Some enterprises (e.g. Toyota-group entities) expect a specific font or a purpose-first "A3" structure. Honor the client's font convention on the deck while keeping ABA's accent and voice. If the client specified fonts, use them; otherwise default to a safe, clean sans.
 - **What must stay off the deck?** Pricing usually lives in the partner/commercial layer, not the customer-facing deck — confirm before including any numbers.
 
 ## Step 2 — Research real impact (ask where to look)

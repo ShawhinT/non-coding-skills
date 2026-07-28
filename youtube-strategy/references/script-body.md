@@ -52,7 +52,7 @@ Use a real client when possible. Pull from `ABA Calls` (Notion) for relevant pro
 
 Before naming a client publicly:
 - Confirm permission to use their name and company
-- If unconfirmed, anonymize via role + industry + size ("the CEO of a 1,200-person company in Prague" or "a mid-market fintech CEO")
+- If unconfirmed, anonymize via role + industry + size ("the CEO of a mid-sized European manufacturer" or "a mid-market fintech CEO")
 - Anonymized doesn't lose impact — the story shape carries the weight, not the name
 
 ### Bridge into the body

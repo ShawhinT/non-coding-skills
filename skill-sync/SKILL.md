@@ -114,6 +114,15 @@ Every run appends to `~/agents/skills-sync/.logs/skills-sync.log`. If Shaw asks 
 tail -n 30 ~/agents/skills-sync/.logs/skills-sync.log
 ```
 
+## Editing skills from Claude Code — package for Desktop import
+
+Claude Desktop is authoritative and the scheduled sync overwrites `~/.claude/skills`, so a direct edit there survives only if it re-enters the pipeline through Desktop:
+
+1. Package the edited skill: from its parent `skills/` dir, `zip -rq ~/Downloads/<name>.skill <name>` (skill folder as zip top level; exclude `.env`, `client_secrets.json`, `token.json`, `.venv/`, `__pycache__/`, `uv.lock`, `.DS_Store`).
+2. Announce with a 📦 line and tell Shaw to import the `.skill` into Claude Desktop before the next hourly sync clobbers the local edit.
+
+Project-level skills (a repo's `.claude/skills/`) are outside the pipeline — still package them (the zip is their only backup) but there's no import deadline.
+
 ## What this skill does NOT do
 
 - Create or edit skills → use `skill-creator` / `skill-updater`.

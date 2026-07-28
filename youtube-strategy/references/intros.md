@@ -70,7 +70,7 @@ Real examples (from one session):
 - [Person] (sales call): *"Last 4 month it was a good email summary tool, just scratching the surface"*
 - [Client Name] (sales call): *"Spending evenings with AI"* / *"Using it but feel behind. FOMO"*
 - [Client Name] (intake): script he built *"sometimes works sometimes it doesn't"*
-- [Client Name] (testimonial): *"stitching outputs together, switching between tools"*
+- [Person] (testimonial): *"stitching outputs together, switching between tools"*
 
 These are the building blocks of line 1.
 

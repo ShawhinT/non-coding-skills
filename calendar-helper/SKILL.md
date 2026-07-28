@@ -8,7 +8,7 @@ description: >
   "another session with X next Saturday", "follow-up call with X", "reschedule the X meeting",
   "move my X call to Friday", "cancel the X event", "delete that meeting", or any casual
   phrasing that implies adding/changing a calendar block (e.g., "let's do another one with
-  [Client Name]", "block off Wednesday morning for the workshop"). Even when Shaw doesn't say
+  [First Name]", "block off Wednesday morning for the workshop"). Even when Shaw doesn't say
   "calendar" explicitly, this skill should fire if the request is about scheduling. This skill
   also creates a paired Notion page in ABA Calls or ABA Trainings when the event is a sales
   call or a delivery session and a paired page is part of the existing pattern.
@@ -73,8 +73,8 @@ ambiguity to surface in Step 5.
 Use `list_events` to search Shaw's calendar for past events that match the request. The right
 search depends on what's available:
 
-- **Attendee + topic** is the strongest signal. E.g., for "another session with [Client Name]", search
-  for past events with that client's email on the attendee list.
+- **Attendee + topic** is the strongest signal. E.g., for "another session with [First Name]",
+  search for past events with that person's email on the attendee list.
 - **Topic alone** if no attendee is named (e.g., "schedule the next podcast recording" →
   search for "podcast" in past event titles).
 - **Pure recurrence** (e.g., a weekly standup) may have no attendee and no topic keyword —
@@ -108,7 +108,7 @@ Search the most likely database first based on event type:
 | Training / delivery / workshop / 1:1 session | `ABA Trainings` | `[page-id]` |
 
 Search query: combine attendee name + topic keywords (e.g., "[Client Name] skill building"
-or "[Client Name] training session"). Look at the top 1-3 matches and pick the one whose title most
+or "[First Name] training session"). Look at the top 1-3 matches and pick the one whose title most
 closely mirrors the calendar event's title pattern.
 
 **Decision rule:**
@@ -125,11 +125,16 @@ above to decide whether a paired page is needed.
 
 ### Step 3.5 — Consult the matching event-type SOP
 
-For sales-call and training events, look up the matching event-type SOP on the SOPs page — find
-it by title (Discovery Call, 1:1 Claude Workshop, Check-in Call, Wrap-up Call, Group Claude
-Workshop). SOPs are discovered by title, not by hardcoded ID; see `notion-helper` → "Event-Type
-SOPs" for how to find them. Read the SOP's **Setup** section — it's the authoritative recipe for
-everything that happens around the calendar event in Notion. The SOP defines:
+For sales-call and training events, look up the matching event-type SOP on the SOPs page
+(`[page-id]`). Fetch that page and match its child pages by title —
+don't work from a list memorized here, because the set changes as offers change, and a
+remembered title that no longer exists sends you hunting for an SOP that was never there. As of
+this writing: **Acquisition** — Discovery Call, AI Rollout Audit Call. **Delivery** — 1:1 Claude
+Workshop, Group 1:1 Claude Workshops, Team Workshop, Check-in Call (plus its Client Nurture /
+Lead Nurture / 1:1 Claude Workshop spokes), Wrap-up Call. Treat that list as a dated snapshot,
+not the source of truth. See `sop-helper` for how SOPs are structured and found. Read the SOP's
+**Setup** section — it's the authoritative recipe for everything that happens around the
+calendar event in Notion. The SOP defines:
 
 - What the paired page's body should contain (usually a one-liner with the CRM link — not
   empty)
@@ -155,9 +160,17 @@ event and hand the Notion side off to Workflow 7 — don't run the SOP yourself.
 call-type SOP (Check-in, Wrap-up, 1:1 Workshop, Group Workshop) gets executed by
 calendar-helper directly.
 
-**No SOP applies?** Then the event isn't paired with Notion at all — just create the calendar
-event and skip the Notion side. (Personal blocks, dentist appointments, internal focus time,
-podcast recordings without a paired ABA page, etc.)
+**No SOP applies?** Ask *why* there's no SOP before concluding there's no Notion side —
+pairing is determined by what the event is, not by whether an SOP exists. An SOP supplies the
+specifics; it doesn't grant permission.
+
+- **Not an ABA event** — personal blocks, dentist appointments, internal focus time, podcast
+  recordings without a paired ABA page. No pairing. Create the calendar event and stop.
+- **An ABA event whose offer isn't documented yet** — a new or ad hoc offer (a standalone paid
+  office hour, a one-off advisory session) is still a paid delivery session or sales call, and
+  still earns the standard pairing: paired page in the matching DB, engagement link, FU task.
+  Run the closest comparable SOP's Setup as the template, and tell Shaw the SOP is missing so
+  the gap gets closed rather than re-improvised next time.
 
 ### Step 4 — Build the event and execute the SOP's Setup
 
@@ -174,7 +187,8 @@ in Step 3.5), execute the SOP's Setup section in full. That typically means:
   by page type"). **Body** = per the SOP's Setup — typically a
   one-line `CRM: <mention-page>` link plus a single short time-of-day line; not empty.
 - **Create the FU task** if the SOP calls for one (it usually does — `FU - [First Name]` in
-  ABA, dated call date + 1).
+  ABA, dated call date + 1, icon `⭕`). Every delivery session gets a follow-up email, so the
+  FU task is the norm for trainings, not an extra.
 - **Append the bidirectional link** on the CRM record — `## Calls` line pointing at the new
   page, on the matching CRM record (Active Leads for a lead, Clients (Nurture) for a client).
 - **Link to an Engagements row** if the SOP calls for it (see Step 4.5 below for the trainings
@@ -266,8 +280,8 @@ name when multiple people from their side are attending (`[Company] / Shaw - Wra
 `[Company] / Shaw - Check-in`). This applies to any event type.
 
 **Spaces around `/` and `x` separators.** When a title joins two names with `/` or `x`,
-always include surrounding spaces: `[First Name] / Shaw – Catch-up`, never `[First Name]/Shaw`. Same for
-`x` collabs: `[First Name] x Shaw`, never the names jammed together with no spaces. This applies to any new title composition;
+always include surrounding spaces: `[First Name] / Shaw – Catch-up`, never `[First Name]/Shaw`.
+Same for `x` collabs: `[First Name] x Shaw`, never `[First Name]xShaw`. This applies to any new title composition;
 when mirroring an existing reference event, preserve its exact format.
 
 **Suffix the event type after the names.** Coffee chats, check-ins, workshops, and 1:1s
@@ -326,8 +340,15 @@ touching it, and let what you find decide whether step 2 runs at all.
    body text for inline date references (e.g., "Send follow-up email after 7/1…") and update
    those too — the date property and the body can drift out of sync if only one changes.
    If a Precall or FU task is already ✅ completed, leave it alone — don't reassign a
-   completed task to the new date. Flag it to Shaw and offer to create a fresh task for the
-   new date instead. **When the event type has a matching SOP, that SOP is
+   completed task to the new date. Check whether prior reschedules of this same session
+   already established a pattern (e.g., a fresh `Precall - {First Name}` created per
+   reschedule): if so, mirror it — create the fresh task directly (copy the last one's
+   body, date = session − 1) and report it. Only fall back to flagging it and offering
+   to create the task when there's no pattern to mirror.
+   Pages that carry a per-reschedule history keep it in the same format — append a
+   matching entry wherever one exists (the session page's research-history line, the
+   engagement's Notes line — and shift the engagement's End Date when the moved session
+   is its last). **When the event type has a matching SOP, that SOP is
    the highest-priority source** — read its Setup / reschedule-handling section and let it
    override these defaults for that event type (e.g. whether a completed `Precall` shifts or
    instead spawns a fresh task). Ad hoc events with a paired page but no SOP (e.g. a one-off
@@ -421,8 +442,8 @@ Use the data source ID when calling `notion-create-pages`.
 
 ## Edge Cases
 
-**Ambiguous attendee name** — a first name could match multiple people. Search calendar for past
-events with anyone by that name; if there's exactly one frequent match, use it. If there
+**Ambiguous attendee name** — a bare first name could match multiple people. Search calendar
+for past events with anyone matching that name; if there's exactly one frequent match, use it. If there
 are multiple, ask via `AskUserQuestion` and offer the top 2-3 by recency.
 
 **Multiple reference events with conflicting patterns** — last 3 sessions were 60 / 90 / 60
@@ -498,6 +519,11 @@ rather than calling `notion-update-page` directly — `notion-helper` owns that 
   Half-executing the SOP (creating only the page) is the bug Step 3.5 exists to prevent.
 - **Mirror the reference, don't reinvent** — if the reference event has a quirk (specific
   color, weird notification setting, custom description), preserve it
+- **Mirror structure, not state** — a reference page shows you the shape (sections, title
+  format, which properties are set); it does not tell you what state a *new* page starts in.
+  Status-carrying fields — icon, Status, checkboxes, completion markers — come from the spec,
+  not from the reference. Copying `✅` off a finished task onto a fresh one is the failure
+  mode: the reference was ✅ because it was done, and the new task isn't.
 - **Hand off, don't duplicate** — for Notion updates on reschedule/delete, route through
   `notion-helper`. For prep notes, route through `pre-call-research`. For lead pipeline
   updates and discovery-call intake, route through `crm` (Workflow 7 for discovery calls).

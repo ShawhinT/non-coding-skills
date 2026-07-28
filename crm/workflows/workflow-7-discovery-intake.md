@@ -84,10 +84,11 @@ that point produces off-template drafts that miss the SOP question selection, th
 mechanics, and Shaw's voice rules. See the "When another skill is already running" section in
 `email-helper/SKILL.md` for the canonical composition rule.
 
-Once email-helper is loaded, its `discovery-call-confirmations.md` owns the threading mechanics
-(reply inside the Calendly notification thread — or the contact-form / sales thread if the lead
-came in that way) and points to the Discovery Call SOP for the canonical template and question
-selection.
+Once email-helper is loaded, its **"Calendly notification threads"** section owns the threading
+mechanics (reply inside the Calendly notification thread, addressed to the invitee's email pulled
+from the notification body — or the contact-form / sales thread if the lead came in that way). The
+Discovery Call SOP carries the canonical template and question selection; find it via the SOPs
+page rather than a hardcoded path.
 
 ## Step 6 — Confirm
 

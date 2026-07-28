@@ -46,7 +46,7 @@ For CRM (Nurture, Active Leads), see `crm/SKILL.md`. For ABA tasks/events, see `
 |---|---|---|
 | Engagement ID | Title | Format `E### - <Name>` — 3-digit zero-padded number, then the client name (e.g., `E007 - [Company]`, `E005 - [Client Name]`). Use the organization name when the client is a company, the person's name for solo individuals. Pull the name from the Client relation, never a search result. NOTE: the property is named "Engagement ID" not "ID" — Notion reserves "id" as a system field name and rejects it. |
 | Client | Relation → Clients (Nurture) | Single client per engagement. The synced backlink on the Nurture page is named "Engagements". |
-| Offer | Multi-select | `1:1 Claude Workshop`, `1:1 Claude Workshops — Team`, `30-Day Claude Intensive`, `Custom AI Training`, `AI Advisory`, `Ad Hoc Consulting`. See `references/offer-pricing.md` for default prices. |
+| Offer | Multi-select | **Read the current options from the data source schema** — don't work from a list written down in this skill; they drift. Roughly: solo workshop, team/group workshops, 30-Day Intensive, Custom AI Training, AI Advisory, Ad Hoc Consulting. See `references/offer-scopes.md` for deliverable shapes. |
 | Source | Multi-select | `LinkedIn`, `YouTube`, `Personal`, `ABB`, `ABA Contact`, `Homepage Contact`, `ABA Discovery Call`, `Referral`. Mirrors CRM Source options. |
 | Status | Select | `Sold`, `Active`, `Delivered`, `Refunded`, `On Hold`. See Lifecycle below. |
 | Start Date | Date | Date of first scheduled session (or kickoff date if no sessions yet). |
@@ -103,7 +103,10 @@ conversations) tracks in the Clients (Nurture) page going forward. The engagemen
 as a permanent record for revenue/case-study purposes, but its 4Rs body section gets filled in
 once and not actively maintained. If the client re-ups before wrap-up is done, the wrap-up items
 (testimonial ask, 4Rs) roll forward to the newest engagement; the older row staying at TBD is
-not a gap.
+not a gap. The handoff is engagement-level, not account-level: the client's CRM row only flips to
+`Nurturing` (with a ~3-month `Next Contact`) when this was their *last* open engagement. If other
+engagements are still `Sold`/`Active`, the account stays `Active` and `Next Contact` points to the
+next real touchpoint — see Workflow 2 step 4.
 
 ---
 
@@ -211,8 +214,8 @@ This is the load-bearing rule that determines what goes where.
 
 | Reference | Contents | File |
 |---|---|---|
-| Offer Pricing | Canonical offer names + default prices | `references/offer-pricing.md` |
-| Offer Scopes | Canonical default program scope per offer (deliverables, bonuses, guarantees) | `references/offer-scopes.md` |
+| Pricing Principles | Where price comes from + judgment rules that outlive a price change | `references/pricing-principles.md` |
+| Offer Scopes | Canonical deliverable shapes per offer (deliverables, bonuses, guarantees) | `references/offer-scopes.md` |
 | Reconciliation Checks | Canonical catalog of sync checks with auto/surface tiers, sources of truth, fixes, and traps | `references/reconciliation-checks.md` |
 
 ---
@@ -225,6 +228,10 @@ This is the load-bearing rule that determines what goes where.
   to rename back.
 - **Leave Price/Paid Status blank if unsure.** Better to flag for Shaw than guess. The Stripe
   workflow can fill these in later.
+- **Don't cache offer names or prices in this skill.** Offers change often — new SKUs appear
+  mid-conversation, formats get shortened, prices move. Read names from the `Offer` multi-select
+  schema and prices from the agreement or live Stripe. A number written here reads as
+  authoritative long after it stops being true.
 - **Check for proxy-email payers before declaring "no invoice found."** Some clients pay via
   vendor portals ([Company], [Company], [Company]) where the billing email differs from the
   client's contact email. The actual payer may be a procurement contact at the company. Search
@@ -247,4 +254,8 @@ This is the load-bearing rule that determines what goes where.
   captures the promise at sale. If actual delivery diverges materially (different sessions,
   different format, different deliverables, materially different price), that's almost always a
   new engagement — split into a second row rather than editing the original scope. Record the
-  re-up in the prior engagement's Notes.
+  re-up in the prior engagement's Notes. The split rule governs *delivery* diverging from the
+  sale; when the sale itself was mis-recorded and corrected before delivery (a scoping
+  misunderstanding surfaces, the invoice gets voided and replaced), update the row in place —
+  same project, one row — and log the correction plus the voided/replacement invoice in Notes.
+  The row reflects the actual agreement; only real follow-on work earns a new row.

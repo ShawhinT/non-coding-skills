@@ -137,6 +137,14 @@ LinkedIn DMs follow the same structure minus the subject line, even shorter.
 - CTA is reply-friction only ("tell me if it's useful"). No meeting ask.
 - Short. No landing-page words. No formal signoff.
 
+## Follow-ups
+
+A follow-up isn't a re-send — it's a lighter touch than the message before it, and the ladder should feel like it's winding down, not repeating.
+
+- **The first follow-up carries the proof.** Don't just "bump" ("just checking in") — that adds pressure without adding a reason. Move the credibility line from the original ask into the first follow-up (e.g. "this is the same framework I've taught to 30+ leaders 1:1"), so the nudge earns its place by giving a fresh reason to say yes.
+- **Don't re-drop a link that's already in the thread.** In a DM or reply chain the original link is one scroll up. Repeating it reads as clutter and makes the message feel automated. Re-include a link only when it's a fresh CTA the reader needs in hand *and* the earlier one has scrolled out of view.
+- **Each rung gets terser.** The final nudge is the shortest and most time-bound — a one-liner tied to a deadline ("we go live Friday"). Drop the greeting and even the sign-off if the thread is already familiar; a short, in-thread nudge doesn't need "Hey [Name]" and "— Shaw" wrapped around it.
+
 ## Common failure modes
 
 1. **"Hi [Name], I hope this email finds you well."** Instant delete. Burns preview text.

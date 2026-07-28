@@ -2,7 +2,7 @@
 
 Use this framework when Shaw is writing a LinkedIn post whose job is to drive conversion — a post promoting an upcoming workshop, launching a cohort, pitching an intensive, or pushing a newsletter signup tied to an offer.
 
-This is **not** the framework for general thought-leadership posts, essays, or frame-setting content. Those belong in `linkedin-post-writer`. Use this one only when the post has a conversion goal.
+This is **not** the framework for general thought-leadership posts, essays, or frame-setting content. Those belong in `linkedin-voice`. Use this one only when the post has a conversion goal.
 
 ## Before you draft
 

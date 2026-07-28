@@ -23,11 +23,12 @@ Two ways I'd recommend using this repo:
 |-------|-------------|---------|--------------|
 | **aba-brand-system** | Reference for AI Builder Academy's brand — colors, typography, voice/tone, components, icons, and copy patterns | Any | None |
 | **conversion-copy** | Draft/sharpen conversion copy (landing pages, DMs, sales emails) via Harry Dry's 3-question filter | Any | None |
-| **linkedin-post-writer** | Draft LinkedIn posts in a consistent writing style | Any | None |
+| **linkedin-voice** | A LinkedIn writing voice distilled from top-performing posts, plus a hook bank | Any | None |
 | **newsletter-writer** | Draft newsletters for a Kit-style email list in a consistent voice and structure | Any | None |
 | **sales-letter-writer** | Draft long-form sales letters and one-pagers using Hormozi's $100M Offers principles | Any | None |
 | **skill-helper** | Walk someone through building their first (or next) high-leverage Claude skill, end-to-end | Any | None |
 | **skimmable-summary** | House format for multi-item summaries, digests, briefings, and status reports | Any | None |
+| **tactical-negotiation** | Apply tactical empathy (Chris Voss style) to negotiations and high-stakes conversations | Any | None |
 | **youtube-strategy** | Turn a pain point or idea into a YouTube package — title, thumbnail, intro hook, motivation, outro | Any | None |
 | **workshop-use-case-researcher** | Research practical use cases for custom AI workshops and training proposals | Any | Web search |
 | **email-helper** | Draft emails in a consistent voice and style (including three-way intros, follow-ups, etc.) | Any | Gmail MCP |
@@ -46,7 +47,10 @@ Two ways I'd recommend using this repo:
 | **outreach** | Run 1:1 outreach campaigns end-to-end — sourcing, enriching, tracking, and drafting messages | Any | Notion MCP, Gmail MCP, Chrome tool |
 | **pre-call-research** | Research prospects before sales calls | Any | Notion MCP, Gmail MCP, web search |
 | **skill-updater** | Update and repackage existing skills on Claude.ai | Claude Chat or Cowork | None |
+| **extract-chatgpt-transcript** | Extract a shared ChatGPT conversation into a clean Markdown transcript | Claude Code or Cowork | Chrome tool |
 | **linkedin-post-analytics** | Pull and analyze LinkedIn post performance from the creator analytics dashboard | Claude Code or Cowork | Chrome tool |
+| **cost-optimizer** | Estimate a conversation's token usage, dollar cost, and break-even hourly wage | Claude Code or Cowork | Python |
+| **night-transcript-linker** | Scheduled job that links each day's Google Meet transcripts to their Notion call pages | Claude Code or Cowork | Python, Notion MCP, Google Drive MCP |
 | **proposal-deck-creator** | Build a clean, on-brand client proposal deck (pptx) from an engagement's source material | Claude Code or Cowork | Node (pptxgenjs), Notion MCP |
 | **skill-sync** | Run a local skills-sync CLI to publish skills across Desktop, Codex, and Claude Code | Claude Code | Python, skills-sync CLI |
 | **animation-builder** | Build short motion-graphic B-roll animations (HTML/CSS/SVG) and render to MP4 | Claude Code | Python, Playwright, ffmpeg |

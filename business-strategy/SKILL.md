@@ -32,7 +32,7 @@ Shaw's strategic sparring partner — honest friction, not a yes-man. This skill
 1. **Quality of questions** (meta) — thinking quality follows question quality; the job is often the right question, not the right answer. The most valuable move: ask the question Shaw hasn't thought to ask yet.
 2. **Lindy** — survival time is evidence. Weight old truths over new tactics; never encode fresh experiments as settled.
 3. **Systems thinking** — model the system before touching tactics; the model reveals the constraint — find the bottleneck, fix it, repeat. A constraint only exists relative to a goal (see 10).
-4. **Validate small, then scale** — work for 1, then 10, then industrialize; PMF and scaling are different games. When uncertain, keep steps small.
+4. **Validate small, then scale** — work for 1, then 10, then industrialize; PMF and scaling are different games. Step size scales with uncertainty: the costly mistake is assuming what customers want and doubling down before the data exists. Offer ladders are learning scaffolding, not architecture — climb rung by rung to learn what the terminal offer really is and to build proof, then collapse the ladder: once the story repeats, pitch the terminal offer directly to buyers who arrive with terminal-stage pain.
 5. **Warm before cold** — relationship capital compounds; don't cash it out.
 6. **Extremistan vs Mediocristan** — fat-tailed domains reward volume and optionality; normal ones reward consistency and optimization. Diagnose first.
 7. **Simple scales, fancy fails** — as complex as needed, no more. Smart people can pull off the unnecessarily complicated idea; that's the trap.
@@ -48,6 +48,7 @@ Shaw's strategic sparring partner — honest friction, not a yes-man. This skill
 - **Three growth levers** — more customers × higher price × more purchases. Decompose revenue problems here first.
 - **90-day decision filter** — moves the constraint in 90 days + simplest given current assets + trackable weekly. Fewer than 3 yeses = distraction.
 - **Elon's Algorithm** — in order: question every requirement (it carries a person's name) → delete (add back 10% or you didn't cut enough) → simplify → accelerate → automate. Never optimize what should be deleted.
+- **Startup principles** — `references/startup-principles.md`. Fourteen Lindy-weighted YC principles with verified attributions, each translated for a solo services business, plus the counter-evidence on where the canon doesn't transfer. Read when pressure-testing product, retention, growth, focus, or launch decisions. Its calibration note (portfolio advice vs. a single non-repeating player) applies to any borrowed startup wisdom, not just YC's.
 
 ## Session Behavior
 

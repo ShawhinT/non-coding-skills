@@ -24,7 +24,7 @@ When the user wants to reference a past proposal:
   ```
 - **.pages files**: Most past proposals have a PDF version alongside the .pages file. Use the PDF with read-pdf.py.
 
-Keep past proposals in a consistent location, organized by client (one folder per client).
+Past proposals live in your proposals directory, one folder per client (`<proposals-root>/<client>/`).
 
 ## Updating an Existing Proposal
 
@@ -34,12 +34,19 @@ When you change a value that appears in more than one place — durations, sessi
 
 ## Drafting a Proposal
 
-**First, find the best base to start from.** Before writing anything, look across *all* client folders in your proposals directory, not just the current client's, and pick the **most recent proposal of the same offering type** to use as the template. The newest proposal of a given type carries the latest copy refinements (wording, structure, section names), so starting there beats both the current client's older draft and the content-free `references/format-reference.md` (which is for format, not copy).
+**First, find the best base to start from.** Before writing anything, look across *all* client folders under the proposals root, not just the current client's, and pick the **most recent proposal of the same offering type** to use as the template. The newest proposal of a given type carries the latest copy refinements (wording, structure, section names), so starting there beats both the current client's older draft and the content-free `references/format-reference.md` (which is for format, not copy).
 
 To do this:
-1. List the proposal folders and their `.md` files with timestamps. Filenames vary: most follow `ai-training-outline_<client>_<variant>.md` (variant `_1on1`/`_team`, version `_v2`), but some are named descriptively after the offering (e.g. `team-claude-workshops_acme.md`). Glob *all* proposal markdown, not a single prefix: `ls -lt **/*.md`. Read the offering type from filename keywords (`team`/`cohort` vs `1on1`/`1:1`) or by opening the file. Don't filter on the `ai-training-outline_` prefix, or you'll silently miss the most recent base when it was renamed.
-2. Match on offering type: a 1:1/2:1 workshop request should clone the most recent `_1on1` outline (e.g., [Company A]'s was the freshest when drafting [Company B]'s), a cohort/team rollout the most recent `_team`, and so on.
-3. Read that file, then adapt it to the new client: swap names, participant groupings, delivery method, dates, and pricing. Preserve its refined copy unless the new engagement calls for different wording.
+1. Rank the candidates for that offering type by the `Prepared on` date *inside* each file. Do not rank by file mtime: editing an old proposal for any reason floats it to the top and silently hands you a stale base. Run this from the proposals root, swapping the variant token:
+
+```bash
+for f in */*1on1*.md; do d=$(grep -m1 '^\*Prepared on' "$f" | sed 's/^\*Prepared on //; s/ by .*//'); echo "$(date -j -f '%B %d, %Y' "$d" '+%Y-%m-%d' 2>/dev/null) $f"; done | sort -r
+```
+
+   Variant tokens: `1on1` (1:1 and 2:1 workshops), `fractional` (ongoing retainers), `team` (cohort/group rollouts). The token matches across naming eras, since current files are `ai-proposal_<client>_<variant>.md`, older ones `ai-training-outline_<client>_<variant>`, and descriptive ones still carry the word (e.g. `team-claude-workshops_<client>-<audience>.md`).
+
+2. Take the top result as the base, with two exclusions. Skip files with `example` in the name (illustrative templates, not live proposals). Skip anything whose offering doesn't actually match once you open it. If the glob returns nothing or suspiciously few hits, the offering may predate the token convention: fall back to `ls */*.md` and identify the type by reading titles.
+3. Read that file, then adapt it to the new client: swap names, participant groupings, delivery method, dates, and pricing. Preserve its refined copy unless the new engagement calls for different wording. Rewrite the H1 to the standard `AI Enablement - <Client>` (older bases carry offering-specific titles like `1:1 Claude Workshops - [Company]`).
 
 Confirm the chosen base with the user if it's ambiguous which prior proposal is the closest match.
 
@@ -56,9 +63,11 @@ Gather these details from the user (ask for anything missing):
 
   | Session type | Standard rate |
   |---|---|
+  | 1:1 Claude Workshop (90-min session + 30-min check-in) | $1,500 |
   | All-hands kickoff (short, prepared) | $2,500 flat |
   | Cohort breakout / done-for-you live build (~90 min) | $5,000 |
   | Office hour / follow-up (~30 min, no-prep) | $1,000 |
+  | Fractional support (ongoing retainer) | from $6,000/mo |
 
   Note the 90-min done-for-you build is a premium over the `$2,500/hr` prepared rate, and short sessions use a flat minimum rather than a prorated hourly figure. These are starting points to confirm with the user, not fixed outputs.
 - **Discount** — When a discount applies, list sessions at full standard-rate prices and add a discount row in green: `| <span style="color: #2E7D32">*Discount*</span> | | <span style="color: #2E7D32">*-$X*</span> |`. The Total row reflects the discounted price.
@@ -66,15 +75,22 @@ Gather these details from the user (ask for anything missing):
 
 **Structure:** Engagements can be multiple sessions or a single session with multiple parts (using `### Part 1:`, `### Part 2:`). The syllabus Duration field should reflect this (e.g., "1 session (3.5 hours total)" or "4 sessions (90 min each)").
 
-**Flexible-scope pricing (count or timing undecided).** When the engagement's exact scope is still open, don't pin a single headline Total. Price by building block: an Investment table that lists each unit (a workshop, a 1:1 prep, a follow-up) at its unit price, followed by two anchored *example scopes*, a smaller and a larger configuration, each with its own reconciled Total. Two anchors let the reader infer the in-between cost without you enumerating every option. If a unit price hinges on a term that could be read two ways (per-team vs per-session), define that term in plain language right before the table (e.g. "a *team* is a function. a *group* is a scheduled session of that team."). See the most recent flexible-scope proposal for a worked example.
+**Flexible-scope pricing (count or timing undecided).** When the engagement's exact scope is still open, don't pin a single headline Total. Price by building block: an Investment table that lists each unit (a workshop, a 1:1 prep, a follow-up) at its unit price, followed by two anchored *example scopes*, a smaller and a larger configuration, each with its own reconciled Total. Two anchors let the reader infer the in-between cost without you enumerating every option. If a unit price hinges on a term that could be read two ways (per-team vs per-session), define that term in plain language right before the table (e.g. "a *team* is a function. a *group* is a scheduled session of that team."). See a past multi-team rollout proposal (`<client>/team-claude-workshops_<client>-<audience>.md`) for the worked example.
+
+**Next phases (optional, buyer-driven).** A proposal usually scopes one recommended starting offering. When the buyer asks to see offerings beyond that starting point (e.g. wanting unit prices to bring to a leadership conversation), add a short "Next phases" section after the Investment listing the other offerings at unit prices, one line each. Keep them out of the Investment Total, they're context, not priced scope. Only include when asked, not as a default.
 
 Two sources, two jobs:
 - **Content/copy** comes from the most recent live proposal of the matching offering type (the "find the best base" step above). Clone its wording and structure.
 - **Format/structure** is defined once in `references/format-reference.md`, a content-free skeleton that demonstrates every pattern with inline notes: both syllabus headings, the spacer row, multi-session vs single-session-with-parts headers, timed segments, optional/unbilled segments, the page break, both Investment table shapes (simple 3-column and Qty-column collapse `N | $total ($unit ea)`), `Included` and `n/a` cells, the green discount row, and the payment-term variants. Consult it whenever you're unsure how a structural element should be written. It is the fallback base when no live proposal of the needed type exists yet.
 
-Save to: `<proposals-directory>/<client>/ai-training-outline_<client>.md`
+**Filename convention.** Save to: `<proposals-root>/<client>/ai-proposal_<client>_<variant>.md`. The H1 title is `AI Enablement - <Client>` (e.g. `# AI Enablement - Acme Coatings`).
 
-When a client gets multiple offering variants or revisions, suffix the filename — variant first, then version: `ai-training-outline_<client>_<variant>.md` (e.g., `_team`, `_1on1`), and `_v2`, `_v3` for major revisions (e.g., `ai-training-outline_acme_team_v2.md`). Shaw sometimes renames a proposal to a descriptive, offering-led name (e.g. `team-claude-workshops_acme.md`). That's fine, and it's why the discovery step globs all `.md` rather than a fixed prefix.
+- `<variant>`: `1on1` | `team` | `fractional`. When a client has only one offering, still include the variant that fits (e.g. `ai-proposal_acme-coatings_1on1.md`).
+- One convention for both the source `.md` and the built `.pdf` (the PDF inherits the basename), and it's also the client-facing name Shaw sends. No separate internal vs client naming.
+- **Do not track versions.** No `_v2`/`_v3` suffixes and no date suffixes. When a proposal is revised, edit and rebuild the same file in place.
+- `<client>` is kebab-case (e.g. `acme-coatings`); the folder uses the same client slug.
+
+Legacy proposals use the older `ai-training-outline_<client>...` prefix and some are named descriptively (e.g. `team-claude-workshops_<client>-<audience>.md`). Leave those as-is. The discovery step globs all `.md` rather than a fixed prefix, so mixed names coexist fine.
 
 Tell the user to review the markdown before PDF generation.
 
@@ -85,7 +101,7 @@ A proposal is a spec, not a pitch. The deal sells itself through clear structure
 - **Compress to the outcome.** State the result; don't explain the mechanism inside it. "Each participant builds one skill relevant to their work" beats "three skills built live (12 total), drawn from the intake form, plus one built as homework."
 - **One idea per sentence.** Any punctuation that fuses two clauses into one breath (em-dash, semicolon, comma-splice) is a signal to split into two sentences or cut the trailing clause. A period is almost always the fix. (Shaw reliably edits these out.)
 - **No em dashes or en dashes, anywhere.** Not in prose, not in headers, not as table placeholders. Shaw strips them from nearly every proposal because they read as AI-authored, so write without them from the start. Replace a prose em dash with a period, comma, or colon. Write number ranges with a hyphen ("2-3 skills", "3-4 participants"), not an en dash. Use "n/a" for an empty Investment-table cell, not "—".
-- **Cut rationale and framing.** A well-ordered agenda argues for itself. Don't narrate why it's structured that way ("no demos here, those come later") or add an "Our Approach" essay. Meta-commentary reads as insecurity about the structure.
+- **Cut rationale and framing.** A well-ordered agenda argues for itself. Don't narrate why it's structured that way ("no demos here, those come later") or add an "Our Approach" essay. Meta-commentary reads as insecurity about the structure. *One sanctioned exception:* a short "Why this matters" block under the Engagement Goal is fine when Shaw asks for it. It's a judgment call he makes by feel, not a default, so don't add it unprompted. When included, keep it to ~2 bullets framing the entry-point offering as the wedge (executives gain the AI mental model to build strategy, champions drive adoption through social proof), drawn from Shaw's roadmap language. Don't let it grow into an essay.
 - **The client is the hero, not the instructor.** Demote yourself as the actor, promote the team as the one who acts and benefits. You get the work verbs (instruct, demo); they get the outcome verbs (learn, build, share). Prefer "skills the team can build" over "skills to build," and "Instructor builds…" over "I build…".
 - **Don't tally or label-inflate.** Counts ("12 skills!") and marketing terms ("done-for-you") signal salesmanship and quietly commit you to numbers. Promise the minimum you can stand behind.
 - **Name things plainly.** Calm, true nouns over benefit-reaching labels: "Onboarding Claude to [Company]" over "Delegating Work to Claude for Teams."

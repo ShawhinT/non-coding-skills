@@ -41,7 +41,10 @@ digest shape — edit this workflow or the check catalog. Never put that logic i
 
 1. **Pull the ledger and the reference sets once.** Query the Engagements default view (sorted).
    Pull the four reference databases in full so workers share one source of truth: Clients
-   (Nurture), Testimonials, ABA Calls, ABA Trainings. Hit Stripe only as needed per engagement.
+   (Nurture), Testimonials, ABA Calls, ABA Trainings. Hit Stripe per engagement as needed — where
+   "as needed" always includes any engagement that is `Unpaid`/`Partial` or `Sold`/`Active` with an
+   outstanding invoice, so a payment that landed since the last run is caught (see Check 7). Don't
+   trust the Notion-recorded Paid Status as proof of the current money state.
 
 2. **Fan out.** Dispatch subagents in parallel, each owning a slice of engagements (≈2 each) and
    carrying the shared reference data, so the sweep stays fast as the ledger grows. For a small
@@ -78,8 +81,12 @@ digest shape — edit this workflow or the check catalog. Never put that logic i
   the payer's CRM page); Reviews links every one.
 - **Lifecycle ≠ payment:** `Active`/`Delivered` is driven by session dates, not by `Paid Status`.
 - **Not every delivered workshop is a missing row.** Some 1:1 workshops are intentionally free and
-  have no engagement row by design — the attendee lives in the CRM, not the ledger. Before surfacing
-  a delivered-but-unlogged workshop as a cleanup, open the attendee's CRM page (Active Leads /
-  Nurture) and look for a free/skip note (e.g. "free workshop — no engagement row expected, skip in
-  engagement syncs"). A documented free session is not a finding; only surface a true orphan whose
-  CRM page shows it was a paid engagement that never got a row.
+  have no engagement row by design — the attendee lives in the CRM, not the ledger. So the CRM check
+  is part of the sweep, not a question for Shaw: when a delivered workshop has no engagement row,
+  open the attendee's CRM page (Active Leads / Nurture) *during the run* and read what the note
+  actually says. Judge by meaning, not by a magic phrase — any clear signal that the session was
+  free or that no payment was expected (e.g. "booked free 1:1 Claude Workshop", "comp'd", "no
+  invoice", or an explicit "skip in engagement syncs") means it's documented and silently skipped,
+  not surfaced. Only escalate a true orphan whose CRM page shows it was a *paid* engagement that
+  never got a row. Deferring a clearly-free session to Shaw as a "verify" ask is itself the miss —
+  the whole point of opening the CRM page is to resolve it without his input.

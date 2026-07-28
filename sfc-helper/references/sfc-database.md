@@ -19,9 +19,39 @@
 
 The post **briefing goes in the page body**, not a property. (The `Copy (old)` text field is legacy — leave it alone.)
 
+## Choosing a Tag
+
+Tags mark a post's **content type**, and a post gets the single tag that matches its primary job. Judge the page body, not the title — a "Thesis:" prefix or a "How to" phrasing in the title isn't decisive if the body does something else. The distinctions:
+
+- **Thesis** — argues a point of view: a belief, a contrarian take, or "here's how I see it," often opening with a claim someone could disagree with.
+- **Education** — explains a concept or feature neutrally ("what is X?", "how does X work?"). No stance, no steps.
+- **How-to** — actionable steps for doing a specific thing; the reader follows along and gets a result.
+- **Use case** — a specific, concrete (anonymized) story of a real before → after.
+- **Resource** — hands the reader a reusable asset (cheat sheet, template, checklist, prompt). The asset is the point.
+- **Share** — points the reader to a piece of content (video, blog, podcast) to consume elsewhere.
+- **Promo** — promotes an event or offer with a clear ask (register, attend, buy).
+- **Listicle** — organized around an enumerated set ("X types of", "X ways to", "X levels of"); the list structure is the format.
+- **Builder Log** — behind-the-scenes of something being built or shipped.
+- **Journey** — a personal arc or transformation over time.
+
+Two tie-breakers for posts that straddle categories:
+
+- **Story vs. point.** A post that opens with a client anecdote but pays off in a reframe or belief is **Thesis**, not Use case — the takeaway decides, not the vehicle it rides in on.
+- **Deliverable vs. pointer.** A "Share X" post is **Resource** when the reader keeps the asset (a cheat sheet they'll use), and **Share** when its job is to drive them to go watch or read something elsewhere.
+
+
 ## The backlog parking convention
 
-Unscheduled ideas are parked on a **single future date** (recently `2026-06-21`). That date is effectively the backlog, and it's where duplicates accumulate. Before creating anything, query the table view, look at what's parked there and what's recently posted, and **flag/reuse duplicates instead of adding new ones**. If an idea you want to schedule already exists in the backlog, reschedule and brief *that* page rather than creating a second copy.
+Unscheduled ideas park on the **next upcoming Sunday** — a *rolling* backlog date, not a fixed one. **Compute it** (the nearest future Sunday from today); don't hardcode a value like `2026-06-21`, which goes stale. Each weekend Shaw reviews what's parked on that Sunday, schedules the good ones onto real weekday dates, and rolls the rest forward to the following Sunday. So the backlog always lives on the nearest future Sunday and advances a week at a time.
+
+**Date is status.** Read a row's state from its Date, not from an empty Channel/Tags:
+
+- A **past-dated** row is already **posted** — it's off the table.
+- A **future-dated** row (sitting on the Sunday backlog, ⬜ icon) is **parked/unwritten**.
+
+**Recycle after ~4 weeks.** A posted topic is off the table only while it's recent. Once it's more than ~4 weeks old it's fair game to rebrief and run again — don't treat every past post as permanently spent.
+
+Before creating anything, query the table view and run the **dedupe scan on two windows**: what's parked on the upcoming Sunday, and what's been posted in the **last ~4 weeks**. **Flag/reuse duplicates instead of adding new ones** — if an idea you want to schedule already exists in the backlog, reschedule and brief *that* page rather than creating a second copy. A matching topic posted more than ~4 weeks ago doesn't count as a duplicate; it's eligible to rerun.
 
 ## Briefing format (page body)
 
@@ -33,8 +63,7 @@ A briefing, not a finished post. Keep it terse:
 **Key points:**
 - <2–4 bullets of substance>
 **Source:** <anonymized origin — e.g. "[Company] ops session" or "VC CFO transcript">. <Honesty note on any number, e.g. "~1 hr is her estimate">
-**CTA:** <only if relevant — e.g. AI Rollout Audit, link in comments>
-**Close:** <closing-question idea>
+**CTA:** <only if relevant — e.g. AI Rollout Audit>
 ```
 
 ## Repurpose pages (exact copy, not a briefing)

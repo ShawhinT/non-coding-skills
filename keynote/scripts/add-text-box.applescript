@@ -82,8 +82,7 @@ on run argv
 	set fileRef to (POSIX file filePath) as alias
 
 	tell application "Keynote"
-		open fileRef
-		set theDoc to front document
+		set theDoc to helpers's docForPath(filePath)
 		set sw to width of theDoc
 		set sh to height of theDoc
 

@@ -23,8 +23,8 @@ Before searching, scan each contact's title for embedded company names:
 - `@ CompanyName` → company = CompanyName
 - `at CompanyName` → company = CompanyName
 - `- CompanyName` at end of title → company = CompanyName
-- `Director at Accenture Strategy` → company = Accenture
-- `Data Science Manager at Toyota Financial Services` → company = Toyota Financial Services
+- `Director at [Company] Strategy` → company = [Company]
+- `Data Science Manager at [Company]` → company = [Company]
 
 If found, skip the profile search and go straight to a size lookup.
 

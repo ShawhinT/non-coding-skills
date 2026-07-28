@@ -19,7 +19,7 @@ Standalone feed stills (LinkedIn). Self-contained packaging, social aspect prese
   - Footer `@shawhintalebi` centered, 14px JetBrains Mono.
 
 - **`two-types-of-skills`** — two-panel comparison with parallel-card eyebrows + bottom-anchored examples row.
-  Path: `~/Documents/_stv/_content/_SFC/linkedin/2026/AI-education/two-types-of-skills/two-types-of-skills.html`
+  Path: `<content-root>/linkedin/2026/AI-education/two-types-of-skills/two-types-of-skills.html`
   - Title at top (Manrope 800, 48px), then two cards in `1fr 1fr` grid.
   - Each card: `TYPE 1` / `TYPE 2` mono eyebrow → display word → one-line descriptor → graphic → `e.g.` footer row separated by a hairline border.
   - Equal-bottom alignment via `.card { min-height: 560px; display: flex; flex-direction: column }` + `.graphic { flex: 1 }` — works when the two graphics are different sizes (left = 3-step list, right = 3+2 logo tile grid).
@@ -27,7 +27,7 @@ Standalone feed stills (LinkedIn). Self-contained packaging, social aspect prese
   - Use when comparing two named *types* or *categories* with examples — the eyebrow carries the "this is one of two" framing.
 
 - **`four-step-framework`** — N-step horizontal progression (4 cards in a row).
-  Path: `~/Documents/_stv/_content/_SFC/linkedin/2026/ai-education/four-step-framework/four-step-framework.html`
+  Path: `<content-root>/linkedin/2026/ai-education/four-step-framework/four-step-framework.html`
   - Header is title-first, eyebrow-below (h1 then `4-STEP FRAMEWORK` mono in accent). Inverts the default eyebrow-above order when the title is the main hook and the eyebrow is metadata.
   - Cards in a `1fr 1fr 1fr 1fr` grid with **explicit `height` on the grid** (470px) instead of letting `flex: 1` distribute remaining space — without this the cards float up and leave dead space at the bottom of the canvas.
   - Each card: white bg, 18px radius, 1px hairline border, mono step eyebrow (`STEP 1`) in accent, bold Manrope step label below.

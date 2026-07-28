@@ -132,12 +132,12 @@ def load_denylist(path: Path) -> list[dict]:
         print(f"[denylist] failed to parse {path}: {e}", file=sys.stderr)
         return []
     entries = data if isinstance(data, list) else data.get("entities", [])
-    # Longest match first so "Justin Schaffer" beats bare "Justin".
+    # Longest match first so "Jane Doe" beats bare "Jane".
     entries.sort(key=lambda e: len(e.get("match", "")), reverse=True)
     for e in entries:
         flags = re.IGNORECASE if e.get("case_insensitive") else 0
         if e.get("word_boundary", True):
-            # \b...\b — leaves a trailing possessive ('s) intact: "Justin's" -> "[Name]'s".
+            # \b...\b — leaves a trailing possessive ('s) intact: "Jane's" -> "[Name]'s".
             e["_re"] = re.compile(r"\b" + re.escape(e["match"]) + r"\b", flags)
         else:
             e["_re"] = re.compile(re.escape(e["match"]), flags)

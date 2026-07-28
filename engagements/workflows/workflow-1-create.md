@@ -40,22 +40,16 @@ If this is a backfill of an older engagement (Start Date significantly before ex
 ask Shaw whether to renumber siblings or append at the end. Default: append unless the insert
 point is recent (≤5 rows would need renumbering).
 
-### 3. Determine the offer + default price
+### 3. Determine the offer + price
 
-Identify the offer from Shaw's description or the lead's most recent ABA Calls notes. Match to
-one of the canonical options:
+Identify the offer from Shaw's description or the lead's most recent ABA Calls notes, then match
+it to a **current** option — fetch the Engagements data source and read the `Offer` multi-select
+schema rather than working from a list. The options drift, and a hardcoded list silently goes
+stale (it once named the team offer `— Team` while every real row said `(Group)`).
 
-- `1:1 Claude Workshop`
-- `1:1 Claude Workshops — Team` (multi-attendee, single payer)
-- `30-Day Claude Intensive`
-- `Custom AI Training`
-- `AI Advisory`
-- `Ad Hoc Consulting`
-
-Pull the default price from `references/offer-pricing.md`. For team workshops, multiply
-$1,500 × N attendees unless Shaw specifies a different bundle rate.
-
-If you can't determine the offer or price confidently, leave Price blank and flag for Shaw to fill.
+Price comes from the agreement — the email thread or call where the number was named — not from a
+default table. See `references/pricing-principles.md`. If the deal doesn't map cleanly to an
+existing option or the price is unclear, leave `Price` blank and flag it rather than guessing.
 
 ### 4. Determine Source
 
@@ -133,7 +127,7 @@ Replace `_paste invoice URL_` with the real Stripe link if available (run **Work
 same pass to fill it in).
 
 **Program Scope is filled at creation, never left for later — and it starts from the canonical
-list.** Copy the deliverables for this offer from `references/offer-scopes.md`, then edit them to
+shape.** Copy the deliverables for this offer from `references/offer-scopes.md`, then edit them to
 match the deal. When a deal customizes the format (grouped sessions, different counts), edit the
 canonical bullets rather than composing the list from scratch — that's how closing deliverables
 survive the rewrite. In particular, keep the canonical closing deliverable (the wrap-up call on
@@ -157,6 +151,10 @@ arrives. Mechanics live in `testimonials/SKILL.md` (Workflow 1).
 
 Reply with the Engagement ID, link, and a one-line summary:
 
-> Created [E009 - [Client Name]](url) — 1:1 Claude Workshop · Sold · $1,500 · Paid in Full.
+> Created [E009 - [Client Name]](url) — 1:1 Claude Workshop · Sold · $[amount] · Paid in Full.
+
+This is also the moment to flag a **new offer shape**. If the deal is a format Shaw hasn't sold
+before (a shorter session, a new bundle), say so — it likely needs a new Stripe SKU and a new
+multi-select option, and both are better created deliberately than improvised at invoice time.
 
 Flag any blanks (Price, Stripe link, projected End Date) so Shaw can fill them in.

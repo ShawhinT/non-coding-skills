@@ -34,6 +34,27 @@ on saveIfOpen(filePath)
 	end tell
 end saveIfOpen
 
+on docForPath(filePath)
+	-- Return the Keynote document for filePath, opening it if it isn't already.
+	-- Resolve by matching each document's own file path — never `front document`.
+	-- When a different deck is already open, `open` does not reliably bring the
+	-- target to the front, so `front document` silently returns the wrong deck.
+	tell application "Keynote"
+		repeat with d in documents
+			try
+				if (POSIX path of (file of d as alias)) is filePath then return d
+			end try
+		end repeat
+		open (POSIX file filePath)
+		repeat with d in documents
+			try
+				if (POSIX path of (file of d as alias)) is filePath then return d
+			end try
+		end repeat
+	end tell
+	error "Could not resolve an open Keynote document for: " & filePath
+end docForPath
+
 on backupDeck(filePath)
 	-- Copy the deck to .keynote-skill/backups/<name>.<timestamp>.key, then
 	-- prune older backups for this deck so only the 3 most recent remain.

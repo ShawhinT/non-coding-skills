@@ -20,8 +20,8 @@ Size ranges to use (pick exactly one per contact):
 If the contact's title contains the company name, use it directly:
 - "@ CompanyName" → employer is CompanyName
 - "at CompanyName" → employer is CompanyName
-- "Director at Accenture Strategy" → employer is Accenture
-- "Data Science Manager at Toyota Financial Services" → employer is Toyota Financial Services
+- "Director at [Company] Strategy" → employer is [Company]
+- "Data Science Manager at [Company]" → employer is [Company]
 
 **For contacts without a title hint:**
 Search "[name] [title] [location] LinkedIn employer" or

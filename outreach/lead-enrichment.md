@@ -17,7 +17,7 @@ How many contacts need enrichment?
         └── See references/chrome-profile-lookup.md
 ```
 
-**Shortcut:** If a contact's title already embeds the company ("@ Mavenir", "at Affirm", "Director at Accenture"), skip the profile lookup and go directly to a size search. Deduplicate by company before searching — if 5 people work at Toyota, look up Toyota's size once.
+**Shortcut:** If a contact's title already embeds the company ("@ [Company]", "at [Company]", "Director at [Company]"), skip the profile lookup and go directly to a size search. Deduplicate by company before searching — if 5 people work at [Company], look up [Company]'s size once.
 
 ## Resolve fully before filtering
 

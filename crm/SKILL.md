@@ -1,17 +1,6 @@
 ---
 name: crm
-description: >
-  Use this skill whenever Shaw mentions leads, contacts, sales pipeline activity, or anything
-  CRM-related — even casually. Triggers include: "check my CRM", "update the CRM", "any
-  updates on leads?", "add this person to the CRM", "review my pipeline", "follow up with X",
-  "anyone worth following up with", "check active campaigns", "did anyone respond?",
-  "cross-reference Gmail", "ABA contact form", or any mention of a specific lead's name in a
-  sales context. Also triggers when Shaw shares new contact form submissions or inbound emails
-  that look like potential leads. Also triggers for client/nurture activity: "check on my
-  clients", "any clients due for check-ins", "move this lead to clients", "nurture review", or
-  any mention of existing clients and expansion opportunities. Also triggers when a discovery
-  call is booked — directly or surfaced during a sync. Follow-up reviews cover Active Leads,
-  Clients (Nurture), AND any active campaign trackers linked from the CRM page.
+description: "Use this skill whenever Shaw mentions leads, contacts, partners, sales pipeline activity, or anything CRM-related — even casually. Triggers include: \"check my CRM\", \"update the CRM\", \"any updates on leads?\", \"add this person to the CRM\", \"review my pipeline\", \"follow up with X\", \"anyone worth following up with\", \"check active campaigns\", \"did anyone respond?\", \"cross-reference Gmail\", \"ABA contact form\", or any mention of a specific lead's name in a sales context. Also triggers when Shaw shares new contact form submissions or inbound emails that look like potential leads. Also triggers for client/nurture activity: \"check on my clients\", \"any clients due for check-ins\", \"move this lead to clients\", \"nurture review\", or any mention of existing clients and expansion opportunities. Also triggers when a discovery call is booked — directly or surfaced during a sync. Follow-up reviews cover Active Leads, Clients (Nurture), AND any active campaign trackers linked from the CRM page."
 ---
 
 # CRM Skill
@@ -20,7 +9,8 @@ Shaw runs a B2B AI enablement sales pipeline and client nurture system. This ski
 read, update, and act on his CRM in Notion — both the Active Leads pipeline and the Clients (Nurture)
 database. It covers cross-referencing Gmail for new activity, checking call notes in Notion, adding
 new leads, moving closed deals to the client database, and proactively managing follow-ups across
-both tables.
+both tables. It also owns the **Friends** database — the non-lead network of friends, affiliates,
+channels, partners, and subcontractors.
 
 ---
 
@@ -34,7 +24,7 @@ CRM-specific sub-databases (sub-pages of the CRM page, not in the main database 
 | Active Leads database | Data source: `collection://[database-id]` |
 | Clients (Nurture) database | Data source: `collection://[database-id]` |
 | 🧊 Archived Leads database | Data source: `collection://[database-id]` (parent: CRM page) |
-| Partners database | Data source: `collection://[database-id]` (parent: ABA (Master) page) — non-lead network: partners, affiliates, subcontractors, peers |
+| Friends database | Data source: `collection://[database-id]` (parent: ABA (Master) page; titled `Partners` at the database level) — the non-lead network. See "The Friends database" below |
 
 For **ABA Calls** (sales calls), **ABA Trainings** (delivery sessions: 1:1 workshops, trainings,
 ongoing engagements), and **ABA** (tasks, launches, events, outreach) — see the canonical
@@ -43,7 +33,8 @@ Check-in Call and its spokes, Wrap-up Call, 1:1 Claude Workshop) are discovered 
 `notion-helper` — it fetches the SOPs page and matches by title rather than relying on hardcoded
 IDs.
 
-**Gmail account:** `shaw@aibuilder.academy` (all outbound sales activity lives here)
+**Gmail account:** `shaw@aibuilder.academy` — ABA sales activity. Partner and referral history
+often *isn't* here; see "Two inboxes, one connector" below
 **Google Calendar:** Available via the `gcal_list_events` tool — use as an additional signal for recent meetings
 
 ---
@@ -71,16 +62,16 @@ need to be duplicated here.
 - `Warm outreach (3/4). FU (3/11). Asked about individual training (3/12). Replied about ABA (3/13).`
 - `ABA contact form (3/16). Replied, offered call (3/16).`
 - `Call on 3/13. Not right now.`
-- `Call w/ [Lead Name] & [Lead Name] (3/27). Sending proposal (3/28).`
+- `Call w/ [Person] & [Person 2] (3/27). Sending proposal (3/28).`
 - `Booked ABA Intro Call 6/2 (5/31).` *(first entry on a new lead — just the trigger)*
 - `[Lead Name] (CFO/COO, [email]) replied accepting, sent next steps (6/1). Closed (6/1).` *(multi-person reply compressed to the lead actor)*
 
 **Bad examples:**
-- `Call w/ [Lead Name] & [Lead Name] (3/27). [Company] growth analytics, small team, already using MCP + agents. $2k L&D budget/person. Sending proposal (3/28).`
+- `Call w/ [Person] & [Person 2] (3/27). [Company] growth analytics, small team, already using MCP + agents. $2k L&D budget/person. Sending proposal (3/28).`
   *(business context belongs in the ABA Calls page, not Notes)*
-- `Booked ABA Intro Call 6/2 4pm CT (5/31). Saw Cowork for Execs video. Owns business, already using Claude. At [Company] ([linkedin-url] — AI solutions exec).`
+- `Booked ABA Intro Call 6/2 4pm CT (5/31). Saw Cowork for Execs video. Owns business, already using Claude. At [Company] ([linkedin-handle] on LinkedIn — AI solutions exec).`
   *(everything after the booking line is background — that belongs in the page body's Context section)*
-- `[Lead Name] (CFO/COO, [email]) replied for [Lead Name] — accepted, moving forward w/ 4 participants ([Lead Name], [Lead Name], [Lead Name], [Lead Name]). cc'd [email] + [email] (6/1). Replied w/ next steps: kickoff email + invoice (6/1). Closed (6/1).`
+- `[Lead Name] (CFO/COO, [email]) replied for [Person] — accepted, moving forward w/ 4 participants ([Person], [Lead Name], [Lead Name], [Lead Name]). cc'd [email] + [email] (6/1). Replied w/ next steps: kickoff email + invoice (6/1). Closed (6/1).`
   *(too verbose — don't list every cc'd person or unpack what "next steps" included)*
 
 **Rules:**
@@ -95,7 +86,7 @@ need to be duplicated here.
   `Next Contact` field. Notes log what *happened*; `Next Contact` tracks what's *next*.
 - When other stakeholders are involved in a deal (e.g. a second contact on the thread), mention them
   by name so future sessions have context without re-reading the full email chain.
-  Example: `[Person] ([email]) responded, evaluating proposals (3/17).`
+  Example: `[Lead Name] ([email]) responded, evaluating proposals (3/17).`
 
 ---
 
@@ -180,6 +171,39 @@ teammate touchpoint is the only recent activity, leave the point person's dates 
 Example: for the [Company] account, only [Person] (CEO/champion) carries the dates —
 his teammates' sessions are captured by their linked session pages, and never reset his dates.
 
+### One person, one next touch (cross-database)
+
+A person is often tracked in more than one place at once: a CRM record here, plus a row in
+Testimonials and/or Referrals. Each of those rows carries its own `Next Contact`, and each has
+its own daily sync that drafts from it. Left alone, two syncs will independently schedule
+outbound to the same person days apart, and neither will know about the other.
+
+The invariant is **one person, one next outbound touch** — not one shared date. At any moment
+exactly one row *owns* the next touch:
+
+- The owning row holds the real `Next Contact` date.
+- Every other row for that person leaves `Next Contact` blank and carries a Notes pointer
+  naming who owns it and when, e.g. `Next touch owned by CRM, due 7/28.`
+- Ownership follows whichever thread is live, and hands back when that sequence parks,
+  completes, or goes terminal. A testimonial sequence running its FU cadence owns the touch;
+  when it lands on `Approved` or `Declined`, ownership returns to the CRM record.
+
+Mirroring the same date across rows is the tempting shortcut and it's wrong, because the
+cadences differ by an order of magnitude: testimonial FUs run every 3 to 7 days, referral FUs
+every 2 to 5, CRM nurture every 3 to 6 weeks. Forcing them equal either stalls a live sequence
+until the nurture date or drags the client's nurture date forward every time an FU fires. The
+dates *should* differ; what must never happen is two of them being live at once.
+
+Blank on a non-owning row means "not scheduled here," not "unknown" or "missed." This is
+consistent with the existing rule that blank `Next Contact` is assumed intentional, so don't
+auto-fill a blank row to match a sibling.
+
+Enforcement is manual and by convention. The `CRM` field on Testimonials and Referrals rows is
+a plain URL, not a relation, so Notion can't roll up or formula-check the sibling date. What
+the syncs owe Shaw is *detection*: when a sweep finds a due row, check the linked CRM record
+(and vice versa) and surface any person carrying two live dates as a decision rather than
+drafting a second touch. Surface it, don't silently pick a winner.
+
 ### Client Lifecycle Stages
 
 ```
@@ -227,6 +251,65 @@ relationship-level happens, add a short dated line.
 - Same mechanics as Active Leads notes: append only, `(M/D)` date format, use shorthands
 - Log relationship-level events, not routine touchpoints — the dates and linked pages carry those
 - Do NOT duplicate business context that belongs in the page body
+
+---
+
+## The Friends database (non-lead network)
+
+Everyone Shaw is in relationship with who is *not* a lead or client lives here — one row per
+contact, in `collection://[page-id]` under ABA (Master). The database
+is titled `Partners` while its data source is named `Friends`, so search may surface it under
+either name; anchor on the ID.
+
+`Type` is a multi-select keyed on **which direction opportunities flow**, not on how close the
+relationship is. That's the distinction the old vocabulary (Partner / Affiliate / Subcontractor /
+Peer) blurred: `Partner` had become a catch-all for "vaguely business-y person," and `Peer`
+described warmth rather than flow, so neither told you what the relationship was *for*.
+
+| Type | Flow | Meaning |
+|---|---|---|
+| `Friend` | — | Nothing flows either way |
+| `Affiliate` | → Shaw | Routes Shaw clients, typically for a finder's fee |
+| `Channel` | → Shaw | Owns a door Shaw wants through — an audience, an event, a client roster |
+| `Partner` | ← Shaw | Shaw sends them work he can't or won't take |
+| `Subcontractor` | ← Shaw | Shaw hires them to deliver work he sold |
+
+Because it's multi-select, a mutual relationship carries two tags, and direction is baked into
+each label so no separate flow column is needed. `Channel` is the one that's easy to miss: a
+sponsored event, a podcast host, a community organizer, and a prime contractor who subs work out
+are all the same shape — someone who owns access Shaw is paying or partnering to reach.
+
+The definitions also live in the database's own `description` field. Keep the two in sync — an
+undefined label is exactly how `Partner` drifted into a catch-all the first time.
+
+**Page bodies follow the same convention as CRM pages:** `## Context` at the top — who they are,
+company as a bolded name with a markdown link, an `**Angle:**` paragraph on what the relationship
+is *for*, and a `**Contact**` block of verified links — with `## Calls` pinned to the bottom. Add
+a `**Stakeholders**` block when a multi-person deal warrants it. When the honest answer is "just a
+friend, nothing flows," write that plainly rather than manufacturing a commercial angle.
+
+`Notes` obeys the same touchpoint-only discipline as Active Leads: dated actions, terse fragments,
+no role/company/links/strategy. If it isn't something that *happened* on a date, it belongs in
+Context.
+
+Never invent a LinkedIn URL by guessing a vanity slug. If a link can't be confirmed from a real
+source, write `LinkedIn: needs confirming` — a gap is recoverable, a plausible wrong link is not.
+
+**Do-not-flag behavior (calendar audit).** These contacts intentionally have no ABA Calls page, so
+the Workflow 1 calendar audit must never surface their meetings as "unlogged." The audit skips any
+calendar attendee that matches a Friends row **by email, or by email domain**. Domain matching is
+deliberate: one row (e.g. [Person] / [company-domain]) covers everyone at that org, not just the named
+person. This is why it's a database and not a static roster in this file — when a new peer or
+partner surfaces, add a row and every future sync skips them automatically, with no skill edit or
+repackage.
+
+When the audit hits an ambiguous meeting that turns out to be a partner or peer rather than a lead,
+the fix is to file them in Friends — not to hand-maintain an exclusion list here.
+
+**A paying customer is not a Friend.** If someone in this database has paid Shaw, that's a Clients
+(Nurture) row. The exception is a past customer whose situation has closed off future flow in both
+directions (e.g. an independent consultant who took a full-time job) — they can sit here as a
+`Friend`, but record *why* in the Angle so the call is legible later.
 
 ---
 
@@ -295,22 +378,6 @@ and stakeholders get cc'd from the same domain.
 
 To reconcile ABA Calls against the CRM in both directions during a sync, see **Workflow 1**.
 
-## Do-not-flag contacts (calendar audit)
-
-Peers, partners, affiliates, and subcontractors intentionally have no ABA Calls page, so the
-Workflow 1 calendar audit must never surface their meetings as "unlogged." The source of truth
-for who they are is the **Partners database** (`collection://[database-id]`,
-under ABA (Master)) — one row per contact, `Type` = Partner / Affiliate / Subcontractor / Peer.
-
-The audit skips any calendar attendee that matches a Partners row **by email, or by email
-domain**. Domain matching is deliberate: one row (e.g. [Person] / [company-domain]) covers everyone
-at that org, not just the named person. This is why it's a database and not a static roster in
-this file — when a new peer/partner surfaces, add a Partners row and every future sync skips
-them automatically, with no skill edit or repackage.
-
-When the audit hits an ambiguous meeting that turns out to be a partner/peer rather than a
-lead, the fix is to file them in Partners — not to hand-maintain an exclusion list here.
-
 ## Active Campaigns
 
 The CRM page has an **Active Campaigns** section that links to currently-running outreach
@@ -357,7 +424,7 @@ option yet, add it (orange or pink works well for visual distinction from active
 
 ## Gmail & Calendly Signals
 
-All outbound sales activity lives in Gmail at `shaw@aibuilder.academy`. Two patterns to know:
+Two patterns to know:
 
 - **Direct thread activity** — search `from:<email> OR to:<email>`
 - **Calendly bookings** — land in the inbox from `notifications@calendly.com` with subject
@@ -374,6 +441,23 @@ without an existing CRM entry.
 than processing it piecemeal. Workflow 7 orchestrates CRM resolution, the ABA Calls page and
 brief, the FU task, and the confirmation email in one pass.
 
+### Two inboxes, one connector
+
+The Gmail MCP is bound to `shaw@aibuilder.academy`. It cannot switch accounts — there's no
+parameter for it, and `u/N` is a browser path, not something the API can address.
+
+ABA sales activity does live in that inbox, but **the partner and referral network largely does
+not.** Shaw's personal account (`shawhintalebi@gmail.com`, `u/2`) carries years of it under the
+`stv/lead connections`, `stv/networking`, and `stv/collabs/*` labels — outbound referral intros,
+referral-fee agreements, peer calls. A partner can look like a nearly-empty row from this inbox
+while having a long history in that one.
+
+So an empty `search_threads` result means "not in this inbox," never "didn't happen." When other
+evidence says a relationship exists and the connector shows nothing, read the personal account via
+Claude in Chrome before concluding the record is thin — see `email-helper` → "Reading threads the
+Gmail MCP can't see." This matters most when auditing the Friends database, where outbound
+referral flow is the whole point of the row.
+
 ---
 
 ## Key Principles
@@ -388,3 +472,4 @@ brief, the FU task, and the confirmation email in one pass.
 - **Always invoke email-helper before drafting an email** — every Gmail draft created during a CRM workflow goes through email-helper first. Skills compose: CRM owns the *who/when/why* of the follow-up; email-helper owns the *voice, threading, and Gmail mechanics*. The failure mode to watch for is batching: once a workflow has several writes lined up (CRM record, ABA Calls page, FU task, *then* draft), the draft starts to feel like one more parallel tool call and gets composed inline. That's how off-template drafts, missed em-dash rules, and snippet-driven follow-ups slip through. The discipline isn't "remember the rule" — it's "if the next tool call is `create_draft` and email-helper isn't loaded in this turn, stop." This applies in Workflow 1's step 6, Workflow 2 follow-ups, Workflow 7's confirmation email, and any other CRM step that creates a draft.
 - **Every call deserves a follow-up email** — whenever a call or meeting is logged (via Workflow 2) or detected (via Workflow 1), check whether a follow-up email was sent. If not, prompt Shaw or flag it. Sources to check: ABA Calls, ABA Trainings, CRM notes, and Google Calendar
 - **Verify a page is live before writing to it** — before editing a Notion page that an SOP names or a search surfaces — especially anything that looks like a "parent" or "index" page — confirm it's current by checking its date and surrounding context. Stale one-off pages (a past cohort, an old campaign round) can look like living indexes but aren't; appending new records to them is noise. If a workflow instruction points you at a specific page that turns out to be stale, treat that as a skill bug to flag — not a step to force through.
+

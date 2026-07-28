@@ -97,6 +97,16 @@ team/company-scoped ("the team", "across the business") rather than ("I", "my wo
   hedged phrasing ("under an hour") and the call notes have a tighter one
   ("in minutes"), use the tighter. The polish step is where to push for precision,
   not where to hedge.
+- **Each number keeps its own claim shape.** A one-time win (built in 3 hours instead
+  of a 4-5 day HubSpot project) and a recurring cost (the 4 days blocked every month
+  for reporting) are different claims; merging them into one line overstates what the
+  client said. Same with saved vs. on track to save: if the time isn't fully recovered
+  yet, the quote says roadmap, not result. When two similar numbers show up in the
+  source material, go back to the transcript to check what each one actually measures.
+- **Vary the opener across concurrently published quotes.** Quotes land side by side
+  on the homepage, so if every one starts "Working with Shaw..." the wall reads
+  templated. Rotate the framing ("Working with Shaw", "After a 1:1 session", "In our
+  session") and check the openers of the other live quotes before finalizing a new one.
 - **Cut filler.** Phrases like "Honestly,", "I have to say,", "All in all,",
   "Truly,", "To be frank," — delete. Same with most "really" / "very" intensifiers.
 - **One beat per idea.** If a closing sentence ("More importantly, X") already
@@ -119,7 +129,7 @@ gets attributed:
 | Permission level (form answer) | Attribution |
 |---|---|
 | No / Decline | Don't share. Flip the row Status to `Declined` and stop. |
-| Yes, anonymous | `— [Role from client's self-ID] + generic industry descriptor` (e.g. `— People leader, mid-size cybersecurity SaaS`). See "Anonymous attribution research" below. |
+| Yes, anonymous | `— [Role from client's self-ID] + generic industry descriptor` (e.g. `— People leader, mid-size [industry] SaaS`). See "Anonymous attribution research" below. |
 | First name only | `— [First Name]` |
 | Name only | `— [Client Name]` |
 | Name + role | `— [Client Name], Founder & Principal` |
@@ -138,14 +148,28 @@ publish-permission but blocks name/company), build the descriptor in two parts:
 1. **Role.** Pull from the client's own self-ID in the form, usually their "Worth
    It" answer ("If you're a People leader..." → "People leader").
 2. **Industry descriptor.** Web-search the company for size + segment. Aim broad
-   enough that the company isn't identifiable: "mid-size cybersecurity SaaS"
-   works (hundreds of companies fit), "cybersecurity risk ratings platform"
+   enough that the company isn't identifiable: "mid-size [industry] SaaS"
+   works (hundreds of companies fit), "[narrow industry niche] platform"
    doesn't (~3 named players in that segment basically IDs them). Default shape:
    `[size]-[adjective] [industry] [SaaS / platform / firm]`.
 
 Confirm the descriptor in the approval ask. Free-text permission answers
 ("Yes, but keep it anonymous") aren't standard form options, so the client may
 have a different attribution shape in mind.
+
+## The pre-drafted arc (FU2 path)
+
+Pre-drafted quotes follow **Before -> After -> Lasting impact**, usually 3 sentences,
+anchored on the single clearest win. Don't pack multiple wins into one quote; breadth
+belongs only when breadth is itself the story (a client whose win is a stack of
+net-new processes). The third beat looks forward: what's now repeatable, or where
+this is heading.
+
+When the wins are new capabilities rather than time saved, close on capability
+expansion, not efficiency. "We now have processes that simply didn't exist before
+and a roadmap to keep expanding" lands harder than another hours-saved line, and it
+matches how clients describe the shift themselves ("we could have done it, but we
+never did"). Marginal-gains framing undersells exactly the engagements worth quoting.
 
 ## Worked examples
 
