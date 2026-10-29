@@ -32,7 +32,7 @@ The chat log and transcript sit alongside the MP4 in Shaw's Drive recordings fol
 
 - **Curly apostrophes vanish under NFKD→ASCII** (`PC's iPhone` → `pcs iphone`, not `pc s iphone`). Normalize `'` → `'` *before* the NFKD pass, or derive override keys from the actual normalizer output rather than by hand.
 - **Stripping parentheticals can empty a name** (`M (Jane D)` → `m`). Keep the parenthetical as a fallback match key instead of discarding it.
-- **Display names in the wild:** first name only, a company name, a device name (`WILLIAM's iPad`), initials with a parenthetical, a handle. Expect all of them.
+- **Display names in the wild:** first name only, a company name, a device name (`[FIRST NAME]'s iPad`), initials with a parenthetical, a handle. Expect all of them.
 - **Chat-log continuation lines.** The format is tab-delimited `HH:MM:SS\tDisplay Name:\tmessage`, and wrapped messages continue on unprefixed lines — append those to the previous message or you truncate the long ones. Timestamps are relative to recording start. Run chat display names through the same normalizer as the participant CSV.
 
 ## Session boundaries from the transcript

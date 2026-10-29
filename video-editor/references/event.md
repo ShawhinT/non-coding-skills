@@ -61,7 +61,7 @@ Cut the meta-commentary *around* questions, not necessarily the questions themse
 
 When the speaker actually engages with a question, protect the substantive answer.
 
-When a mid-talk answer is being kept, the question read-out is part of the answer, not part of the meta. Trim the housekeeping around it ("I see we've got some questions in the chat", "great question", "I think David had a good answer") but keep the sentence where the speaker reads or restates the question — an answer whose question was trimmed lands as an orphaned non-sequitur, and restoring it later costs a parent-session lookup-and-revalidate pass.
+When a mid-talk answer is being kept, the question read-out is part of the answer, not part of the meta. Trim the housekeeping around it ("I see we've got some questions in the chat", "great question", "I think [Person] had a good answer") but keep the sentence where the speaker reads or restates the question — an answer whose question was trimmed lands as an orphaned non-sequitur, and restoring it later costs a parent-session lookup-and-revalidate pass.
 
 #### Logistics tail — **end-of-talk only**
 

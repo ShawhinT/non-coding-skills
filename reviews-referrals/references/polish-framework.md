@@ -129,7 +129,7 @@ gets attributed:
 | Permission level (form answer) | Attribution |
 |---|---|
 | No / Decline | Don't share. Flip the row Status to `Declined` and stop. |
-| Yes, anonymous | `— [Role from client's self-ID] + generic industry descriptor` (e.g. `— People leader, mid-size cybersecurity SaaS`). See "Anonymous attribution research" below. |
+| Yes, anonymous | `— [Role from client's self-ID] + generic industry descriptor` (e.g. `— Ops leader, mid-size logistics SaaS`). See "Anonymous attribution research" below. |
 | First name only | `— [First Name]` |
 | Name only | `— [Client Name]` |
 | Name + role | `— [Client Name], Founder & Principal` |
@@ -146,11 +146,11 @@ When permission is "Yes, anonymous" (or any free-text variant that grants
 publish-permission but blocks name/company), build the descriptor in two parts:
 
 1. **Role.** Pull from the client's own self-ID in the form, usually their "Worth
-   It" answer ("If you're a People leader..." → "People leader").
+   It" answer ("If you're an Ops leader..." → "Ops leader").
 2. **Industry descriptor.** Web-search the company for size + segment. Aim broad
-   enough that the company isn't identifiable: "mid-size cybersecurity SaaS"
-   works (hundreds of companies fit), "cybersecurity risk ratings platform"
-   doesn't (~3 named players in that segment basically IDs them). Default shape:
+   enough that the company isn't identifiable: "mid-size logistics SaaS"
+   works (hundreds of companies fit), "freight-visibility platform"
+   doesn't (a handful of named players in that segment basically IDs them). Default shape:
    `[size]-[adjective] [industry] [SaaS / platform / firm]`.
 
 Confirm the descriptor in the approval ask. Free-text permission answers

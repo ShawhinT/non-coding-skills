@@ -9,7 +9,7 @@ Lock before drafting: who they are and the context, the single next step, the sp
 1. **Short wins.** Three lines beat five. The goal is a reply, not a pre-closed deal — long setup signals uncertainty.
 2. **Ask one question.** The whole email can be a question plus signature. Make "no" easy and "yes" specific.
 3. **Use the context only a warm email has.** "You mentioned the three hours of reporting every Friday..." If you don't have that, ask why this is a warm email.
-4. **Personalize line one — it's the preview text.** "Karen — quick one about the reporting workflow" gets opened; "I wanted to follow up on our previous conversation" gets archived.
+4. **Personalize line one — it's the preview text.** "[Lead Name] — quick one about the reporting workflow" gets opened; "I wanted to follow up on our previous conversation" gets archived.
 5. **Match commitment to relationship.** Post-call: "want me to send the intake?" Past client: "worth a 15-minute catch-up?" Ghosted: "still on your radar, or should I stop bugging you?" — permission to say no often surfaces a yes.
 6. **Offer something useful either way.** A Loom they can forward is valuable whether or not they buy.
 7. **Sign "— Shaw."** Not "Best regards, Shaw Talebi."
@@ -20,7 +20,7 @@ Opener using recent context (1 line) → the specific thing you're following up 
 
 ## Worked example — post-call follow-up
 
-> Karen — you mentioned the three hours of reporting every Friday is what's killing you. I've been thinking about what that looks like if we tackle it first in the 30-day intensive.
+> [Lead Name] — you mentioned the three hours of reporting every Friday is what's killing you. I've been thinking about what that looks like if we tackle it first in the 30-day intensive.
 >
 > Want me to send a 5-minute Loom walking through what Week 1 would look like specifically for your reporting workflow? No call needed to watch it.
 >

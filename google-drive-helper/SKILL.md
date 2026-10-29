@@ -128,7 +128,7 @@ Edge cases:
   evidence the call happened — and note a single no-show slot can emit more than one stub.
 - Transcripts only exist for meetings Shaw organized and held **on Meet**. Calls on Zoom or another
   platform will never appear here at all; that's a permanent absence, not a pending one.
-- Unscheduled instant meetings are named by meeting code (e.g. `gdm-ytcq-wzh`) instead of a person,
+- Unscheduled instant meetings are named by meeting code (e.g. `abc-defg-hij`) instead of a person,
   so a name search won't catch them — fall back to the date bounds.
 
 ### "Save this to Drive" / create a doc or file
