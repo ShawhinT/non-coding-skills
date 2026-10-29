@@ -260,11 +260,10 @@ def is_text_file(p: Path) -> bool:
     return p.suffix.lower() in TEXT_SUFFIXES
 
 
-# Carve-out files copied byte-for-byte (no scrubbing): public posts whose public-figure
-# names + metrics are load-bearing. See SKILL.md "Per-skill carve-outs".
-KEEP_VERBATIM_PREFIXES = (
-    "linkedin-post-writer/references/examples-",
-)
+# Carve-out files copied byte-for-byte (no scrubbing). Currently empty: the former
+# linkedin-post-writer/references/examples-* entry died with that skill (Oct 2026).
+# Add a "skill/path/prefix" only for a file that must ship byte-identical.
+KEEP_VERBATIM_PREFIXES: tuple[str, ...] = ()
 
 
 def is_keep_verbatim(rel_path: str) -> bool:
