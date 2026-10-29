@@ -95,6 +95,11 @@ new_str:
 **Stripe link:** *Paid $X via <company>'s vendor payment service — didn't route through Shaw's main Stripe account.*
 ```
 
+For an engagement billed in installments (several invoices, one contract), don't write a single
+Stripe line — use the **Payment Schedule** table from `SKILL.md` → "Installment engagements", set
+`Price` to the contract value (the sum), and set `Paid Status` by how many installments have
+cleared: none → `Unpaid`, some → `Partial`, all → `Paid in Full`.
+
 For a voided invoice with no clear replacement:
 
 ```

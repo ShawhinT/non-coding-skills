@@ -20,6 +20,16 @@ Put weight on two ends, starve the mediocre middle.
 - **Reach satellite (~1/week):** high-variance, ICP-flavored curiosity or emotion. Broad *within the buyer's world*, never a generic meme that pulls students and other creators.
 - **Kill the middle:** abstract analogies aimed at no one (e.g. "rails vs streets"). They get neither reach nor engagement.
 
+## Teach what you sell (and where ideas come from)
+
+Three principles absorbed from Uptown's LinkedIn revenue system (the outbound agency behind the Uptown method in conversion-copy) — they slot cleanly into the champion/authority end of the barbell:
+
+- **Teach exactly how to do the thing you sell.** DIYers take the free lesson and self-serve — they were never buyers. People who'd rather pay raise their hands, warmer for having seen the expertise demonstrated. Depth is the qualifier, not the giveaway; this is the *why* behind quantified-outcome and method posts.
+- **Mine sales calls for topics.** The best-performing post ideas are the questions prospects actually asked and the aha moments from discovery calls — pull from the last ~3 months of call transcripts. This is the same well the `qa_pairs` mine-file feeds from; call transcripts are a first-class source for refilling it.
+- **Content and outbound compound.** Outreach targeted at *active* LinkedIn users (people who post) means new connections actually see and engage with Shaw's content — and content, in turn, makes his name familiar before the DM lands. The goal of posting is not virality; it's that a prospect already half-knows Shaw when outbound reaches them. (The outbound half lives in the `outreach` skill.)
+
+**Two more topic wells beyond calls.** *Old lessons:* something Shaw lived years ago (PhD, Toyota, the dealership, early SaaS builds), told as the moment and the lesson without the backstory, and tied to a problem the buyer has now. *News:* a specific event from the last few days plus Shaw's firsthand take or test ("Anthropic shipped X yesterday. I ran it on my CRM."). Naming the event and putting Shaw in the first line is what separates this from the abstract trend opener that flops. Its value decays daily, so it ships within a day or two rather than joining the backlog.
+
 ## What the data says (recurring patterns)
 
 - **Reach and engagement rate are nearly decoupled.** The widest-reach post is often the lowest-rate. So a reach play doesn't cost engagement quality — but pick *qualified* reach (ICP emotion/status), not random virality.

@@ -7,7 +7,7 @@ description: Import or update skills in this public repo from Shaw's canonical s
 
 Workflow for bringing skills from Shaw's canonical skills repo into this public GitHub repo. The hard parts are (1) scrubbing PII without over-scrubbing brand references, and (2) keeping the README table sorted and accurate.
 
-> **Naming note:** This skill is named `sync-desktop-skills` for historical reasons — the canonical source was originally the Claude Desktop skills-plugin cache. It has since moved to a dedicated git repo at `~/agents/skills/`. The skill name is preserved; the workflow below reflects the current source.
+> **Naming note:** This skill is named `sync-desktop-skills` for historical reasons — the canonical source was originally the Claude Desktop skills-plugin cache. It then moved to `~/agents/skills/`, and in Sep 2026 to the plugin-structured repo `~/agents/shaws-skills/skills/` (Claude Desktop remains the source of truth; that repo is rsynced from it hourly — see the `skill-pipeline` skill). The skill name is preserved; the workflow below reflects the current sources.
 
 ## When to use
 
@@ -20,41 +20,46 @@ Workflow for bringing skills from Shaw's canonical skills repo into this public 
 - Creating a skill from scratch → skill-creator
 - Editing one file inside a single already-imported skill → just edit it directly
 
-Note: Code-native skills (animation-builder, graphic-builder, keynote, skill-sync, skill-updater, training-proposal, video-editor) are NOT in the canonical `~/agents/skills` repo — they source from `~/.claude/skills/` instead. They are still in scope for this skill; see "Second source" below. (July 2026: `infographic-builder` was renamed upstream to `graphic-builder`, and `skill-sync` moved out of canonical into Code-native.)
+Note: a full sync draws from **three** sources (details under "Source location"): the canonical repo, the Code-native skills in `~/.claude/skills/` (animation-builder, client-docs, graphic-builder, keynote, video-editor), and the public `aba-skills` plugin (cost-optimizer, skill-helper, skill-updater) from its local `aba-plugins` clone. All are in scope for this skill. (History: July 2026 `infographic-builder` → `graphic-builder`; Oct 2026 `pre-call-research` → `meeting-prep`, `referrals` + `testimonials` → `reviews-referrals`, `training-proposal` + `proposal-deck-creator` → `client-docs`, and `skill-sync` + `night-transcript-linker` were deleted upstream.)
 
 ## Source location
 
 The canonical skills repo lives at:
 
 ```
-~/agents/skills/
+~/agents/shaws-skills/skills/
 ```
 
-It's a regular git repo — one directory per skill, no session/instance hunting needed. List contents with:
+It's a plugin-structured git repo (`plugin.json` + `skills/<name>/`), rsynced from Claude Desktop hourly by `~/agents/skills-sync/sync.sh` — never edit it; it is derived state. `plugin.json` carries the last-synced version. List contents with:
 
 ```bash
-ls ~/agents/skills/
+ls ~/agents/shaws-skills/skills/
 ```
+
+If that path is missing, do NOT guess: read `~/.claude/skills/skill-pipeline/SKILL.md` and `~/agents/skills-sync/sync.sh`, which are the authority on where the canonical copy currently lives.
 
 Target is always this repo's root (the directory this `.claude/skills/` dir lives in).
 
-### Second source — Code-native skills (`~/.claude/skills/`)
+### Second and third sources — Code-native skills and the aba-skills plugin
 
-Shaw maintains **two** skill sources, and a full sync covers both:
+Shaw maintains **three** skill sources, and a full sync covers all of them:
 
-1. `~/agents/skills/` — the canonical repo above. The "portable" skills (run on any surface / Chat / Cowork). The `scrub.py` script targets this source.
-2. `~/.claude/skills/` — his live Claude Code skills. This is the ONLY source for the **Code-native** skills that have no canonical copy: `animation-builder`, `graphic-builder`, `keynote`, `skill-sync`, `skill-updater`, `training-proposal`, `video-editor`. (It also contains the canonical skills, plus Code-only skills that are intentionally NOT published — e.g. `fasthtml`, `playwright-mcp-guidance`, `claude-trace-helper`, `generate-video-ideas`. Don't add those without Shaw's say-so.)
+1. `~/agents/shaws-skills/skills/` — the canonical repo above. The "portable" skills (run on any surface / Chat / Cowork). The `scrub.py` script targets this source.
+2. `~/.claude/skills/` — his live Claude Code skills. This is the ONLY source for the **Code-native** skills that have no canonical copy: `animation-builder`, `client-docs`, `graphic-builder`, `keynote`, `video-editor`. (It also contains Code-only skills that are intentionally NOT published — e.g. `fasthtml`, `playwright-mcp-guidance`, `claude-trace-helper`, `generate-video-ideas`, `coding-standards`, `audit-code`, `pages`, `skill-pipeline` — and a `synced/<uuid>/` tree that is claude.ai's copy of the canonical set. Don't add the Code-only ones without Shaw's say-so; never source from `synced/`.)
+3. `~/Documents/_code/_stv/_repos/aba-plugins/plugins/aba-skills/skills/` — the local clone of the public `aba-skills` plugin (`ShawhinT/aba-plugins`): `cost-optimizer`, `skill-helper`, `skill-updater`. Confirm the clone is at the same commit as `~/.claude/plugins/marketplaces/aba` before copying (`git log -1` in both). Plain `rsync -a --delete` with the junk excludes; these have historically needed zero PII edits.
 
-For the canonical set, compare against `~/agents/skills/`. For the six Code-native skills, compare against `~/.claude/skills/`. To tell which truly changed (vs. PII-scrub noise), scrub a temp copy of the source and diff *that* against the repo.
+For the canonical set, compare against source 1. For the Code-native and plugin skills, compare against sources 2 and 3. To tell which truly changed (vs. PII-scrub noise), scrub a temp copy of the source and diff *that* against the repo.
+
+**iCloud conflict copies.** This repo lives under `~/Documents`, which is iCloud-synced. A bulk copy can make Finder spawn `<name> 2.md` duplicates of files being written, and `git rm` may first complain about phantom "local modifications" (a `git status` refresh clears it). Before auditing or committing: `find . -name '* 2.*' -not -path './.git/*'` and delete every hit — they exist in no source.
 
 **Syncing Code-native skills (`scrub.py` does NOT handle these — it's wired to `~/agents/skills` + Notion patterns):**
 
 - Use `rsync -a --delete` per skill so upstream *deletions* propagate (e.g. video-editor dropped `analyze.py`/`propose_edits.py`). **Pass each `--exclude` as its own argument inline** — do NOT collect them in a shell variable and expand it: zsh does not word-split unquoted variables, so `$EXC` arrives as one bogus pattern and every exclude silently no-ops (this leaked full `.venv` trees and a real `.env` in one run). 
 - **Exclude junk/secrets/generated:** `.DS_Store __pycache__ *.pyc .venv *.egg-info build dist wheels .env uv.lock output transcripts claude-edits .gitkeep`. (`uv.lock`/`.python-version`: don't churn them — restore whatever the repo already committed with `git checkout`; the repo's footprint is deliberate and you can't run `uv` to regen a lock.)
 - **Protect repo adaptations from `--delete`** by also `--exclude`-ing them (so they're neither overwritten nor removed), then reconcile by hand:
-  - `keynote/` — repo renamed `shaw-style-guide.md` → `style-guide.md` and de-personalizes ("Shaw" → "your", `"author": "Shaw Talebi"` → `"Your Name"`, etc.). Port new style-guide bullets into the renamed file; fix the SKILL.md reference to `style-guide.md`. (The `shawhintalebi@gmail.com` curl-UA contact is KEEP — allowlisted + matches the committed infographic-builder precedent.)
+  - `keynote/` — repo renamed `shaw-style-guide.md` → `style-guide.md` and de-personalizes the whole SKILL.md to **zero "Shaw" mentions** ("When Shaw asks" → "When asked", `"author": "Shaw Talebi"` → `"Your Name"`, "hand the step back to Shaw" → "to the user", etc.). Exclude `shaw-style-guide.md`, `style-guide.md` and `assets/logos` from the rsync (the logo PNGs are deliberately not published; `rmdir keynote/assets` afterwards), port new style-guide bullets into the renamed file, and fix the SKILL.md reference to `style-guide.md`. The upstream "verified-good logo cache" paragraphs assume the shipped `assets/logos/` folder — replace them with the committed version's "verified-good sources" wording (pull it from `git show HEAD:keynote/SKILL.md`) rather than describing a folder that isn't there. (The `shawhintalebi@gmail.com` curl-UA contact is KEEP — allowlisted + matches the committed graphic-builder precedent.)
   - `video-editor/` — keep the sanitized `.env.example`, `README.md`, `.gitignore`; never copy the real `.env`.
-  - `training-proposal/` — keep `scripts/LOGO-README.md` (placeholder for the gitignored `logo-square.png`); skip `evals/` and the real logo binary. As of July 2026 upstream dropped the example proposals entirely in favor of the content-free `references/format-reference.md` (the repo's fictional Acme/TechStart/Globex examples were deleted to match). Upstream SKILL.md prose embeds **real client names** (filename examples, "freshest proposal" anecdotes) and points at Shaw's local proposals folder — scrub names to `[Company]`/fictional placeholders and genericize personal absolute paths (`/Users/shaw/...` → `~/...` or "your proposals directory"); also strip personal-website logo links from `md-to-pdf.py`. Grep case-insensitively: one run missed a CamelCase client name by grepping lowercase.
+  - `client-docs/` (Oct 2026 successor to `training-proposal` + `proposal-deck-creator`) — keep `scripts/LOGO-README.md` (placeholder for the excluded `logo-square.png`); exclude `.venv`, `uv.lock`, `evals/` and the real logo binary. Upstream SKILL.md, `references/*-format-reference.md` and `deck/*.md` embed **real client names** (filename examples, "freshest proposal" anecdotes, even the frontmatter description) and point at Shaw's local proposals/SOW folders — scrub names to `[Company]`/fictional placeholders and genericize personal absolute paths (`/Users/shaw/...` → `~/...` or "your proposals directory"); also strip the `shawhintalebi.com` `<a>` wrappers around the header/footer logos in `scripts/md-to-pdf.py`. Grep case-insensitively: one run missed a CamelCase client name by grepping lowercase.
   - `graphic-builder/` (renamed from `infographic-builder` in July 2026) — `@shawhintalebi` footer handle, `shawhintalebi@gmail.com` curl-UA, and `aibuilder.academy` are KEEP (public). Genericize personal folder paths (`/Users/shaw/...` → `~/...`). The `billing@acme-invoices.net` in the prompt-injection example graphic is fictional payload — allowlisted in scrub.py.
 
 **Heads-up — prior-pass misses surface here.** Earlier syncs left some PII in the *committed* repo (e.g. `crm/workflows/workflow-4-link-calls.md` and `workflow-1-sync.md` had real lead/company names; `pre-call-research/SKILL.md` had a private Google Sheets ID; `crm/SKILL.md` had a bare first-name example). Re-scan the whole file even when a name appears unchanged vs HEAD, and scrub for consistency. The `report-pii` mode + the private denylist exist to catch exactly these — run it after every sync. Note: the deterministic overwrite *reintroduces* real names where the committed repo had placeholders — check each name against the committed version and restore its placeholder.
@@ -116,11 +121,11 @@ It also applies the **private name/company denylist** at `pii-denylist.local.jso
 ```bash
 # Copy + scrub
 python3 .claude/skills/sync-desktop-skills/scripts/scrub.py scrub \
-  --source ~/agents/skills \
+  --source ~/agents/shaws-skills/skills \
   --target . \
-  --skills crm,outreach,notion-helper,...  \
+  --skills "$(ls ~/agents/shaws-skills/skills | paste -sd, -)" \
   --overwrite \
-  --log /tmp/sync-scrub.tsv
+  --log <scratchpad>/sync-scrub.tsv
 
 # Audit 1 — deterministic regex (should be clean except gitignored .claude/settings.local.json)
 python3 .claude/skills/sync-desktop-skills/scripts/scrub.py verify --target .
@@ -137,9 +142,11 @@ Notion-ID replacement uses a small left-context heuristic: `[database-id]` if th
 After the script runs, spawn ~3 `general-purpose` sub-agents in parallel for judgment-only categories: real person names, company names, dollar amounts tied to real engagements, LinkedIn profile URLs of non-public-figures, and the carve-out files. The script has already handled deterministic patterns — agents must NOT re-do that work.
 
 Typical batches (rough volume balance):
-- **Batch A — Notion-heavy:** crm, outreach, notion-helper, executive-briefing, sop-helper, engagements, referrals, testimonials, stripe-helper (most names live here)
-- **Batch B — voice + people-heavy:** email-helper (three-way-intros template carve-out), calendar-helper, pre-call-research, google-drive-helper, sfc-helper (sfc-helper is built from client-call research — read every line)
-- **Batch C — copy-heavy + Code-native:** business-strategy, conversion-copy, linkedin-post-writer, linkedin-post-analytics, sales-letter-writer, workshop-use-case-researcher, youtube-strategy, aba-brand-system, skimmable-summary, proposal-deck-creator, plus the Code-native set (historically near-zero edits — but freshly synced upstream prose DOES reintroduce real client names in training-proposal, so still read everything)
+- **Batch A — Notion-heavy:** crm, outreach, notion-helper, executive-briefing, sop-helper, engagements, reviews-referrals, stripe-helper, calendar-helper, meeting-prep, slack-helper, convo-mining, campaign-retrospective, call-follow-up (most names live here; calendar-helper's title-composition examples and slack-helper's channel table are dense with bare first names, company slugs and Slack IDs)
+- **Batch B — voice + people-heavy:** email-helper (three-way-intros template carve-out; expert-network-replies and SKILL.md "based on a real send (Name, date)" examples), client-support, sfc-helper (built from client-call research — read every line), google-drive-helper, event-finder, linkedin-audience, text-helper, social-replies, upwork, medium-helper, aba-plugin-updater, business-strategy
+- **Batch C — copy-heavy + Code-native + plugin:** conversion-copy, linkedin-voice, linkedin-post-analytics, sales-letter-writer, newsletter-writer, workshop-use-case-researcher, youtube-strategy, aba-brand-system, skimmable-summary, tactical-negotiation, extract-chatgpt-transcript, plus animation-builder, graphic-builder, keynote, video-editor, client-docs, cost-optimizer, skill-helper, skill-updater (historically near-zero edits — but freshly synced upstream prose DOES reintroduce real client names in client-docs, so still read everything)
+
+Write the shared rules (inputs, scrub/keep lists, carve-outs, boundaries, report format) to ONE brief file in the scratchpad and point all three agents at it; also drop `git show HEAD:<path>` copies of every modified file under `<scratchpad>/head/` so agents can reuse the placeholder the last public version chose. Agents must NOT edit the denylist themselves (concurrent writes) — they report new names and the orchestrator adds them.
 
 Each sub-agent prompt must include:
 1. Repo root (target only — script already did the copy)
@@ -202,7 +209,7 @@ Sync canonical skills: add X, update Y, remove Z
 - Removed: 3-way-intro (folded into email-helper)
 - README table resorted by complexity
 
-Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>
+Co-Authored-By: <the attribution line from this session's system reminder>
 ```
 
 **Never push without explicit approval from Shaw.**
@@ -211,4 +218,5 @@ Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>
 
 - Past session established that most content-heavy skills (`conversion-copy`, `sales-letter-writer`, most single-file skills) need **zero scrubs** — the PII concentrates in Notion-integrated skills and email examples.
 - Typical scrub volumes to expect per full sync: ~50–60 Notion IDs, ~15–20 person names, ~5–10 emails, ~5–10 company names.
-- `workflow-1-review.md` was an example of upstream rename (→ `workflow-1-sync.md`) that left a stale file in target. Watch for similar renames.
+- `workflow-1-review.md` was an example of upstream rename (→ `workflow-1-sync.md`) that left a stale file in target. Watch for similar renames. Whole-skill renames/merges happen too (Oct 2026: 7 repo skills gone upstream, 15 new) — trace them with `git log --diff-filter=D -- skills/<name>` and `-- <name>` (pre-restructure path) in the canonical repo, then confirm the successor by reading its description, and repoint README rows and cross-references.
+- Oct 2026 full sync volumes: ~330 deterministic replacements (128 denylist, 106 UUID, 68 Notion hex, 20 emails) plus a 3-agent judgment pass; ~100 report-only "risky" bare-first-name leaks to resolve by hand.

@@ -10,7 +10,10 @@ Use when Shaw shares new info about a lead (reply received, call happened, propo
    [Person] on 3/30 is already in the CRM — anything new to add?"). Only append entries that
    represent new information not yet in the log.
 3. Determine what changed: new activity, status change, or both
-4. Update properties:
+4. Update properties — first confirm this row is the right owner: the person on the touchpoint
+   should be the person on the row. A touch that belongs to someone else at the account doesn't
+   go here, even when this row owns the thread it came out of (see SKILL.md → "Companies,
+   people, and who gets a CRM row").
    - Append to Notes (never overwrite). For **clients** (Nurture), log only relationship-level
      events — status changes, expansion conversations, engagement milestones; routine touchpoints
      are carried by the dates, not Notes (see SKILL.md → "Client Notes Format"). For leads, keep
@@ -27,9 +30,7 @@ Use when Shaw shares new info about a lead (reply received, call happened, propo
    (or yesterday), ask Shaw whether he'd like a follow-up email drafted. If yes, use the
    email-helper skill's call follow-up reference (`references/call-follow-ups.md`) to draft it.
    If Shaw already requested a follow-up email as part of the same message, skip the prompt and
-   draft it directly. When you draft the email, do NOT also bump `Status`, `Last Contact?`, or
-   `Next Contact` to reflect the email's send — drafts aren't touchpoints. Step 4's CRM update
-   should reflect only what actually happened (e.g., the call). The drafted email's send-state
-   gets picked up later, either when Shaw confirms send or on the next Workflow 1 sync. See
-   "Drafts aren't touchpoints" in SKILL.md.
+   draft it directly. When you draft the email, step 4's CRM update still reflects only what
+   actually happened (e.g., the call) — drafts aren't touchpoints (see SKILL.md); the send gets
+   picked up when Shaw confirms it or on the next Workflow 1 sync.
 6. Confirm the update to Shaw with a brief summary

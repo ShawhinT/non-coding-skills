@@ -69,10 +69,10 @@ Cheers,
 Shaw
 ```
 
-**Example ([Person A] — asked for 2 weeks to decide):**
+**Example ([Person] — asked for 2 weeks to decide):**
 
 ```
-Hey [Person A],
+Hey [First Name],
 
 Thanks for your reply! Your analytics background would be super valuable for this series.
 
@@ -125,10 +125,10 @@ Shaw
 - Don't assume what they meant
 - Use "-Shaw" sign-off (it's a quick reply, not a formal email)
 
-**Example ([Person B] — wanted to join a cohort, not lead a workshop):**
+**Example ([Person] — wanted to join a cohort, not lead a workshop):**
 
 ```
-Hi [Person B],
+Hi [First Name],
 
 Thanks for your reply!
 
@@ -150,10 +150,10 @@ Then once clarified, redirect appropriately (e.g., waitlist link for self-paced 
 - Keep it very short (2-4 lines)
 - Use "-Shaw" sign-off
 
-**Example ([Person C] — passed because background isn't in pure analytics):**
+**Example ([Person] — passed because background isn't in pure analytics):**
 
 ```
-Thanks for your reply [Person C]!
+Thanks for your reply [First Name]!
 
 All good, there is a tentative plan to do another series on AI for customer acquisition in May, which might align with your sales background :)
 

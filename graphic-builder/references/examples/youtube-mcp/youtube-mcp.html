@@ -1,0 +1,22 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>youtube-mcp</title>
+<style>
+  :root { --bg:#FAFAF7; --surface:#FFFFFF; --hair:rgba(1,4,19,0.08); --accent:#087CA7; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:1080px; height:1080px; background:var(--bg); }
+  .canvas { width:1080px; height:1080px; display:flex; align-items:center; justify-content:center; }
+  .panel { width:960px; height:520px; background:var(--surface); border:1.5px solid var(--hair); border-radius:40px; display:flex; align-items:center; justify-content:center; }
+  .mark { object-fit:contain; display:block; flex:none; }
+  .claude { width:300px; height:300px; }
+  .youtube { width:252px; height:252px; }
+  .dots { width:78px; height:20px; flex:none; display:block; }
+  .badge { width:104px; height:104px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; flex:none; }
+  .badge svg, .badge img { width:52px; height:52px; color:#FAFAF7; display:block; }
+</style></head><body>
+<div class="canvas"><div class="panel">
+  <img class="mark claude" src="assets/claude.png" alt="">
+  <svg class="dots" viewBox="0 0 78 20"><line x1="8" y1="10" x2="70" y2="10" pathLength="5" stroke="#087CA7" stroke-width="7" stroke-linecap="round" stroke-dasharray="0 1"/></svg>
+  <div class="badge"><svg viewBox="0 0 24 24" fill="none"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244"/></svg></div>
+  <svg class="dots" viewBox="0 0 78 20"><line x1="8" y1="10" x2="70" y2="10" pathLength="5" stroke="#087CA7" stroke-width="7" stroke-linecap="round" stroke-dasharray="0 1"/></svg>
+  <img class="mark youtube" src="assets/youtube.png" alt="">
+</div></div>
+</body></html>

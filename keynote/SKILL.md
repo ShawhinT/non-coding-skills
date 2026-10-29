@@ -24,8 +24,9 @@ Work with Apple Keynote (.key) presentations: extract text, export images, creat
 
 - **export-images** — export slides as PNGs:
   ```
-  osascript .claude/skills/keynote/scripts/export-images.applescript "<absolute-deck-path>" "<absolute-output-dir>"
+  osascript .claude/skills/keynote/scripts/export-images.applescript "<absolute-deck-path>" "<absolute-output-dir>" [--all-stages]
   ```
+  `--all-stages` emits one PNG per build stage (every animation step) instead of one per slide — what you need to rebuild a talk's slide track synced to a recording (video-editor's `references/recreated-slides.md`). Stage files are numbered sequentially across the deck, so map them back to slides from a contact sheet. Embedded movies aren't in the export; pull them from the `.key` zip's `Data/` folder (`unzip -l deck.key | grep -E 'mp4|mov'`).
   Both paths must be **absolute** — a relative output dir (e.g. `./.keynote-skill/images/<name>`) fails with "could not be interpreted as a file URL". Use `"$(pwd)/.keynote-skill/images/<name>"`.
 
 ### Write (any `.key` file — automatic backups)
@@ -118,6 +119,15 @@ When asked to add a logo, screenshot, or other image to a slide:
   | Brand | File | Source |
   |---|---|---|
   | Claude | `claude.png` | lobehub `light/claude-color.png` |
+  | Claude Code | `claude-code.png` | lobehub `light/claudecode-color.png` — note the name has **no hyphen** (`claudecode`); `claude-code` 404s |
+  | Codex | `codex.png` | lobehub `light/codex-color.png` (purple-gradient app mark) — `Codex.app` is not in `/Applications` on this machine |
+  | ChatGPT | `chatgpt.png` | lobehub `light/openai.png` (black knot, transparent) — `/Applications/ChatGPT.app` is a **white tile**, avoid it |
+  | Cursor | `cursor.png` | lobehub `light/cursor.png` (black cube, transparent) — `/Applications/Cursor.app` is a **dark tile**, avoid it |
+  | Google Meet | `google-meet.png` | Wikimedia `Google_Meet_icon_(2020).svg` |
+  | Stripe | `stripe.png` | favicon service `stripe.com` (indigo #635BFF tile) |
+  | Python | `python.png` | Wikimedia `Python-logo-notext.svg` — the `-notext` file is the icon-only two-snake mark; plain `Python-logo.svg` is the **wordmark** |
+  | Resend | `resend.png` | simpleicons `cdn.simpleicons.org/resend/000000` → `qlmanage -t -s 480`; the favicon is only 114px and has a visible border |
+  | Google Analytics (GA4) | `ga4.png` | simpleicons `cdn.simpleicons.org/googleanalytics` (brand orange #E37400 bar chart) → `qlmanage -t -s 480`. icons8 `google-analytics` is a **flat orange circle** redraw and Wikimedia's `Logo_Google_Analytics.svg` is a **wordmark** — both wrong |
   | MCP | `mcp.png` | lobehub `light/mcp.png` |
   | Gmail | `gmail.png` | Wikimedia `Gmail_icon_(2020).svg` |
   | Google Calendar | `google-calendar.png` | Wikimedia `Google_Calendar_icon_(2020).svg` |
@@ -138,8 +148,15 @@ When asked to add a logo, screenshot, or other image to a slide:
   | Chrome | `chrome.png` | Wikimedia `Google_Chrome_icon_(February_2022).svg` (icon-only color wheel) — the `/Applications` app icon is a **white tile**, avoid it |
   | git | `git.png` | Wikimedia `Git_icon.svg` (icon-only orange diamond) — `Git-logo.svg` is the **wordmark** version, avoid it |
   | Calendly | `calendly.png` | simpleicons `cdn.simpleicons.org/calendly` (brand-blue #006BFF icon-only "C"), rendered to 800px PNG via `qlmanage -t -s 800 -o . <file>.svg` — Wikimedia/icons8/lobehub/clearbit all had nothing usable, and the favicon service only served 48px |
+  | Loopio | `loopio.png` | favicon service `loopio.com` (brand-teal icon-only "lo" mark, 256px transparent) — simpleicons has no `loopio` entry and returns an **empty file**, not a 404, so check `file` on the result |
+  | PowerPoint | `powerpoint.png` | Wikimedia `Special:FilePath/Microsoft_Office_PowerPoint_%282019%E2%80%93present%29.svg?width=500` — note the filename's **en-dash** (`%E2%80%93`) in "2019–present"; a plain hyphen 404s |
+  | Airspeed (formerly Glyphic) | `airspeed.png` | favicon of **glyphic.ai** (256px gradient "a" tile). `airspeed.ai`'s favicon is a GoDaddy parking placeholder, so after a rebrand try the old domain |
+  | Word | `word.png` | Wikimedia `Special:FilePath/Microsoft_Office_Word_%282019%E2%80%93present%29.svg?width=500` — same en-dash filename pattern as PowerPoint (500×466, icon-only blue "W" tile) |
+| Apollo.io | `apollo.png` | favicon service `apollo.io` (yellow tile, black sunburst mark, 256px) — lobehub has no `apollo` entry |
 
   Other brands sourced the same way and worth checking against the patterns above: `github`, `linkedin`, `playwright`, `assemblyai`. When you track down a new good logo, add a table row here so the next deck doesn't repeat the search.
+
+  **Logos added to a slide go wherever the slide's structure says they belong.** A slide that contrasts two states with the same set of tools (e.g. "How do I do this?" vs. "How do I get Claude to do this?" icon clusters) implies each tool appears in both, so a new logo goes into every matching cluster, sized and spaced like its neighbours. Check the exported slide afterwards for crowding.
 ## Speeding up videos before insertion
 
 Keynote's Movie inspector exposes only volume, trim, poster frame, and repeat — there's no playback-speed slider. To present a screen recording faster, pre-process it:
@@ -202,9 +219,45 @@ Title, Section, Title Only, Blank
 5. **Verify** — extract text and export images to confirm content placement
 6. **Iterate** — use `set-slide-text` / `add-slides` / `delete-slides` / `insert-image` to make targeted edits. **Do not re-run `populate-deck`** on an in-progress deck — it refuses by default and even `--force` discards user edits.
 
+## What Keynote's AppleScript genuinely cannot do
+
+Verified against `/Applications/Keynote.app/Contents/Resources/Keynote.sdef`. These are hard limits, not gaps in this skill. **When you hit one, say so plainly and hand the step back to the user — do not invent a workaround that mutates his deck.** He would rather do ten seconds of clicking than discover you rebuilt his title placeholders.
+
+### No z-order control
+
+There is no bring-to-front, send-to-back, arrange, or index property on any iWork item. **Newly created objects always land on top of everything already on the slide.**
+
+The consequence that bites: `insert-image` with a full-bleed 1920×1080 image **will cover the slide's title and every other existing element.** The content is not lost, just buried.
+
+Tell the user: *"the image is in, but Keynote's AppleScript can't send it behind the title — right-click the image and choose Arrange → Send to Back."* Then stop.
+
+**Do NOT** "fix" this by blanking the title placeholder and re-adding the text with `add-text-box` so it stacks on top. It looks like it works, but it swaps a themed master placeholder for a loose text box, which silently breaks the deck's typography inheritance and any later master change. This exact mistake was made once; don't repeat it.
+
+The only legitimate way to avoid the collision is to **not** cover the region in the first place: render the image so its content sits below the title band and insert it at a y-offset, leaving the title area untouched.
+
+### No shape fill color
+
+`background fill type` on `shape` and `text item` is **read-only** (`access="r"`), and it is an enum (`no fill` / `color fill` / `gradient fill` / `advanced gradient fill`), not a color value. There is no writable fill property anywhere in the dictionary. You cannot recolor a shape.
+
+What *is* writable: `color` of `character`/`paragraph`/`text` (font color, as RGB 0–65535, e.g. `{65535, 0, 0}`), plus `opacity` and `rotation` on the item itself.
+
+The tempting workaround also fails: `selection` on the document *is* read-write, so you can select a specific shape from AppleScript, but driving Keynote's own Copy Style (⌥⌘C) / Paste Style (⌥⌘V) through System Events dies with `osascript is not allowed to send keystrokes` unless the parent process has been granted Accessibility permission. Don't build on it.
+
+So: **shape fills are a manual step.** Sample the existing fill from an exported PNG if you need to match it (`export-images`, then read the pixel), give the user the hex, and let them apply it.
+
+### Reading geometry you cannot set
+
+`extract-text --positions` covers text items. For shapes and images, read `position`, `width`, and `height` directly — but coerce numerics explicitly or you get `-1700`:
+
+```applescript
+set p to position of sh
+set out to ((item 1 of p) as integer) & "," & ((item 2 of p) as integer)
+```
+
 ## Safety
 
 - Write scripts automatically back up the deck to `<deck-dir>/.keynote-skill/backups/` before modifying. Read-only scripts (`extract-text`, `export-images`) make no backup.
+- **Hand-rolled AppleScript that mutates a deck does NOT get the automatic backup.** If you're deleting or replacing objects outside the provided scripts, `cp -R` the deck into `.keynote-skill/backups/` yourself first.
 - `create-deck` refuses to overwrite an existing file.
 - `populate-deck` refuses to run on a deck with >1 slide without `--force`. This is the only destructive script — when in doubt, use the additive scripts instead.
 - If the user has the deck open in Keynote, the AppleScripts will close and reopen it; warn before running if they may have unsaved changes.
@@ -249,7 +302,11 @@ Exported handlers:
 - **`text items` shadowing inside Keynote `tell` blocks**: Inside `tell application "Keynote"`, the term `text items` refers to slide text-item objects, not string parts. If you parse comma-separated args (e.g. `"180,550"`) by setting `AppleScript's text item delimiters` and reading `text items of <string>`, do it **outside** the Keynote tell block — otherwise you'll get error -1728 ("Can't get every text item of '180,550'"). Same applies to any keyword that overlaps Keynote's vocabulary.
 - **Don't rebuild from JSON to fix one slide**: If the user has edited the deck, `populate-deck` will wipe their changes. Use `set-slide-text` for text fixes and `insert-image` for adding visuals.
 - **Setting `object text` wholesale strips hyperlinks**: Overwriting a text box's `object text` (e.g. to reorder a references list) flattens any auto-detected URL links/underlines to plain text — Keynote does **not** re-autolink text set via AppleScript. To renumber/reorder a list while keeping only *some* lines intact, set individual `paragraph i of object text` (leaves untouched paragraphs' links alone). If the whole box must be rewritten, warn the user the URLs became plain text (they re-link by clicking into each line in the app).
-- **`front document` is the wrong deck whenever a second one is open**: `open <file>` does not reliably bring an already-open deck to the front, so `open fileRef` + `set theDoc to front document` silently operates on whichever deck Keynote happened to have frontmost. Read scripts then return another deck's content — which looks like the user's deck mysteriously changed — and **write scripts edit the wrong file**, with the backup taken against the intended path, so the damage lands somewhere the backup can't undo. Resolve the target by matching each document's own file path (`docForPath`), never by front-most position. This applies to any new script you write against Keynote, not just the ones shipped here.
+- **`front document` is the wrong deck whenever a second one is open**: `open <file>` does not reliably bring an already-open deck to the front, so `open fileRef` + `set theDoc to front document` silently operates on whichever deck Keynote happened to have frontmost. Read scripts then return another deck's content — which looks like the user's deck mysteriously changed — and **write scripts edit the wrong file**, with the backup taken against the intended path, so the damage lands somewhere the backup can't undo. Resolve the target by matching each document's own file path (`docForPath`), never by front-most position. This applies to any new script you write against Keynote, not just the ones shipped here. The obvious shortcut `first document whose file is (POSIX file "…")` doesn't work either — it throws -1700 ("Can't make file into type specifier"); load `docForPath` from `_helpers.scpt` or loop over `documents` comparing `POSIX path of (file of d as alias)`.
+- **`item N of (position of <image>)` throws -1700 when inlined**: Keynote returns `position` as a coercion-resistant record. `set py to (item 2 of (position of im)) as integer` fails; `set pp to position of im` then `set py to (item 2 of pp) as integer` works. Same for `width`/`height` — coerce `as integer` before concatenating into a string.
+- **Image index ≠ insertion order**: `image i of slide N` follows z-order, which drifts from the order you inserted. To identify a specific logo in a row, match on its **position**, never its index. To clear one band of a slide (e.g. rebuild an app row while leaving a logo row above it untouched), iterate images in reverse and `delete` those whose y exceeds a threshold — deleting forward reindexes underneath you.
+- **A batch of write-script calls outruns the backup window**: every write script takes a backup and then prunes to the 3 most recent, so the fourth call in a row silently discards the pre-batch snapshot — and a failed call (bad args) still backs up first, burning a slot without changing anything. Before running more than three write scripts against one deck (e.g. a row of six logos), `cp` the deck into `.keynote-skill/backups/<name>.prebatch-<timestamp>.key` yourself so the clean starting point survives.
+- **zsh does not word-split unquoted variables**: a loop like `for spec in "word.png 150,655"; do set -- $spec; osascript ... "$1" "$2"` passes the whole spec as `$1` and an empty `$2`, so `insert-image` errors "Invalid position" (and still backs up, see above). Write the calls out explicitly, or split with `${=spec}` — `set -- $spec` only works in bash.
 - **Stale exports fool pixel-measurement**: When verifying placement by measuring the exported PNG, make sure the export actually refreshed first. `export-images` writes to the output dir you pass literally — if you've `cd`'d elsewhere, a `$(pwd)/.keynote-skill/images/...` arg resolves to a *different, nested* dir and you'll keep measuring the old PNG (and chase a bug that isn't there). Pass an absolute output path, or check the file's mtime, before trusting the pixels.
 
 ## Notes
@@ -258,3 +315,4 @@ Exported handlers:
 - The AppleScripts open and close documents in Keynote automatically
 - For large presentations, text extraction is usually sufficient; only export images when visuals matter
 - The `populate-deck` script requires Python 3 (for JSON parsing)
+- **Slides after the blank black end slide are backups, not misordered content.** In the user's talk decks, a blank black slide marks the end of the talk. Anything after it (welcome slide, alternate title, detail slides) is extra material he pulls up on demand. When reviewing a deck, judge flow and order only up to that blank slide.

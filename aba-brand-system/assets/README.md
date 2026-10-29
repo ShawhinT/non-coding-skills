@@ -8,6 +8,7 @@ Bundled with this skill so it has no external dependencies. Reference these in H
 | `logo-wide-light.png` | Wide wordmark, light variant | Only when the background is light (off-brand for ABA itself but useful in mixed-brand decks). |
 | `logo-square-dark-192.png` | Square mark, 192px, dark variant | Footer (40×40 rounded), chip avatars, dark-background slides. |
 | `logo-square-dark-512.png` | Square mark, 512px, dark variant | Higher-resolution use — app icons, large social graphics. |
+| `logo-square-dark-512-sharp.png` / `logo-square-dark-192-sharp.png` | Square mark, dark variant, **straight (unrounded) corners** | When Shaw asks for the logo without rounded edges, or a platform applies its own corner mask (avatars, app icons). Same art as the rounded files; corners filled with the logo background `#010101`. |
 | `logo-square-light-192.png` | Square mark, 192px, light variant | Same as above but on light backgrounds. |
 | `favicon-32x32.png` | 32×32 favicon | Browser tab icon. |
 

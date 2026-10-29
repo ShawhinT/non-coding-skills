@@ -178,6 +178,8 @@ Sub-agents write to `<project_dir>/chunks/chunk_<id>_segments.json`. If Write is
 
 Run sub-agents in parallel wherever the API allows.
 
+When the brief mandates dropping an entire chunk (e.g. a Q&A block the user excluded wholesale), skip the agent for that chunk and author its `chunk_<id>_segments.json` from the parent session — `[]` for a full drop, or the one or two tool-sourced keeps the brief carves out (such as a goodbye line kept as the outro, with boundaries read from `transcript_lookup.py`). An agent dispatched only to return an empty list is wasted tokens and wall-clock.
+
 #### Word-level trimming inside a segment (head-trim / internal restart)
 
 The chunk files carry only segment-level `start`/`end` and the concatenated `text`. A segment can therefore contain a **fused take** — a false start, a repeated opening, or a throat-clear bridging two attempts — that the silence-gap splitter never broke apart (filler vocalizations like "ahem"/"um" are transcribed as zero-gap words, so no gap ever crosses the split threshold). The agent can *see* the repeat in the `text` but the segment object gives it no timestamp for where the clean take begins.
@@ -332,11 +334,19 @@ The reason this matters: FCPXML durations are frame-aligned rationals like `1913
 
 See `references/fcpxml-format.md` ("Connected Clips and Lanes", "DTD Content Order", "Mixed Formats") for the structural rules the emitter enforces.
 
-**Redaction (on request only).** When the user asks to obscure something visible on screen — emails, PII, keys — follow **`references/redaction.md`**: exposure mapping, patch/blur design, the still-image→ProRes-alpha detour (the emitter takes video assets only), spine micro-cuts, and FCPXML round-trip gotchas all live there. Never run it as a default step.
+**Intro name title.** Shaw's videos open with a standing lower-third over "Hey everyone, I'm Shaw". The asset already exists; place it as a Step 8 overlay rather than rebuilding it. Path, placement timing and the re-render recipe are in **`references/intro-title.md`**.
+
+**"Coming up" pre-roll (on request).** When the user wants a ~30 s teaser of later lines at the head of the video, follow **`references/coming-up.md`**: the register-by-register research process, the storytelling judgment (open a loop, credibility, struggle, permission, thesis), RMS-snapped cut points, and the editable deliverable (pre-roll prepended to the EDL as separate clips, title as a Step 8 overlay).
+
+**Redaction (on request only).** When the user asks to obscure something visible on screen — emails, PII, keys, or a *category* like "client names" with no list — follow **`references/redaction.md`**: scoping the brief (which categories are sensitive vs. the demo itself), OCR discovery (`scripts/ocr_frames.swift`), exposure mapping, word-level patch design, the still-image→ProRes-alpha detour (the emitter takes video assets only), fan-out across sub-agents, spine micro-cuts, verification and the deliverable map all live there. Never run it as a default step.
 
 ### Step 7-alt — Dual-source picture-in-picture (rare)
 
 When the shoot has **two recordings of the same talk** — e.g. a speaker camera plus a separate screen/slides capture — and you want one full-screen as the main show with the other as a synced PiP inset (usually keeping the *better* recording's audio), use `make_pip_fcpxml.py` **instead of** Step 7. This path is uncommon; the full workflow — audio-sync discovery, the emitter, the FCP transform coordinate system, and verification — lives in **`references/picture-in-picture.md`**. Read it before running.
+
+### Step 7-alt — Recreated slides (camera-only talk, rare)
+
+When the talk was filmed on camera but the **screen wasn't recorded**, rebuild the slides from the deck: export every Keynote build stage, cue each one to the transcript word where the speaker reveals it, render a slides track (plus any embedded demo video, time-warped to the narration) on the raw camera timeline, and composite a rounded camera inset over it. Slides drive the cut here — a line a slide builds on must survive Step 3, so say so in the chunk brief. Full workflow and scripts (`render_slides_track.py`, `make_slides_inset_fcpxml.py`) in **`references/recreated-slides.md`**.
 
 ## Output
 

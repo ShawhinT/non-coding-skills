@@ -78,9 +78,9 @@ def main():
     ap.add_argument("--project-name", default=None)
     ap.add_argument("--seq-w", type=int, default=1920)
     ap.add_argument("--seq-h", type=int, default=1080)
-    # Defaults = bottom-right quadrant, flush to the corner, on a 1920x1080
-    # canvas (confirmed in FCP — the project/preview MUST be 1080p for these
-    # pixel values; for a 4K project recompute, see references/picture-in-picture.md).
+    # --pos-x/--pos-y are PIXELS of the sequence canvas (center origin, +y up);
+    # converted to FCPXML units below. Defaults = bottom-right quadrant, flush
+    # to the corner, on 1920x1080 (see references/picture-in-picture.md).
     ap.add_argument("--scale", type=float, default=0.5)
     ap.add_argument("--pos-x", type=float, default=480.0)
     ap.add_argument("--pos-y", type=float, default=-275.0)
@@ -152,6 +152,9 @@ def main():
     spine = ET.SubElement(sequence, "spine")
 
     fd = Fraction(seq_den, seq_num)
+    # FCPXML position units are % of frame height (100 = seq_h px), not pixels;
+    # raw pixels import fine but park the PiP far off-screen.
+    px_to_xml = lambda px: px * 100.0 / args.seq_h
     tl_off = Fraction(0)
     n_pip = 0
     for i, seg in enumerate(segs):
@@ -184,7 +187,7 @@ def main():
                                 format="r3f")
             ET.SubElement(pip, "adjust-transform",
                           scale=f"{args.scale} {args.scale}",
-                          position=f"{args.pos_x} {args.pos_y}")
+                          position=f"{px_to_xml(args.pos_x):.4f} {px_to_xml(args.pos_y):.4f}")
             n_pip += 1
         tl_off += rdur
 

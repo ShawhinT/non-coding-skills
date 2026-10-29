@@ -1,17 +1,6 @@
 ---
-name: sop-helper
-description: >
-  Create, update, and reference Shaw's standard operating procedures (SOPs) in Notion. Use
-  whenever Shaw wants to turn a process into an SOP, update an existing one, or pull up an SOP
-  to reference or walk through. Triggers: "write/update/fix the SOP for X", "document this
-  process", "turn this into an SOP", "where's the SOP for X", "walk me through the SOP", or
-  any reference to the SOPs page. Also trigger when Shaw describes a repeatable workflow and
-  says "let's save this" or "this should be written down", or casual phrasings like "I keep
-  redoing this, make it an SOP" or "we need a playbook for X". Also load at the start of any
-  SOP-adjacent reasoning — proposing template edits, comparing sent mail to existing templates,
-  or sketching SOP changes. Don't wait for the actual edit; if you're reasoning about what an
-  SOP should say, the skill should already be loaded. Do NOT use for one-off tasks — those go
-  through `notion-helper`. SOPs are for repeatable processes, not single to-dos.
+name: "sop-helper"
+description: "Create, update, and reference Shaw's standard operating procedures (SOPs) in Notion. Use whenever Shaw wants to turn a process into an SOP, update an existing one, or pull up an SOP to reference or walk through. Triggers: \"write/update/fix the SOP for X\", \"document this process\", \"turn this into an SOP\", \"where's the SOP for X\", \"walk me through the SOP\", or any reference to the SOPs page. Also trigger when Shaw describes a repeatable workflow and says \"let's save this\" or \"this should be written down\", or casual phrasings like \"I keep redoing this, make it an SOP\" or \"we need a playbook for X\". Also load at the start of any SOP-adjacent reasoning — proposing template edits, comparing sent mail to existing templates, or sketching SOP changes. Don't wait for the actual edit; if you're reasoning about what an SOP should say, the skill should already be loaded. Do NOT use for one-off tasks — those go through `notion-helper`. SOPs are for repeatable processes, not single to-dos."
 ---
 
 # SOP Helper Skill
@@ -36,29 +25,33 @@ All SOPs are child pages under the **SOPs** parent page in Shaw's ABA (Master) w
 | URL | https://www.notion.so/SOPs-[page-id] |
 | Parent (ABA Master) | `[page-id]` |
 
-The parent page is organized by category headers. As of this writing (confirm against the live
-page — titles drift as SOPs are added, split, or renamed):
-
-- **Acquisition** — Discovery Call, Testimonial Ask, Referral Ask, AI Rollout Audit Call,
-  Event Series, Post Event
-- **Delivery** — 1:1 Claude Workshop, Group Claude Workshop, Wrap-up Call, and the **Check-in
-  Call family**: a shared base (**Check-in Call** — Setup, call bank, post-call mechanics) plus
-  three spokes carrying the agenda + templates — **Check-in Call (1:1 Claude Workshop)**
-  (post-session 4Rs), **Check-in Call (Client Nurture)** (periodic; 4Rs not forced), and
-  **Check-in Call (Lead Nurture)** (warm lead; no 4Rs)
-- **Resources** — reference pages rather than process SOPs (e.g. The 4Rs Framework, The
-  Hormozi Content Framework); SOPs link to these instead of restating them
+The parent page is organized by category headers — currently **Acquisition**, **Delivery**,
+and **Resources** (reference pages rather than process SOPs, e.g. The 4Rs Framework; SOPs link
+to these instead of restating them). Fetch the parent page for the live list rather than
+working from memory — SOPs get added, split, and renamed.
 
 The call/session SOPs follow a consistent **Trigger → Setup → Pre-call research → Call →
-Post-call** structure; delivery/acquisition SOPs follow their own order.
+Post-call** structure; delivery/acquisition SOPs follow their own order. The **Check-in Call**
+family is the one shape worth knowing in advance: a shared base carrying Setup, the call bank,
+and post-call mechanics, plus spokes that carry the agenda and templates for each variant.
 
-All the entries above are real child pages. A category may also carry placeholder header
-bullets for SOPs Shaw hasn't written yet — promote those to real pages rather than
-duplicating them.
+Most entries under a category header are real child pages, but a category may also carry
+placeholder bullets for SOPs Shaw hasn't written yet — promote those to real pages rather
+than duplicating them.
 
 When creating a new SOP, add it under the right category heading. If there's no obvious
 category fit, surface that to Shaw and suggest either extending an existing category or adding
 a new one — don't silently drop it at the bottom.
+
+### Other libraries
+
+Each business keeps its own SOP library, and the IDs above are only ABA's. Pick the library by
+which business the process serves — an SOP filed under the wrong business is as lost as one
+never written. The same format conventions apply everywhere.
+
+| Library | Page ID | Organized by |
+|---|---|---|
+| **TDE SOPs** (under TDE (Master)) | `[page-id]` | **Events** (one SOP per event type: Workshop, Podcast, Virtual Meetup, In-Person Meetup) and **Shared** (Event Changes — cancel/reschedule for every type) |
 
 ---
 
@@ -153,6 +146,23 @@ Subject: <subject> *(... — Variant B, <short label>)*
   Don't expand these.
 - **Keep nesting shallow** — two levels deep is usually enough. Three is a code smell.
 
+### Resource pages
+
+Pages under **Resources** are reference material, not processes, so the step spine above
+doesn't apply — there is no trigger and no order of operations to follow. They answer a
+different question: what is this idea, and how do I check my work against it. The shape that
+serves that is five sections:
+
+- `## What it is` — one or two lines defining the framework
+- `## Why it matters` — the few reasons it earns a place
+- `## How it works` — the framework itself, one `###` per component
+- `## Applying the framework` — a checklist to pressure-test real work against
+- A closing `Source:` line — external link with timestamps or page numbers, plus
+  `<mention-page>` links to companion resources
+
+Content comes from the source only: where the source leaves something unexplained, leave it
+blank rather than filling it in.
+
 ---
 
 ## What belongs in an SOP
@@ -178,15 +188,27 @@ imagination. Ground templates in real sent emails; ground edge cases in cases th
 came up. If there's nothing real to codify for a section yet, leave it out rather than padding
 it — an empty space is honest, an invented one is misleading.
 
+### Check the SOP against the record
+
+"Codify only what's real" says what's admissible; it also says where to look. Once an SOP has
+been run, the run is better evidence than anyone's memory of it — the engagement record, the
+pages it produced, the mail actually sent. Read those before proposing an update, and compare
+what the SOP prescribes against what happened.
+
+What you're looking for is rarely a step done wrong. It's a step the SOP left optional that
+turned out to be load-bearing, or a schema the SOP describes that practice has already
+replaced. A template can be followed exactly and still be incomplete, so check the downstream
+state too — an item still unchecked weeks later says more about the SOP than the email sent
+from it. The same holds when Shaw sends an edited version of a templated email: the edit is
+evidence the template drifted, so propose updating it rather than letting future drafts start
+from a stale base.
+
 ### Cross-reference: email-helper
 
 SOP-stored email templates are consumed by `email-helper` when drafting standard emails
 (pre-call, post-event, kickoff, follow-up, testimonial asks). Keep templates in plain text
 with `-` dashes — `email-helper` handles HTML conversion (bullets, links) when generating the
 draft. Don't encode HTML in the SOP template itself.
-
-**Maintenance loop.** When Shaw sends an edited version of a templated email, propose updating
-the SOP template to match — otherwise future drafts start from a stale base.
 
 ---
 
@@ -222,6 +244,16 @@ the original context. Extract:
 
 If Shaw's description is thin (he just said "research calls, make an SOP"), ask one or two
 targeted questions before drafting. Don't invent a process he hasn't described.
+
+**Splitting a long checklist into several SOPs.** Shaw's raw checklists mix variants
+together ("(For Podcasts)", "(For Discord Events)"). Split them by the thing he picks at the
+start, so each SOP reads top to bottom with no skipping (for TDE, that's event type). Steps
+that are the same for every variant and happen off the main path, like cancel/reschedule, go
+into one shared SOP the others link to. Copying them into each SOP leaves several versions that
+drift apart. When two variant SOPs share a stretch (day-of run of show, publishing the
+recording), one of them owns it along with its templates, and the other points to it. A live
+example page Shaw shares (a past event page with its tracker and copy) is better evidence than
+the checklist, so draft against it.
 
 ### Step 3: Pick the right category
 
@@ -259,12 +291,28 @@ steps — he just told you them.
 Triggers: "update the SOP for X", "fix the event SOP", "the launch SOP is out of date", or any
 time Shaw describes a change to how he does something that's already documented.
 
-### Step 1: Find the SOP
+### Step 1: Resolve what's changing — a page, or a step
+
+A request names an SOP, but the name may not resolve to one. The SOPs are organized by process
+while the policies cut across processes, so a change phrased as one SOP often lands on a step
+that several share — the proposal send, the pre-call email, the follow-up.
+
+Search on the *step*, not the title: `notion-search` the SOPs page for the action, and read
+every hit before editing any of them. Confirm the blast radius with Shaw before starting — a
+policy applied to one SOP and not its siblings is worse than not applying it, because the
+library now contradicts itself.
+
+Once the radius is set, one SOP owns the canonical version of the step (usually the one
+carrying the templates) and the others reference it. Edit the owner first, then propagate —
+including phrasing shared across template variants, which drifts if you change one and not its
+siblings.
+
+### Step 2: Find the SOP
 
 Use `notion-search` or fetch the SOPs parent page and locate the child page. Read it fully
 before editing — you want to make a targeted change, not a rewrite.
 
-### Step 2: Make a targeted edit
+### Step 3: Make a targeted edit
 
 Use `notion-update-page` with `command: "update_content"` and a search-and-replace that
 touches only the relevant section. For small changes (adding a step, fixing a template), this
@@ -273,7 +321,7 @@ is much safer than rewriting the whole page.
 If Shaw is asking for a larger rewrite ("redo the event SOP, it's stale"), confirm scope
 before doing it — a big rewrite risks losing useful detail he doesn't remember is there.
 
-### Step 3: Don't add revision metadata
+### Step 4: Don't add revision metadata
 
 Shaw's SOPs don't track "last updated" or version history. Don't add it unless he asks.
 
@@ -330,6 +378,10 @@ business; changes should be intentional.
 - **Codify only what's real** — never invent edge cases, templates, or question banks; ground
   them in things Shaw has actually experienced or sent.
 - **Always search first** to avoid creating duplicates.
+- **A change may belong to a step, not a page** — search on the action, confirm the blast
+  radius, edit the owner SOP first, then propagate to its siblings.
+- **Check the SOP against the record** — once it has been run, the engagement record and the
+  mail actually sent are better evidence than memory of it.
 - **Use `<mention-page url="..."/>` for internal Notion links** (pages and databases),
   Markdown for external ones.
 - **Preserve Shaw's shorthand** ("FU", "ID") — don't expand it.

@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AI Use Cases for Restaurants</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Libre+Franklin:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  @page { size: Letter; margin: 0; }
+  :root {
+    --bg: #FAFAF7;
+    --ink: rgba(1, 4, 19, 1);
+    --body: rgba(1, 4, 19, 0.66);
+    --muted: rgba(1, 4, 19, 0.45);
+    --rule: rgba(1, 4, 19, 0.1);
+    --rule-strong: rgba(1, 4, 19, 0.85);
+    --primary: #087CA7;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); }
+  html { height: 11in; overflow: hidden; }
+  body {
+    width: 8.5in; height: 11in; overflow: hidden;
+    padding: 0.45in 0.7in 0.34in;
+    font-family: "Libre Franklin", sans-serif;
+    color: var(--body);
+    display: flex; flex-direction: column;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  header img { height: 40px; mix-blend-mode: multiply; margin-left: -2px; display: block; }
+
+  h1 {
+    font-family: Manrope, sans-serif; font-weight: 800;
+    font-size: 28pt; line-height: 1.05; letter-spacing: -0.02em;
+    color: var(--ink); margin-top: 0.16in;
+  }
+  .lede { font-size: 10pt; line-height: 1.5; margin-top: 8px; }
+
+  .index { margin-top: 0.2in; border-top: 1.25px solid var(--rule-strong); }
+
+  .group-head {
+    display: block;
+    padding: 0.16in 0 6px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .group:first-child .group-head { padding-top: 0.1in; }
+  .group-head span, .group-head h2 {
+    font-family: "JetBrains Mono", monospace; font-weight: 500;
+    font-size: 8pt; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--primary);
+  }
+  .group-head span { color: var(--muted); letter-spacing: 0.02em; }
+
+  .row {
+    display: grid; grid-template-columns: 0.42in 2.45in 1fr; align-items: baseline;
+    padding: 7px 0 7.5px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .group:last-child .row:last-child { border-bottom: none; }
+  .num {
+    font-family: "JetBrains Mono", monospace; font-size: 8.5pt; color: var(--muted);
+  }
+  .row h3 {
+    font-family: Manrope, sans-serif; font-weight: 800;
+    font-size: 10.5pt; letter-spacing: -0.01em; color: var(--ink);
+    padding-right: 0.2in;
+  }
+  .row p { font-size: 8.75pt; line-height: 1.42; }
+
+  footer {
+    margin-top: auto; text-align: center;
+    font-family: "JetBrains Mono", monospace; font-size: 7.5pt;
+    letter-spacing: 0.04em; color: var(--muted);
+  }
+</style>
+</head>
+<body>
+
+  <h1>AI Use Cases for Restaurants</h1>
+
+  <div class="index">
+    <div class="group">
+      <div class="group-head"><h2>For consultants</h2></div>
+      <div class="row"><span class="num">01</span><h3>Contract and spec review</h3><p>Compare the equipment spec you sent with what came back. Claude flags missed or swapped items before they cost the project.</p></div>
+      <div class="row"><span class="num">02</span><h3>Equipment quote builder</h3><p>Drop in a vendor quote. Claude pulls the models and SKUs into an equipment schedule and a client-ready quote.</p></div>
+      <div class="row"><span class="num">03</span><h3>Job prospecting</h3><p>Claude finds new design projects, tracks your emails, and drafts the follow-ups. Business development without a hire.</p></div>
+    </div>
+
+    <div class="group">
+      <div class="group-head"><h2>For operators</h2></div>
+      <div class="row"><span class="num">04</span><h3>Menu and pricing optimization</h3><p>Claude reviews menu mix, prices, and drink margins against your costs. A first-time owner gets years of operator know-how on call.</p></div>
+      <div class="row"><span class="num">05</span><h3>Social media marketer</h3><p>Upload a food photo and get an on-brand Instagram post. A shop with no marketer still shows up locally.</p></div>
+      <div class="row"><span class="num">06</span><h3>Promo flyer design</h3><p>Flyers for specials, events, and limited-time offers, on brand and done in minutes. No designer needed.</p></div>
+      <div class="row"><span class="num">07</span><h3>Review response drafting</h3><p>Claude drafts replies to Google reviews, especially the negative ones that wear owners down.</p></div>
+      <div class="row"><span class="num">08</span><h3>Catering sales outreach</h3><p>Claude researches nearby offices and venues and sends tailored catering pitches. Catering becomes a pipeline, not word of mouth.</p></div>
+      <div class="row"><span class="num">09</span><h3>Photo-to-SOP manual</h3><p>Photograph each station step and get an illustrated SOP back. One operator went from 4 to 5 hours per manual to about 15 minutes.</p></div>
+      <div class="row"><span class="num">10</span><h3>Multi-unit P&amp;L summary</h3><p>Monthly exports from every location become one page: sales, labor %, food cost %, and the outliers worth a call.</p></div>
+      <div class="row"><span class="num">11</span><h3>Month-end close</h3><p>Claude cleans up each store's accounting exports and flags errors and unrecorded transfers. Close goes from days to hours.</p></div>
+      <div class="row"><span class="num">12</span><h3>Industry news digest</h3><p>A daily brief on restaurant industry and competitor news. One operator saves about 2.5 hours a week.</p></div>
+      <div class="row"><span class="num">13</span><h3>Hourly hiring pipeline</h3><p>Claude screens crew applicants against a rubric and turns interview notes into scorecards. Built for kitchens that hire every week.</p></div>
+    </div>
+  </div>
+
+  <footer>aibuilder.academy</footer>
+</body>
+</html>

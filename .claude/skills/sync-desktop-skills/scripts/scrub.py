@@ -83,6 +83,11 @@ SAFE_WORDS = {
 # 32-char hex Notion IDs (page or database, dashless form). Word boundary on both sides.
 RE_NOTION_HEX = re.compile(r"(?<![a-f0-9])[a-f0-9]{32}(?![a-f0-9])")
 
+# 32-hex values that are NOT Notion IDs and must survive (public API constants embedded in scripts).
+HEX_ALLOWLIST = {
+    "9501074288a12f3ae9e3c7ea243bccbf",  # linkedin-audience/scripts/dm-inbox.js — LinkedIn messengerConversations GraphQL queryId (public)
+}
+
 # UUID form (with dashes) — used for both Notion IDs and other UUIDs. Treat as Notion ID.
 RE_UUID = re.compile(
     r"(?<![a-f0-9])[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}(?![a-f0-9])"
@@ -94,6 +99,7 @@ RE_EMAIL = re.compile(r"[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}")
 # Phone — North-American-leaning. Avoid matching obvious non-phone numeric runs.
 RE_PHONE = re.compile(
     r"(?<!\d)(?:\+?1[\s.\-]?)?\(?\d{3}\)?[\s.\-]\d{3}[\s.\-]\d{4}(?!\d)"
+    r"|(?<![\d.])1[2-9]\d{2}[2-9]\d{6}(?![\d.])"  # bare 11-digit NANP form, e.g. 19725551234 (iMessage/WhatsApp handles)
 )
 
 # Calendly booking URLs (keep notifications@ email handled separately above).
@@ -182,6 +188,8 @@ def scrub_text(
     """Apply regex + denylist scrubs. Append (rel_path, category, original, repl) to log."""
 
     def sub_notion_hex(m: re.Match) -> str:
+        if m.group(0) in HEX_ALLOWLIST:
+            return m.group(0)
         repl = notion_id_replacement(text, m)
         log.append((rel_path, "notion_hex_id", m.group(0), repl))
         return repl
@@ -385,7 +393,7 @@ def cmd_verify(args: argparse.Namespace) -> int:
     for path, rel in iter_target_text_files(target_root):
         try:
             for i, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
-                if RE_NOTION_HEX.search(line):
+                if any(h.group(0) not in HEX_ALLOWLIST for h in RE_NOTION_HEX.finditer(line)):
                     findings.append(("notion_hex_id", rel, i, line.strip()))
                 if RE_UUID.search(line):
                     findings.append(("uuid", rel, i, line.strip()))

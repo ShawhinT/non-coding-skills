@@ -48,11 +48,19 @@ Use a real client when possible. Pull from `ABA Calls` (Notion) for relevant pro
 4. **What changed.** One concrete moment of inflection.
 5. **Result.** Brief.
 
+When no client story fits, or Shaw has a lived lesson that maps better, use his own story instead (often a far-past one — see `topics.md`). It runs in three beats, each one spoken line or two:
+
+1. **Hook.** The moment, stated plainly, with the detail that makes it his ("I complained I had no time while glued to my phone").
+2. **Retain.** One concrete detail that raises the stakes or flips the situation ("They checked my screen time: three hours a day").
+3. **Reward.** The lesson as a payoff line, which is also the bridge into the body ("Hey, I found you some time").
+
+Skip the backstory and the struggle; keep the moment and the lesson.
+
 ### Permissions and discretion
 
 Before naming a client publicly:
 - Confirm permission to use their name and company
-- If unconfirmed, anonymize via role + industry + size ("the CEO of a mid-sized European manufacturer" or "a mid-market fintech CEO")
+- If unconfirmed, anonymize via role + industry + size ("the CEO of a 1,200-person company in Prague" or "a mid-market fintech CEO")
 - Anonymized doesn't lose impact — the story shape carries the weight, not the name
 
 ### Bridge into the body

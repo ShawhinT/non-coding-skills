@@ -1,22 +1,21 @@
 ---
-name: executive-briefing
-description: >
-  Generate Shaw's daily executive briefing by pulling today's tasks from his main Notion databases.
-  Use this skill whenever Shaw asks for his daily briefing, rundown, what's on his plate, what he has
-  going on today, or anything about reviewing his scheduled tasks for the day. Triggers include:
-  "give me my briefing", "what do I have today", "daily rundown", "executive briefing", "what's on
-  my plate", "what's scheduled today", "morning briefing", "what am I working on today", or any
-  reference to checking tasks across his Notion databases. Even casual mentions like "what's today
-  look like" or "run me through my day" should trigger this skill.
+name: "executive-briefing"
+description: "Generate Shaw's daily executive briefing by pulling today's tasks from his main Notion databases. Use this skill whenever Shaw asks for his daily briefing, rundown, what's on his plate, what he has going on today, or anything about reviewing his scheduled tasks for the day. Triggers include: \"give me my briefing\", \"what do I have today\", \"daily rundown\", \"executive briefing\", \"what's on my plate\", \"what's scheduled today\", \"morning briefing\", \"what am I working on today\", or any reference to checking tasks across his Notion databases. Even casual mentions like \"what's today look like\" or \"run me through my day\" should trigger this skill."
 ---
 
 # Executive Briefing Skill
 
 Shaw organizes his work across several Notion databases. The first six are dated work
 databases — pages with a `Date` property, scheduled for the day Shaw wants to act on them.
-The last three are relationship databases (Active Leads, Clients (Nurture), Testimonials)
-where each page has a `Next Contact` field; the briefing surfaces rows whose next touch is
-due. Together they form a single daily picture of what's on Shaw's plate.
+The last four are relationship databases (Active Leads, Clients (Nurture), Reviews/Referrals,
+Friends) where each page has a `Next Contact` field; the briefing surfaces rows whose next
+touch is due. Together they form a single daily picture of what's on Shaw's plate.
+
+A relationship database earns a place here by carrying a live `Next Contact`, not by holding
+leads. Friends is the case that makes the distinction visible: nobody in it is a prospect, but
+partners, channels, and affiliates have next touches that go stale exactly like a lead's — and
+a next-touch date nothing sweeps is worse than no date at all, because it reads as scheduled.
+When a new database starts carrying `Next Contact`, it belongs in this briefing.
 
 The briefing is a snapshot of what's due now — not a project management tool. No overdue
 items from prior days, no upcoming items beyond today's window, no backlog.
@@ -42,7 +41,8 @@ Follow-ups due (filtered by `Next Contact`):
 
 - 💼 **Active Leads** — pipeline rows where the next touch is due
 - 🌱 **Clients (Nurture)** — active/nurturing client check-ins coming up
-- ⭐ **Testimonials** — testimonial asks where the next nudge is due
+- 📝 **Reviews/Referrals** — testimonial asks and referral touches where the next nudge is due (both tracks live on one row; the row's live track is whichever its Notes say)
+- 🫂 **Friends** — the non-lead network (partners, channels, affiliates, subcontractors, friends, family) where the next touch is due. `Type` is the field that says what the relationship is, so it belongs in the line
 
 If a new database is added, update `notion-helper/SKILL.md` (catalog) and add its view rows to
 the "View URLs" section below.
@@ -54,9 +54,13 @@ the "View URLs" section below.
 The precomputed server-side-filtered views this briefing runs on. Today views filter the
 dated-work DBs on `Date is Today` and the relationship DBs on `Next Contact` due; Tomorrow views
 mirror them one day forward. All are relative filters set in the Notion UI (the view DSL can't
-write relative dates), so they update automatically each day. The six dated views live on the
-database itself; the three relationship views live on their *source* database (note the
-different page IDs).
+write relative dates), so they update automatically each day.
+
+**Which page ID a view URL uses is not uniform, so copy these rows rather than deriving them.**
+The six dated views live on the database itself. Active Leads, Clients (Nurture), and
+Reviews/Referrals point at their *source* database, which is why their Today and Tomorrow rows
+carry different page IDs. Friends points at the database itself for both, so its two rows share
+one ID — that is correct, not a copy-paste error to "fix."
 
 ### Today Views
 
@@ -70,7 +74,8 @@ different page IDs).
 | ABN | `https://www.notion.so/[page-id]?v=[page-id]` |
 | Active Leads | `https://www.notion.so/[page-id]?v=[page-id]` |
 | Clients (Nurture) | `https://www.notion.so/[page-id]?v=[page-id]` |
-| Testimonials | `https://www.notion.so/[page-id]?v=[page-id]` |
+| Reviews/Referrals | `https://www.notion.so/[page-id]?v=[page-id]` |
+| Friends | `https://www.notion.so/[page-id]?v=[page-id]` |
 
 ### Tomorrow Views
 
@@ -84,10 +89,12 @@ different page IDs).
 | ABN | `https://www.notion.so/[page-id]?v=[page-id]` |
 | Active Leads | `https://www.notion.so/[page-id]?v=[page-id]` |
 | Clients (Nurture) | `https://www.notion.so/[page-id]?v=[page-id]` |
-| Testimonials | `https://www.notion.so/[page-id]?v=[page-id]` |
+| Reviews/Referrals | `https://www.notion.so/[page-id]?v=[page-id]` |
+| Friends | `https://www.notion.so/[page-id]?v=[page-id]` |
 
-(Referrals also has Today + Tomorrow views on its source database, but it's handled by the
-`referrals` skill and is intentionally **not** part of the executive briefing.)
+(The Reviews/Referrals DB carries both the testimonial and referral tracks since the 8/7/26
+merge, so referral touches now surface here naturally — the old standalone Referrals DB is
+frozen and not queried.)
 
 ---
 
@@ -95,17 +102,8 @@ different page IDs).
 
 ### Step 1: Resolve the date (in Shaw's current timezone), then query all databases
 
-**Resolve "today"/"tomorrow"/"Friday" in Shaw's *current* timezone — never UTC, never a
-hardcoded zone.** The client passes his timezone into the session context (a system reminder
-like "The user's timezone is America/Chicago (currently UTC-5)"); read it from there each run
-and use it, because he travels and it changes. This matters because the environment clock
-runs in UTC, so a bare `date` is already the *next* calendar day during his evening —
-resolving the date from it silently gives the wrong day's briefing. Stamp the dates in his
-zone (substitute the zone from the session context for `<TZ>`):
-
-**No timezone reminder this session? Don't trust the env prompt's `Today's date` header — it
-tracks UTC and reads as the next day during his evening. Default to `America/Chicago`, resolve
-via bash (`TZ=America/Chicago date +%F`). The UTC header lands a *tomorrow* briefing a day late.**
+Stamp the dates in his zone — read it from the session context each run, since he travels;
+default to `America/Chicago` if no timezone reminder is present. Substitute it for `<TZ>`:
 
 ```
 TZ="<TZ>" date +%F                     # his local today
@@ -115,9 +113,9 @@ date -u +%F                            # what the connector's relative filters t
 ```
 
 **Prefer the fast saved views — the precomputed Today/Tomorrow views are the default path,
-and SQL is a rare fallback.** All nine databases have both a Today and a Tomorrow view (six
-dated views on the database itself; three relationship views on their *source* database —
-URLs in the "View URLs" section above). They're server-side filtered and quick.
+and SQL is a rare fallback.** All ten databases have both a Today and a Tomorrow view (URLs in
+the "View URLs" section above, which also explains why their page IDs don't follow one rule).
+They're server-side filtered and quick.
 
 **Pick the view set from one comparison: does UTC's date (`date -u +%F`) equal Shaw's local
 today or his local tomorrow?** The connector resolves every view's relative filter
@@ -152,12 +150,12 @@ in play. Query the data sources with `notion-query-data-sources` (SQL mode), IDs
 `notion-helper/SKILL.md` → "Main Databases":
 
 - Dated work (6): `WHERE "date:Date:start" >= '<date>' AND "date:Date:start" < '<next-day>'`
-- Relationship (3): `WHERE "date:Next Contact:start" <= '<date>'`
+- Relationship (4): `WHERE "date:Next Contact:start" <= '<date>'`
 
 SQL gotchas, learned the hard way:
 
 - **Cap parallel SQL queries at 4** (see `notion-helper` → "Connector quirks"). Up to 4
-  `query_data_sources` calls batch fine; a 5th trips a 429. With nine databases, run them in
+  `query_data_sources` calls batch fine; a 5th trips a 429. With ten databases, run them in
   batches of ≤4 with a brief gap, and wrap each in a retry-once — a throttled query recovers in
   ~30–60s. (SQL-only — `mode:view` queries batch freely.)
 - **Select `url` and the display columns you'll show in the first query** — not just `Name`
@@ -197,12 +195,18 @@ When summarizing page content:
   so the next step is obvious
 - For Clients (Nurture): status (Active, Nurturing, Expansion) and the most recent Note line
   — what's the next touch
-- For Testimonials: status (Asked, Form Submitted, Approved) and what's owed (FU nudge,
-  polish quote, publish, etc.)
+- For Reviews/Referrals: the live track's status (Review Status: Asked, Form Submitted,
+  Approved; or Referral Status: Asked, Intro Made) and what's owed (FU nudge, polish quote,
+  publish, referral check-in, etc.) — the Notes say which track is live
+- For Friends: the `Type` (Partner, Channel, Affiliate, Subcontractor, Friend, Family) and the
+  most recent Note line — what the next touch is. `Type` matters more here than status does
+  elsewhere, because it's what tells Shaw whether he's nudging a deal, an audience ask, or a
+  catch-up. A Friends row's real state usually lives in its page body under `Arrangement:` and
+  `Open items:`, so fetch the page when the Notes line alone doesn't say what's owed
 
-The relationship-database rows (Active Leads, Clients (Nurture), Testimonials) often have
-rich `Notes` columns in the query response itself — use those directly rather than fetching
-each page, unless the row needs deeper context.
+The relationship-database rows (Active Leads, Clients (Nurture), Reviews/Referrals, Friends)
+often have rich `Notes` columns in the query response itself — use those directly rather than
+fetching each page, unless the row needs deeper context.
 
 ### Step 3: Present the briefing
 
@@ -234,8 +238,11 @@ Output as plain text, organized by database section. Format:
 **🌱 Clients (Nurture)**
 - [**Client name**](https://www.notion.so/page-id) — Status; next touch from Notes.
 
-**⭐ Testimonials**
-- [**Person name**](https://www.notion.so/page-id) — Status; what's owed.
+**📝 Reviews/Referrals**
+- [**Person name**](https://www.notion.so/page-id) — Live track + status; what's owed.
+
+**🫂 Friends**
+- [**Person name**](https://www.notion.so/page-id) — Type; next touch from Notes.
 ```
 
 ---
@@ -249,6 +256,7 @@ Output as plain text, organized by database section. Format:
 - Completed items (page icon ✅) get a ✅ prefix before the linked name; all others have no prefix
 - Descriptions are 1-2 sentences max, pulled from the actual page content
 - Keep the section order consistent: ABA → ABA Trainings → ABA Calls → LFC → SFC → ABN →
-  Active Leads → Clients (Nurture) → Testimonials (dated work first, then follow-ups)
+  Active Leads → Clients (Nurture) → Reviews/Referrals → Friends (dated work first, then
+  follow-ups)
 - No commentary, no prioritization advice, no suggestions — just the facts
 - No widget/visualization — plain text only

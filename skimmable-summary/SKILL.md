@@ -1,18 +1,6 @@
 ---
 name: skimmable-summary
-description: >-
-  Shaw's house format for any multi-item summary, digest, briefing, status report,
-  roundup, or a staged plan/roadmap he'll skim. Use whenever Claude presents several items across categories —
-  scheduled-task reports, "give me a rundown," "catch me up on X," "summarize my
-  inbox/Slack/calendar/leads/pipeline," research roundups, sync results. Render as:
-  a dated H1, a one-line count dashboard, emoji-headed sections with one-sentence
-  linked items, every section always shown with an empty-state line, and a
-  "🔴 Needs Your Attention" action closer. This is the DEFAULT presentation for
-  digests to Shaw — apply it even when he doesn't name a format, and especially when
-  he asks to make something "easier to skim," "more scannable," or "match my format."
-  When a task supplies its own section map, keep this frame with those sections. Do
-  NOT use for single facts, one-item lookups, conversational replies, code, or
-  long-form prose (reports, essays, letters, docs).
+description: "Shaw's house format for any multi-item summary, digest, briefing, status report, roundup, or a staged plan/roadmap he'll skim. Use whenever Claude presents several items across categories — scheduled-task reports, \"give me a rundown,\" \"catch me up on X,\" \"summarize my inbox/Slack/calendar/leads/pipeline,\" research roundups, sync results. Render as: a dated H1, a one-line count dashboard, emoji-headed sections with one-sentence linked items, every section always shown with an empty-state line, and a \"🔴 Needs Your Attention\" action closer. This is the DEFAULT presentation for digests to Shaw — apply it even when he doesn't name a format, and especially when he asks to make something \"easier to skim,\" \"more scannable,\" or \"match my format.\" When a task supplies its own section map, keep this frame with those sections. Do NOT use for single facts, one-item lookups, conversational replies, code, or long-form prose (reports, essays, letters, docs)."
 ---
 
 # Skimmable Summary
@@ -95,11 +83,29 @@ These hold no matter what the sections are. They're what make every summary feel
   item can't be phrased as a question (or a direct approval ask), it's an FYI, not an
   attention item: move it to a record section. Bolding the question is the one deliberate
   exception to the never-bold rule — bold marks the ask, and only the ask.
+- **The closer is scope-bounded to this summary's domain.** In a system of specialized
+  syncs, an adjacent signal you happened to notice while gathering data belongs to whichever
+  report owns that domain, not to this one. Surfacing it here produces the same ask in two
+  reports and dilutes the closer's signal. If an item wouldn't have been found by this
+  summary's own sources, it isn't a closer item — leave it out.
 - **Every section always renders, with an explicit empty-state line.** A quiet day must read
   as cleanly as a busy one — never drop a section just because it's empty. The empty-state is
   one short line (see each component for its wording).
 - **Record first, action last.** Informational sections up top; the 🔴 closer at the bottom.
   Never make Shaw hunt through the record to find what he has to do.
+
+## Delivery (pull, not push)
+
+The summary is a pull artifact: it renders in the surface Shaw will open himself — the chat
+reply, or a scheduled run's final report. It is never the body of a notification, in full or
+in part. A digest pushed to a phone defeats the format — nothing is clickable there, and a
+daily push trains skim-blindness on the one channel that exists to interrupt.
+
+On a scheduled run: a clean run — empty closer, nothing failed — sends no notification at
+all; Shaw pulls the report up when he wants it. Only when the 🔴 closer has items, or the run
+itself failed, send a one-line ping so he knows to open the run — title + count ("Engagement
+Sync: 2 need you"), never the content. A task's own prompt may tighten this further (e.g.
+always silent); it never loosens it back to pushing the summary.
 
 ## Marker legend (fixed meaning)
 

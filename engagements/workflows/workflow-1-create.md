@@ -20,17 +20,28 @@ Search Clients (Nurture) by name and email. If no match:
 - The client may still be in Active Leads. Run the CRM skill's **Workflow 5 (Move Lead to
   Clients)** first, then come back here.
 - Don't create an engagement without a Nurture row to link to — the Client relation property
-  is required.
+  is required, and it points at the deal's decision makers and economic buyers, not at
+  colleagues who attend.
 
-Get the Nurture page URL — you'll need it as a JSON array for the `Client` property:
-`["https://www.notion.so/<page-id>"]`
+Get the Nurture page URL of the buyer, plus any other decision maker who approved this deal
+and has a Nurture row — you'll need them as a JSON array for the `Client` property:
+`["https://www.notion.so/<page-id>", ...]`
+
+### 1.5 Confirm the company exists in Companies
+
+Read the `Company` relation on the buyer's Nurture row. If it's set, reuse that page URL as
+the engagement's `Company` (JSON array, same shape as `Client`). If it's blank and the buyer
+represents a company, the Companies row is missing: create it (Name, Domain, Website,
+Relationship `Client`, a two-bullet `## Context`) and link it on both the Nurture row and the
+engagement. If the buyer is a solo client, leave `Company` blank. Either way, a company that
+now has a paid engagement carries Relationship `Client` — flip it if it still says `Prospect`.
 
 ### 2. Determine the next Engagement ID
 
 Query the Engagements data source sorted by Engagement ID descending, take the top row's
 `E###` numeric prefix, increment by 1, and format the title as `E### - <Name>` — the name being
-the client's organization (or the person's name for a solo individual), pulled from the Client
-relation confirmed in Step 1.
+the client's organization from the Company relation confirmed in Step 1.5 (or the person's name
+for a solo individual with no company).
 
 ```
 view URL: https://www.notion.so/[page-id]?v=<view-id>
@@ -69,7 +80,8 @@ Use `notion-create-pages` with parent `data_source_id: [page-id]`.
 
 **Property keys (use these exact names):**
 - `Engagement ID` (NOT `ID` — Notion rejects it). Value is `E### - <Name>`, e.g. `E009 - [Company]`.
-- `Client` (JSON array of page URLs: `"[\"https://www.notion.so/<id>\"]"`)
+- `Client` (JSON array of page URLs: `"[\"https://www.notion.so/<id>\"]"`) — the decision makers' / buyer's Nurture rows
+- `Company` (JSON array with the Companies page URL; omit for a solo client)
 - `Offer` (JSON array: `"[\"30-Day Claude Intensive\"]"`)
 - `Source` (JSON array: `"[\"LinkedIn\"]"`)
 - `Status` (string: `"Sold"`)
@@ -136,16 +148,18 @@ sold; ask before dropping it. A scope missing its closing deliverable makes the 
 mis-time the `Active → Delivered` flip (E009: a custom grouped-session scope omitted the wrap-up
 call, and the sync repeatedly flagged a status decision that was really a scope gap).
 
-### 7. Open placeholder Testimonials rows
+### 7. Open placeholder Reviews/Referrals rows
 
-Every participant in the engagement gets a Testimonials row at creation time, not at wrap.
-Placeholder rows opened now act as standing reminders so the ask never gets skipped later.
+Every participant in the engagement gets a Reviews/Referrals row at creation time, not at
+wrap. Placeholder rows opened now act as standing reminders so the ask never gets skipped
+later.
 
 For each participant (champion included only if they attend sessions): create a row with
-`Status: Not Asked`, the `Engagement` relation set to this new row, and `CRM` pointed at the
-champion's Clients (Nurture) page. Partial info is fine — tag unknown names with the company
-(e.g. `[Person] ([Company])`) and leave Email blank, then fill both in when the participant list
-arrives. Mechanics live in `testimonials/SKILL.md` (Workflow 1).
+`Review Status: Not Asked`, `Referral Status: Not Asked`, the `Engagement` relation set to
+this new row, and `CRM` pointed at the champion's Clients (Nurture) page. Partial info is
+fine — tag unknown names with the company (e.g. `[Person] ([Company])`) and leave Email blank,
+then fill both in when the participant list arrives. Mechanics live in
+`reviews-referrals/workflows/testimonial-ask.md` (§1).
 
 ### 8. Confirm with Shaw
 

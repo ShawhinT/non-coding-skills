@@ -81,6 +81,13 @@ Study the stacks. Don't copy directly.
 
 ## Title workflow
 
+### Step 0 — Research before drafting
+Titles drift generic when they're written from the principles alone. Before drafting, have a sub-agent pull the latest ~30 videos plus the Popular tab for Shaw's channel and the benchmark channels (Alex Hormozi, Nate Herk, Riley Brown, Jeff Su, Greg Isenberg — add others Shaw names), and rank each video by **views ÷ that channel's median** of its recent set (raw views mostly measure channel size; videos under a week old read low). Return the top outliers per channel, any videos adjacent to the topic, and the title patterns they share. Save the CSV next to the work.
+
+What this surfaced in Oct 2026 (re-check, it drifts):
+- On Shaw's channel, "[Concept] Explained in N Minutes" and "X vs Y: What's the difference?" carry the outliers; "How I run my business on Claude"-style titles flop (~0.3× median).
+- Across the AI channels, a dramatic result ("I Turned Claude Into a 24/7 Trader") beats AI-handles-a-chore ("Bot Manages My Inbox"), and first-person experiments with concrete numbers lead.
+
 ### Step 1 — Capture intent
 Confirm:
 - **Underlying pain or topic** in one sentence

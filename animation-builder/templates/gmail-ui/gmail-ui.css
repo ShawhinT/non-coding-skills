@@ -1,0 +1,79 @@
+/* Gmail (light) mock, matched to captures in demo-video/reference/gmail-* (2026-10-12).
+   Scaled ~1.45x from a 1920px-wide real viewport so the draft reads on a projector.
+   Real faces: Google Sans (UI) + Arial (message body); Roboto stands in for Google Sans. */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+.gm { position: absolute; inset: 0; background: #f6f8fc; font-family: 'Roboto', Arial, sans-serif; color: #1f1f1f; }
+.gm svg { fill: currentColor; }
+
+/* top bar */
+.gm-top { position: absolute; left: 0; right: 0; top: 0; height: 92px; display: flex; align-items: center; padding: 0 22px; }
+.gm-burger { width: 70px; height: 70px; display: grid; place-items: center; color: #444746; }
+.gm-burger svg { width: 34px; height: 34px; }
+.gm-logo { display: flex; align-items: center; gap: 10px; font-size: 32px; color: #444746; margin-left: 12px; width: 300px; }
+.gm-logo img { width: 46px; height: 35px; object-fit: contain; }
+.gm-search { flex: 0 0 1040px; height: 66px; border-radius: 33px; background: #e9eef6; display: flex; align-items: center; gap: 22px; padding: 0 26px; font-size: 22px; color: #444746; }
+.gm-search svg { width: 32px; height: 32px; }
+.gm-search .tune { margin-left: auto; }
+.gm-ricons { margin-left: auto; display: flex; align-items: center; gap: 26px; color: #444746; }
+.gm-ricons svg { width: 32px; height: 32px; }
+.gm-av { width: 50px; height: 50px; border-radius: 50%; background: #7b5ea7; color: #fff; display: grid; place-items: center; font-size: 22px; font-weight: 500; }
+
+/* left nav */
+.gm-nav { position: absolute; left: 0; top: 92px; width: 370px; bottom: 0; padding-right: 22px; }
+.gm-compose { margin: 12px 0 22px 12px; width: 210px; height: 84px; border-radius: 24px; background: #c2e7ff; display: flex; align-items: center; gap: 22px; padding-left: 28px; font-size: 21px; font-weight: 500; color: #001d35; }
+.gm-compose svg { width: 30px; height: 30px; }
+.gm-ni { height: 46px; display: flex; align-items: center; gap: 26px; padding: 0 18px 0 38px; border-radius: 0 23px 23px 0; font-size: 20.5px; color: #1f1f1f; }
+.gm-ni svg { width: 28px; height: 28px; color: #444746; flex: none; }
+.gm-ni .ct { margin-left: auto; font-size: 18px; font-weight: 500; }
+.gm-ni.b { font-weight: 700; }
+.gm-ni.on { background: #d3e3fd; font-weight: 700; color: #041e49; }
+.gm-ni.on svg { color: #041e49; }
+
+/* message list card */
+.gm-list { position: absolute; left: 370px; right: 24px; top: 92px; bottom: 22px; background: #fff; border-radius: 22px; overflow: hidden; }
+.gm-tools { height: 70px; display: flex; align-items: center; gap: 30px; padding: 0 30px; color: #444746; }
+.gm-tools svg { width: 28px; height: 28px; }
+.gm-tools .pg { margin-left: auto; font-size: 17px; }
+.gm-row { height: 58px; display: flex; align-items: center; padding: 0 24px; font-size: 20px; color: #1f1f1f; border-bottom: 1px solid #eef0f3; position: relative; isolation: isolate; white-space: nowrap; overflow: hidden; }
+.gm-row .ic { display: flex; gap: 18px; color: #c4c7c5; margin-right: 24px; }
+.gm-row .ic svg { width: 26px; height: 26px; }
+.gm-row .who { width: 300px; color: #d93025; flex: none; }
+.gm-row .sub { flex: none; }
+.gm-row .snip { color: #5f6368; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 1; }
+.gm-row .tm { margin-left: 24px; font-size: 17px; color: #444746; flex: none; }
+.gm-row::before { content: ''; position: absolute; inset: 0; background: #f2f6fc; z-index: -1; opacity: 0; }
+.gm-row.hov::before { animation: fadeIn .12s linear var(--h, 0s) forwards; }
+
+/* compose popup */
+.gm-cmp { position: absolute; right: 70px; bottom: 0; width: 900px; height: 930px; background: #fff; border-radius: 14px 14px 0 0; box-shadow: 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12), 0 5px 5px -3px rgba(0,0,0,.2); overflow: hidden; display: flex; flex-direction: column; }
+.gm-cmp.opening { opacity: 0; animation: fadeUp .35s var(--out) var(--o) forwards; }
+.gm-ch { height: 60px; flex: none; background: #f2f6fc; display: flex; align-items: center; padding: 0 22px 0 26px; font-size: 20.5px; font-weight: 500; color: #041e49; }
+.gm-ch .wc { margin-left: auto; display: flex; gap: 22px; color: #444746; }
+.gm-ch .wc svg { width: 24px; height: 24px; }
+.gm-f { flex: none; margin: 0 26px; height: 58px; display: flex; align-items: center; gap: 14px; border-bottom: 1px solid #e8eaed; font-size: 20.5px; color: #1f1f1f; position: relative; isolation: isolate; }
+.gm-f .k { color: #444746; width: 44px; }
+.gm-f .ccb { margin-left: auto; color: #444746; }
+.gm-chip { display: inline-flex; align-items: center; gap: 10px; height: 38px; padding: 0 16px 0 4px; border-radius: 19px; border: 1px solid #c4c7c5; font-size: 19px; }
+.gm-chip i { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-size: 15px; font-weight: 500; color: #fff; }
+.gm-f.hl::before, .gm-li.hl::before { content: ''; position: absolute; inset: 4px -14px; border-radius: 10px; background: rgba(217,119,87,0.14); box-shadow: inset 0 0 0 2px rgba(217,119,87,0.7); opacity: 0; z-index: -1; animation: fadeIn .4s var(--out) var(--h, 0s) forwards; }
+.gm-body { flex: 1; padding: 22px 26px; font-family: Arial, Helvetica, sans-serif; font-size: 19.5px; line-height: 1.5; color: #222; overflow: hidden; }
+.gm-body p { margin: 0 0 18px; }
+.gm-body ul { margin: 0 0 18px; padding-left: 30px; }
+.gm-body li { margin: 2px 0; position: relative; isolation: isolate; }
+.gm-li.hl::before { inset: -3px -12px -3px -34px; }
+.gm-body a { color: #1155cc; text-decoration: underline; position: relative; isolation: isolate; }
+.gm-body a.hl::before { content: ''; position: absolute; inset: -4px -8px; border-radius: 8px; background: rgba(217,119,87,0.14); box-shadow: inset 0 0 0 2px rgba(217,119,87,0.7); opacity: 0; z-index: -1; animation: fadeIn .4s var(--out) var(--h, 0s) forwards; }
+.gm-fmt { flex: none; margin: 0 26px 14px; height: 54px; border-radius: 27px; background: #eef2f8; width: 660px; display: flex; align-items: center; gap: 22px; padding: 0 20px; color: #444746; font-size: 19px; }
+.gm-fmt b, .gm-fmt em, .gm-fmt u { font-size: 22px; color: #444746; }
+.gm-fmt .sep { width: 1px; height: 26px; background: #c4c7c5; }
+.gm-fmt svg { width: 24px; height: 24px; }
+.gm-bar { flex: none; height: 84px; display: flex; align-items: center; gap: 22px; padding: 0 26px 14px; color: #444746; }
+.gm-send { display: flex; height: 52px; border-radius: 26px; overflow: hidden; background: #0b57d0; color: #fff; font-size: 20px; font-weight: 500; }
+.gm-send span { display: grid; place-items: center; padding: 0 30px; }
+.gm-send span + span { padding: 0 14px; border-left: 1px solid rgba(255,255,255,0.35); }
+.gm-send svg { width: 24px; height: 24px; }
+.gm-bar > svg { width: 28px; height: 28px; }
+.gm-bar .trash { margin-left: auto; }
+
+body.gmail .caption { box-shadow: 0 10px 40px rgba(0,0,0,.22), 0 0 0 1px rgba(0,0,0,.08); }

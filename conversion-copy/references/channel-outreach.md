@@ -1,125 +1,42 @@
 # Channel: Cold Outreach / DMs
 
-Use this framework when writing cold outreach — cold emails, LinkedIn DMs, or platform-specific cold messages to people who don't yet know Shaw. This includes outreach for partnerships, research calls, podcast pitches, event invites, and direct offer pitches.
+Cold emails and LinkedIn DMs to people who don't know Shaw — partnerships, research calls, podcast pitches, event invites, offer pitches. Warm contacts → `channel-emails.md`. Campaign orchestration (sourcing, enrichment, trackers, logging) → the `outreach` skill; this file owns the message.
 
-This is **not** the framework for messages to warm leads (→ `channel-emails.md`) or campaign-level outreach strategy (→ `outreach-campaign` skill handles the *orchestration*; this skill handles the *message*).
+Lock before drafting: the target cohort, the specific shared need, the lowest-friction next step, and which playbook fits.
 
-## Before you draft
+## Shared principles
 
-Lock these:
+A new playbook that violates one of these needs an explicit argument for why.
 
-- **Who's the target cohort?** Cold outreach lives or dies on targeting. If you're sending to "marketers," it's already over. If you're sending to "VPs of marketing at B2B SaaS companies who've hired in the last 90 days," you have a shot.
-- **What's the specific shared need?** Everyone on the list should have the same hot problem.
-- **What's the lowest-friction next step?** Not "jump on a call." Something small — a question reply, a one-liner of feedback, a yes/no.
-- **What's your value upfront?** Ryan's rule (from Harry's "1000 replies" breakdown): offer value *before* you pitch.
+1. **Target a tight cohort, not a broad list.** "VPs of marketing at B2B SaaS companies who've hired in the last 90 days" gives you a shot; "marketers" doesn't. A tight cohort lets one message hit many recipients; a broad list forces generic slop.
+2. **First line = preview text = opens.** What you avoid matters more than what you use: "I hope this email finds you well," "thanks for connecting," "I'd love to add you to my network" are instant deletes. Two ways to escape the template read: a reference specific to *them*, or disarming honesty about being cold ("I know this is random, but…").
+3. **Personalization never disappears — it moves.** Bespoke outreach personalizes to the individual (their post, their news); scaled outreach personalizes to the cohort (a problem statement so specific it reads as "this person knows my job"). Generic copy to a generic list is the one unforgivable combination.
+4. **Three to five lines.** Longer and they read two lines and archive.
+5. **The CTA is a permission ask, not a meeting ask.** "Quick 15-minute call?" is the most-used and least-effective CTA in cold outreach — the ask is too big for zero trust. In ascending order: reply-only ("worth me sending a 2-minute Loom? just reply 'yes'") → one-click → low-time ("worth a 10-min chat? if not, no worries") → a call, only after they've reciprocated.
 
-## Core principles (cold outreach–specific)
+## Choosing a playbook
 
-### 1. Target a tight cohort, not a broad list
+| Condition | Advice-frame | Uptown method |
+|---|---|---|
+| List size | Tens | Hundreds+ (e.g. 200 requests/wk) |
+| Per-prospect research | Affordable (30 sec–5 min) | Not affordable — cohort does the targeting |
+| Per-prospect hook | Yes (their post, their news) | No — shared cohort pain instead |
+| Optimizing for | Hit rate per message | Split-testable reply data on a fixed template |
+| Trust posture | Value before pitch | Upfront "pitch slap" — name who you are and why |
 
-Why cold emails suck: they're hopelessly untargeted. The same junk goes to 1,000 prospects with different problems.
+Shaw's per-prospect scripting workflow in `outreach` (templated base script + personalization menu) is a middle position: Uptown-style body, advice-frame opener. Don't mix playbooks mid-campaign — editing a scaled template per send destroys the test data; templating a bespoke message wastes the research.
 
-The fix: scrape a tight group with shared needs.
-- Running an SEO agency? Scrape companies hiring SEO roles.
-- Selling exec coaching? Scrape companies that just raised.
-- Selling AI training for operators? Scrape founder-CEOs of 20–100-person firms who've recently posted on LinkedIn about "being the bottleneck" or similar pain points.
+## Playbook: Advice-frame (Harry Dry / Ryan's "1000 replies")
 
-A tight cohort lets one message hit multiple recipients. A broad list forces you to write generic slop.
+**Proven in:** small-batch cold email where each message could be hand-researched. AndCo's advice email saw 65% CTR and 55% reply rate vs. <5% for typical pitch emails.
 
-### 2. First line = preview text = opens
+Lead with a genuine observation or question and offer something useful before asking for anything. This only works if you're actually willing to help whether or not they buy — Ryan's test: *"Find 100 people you can help. Offer to help them for free. Blow them away."* If the draft wouldn't pass that, rewrite it.
 
-If the recipient's inbox shows your first line as preview, and the preview looks like a template, the email doesn't get opened.
+Personalization costs 30 seconds, not 30 minutes: one specific thing from their latest post, recent company news, or about page.
 
-- Your first line should be specific enough that it couldn't have been sent to anyone else.
-- Pull from their LinkedIn post, their company news, their podcast appearance, their recent hire.
-- **Bad:** "Hi [Name], I hope this email finds you well."
-- **Good:** "Saw your post last week about cutting manual reporting in half — curious how you got there."
+**Structure:** subject ("[First name] — one question" / "Your post about X") → opener referencing them → the observation or offer → reply-only CTA → "— Shaw". DMs drop the subject and run shorter.
 
-### 3. Advice/help frame beats pitch frame
-
-AndCo's advice email saw 65% CTR, 55% reply rate. A typical pitch email sees <5%.
-
-The pattern:
-- Lead with a genuine observation or question.
-- Offer something useful before asking for anything.
-- Don't position yourself as selling — position yourself as helping.
-
-This isn't a trick. It only works if you're genuinely willing to help whether or not they buy. But when you are, it's the highest-performing pattern in cold outreach.
-
-### 4. Don't ask for the meeting — offer a lower-friction step
-
-"Quick 15-minute call?" is the single most-used and least-effective CTA in cold outreach. The ask is too big for the trust you've built (which is zero).
-
-Better options, in ascending commitment order:
-1. **Reply-friction only:** "Worth me sending a 2-minute Loom breaking it down? Just reply 'yes' if so."
-2. **One-click:** "Here's a 4-line answer. If it lands, reply and I'll send the full version."
-3. **Low-time:** "Worth a 10-min chat? If not, no worries — good luck either way."
-4. **Then a call:** only after they've reciprocated with an open or reply.
-
-### 5. Personalization that costs 30 seconds, not 30 minutes
-
-You don't need to research every prospect for an hour. Thirty seconds on their LinkedIn or website is enough to find one specific thing to reference.
-
-- A line from their latest post.
-- A company news item from the past 30 days.
-- A specific detail from their about page.
-
-One specific reference trumps five generic compliments.
-
-### 6. Short emails beat long emails
-
-Cold emails should be 3–5 lines. If it's longer, the prospect reads the first two lines and archives.
-
-- One line: opener with context
-- One line: the observation or offer
-- One line: the question/CTA
-- Signature
-
-That's it. The goal is a reply, not a commitment.
-
-### 7. Find 100 you can help — then help them for free
-
-Ryan's closing thought from the "1000 replies" breakdown is the mindset that makes cold outreach work:
-
-> *"Find 100 people you can help. Offer to help them for free. Blow them away. You'll make more money than 99% of 'experts.'"*
-
-This isn't a tactic. It's the mental frame. When you genuinely go in with "how can I help this person" rather than "how can I get this person to buy," the copy changes. Use this frame when drafting. If your email doesn't feel like it would pass Ryan's test, rewrite it.
-
-## Structure (default — cold email)
-
-1. **Subject line** — short, personal, not templated. Something like "[First name] — one question" or "Your post about X" or "30 seconds — re: the [specific thing]."
-2. **Opener (preview text)** — specific reference to them, their work, or their public writing.
-3. **The observation / offer** — what you noticed and why you're reaching out. Usually offering value or asking a thoughtful question.
-4. **Low-friction CTA** — a reply-only ask, not a meeting ask.
-5. **Sign-off** — "— Shaw" plus maybe a one-line signature.
-
-LinkedIn DMs follow the same structure minus the subject line, even shorter.
-
-## Which universal principles matter most here
-
-- **#5 Cut ruthlessly** — cold email length is the #1 killer. Short > long.
-- **#7 Don't persuade, let them be persuaded** — advice frame vs pitch frame is the single biggest lever in cold outreach.
-- **#4 Specific beats vague** — generic outreach gets generic results (none). Specific outreach gets specific replies.
-- **#1 Write for one reader** — in cold outreach, this is especially literal. One reader. One message.
-
-## Voice cues
-
-- Casual tone, first-name basis.
-- "Hey [Name]" or "[Name] —" are both fine openers.
-- Don't use formal signoffs. "— Shaw" is enough.
-- Don't include a full signature block with title, company, link, disclaimer. One line max if any.
-- If you're writing a batch template with {merge fields}, the merge field should be something that requires actual research to fill — not just the first name. Otherwise it's a form letter in costume.
-
-## Worked example — cold LinkedIn DM
-
-**Target:** Founder-CEO of a 40-person professional services firm who posted last week about being "the bottleneck for every client deliverable."
-
-**Weak DM:**
-> *Hi [Name], I hope this message finds you well! I came across your profile and I'm impressed by the work you're doing. I wanted to reach out because I help forward-thinking founders like yourself leverage AI to transform their businesses. Would you be open to a 15-minute call to explore how AI could benefit your company? Looking forward to hearing from you!*
-
-**Filter check:** First line burns preview. "Forward-thinking" is a landing-page word. No specific reference. Asks for a call immediately.
-
-**Strong DM:**
+**Worked example — cold DM to a founder who posted about being the bottleneck:**
 
 > Saw your post last week about being the bottleneck for every deliverable. That Friday night review hell is literally why I stopped doing client delivery myself.
 >
@@ -129,27 +46,34 @@ LinkedIn DMs follow the same structure minus the subject line, even shorter.
 >
 > — Shaw
 
-**Why this works:**
-- First line references a specific post (uses preview text, proves non-template).
-- "Friday night review hell" uses the reader's language (assuming that was in their post).
-- Specific numeric claim that falsifies (10–15 hours).
-- Offers value upfront (the Loom) before asking for anything.
-- CTA is reply-friction only ("tell me if it's useful"). No meeting ask.
-- Short. No landing-page words. No formal signoff.
+## Playbook: The Uptown method (pattern-disrupt / "pitch slap")
 
-## Follow-ups
+**Proven in:** Sales Navigator campaigns at ~200 connection requests/week against cohorts filtered for active LinkedIn users. Their pharmacy-tech campaign: ~3,000 requests → 35% accepted → 219 replies → 49 positive → 24 meetings → 11 closed → ~$400k in under 6 months. These are the seller's own case studies — treat the numbers as directional; the structural logic is what transfers.
 
-A follow-up isn't a re-send — it's a lighter touch than the message before it, and the ladder should feel like it's winding down, not repeating.
+The philosophy: the most respectful cold message names the elephant — who you are and why you're writing — instead of manufacturing fake warmth. The template stays rigid *on purpose*; one skeleton with one variable slot produces clean split-test data.
 
-- **The first follow-up carries the proof.** Don't just "bump" ("just checking in") — that adds pressure without adding a reason. Move the credibility line from the original ask into the first follow-up (e.g. "this is the same framework I've taught to 30+ leaders 1:1"), so the nudge earns its place by giving a fresh reason to say yes.
-- **Don't re-drop a link that's already in the thread.** In a DM or reply chain the original link is one scroll up. Repeating it reads as clutter and makes the message feel automated. Re-include a link only when it's a fresh CTA the reader needs in hand *and* the earlier one has scrolled out of view.
-- **Each rung gets terser.** The final nudge is the shortest and most time-bound — a one-liner tied to a deadline ("we go live Friday"). Drop the greeting and even the sign-off if the thread is already familiar; a short, in-thread nudge doesn't need "Hey [Name]" and "— Shaw" wrapped around it.
+**Three sentences:**
+1. **Pattern disrupt + problem statement.** "I know this is random, but I'm chatting with [role] who [specific pain]." The disrupt earns the open; the problem statement is both the personalization and the thesis you're testing.
+2. **The "at a high level" line.** "At a high level, we [do X via Y] — typically [quantified result]."
+3. **CTA mirroring sentence one.** "Would it be all right if I shared a few ideas to [the exact problem you named]?" People skim, so the problem appears first and last.
 
-## Common failure modes
+> I know this is random, but I'm chatting with pharmacy leaders who see technician payroll climbing as script volume grows. At a high level, we help pharmacies deploy AI agents to help prescription data entry, fax processing, and insurance workflows — typically saving $300–500k in technician wages. Would it be all right if I shared a couple ideas to keep your technicians focused on patient-facing work instead of being glued to a screen?
 
-1. **"Hi [Name], I hope this email finds you well."** Instant delete. Burns preview text.
-2. **"I came across your profile and I'm impressed by your work."** Generic flattery. Archived.
-3. **Asking for a call in the first message.** Commitment level too high for zero trust.
-4. **Bulk-template language with a first-name merge field as the only personalization.** Prospects can smell this from the first line.
-5. **Long paragraphs about your offer in a cold message.** They don't care yet — you haven't earned the attention.
-6. **Generic "hope this helps" or "happy to chat" closers.** Replace with a specific yes/no question they can answer in one word.
+Only the problem statement and mechanism line are custom per campaign; everything else is scaffold. Split-test the **problem statement only**, every 1–2 weeks early on, then freeze the winner. Pain tied to *revenue* outperformed pain tied to activity. Silence means targeting or messaging is off — if the cohort is confirmed right, change the message.
+
+**Follow-up ladder:** M2 "forgot to mention" (proof point + CTA) → M3 bare nudge ("Thoughts, [FirstName]?") → M4 loose breakup (reframe to a different pain, then an explicit out: "seems like my timing is off… let me know if I'm completely off base"). Cadence: ~4 messages month one, ~3 more across year one, ~4/year ongoing.
+
+**Adding playbooks:** same template — source and proven context (with an honesty note on evidence quality), the discriminating "best when" conditions added to the chooser, structure, what to test. Check new playbooks against the shared principles rather than rewriting them.
+
+## Follow-ups (both playbooks)
+
+A follow-up is a lighter touch than the message before it — the ladder should feel like it's winding down, not repeating.
+
+- **The first follow-up carries the proof.** Don't "just check in" — that adds pressure without a reason. Move the credibility line from the original ask into the nudge ("this is the same framework I've taught to 30+ leaders 1:1").
+- **Don't re-drop a link already in the thread.** It's one scroll up; repeating reads as automated. Re-include only when it's a fresh CTA and the earlier one has scrolled away.
+- **Each rung gets terser.** The last nudge is a one-liner tied to a deadline ("we go live Friday") — drop the greeting and sign-off in a familiar thread.
+- **The last touch changes the angle and gives an out.** A fast no frees the list for people who'll say yes.
+
+## Voice cues
+
+Casual, first-name basis, "— Shaw" as the only sign-off, no signature block. If a batch template has a {merge field}, it should require real research to fill — otherwise it's a form letter in costume. (In the Uptown method the cohort-level problem statement satisfies this by construction, but both custom slots still have to sound like Shaw, not a SaaS homepage.)

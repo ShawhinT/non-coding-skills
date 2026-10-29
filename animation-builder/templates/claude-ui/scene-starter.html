@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>NN scene</title>
+<link rel="stylesheet" href="../shared/claude-ui.css">
+<style>
+  /* STARTER SCENE: Cowork home -> type a task -> click send.
+     Copy into src/NN-name/NN-name.html (kit copied to src/shared/). Edit the TASK text,
+     caption, greeting name, and active rows. Timings: typing starts .55s, send press 5.25s,
+     cursor keyframes are % of the 6.5s clip -> keep --duration 6.5 or rescale all three together. */
+  .toggle .pill.chat { opacity: 0; }
+  .toggle .lbl-chat { color: var(--fg-3); }
+  .toggle .lbl-cowork { color: var(--fg); }
+  .corner .ghost { opacity: 0; }
+  .corner .beta { position: absolute; right: 0; top: 0; }
+  .ph.a { animation: fadeOut .1s linear .5s forwards; }
+  .rslot { position: relative; width: 104px; height: 43px; }
+  .rslot > * { position: absolute; right: 0; top: 0; height: 43px; }
+  .ci-chat { opacity: 0; }
+  .ci-cow { animation: fadeOut .1s linear .55s forwards; }
+  .rslot .send { opacity: 0; animation: fadeIn .15s linear .55s forwards, press .25s var(--std) 5.25s; }
+  .model { margin-right: 14px; }
+  .cursor { animation: cur 6.5s linear forwards; }
+  @keyframes cur {
+    0%, 66% { transform: translate(1440px, 700px); opacity: 0; }
+    70%     { transform: translate(1440px, 700px); opacity: 1; }
+    80%     { transform: translate(var(--sx), var(--sy)); }
+    81%     { transform: translate(var(--sx), var(--sy)) scale(.9); }
+    83%     { transform: translate(var(--sx), var(--sy)) scale(1); opacity: 1; }
+    100%    { transform: translate(var(--sx), var(--sy)); opacity: 1; }
+  }
+</style></head>
+<body>
+<div class="app">
+  <div id="side"></div>
+  <main class="main">
+    <div class="corner"><span class="ghost" id="ghost"></span><span class="beta">Beta</span></div>
+    <div class="home2">
+      <div class="greet"><img src="../shared/claude-color.svg" alt="">Good afternoon, NAME</div>
+      <div class="composer">
+        <div class="field">
+          <span class="ph a">How can I help you today?</span>
+          <span id="typed"></span>
+        </div>
+        <div class="row">
+          <span class="plus" id="plus"></span>
+          <div class="toggle">
+            <div class="pill chat" data-for=".lbl-chat"></div><div class="pill cowork" data-for=".lbl-cowork"></div>
+            <span class="lbl-chat on">Chat</span><span class="lbl-cowork">Cowork</span>
+          </div>
+          <div class="model">Opus 5.5 <span class="effort">Medium</span></div>
+          <div class="rslot">
+            <span class="cicons ci-chat" id="ciChat"></span>
+            <span class="cicons ci-cow" id="ciCow"></span>
+            <div class="send" id="send"></div>
+          </div>
+        </div>
+      </div>
+      <div class="pickers"><span>Project</span><span>Manual</span><span>Output</span></div>
+      <div class="active-list">
+        <div class="ah"><span>Active</span><span>Clear active</span></div>
+        <div id="rows"></div>
+      </div>
+    </div>
+  </main>
+</div>
+<div class="caption capio" style="--d:0.35s;--cap-b:60px">Explain the task to Claude like a new hire</div>
+<div id="cur"></div>
+<script src="../shared/claude-ui.js"></script>
+<script>
+  document.getElementById('side').outerHTML = sidebar({ active: 'new' });
+  document.getElementById('plus').innerHTML = icon('plus');
+  document.getElementById('send').innerHTML = icon('up');
+  document.getElementById('ghost').innerHTML = icon('eyeoff');
+  document.getElementById('ciChat').innerHTML = icon('mic') + icon('wave') + icon('chevron', 'chev');
+  document.getElementById('ciCow').innerHTML = icon('mic') + icon('chevron', 'chev');
+  document.getElementById('rows').innerHTML = [
+    ['clock', 'Weekly client check-in', '2 days ago'],
+    ['listcheck', 'Lakeshore Dental follow-up', '3 days ago'],
+    ['listcheck', 'Q4 workshop prep', '5 days ago'],
+  ].map(([ic, t, w]) => `<div class="arow"><span class="aic">${icon(ic)}<i></i></span><div><div class="at">${t}</div><div class="aw">${w}</div></div></div>`).join('');
+  document.getElementById('cur').outerHTML = CURSOR_SVG;
+  placePills();
+  aim({s: '#send'});
+  typeInto(document.getElementById('typed'),
+    "TASK: one or two sentences, phrased the way a manager briefs a new hire.",
+    0.55, 32);
+</script>
+</body></html>

@@ -1,6 +1,6 @@
 ---
-name: sales-letter-writer
-description: Draft long-form sales letters and one-pagers for Shaw's offers (intensives, workshops, courses, productized services) using Hormozi's $100M Offers principles. Use this skill whenever Shaw asks to write, draft, or iterate on a sales letter, one-pager, offer page, landing page copy, sales page, "offer brief," or any long-form copy designed to sell a specific paid offer. Triggers include "write a one-pager for X", "draft a sales page for my new offer", "help me write the sales letter for my [intensive / workshop / cohort / program]", "turn this offer into a sales page", or any time Shaw is putting together written copy whose job is to sell a specific package. Even casual mentions like "I need to write up my new offer" or "let's put the offer in writing" should trigger this skill. Do NOT use for short-form content like LinkedIn posts, tweets, or newsletters (use linkedin-voice or newsletter-writer instead) — this skill is specifically for long-form sales copy that walks a buyer from headline to CTA.
+name: "sales-letter-writer"
+description: "Draft long-form sales letters and one-pagers for Shaw's offers (intensives, workshops, courses, productized services) using Hormozi's $100M Offers principles. Use this skill whenever Shaw asks to write, draft, or iterate on a sales letter, one-pager, offer page, landing page copy, sales page, \"offer brief,\" or any long-form copy designed to sell a specific paid offer. Triggers include \"write a one-pager for X\", \"draft a sales page for my new offer\", \"help me write the sales letter for my [intensive / workshop / cohort / program]\", \"turn this offer into a sales page\", or any time Shaw is putting together written copy whose job is to sell a specific package. Even casual mentions like \"I need to write up my new offer\" or \"let's put the offer in writing\" should trigger this skill. Do NOT use for short-form content like LinkedIn posts, tweets, or newsletters (use linkedin-post-writer or newsletter-writer instead) — this skill is specifically for long-form sales copy that walks a buyer from headline to CTA."
 ---
 
 # Sales Letter Writer
@@ -84,6 +84,8 @@ Split into two clearly labeled mini-lists.
 
 Bonuses are not random extras. They are levers on the value equation aimed at "the next problem after they buy." See `references/bonus-design-playbook.md` for the full design principles and pre-flight checklist. Audit every bonus against that checklist before presenting it.
 
+**Stack the value visibly (optional, for sales-page renderings).** Brunson's stack-slide principle: when components carry individual values that sum to a visible total shown right before the price, the buyer anchors the price against the *entire* stack rather than the last item mentioned. Where the format supports it (sales page, webinar close — usually not a one-pager), assign each deliverable and bonus an honest standalone value and show the total. Every stated value must survive conversion-copy's falsify check — a made-up "$2,000 value" on a checklist reads as theater and taxes trust across the whole page. If the values can't be defended, skip the totals and let the named stack do the work.
+
 ### 5. How It Works (Process)
 
 3 simple steps. Each step is 1–2 sentences answering: what happens, when, and who does what.
@@ -103,6 +105,8 @@ For premium offers, a two-tier guarantee is stronger:
 - **Outcome guarantee at the end** — "If by Day [X] you don't have [specific minimum result], and you've shown up to every session and done the work, I'll keep working with you for free until you do." This kills the "what if it doesn't work" objection.
 
 The minimum result in the outcome guarantee should be the *floor* of your headline range, not the average — this keeps the promise believable. ("If headline says 20–40 hrs/month, guarantee 20.")
+
+**Name the guarantee.** "The Sleep-On-It Guarantee" or "The Pay-You-For-Your-Time Promise" is memorable, quotable, and turns risk reversal into a feature of the offer; an unnamed "30-day refund" is furniture. Keep the name honest and plain — it should describe the actual mechanism, not hype it.
 
 ### 7. Investment, Scarcity, CTA
 

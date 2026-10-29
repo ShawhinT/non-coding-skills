@@ -1,0 +1,282 @@
+/* Importing Google Fonts - ABA branding */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Libre+Franklin:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+/* Running element for clickable header logo (first page only) */
+.header-logo-element {
+    position: running(headerLogo);
+}
+
+.header-logo-element img {
+    width: 1.5cm;
+    height: 1.5cm;
+    margin-top: 1.25cm;
+    margin-right: -1.5cm;
+}
+
+/* Running element for clickable footer logo */
+.footer-logo-element {
+    position: running(footerLogo);
+}
+
+.footer-logo-element img {
+    width: 1cm;
+    height: 1cm;
+}
+
+/* Page setup with clickable footer logo.
+   US Letter at the ABA document scale (matches the [Company] SOW docx spec). */
+@page {
+    size: Letter;
+    margin: 0.86in 1in 0.76in 1in;
+    @bottom-center {
+        content: element(footerLogo);
+    }
+}
+
+/* First page - header logo in top right, no footer logo */
+@page :first {
+    @top-right {
+        content: element(headerLogo);
+    }
+    @bottom-center {
+        content: none;
+    }
+}
+
+body {
+    font-family: 'Libre Franklin', sans-serif;
+    font-size: 10.5pt;
+    line-height: 1.4;
+    /* Zero the UA default body margin so the 1in page margin is exact. */
+    margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    color: #087CA7;
+    margin-bottom: 0.25em;
+    letter-spacing: -0.02em;
+}
+
+h1 { font-size: 22pt; }
+h2 { font-size: 15pt; }
+h3 { font-size: 11.5pt; }
+
+h2, h3 {
+    color: #333;
+}
+
+ol {
+    padding-left: 2em;
+}
+
+ol li {
+    margin-bottom: 0;
+    line-height: 1.4;
+}
+
+ul {
+    padding-left: 2em;
+}
+
+ul li {
+    margin-bottom: 0;
+    line-height: 1.4;
+}
+
+code {
+    background-color: #f5f5f5;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+pre {
+    background-color: #f5f5f5;
+    padding: 1em;
+    border-radius: 5px;
+    overflow-x: auto;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 0.5em 0 1.5em 0;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #e8f4f8;
+    color: #087CA7;
+    padding: 2px 8px;
+}
+
+a {
+    color: #087CA7;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+li > ol, li > ul {
+    margin-top: 0.05em;
+    margin-bottom: 0.05em;
+}
+
+/* Loose lists wrap each item in a <p>. Keep the label tight to its sub-bullets
+   and put the gap after the last sub-bullet, so it separates sections instead. */
+li > p {
+    margin: 0;
+}
+
+li > p + ul, li > p + ol {
+    margin-bottom: 7pt;
+}
+
+/* Prose paragraphs get real spacing; widow and orphan control keeps a page
+   break from stranding a single line. */
+p {
+    margin: 0 0 7pt 0;
+    orphans: 2;
+    widows: 2;
+}
+
+/* Footnotes (e.g. asterisk notes under a session) render 20% smaller */
+.footnote {
+    font-size: 0.8em;
+    color: #555;
+    margin-top: 1.5em;
+}
+
+/* Borderless syllabus info table */
+table.syllabus {
+    border-collapse: collapse;
+    width: auto;
+    margin: 0.4em 0;
+}
+
+table.syllabus td {
+    border: none;
+    padding: 1px 12px 1px 0;
+    vertical-align: top;
+}
+
+table.syllabus td:first-child {
+    white-space: nowrap;
+    width: 6em;
+}
+
+table.syllabus tr.spacer td {
+    padding-top: 0.75em;
+}
+
+h2 + table {
+    margin-top: 1.5em;
+}
+
+.page-break {
+    page-break-before: always;
+}
+
+.tbd {
+    color: #B80C09;
+    font-weight: 600;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #087CA7;
+    margin: 1.5em 0;
+    opacity: 0.3;
+}
+
+/* Hide the markdown TOC permalink anchors (¶) — meaningless in a PDF */
+.headerlink {
+    display: none;
+}
+
+/* Print flow: keep headings with following content, and avoid orphaning
+   list items or splitting table rows across a page break */
+h1, h2, h3, h4, h5, h6 {
+    break-after: avoid;
+}
+
+li {
+    break-inside: avoid;
+}
+
+tr {
+    break-inside: avoid;
+}
+
+/* Compact data tables (e.g. audit scorecards): smaller text, centered
+   column headers, and stage labels kept on a single line. Scoped to
+   .scorecard so standard proposal tables are unaffected. */
+table.scorecard th,
+table.scorecard td {
+    font-size: 12px;
+}
+
+table.scorecard th {
+    text-align: center;
+}
+
+table.scorecard td:first-child {
+    white-space: nowrap;
+}
+
+/* Signature block (SOWs): two borderless columns, each with a party label,
+   a signature line, printed name + role, and a dated line. Kept on one page. */
+table.signatures {
+    width: 100%;
+    margin-top: 1em;
+    break-inside: avoid;
+}
+
+table.signatures td {
+    border: none;
+    width: 50%;
+    padding: 0 2.5em 0 0;
+    vertical-align: top;
+}
+
+.sig-party {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 600;
+    color: #333;
+}
+
+.sig-line {
+    border-bottom: 1px solid #333;
+    margin-top: 3.5em;
+    margin-bottom: 0.3em;
+}
+
+.sig-role {
+    font-size: 0.85em;
+    color: #777;
+}
+
+/* Callout blockquote: light Cerulean tint with a full border and rounded
+   corners (no side-stripe, per ABA brand), smaller text. */
+blockquote {
+    background-color: #e8f4f8;
+    border: 1px solid #b9dce8;
+    border-radius: 0.5rem;
+    padding: 0.7em 1.1em;
+    margin: 1.5em 0;
+    font-size: 0.9em;
+    color: #333;
+}
+
+blockquote p {
+    margin: 0;
+}

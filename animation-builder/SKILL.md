@@ -1,11 +1,13 @@
 ---
 name: animation-builder
-description: Build short motion-graphic animations (1–6 seconds) as B-roll overlays for talking-head YouTube videos — icon morphs, label fade-ins, diagrams that draw themselves, side-by-side comparisons, simple flow charts. Use this skill whenever the user asks to create, design, or render an animation, motion graphic, B-roll clip, explainer overlay, or any short visual that needs to be exported as an MP4. Triggers include "make an animation for X", "build a motion graphic", "I need B-roll for this script", "animate the [icon/label/curve/flow]", "render this as a video", "create a short clip that shows X morphing into Y", or any reference to producing a video file from a designed animation. Also fire when the user pastes a video script that contains `[ANIMATION]` callouts and asks to build them. Each animation is authored as a self-contained HTML file (CSS/SVG animations) and rendered to MP4 via a Playwright + ffmpeg pipeline included with this skill. Defaults to Heroicons outline icons. If the animation is for a specific brand, reference the relevant brand-system skill (e.g. aba-brand-system) for colors/type/voice — this skill itself is brand-agnostic.
+description: Build short motion-graphic animations (1–6 seconds) as B-roll overlays for talking-head YouTube videos — icon morphs, label fade-ins, diagrams that draw themselves, side-by-side comparisons, simple flow charts. Use this skill whenever the user asks to create, design, or render an animation, motion graphic, B-roll clip, explainer overlay, or any short visual that needs to be exported as an MP4. Triggers include "make an animation for X", "build a motion graphic", "I need B-roll for this script", "animate the [icon/label/curve/flow]", "render this as a video", "create a short clip that shows X morphing into Y", or any reference to producing a video file from a designed animation. Also fire when the user pastes a video script that contains `[ANIMATION]` callouts and asks to build them, and for multi-scene product demo videos that mock up the Claude app (claude.ai, Cowork, Customize/Connectors, skills): "make a demo video of Cowork", "mock up the Claude UI", "product video showing Claude doing X", "storyboard a Claude walkthrough", and for a clickable version of such a mock ("make it interactive", "an HTML file that looks like the app I can click through"). Each animation is authored as a self-contained HTML file (CSS/SVG animations) and rendered to MP4 via a Playwright + ffmpeg pipeline included with this skill. Defaults to Heroicons outline icons. If the animation is for a specific brand, reference the relevant brand-system skill (e.g. aba-brand-system) for colors/type/voice — this skill itself is brand-agnostic.
 ---
 
 # Animation Builder
 
 Author short motion graphics in HTML/CSS/SVG, render them frame-accurate to MP4 with a Playwright + ffmpeg pipeline. The output drops directly into a video editor as B-roll over talking-head footage.
+
+The same pipeline also builds **multi-scene product demos that recreate the Claude app** (a cursor clicking through Cowork, captions naming each step). Those follow different rules (fidelity to the live UI over original design), so see "Claude UI product demos" below before starting one.
 
 ## Why HTML/CSS, not Manim or Remotion
 
@@ -16,6 +18,7 @@ Author short motion graphics in HTML/CSS/SVG, render them frame-accurate to MP4 
 ## Workflow
 
 1. **Read the brief.** If the user pasted a script with `[ANIMATION]` callouts, treat each one as a separate clip. Confirm scope — which animation(s), how long each, target aspect ratio (default 1920×1080 / 16:9).
+   For a multi-scene demo (a cursor working through a real UI), **storyboard before building**: write a `STORYBOARD.md` in the video folder with the cast/data, one row per beat with its duration, and a short table of open choices with a default picked for each (interaction mechanic, how many items, browser chrome or app only, how many screens/weeks). Defaults-to-override get decided in one round; open questions don't. The file then stays as the decision log — append what was decided and why as the project moves.
 2. **Find the transcript and pace beats to the voice-over (mandatory when one exists).** Before settling on durations or delays, look for a word-level transcript in or near the working folder — typical names include `*_transcript.json`, `transcript.json`, `*.srt`, `*.vtt`. If one exists, use it. Don't invent pacing by gut feel when the actual timing data is sitting in the project; the clip will sit on a real spine and the editor will not adjust delays clip by clip to recover what should have been baked in. See "Pacing beats to the transcript" below for the lookup pattern.
 3. **Write the scene sentence.** Before opening the template, write one sentence stating: what the voice-over is saying when this clip is on screen, what idea the clip must reinforce, and what feeling it should leave. "An icon morphs" is not a scene. "Under the line *'…and that's when the wrench becomes a screwdriver'*, a wrench rotates and resolves into a screwdriver — quick, confident, no theatrics" is. If the sentence doesn't force the timing and the motion, add detail until it does.
 3. **Check for brand context.** If the animation belongs to a specific brand (e.g. AI Builder Academy), invoke the matching brand-system skill (e.g. `aba-brand-system`) and pull its colors/type/voice plus the brand's *animation-motion* reference (e.g. `aba-brand-system/references/animation-motion.md`) — never the brand's web composition. Otherwise default to a tinted-neutral dark palette (see "Color hygiene") and system-ui fonts.
@@ -538,6 +541,15 @@ A row whose `background` is animated via keyframes that interpolate between `tra
   `!important` so it beats the imported rule regardless of source order or specificity. Re-render and re-verify against red.
 - **Prevent:** when authoring overlays from a template that imports a brand palette, always include the transparent-bg override even if the template's own styles look harmless — palettes change, and the next palette edit may silently re-introduce the bug.
 
+### 6. zsh gotchas in render and assembly commands
+
+The default shell is zsh, and two of its rules break commands that work in bash:
+
+- **No word splitting on variables.** `R="uv run --project … render.py"; $R file.html` fails with "no such file or directory" because zsh treats the whole string as one command name. Wrap the command in a function instead: `R() { uv run --project … render.py "$@"; }`.
+- **`$var[...]` is an array subscript.** In a string like `"offset=$t[$out]"` (ffmpeg filter labels), zsh indexes into `$t` and produces an empty string, which ffmpeg reports as "Unable to parse option value". Brace every variable that touches a `[`: `"offset=${t}[${out}]"`.
+
+Also: the bundled ffmpeg build has no `drawtext` filter, so label comparison grids in HTML (or state the order in prose) rather than burning text in with ffmpeg.
+
 ## When the animation has many states / labels building in
 
 For sequences like "four boxes appear left-to-right" or "three labels fade in then animate into a file diagram," author one animation per element with staggered `animation-delay`, all sharing the same total duration. Don't try to script complex sequences with JavaScript timelines — CSS keyframes + delays cover the common cases and are dead simple to seek deterministically with the render pipeline.
@@ -561,6 +573,44 @@ Two important details:
 - Each element's `animation-duration` is its own build-in time (0.8s here), **not** the total clip length. The clip's total length comes from the `--duration` flag passed to the renderer.
 - `animation-fill-mode: forwards` (via the `forwards` keyword on the shorthand) holds the `to` state forever after the animation completes. Without it, the box snaps back to `from` and the final frame is empty.
 
+## Demo data: a puzzle, not a wall
+
+When a demo's job is to show that a problem is *hard* (a schedule nobody can find a slot in, an inbox that can't be triaged by eye), the instinct is to max out density. That proves nothing and reads as staged. Real problems are hard in a specific way: near-misses, soft constraints next to inflexible ones, and usually one structural constraint nobody notices at a glance (in the scheduling demo, three time zones leave a single 90-minute window per day). Build the data to be hard *that* way:
+
+- **Ground it on the user's real artifact, then swap every name.** Take shape, times and density from their actual screen (a recording, a screenshot) and replace each person, company and title with a fictional one. The result is believable because its texture is real; it is safe because none of its facts are.
+- **Show flexibility the way the real UI shows it.** Calendar draws unaccepted invites as outlined chips and lets titles carry softness ("Focus time", "[HOLD] …", "Lunch", "Optional: …"); hard commitments are solid. Viewers should be able to tell soft from hard if they look, and not if they don't.
+- **Encode the story's claims as a self-test on a seeded generator.** "No slot is clean for everyone" and "exactly one slot per week has only soft conflicts" are assertions; write them as a script that classifies every candidate and prints the answers. Seeded data renders identically every time, and the test tells you when a later edit (a new name, an extra blocker) breaks the premise.
+- **Author the answers when randomness won't.** With enough constraints, random data almost never leaves a near-miss. Carve it: clear hard conflicts in the chosen slot, leave two or three soft ones so it still looks occupied. Record the answers in the storyboard; they are what the later scenes (or the VO) reveal.
+
+`templates/gcal-ui/gcal-data.js` is a worked example: generator, soft/tentative flags, `ANSWERS`, and the self-test (`node gcal-data.js`).
+
+## Claude UI product demos
+
+When the video recreates the Claude app rather than illustrating an idea, **read `references/claude-ui-mockups.md` first.** It holds the principles, the capture-then-iterate workflow, and a dated snapshot of measured UI values. The short version:
+
+- **Fidelity beats design.** Capture the live app (screenshots + computed styles), compare the mockup side by side, iterate. Don't reconstruct the UI from memory; every guess shows.
+- **Start from the kit.** Copy `templates/claude-ui/` into `<video>/assets/src/shared/` and build scenes from `scene-starter.html`. Shared components (sidebar, session panel, to-do list, captions) change in the kit files, never per scene.
+- **One beat per scene.** Split the story into short scene folders so each can be retimed alone; join them with `scripts/assemble.sh` (offsets come from real clip durations; `N=alt.mp4` swaps in alternate clips for a second version).
+- **Clicks self-measure.** `aim()` and `placePills()` position the cursor and toggles after fonts load. Verify each click on a frame pulled from the rendered clip.
+- **Offer versions for open choices** (fonts, wording, flow) instead of picking for the person.
+- **Continuous-UI sequences cut hard.** Scenes of the same screen join with straight cuts, not crossfades (a dissolve blurs the state change that is the whole point). Before rendering, read the coordinates of a few fixed elements in every scene and confirm they match; a 10px sidebar drift is invisible in a snapshot and obvious at the cut. Chain the cursor by starting each scene where the previous one ended.
+
+The same discipline applies to any third-party product (Google Calendar, Slack, Notion …). `references/third-party-ui-mockups.md` carries the capture-from-recording workflow, the state-layer animation pattern for UIs that reflow, and the gotchas; `templates/gcal-ui/` is a complete kit for Google Calendar week-view demos. `templates/gmail-ui/` covers Gmail Drafts and the compose window, for when Claude's output is an email draft.
+
+## Interactive demos: the same mock, live
+
+A UI mock built for a video is often wanted a second time as something the person can drive themselves: in a live presentation, a workshop, a recording where they want to click at their own pace. The ask sounds like "make it interactive", "a version I can click through", "an HTML file that looks like the app". It is the same mock with a different driver, and it should cost a fraction of the video build if the kit was written with that in mind.
+
+**The deliverable is the app and nothing else.** A standalone HTML file (`<video>/assets/interactive/index.html`) that opens in a browser and fills the window with the recreated UI. No toolbar above it, no step chips, no status strip, no overlays or guided walkthrough, and not a published Artifact unless asked. Anything around the mock breaks the illusion the person is going to perform inside; a first version with demo chrome, a slot finder and an autoplay was rejected for exactly that reason. Only the interactions the story needs go live (in the scheduling demo: the calendar checkboxes, Today, ‹ ›); every other control is painted and inert, and that is a feature, not a shortcut. Confirm the live set in one line if the brief doesn't name it.
+
+**Keep rendering pure of timing, and swap the driver.** A kit's builders (`topbar`, `sidebar`, `weekView`, the cascade layout) should take a state object and return markup, with no knowledge of `at` times. The video driver precomputes the state sequence and emits one layer per state with `step-end` animations so `render.py` can seek it; the interactive driver holds one state, re-renders on click, and never animates. Written this way, "make it interactive" is a new 60-line driver. The gcal kit was written timeline-first, so the conversion meant stripping the layer and cursor machinery out of `buildApp` and keeping the builders; `templates/gcal-ui/interactive.html` is the result and the shape to copy for the next kit. When starting a new kit, write the builders first and the timeline driver second.
+
+**Fluid like the real app, not a scaled frame.** The video kit hardcodes 1920×1080 because the renderer needs frame-exact geometry. An interactive page must instead reflow the way the real app does, or browser zoom (Cmd +/−) does nothing and scrolling is fake. Work out from the spec which dimensions are fixed in the real app (sidebar and rail widths, gutter, hour pitch, header height) and which fill (day columns = (card width − gutter − scrollbar gutter) / 7), compute the fluid ones on resize, and give the parts that scroll in the real app real `overflow: auto` containers. Open in the app's own initial scroll state (Calendar: 7 AM at the top, the calendar list in view) and restore each container's `scrollTop` across re-renders, since `innerHTML` resets it. Don't `transform: scale()` a fixed frame to the window: it looks right at one size and defeats zoom at every other. Set a sensible `min-width` so extreme zoom scrolls sideways instead of letting fixed clusters overlap (the top bar's right-hand icons collided with the week arrows at a 960px viewport until the floor was raised).
+
+**Affordances come from CSS, not from the timeline.** Hover pills and button rings that the video faked with timed layers become `:hover` rules. Controls at the edge of the data (no fourth week) read as disabled rather than silently doing nothing. Keyboard equivalents (arrow keys for week flips) are cheap and never in the way.
+
+**Verify by driving it.** `scripts/interact.py` opens the page headlessly, replays clicks, wheel scrolls and keys, prints counts or text for selectors you name, and saves one screenshot; run it once at a laptop viewport and once at a smaller one (a 960×600 viewport is what a 1440×900 window looks like at 150% zoom) and look at one frame. That is enough; don't loop on screenshots.
+
 ## Output expectations
 
 After rendering, tell the user:
@@ -578,11 +628,19 @@ If the MP4 is overwriting a path already referenced by an FCPXML the editor open
 
 - `templates/starter.html` — copy this to start a new animation.
 - `templates/card.html` — copy this to start a new section/chapter card (static, no keyframes).
-- `templates/chat-thread.html` — scaffold for any "Claude in a back-and-forth with the user" scene. User on right, bot on left, with sub-styles for thinking dots, tool-call chips, draft docs, and edit annotations.
+- `templates/chat-thread.html` — scaffold for any "Claude in a back-and-forth with the user" scene. User on right, bot on left, with sub-styles for thinking dots, tool-call chips, draft docs, and edit annotations. Stylized, for B-roll; when the clip must look like the real Claude app, use `templates/claude-ui/` instead.
+- `templates/gmail-ui/` — kit for Gmail Drafts + compose-window scenes (`gmail()` builder: recipient chips, Cc row, link/line/row highlights, optional click-to-open). See its README.
+- `templates/gcal-ui/` — kit for Google Calendar week-view demos: `gcal-ui.css` + `gcal-ui.js` (top bar, sidebar, grid, cascade event layout, checkbox toggles, week flips, self-measuring cursor), `gcal-data.js` (seeded cast/events with soft/tentative flags, authored answers, self-test) and `scene-starter.html`. See its README for the `buildApp` options. `interactive.html` is the same app as a standalone clickable page (fluid layout, real scrolling, only the story's controls live); the worked example for § "Interactive demos".
+- `scripts/interact.py` — drive an interactive mock headlessly (clicks, wheel, keys), print selector counts/text and page errors, save one screenshot. Use it to verify a clickable demo at two viewports.
+- `templates/claude-ui/` — kit for Claude app mockups: `claude-ui.css` + `claude-ui.js` (sidebar, Cowork home and session views, right panel, to-do list, connectors, skill proposal, captions, `typeInto`, `aim`, `placePills`), `scene-starter.html`, the vector Claude logo and connector logos, and `example-deck.*` showing how per-video content stays out of the engine files.
 - `templates/file-mock.html` — scaffold for an IDE-style file window (SKILL.md, README, settings). Title bar with traffic-light dots, cerulean-keyed frontmatter, neutral instruction skeleton.
 - `templates/math-curve.html` — scaffold for any chart of an analytical relationship. Generates the SVG path procedurally from a JS function (Gaussian + tanh by default); easy to swap in any y(x).
 - `templates/caption-overlay.html` — scaffold for transparent lower-third caption overlays (karaoke / word-by-word reveal). Render with `--alpha`; output is ProRes 4444 `.mov` with alpha.
 - `scripts/render.py` — the render pipeline. Don't reinvent.
+- `scripts/snap.py` — seek a scene to given times, screenshot each, print element boxes. Same seek method as `render.py`, so snaps match rendered frames.
+- `scripts/assemble.sh` — join `assets/N-*.mp4` with 0.4s crossfades into one MP4; offsets from real clip durations; `N=path` swaps in alternate clips.
+- `references/claude-ui-mockups.md` — principles, workflow and dated measurements for Claude UI product demos.
+- `references/third-party-ui-mockups.md` — recreating any other product's UI from a screen recording: pixel-measuring frames, state-layer animations for reflowing UIs, hard cuts, ops gotchas (macOS recording filenames, protected temp dirs, font stand-ins).
 - `references/techniques.md` — patterns for common animation types (morph, build-in, draw-on, side-by-side).
 - `assets/README.md` — running index of bundled logos/icons.
 - `assets/icons/heroicons.md` — quick-reference Heroicon paths.

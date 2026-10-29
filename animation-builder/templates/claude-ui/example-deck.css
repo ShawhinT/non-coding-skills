@@ -1,0 +1,9 @@
+:root { --aba-bg: #010413; --aba-primary: #087CA7; --aba-overlay: #5DC3E8; --aba-lime: #8FC93A; }
+/* ---------- ABA-branded slide (the deck Claude makes) ---------- */
+.slide { background: var(--aba-bg); border-radius: 10px; overflow: hidden; position: relative; color: rgba(255,255,255,0.92); font-family: 'Libre Franklin', sans-serif; border: 1px solid rgba(255,255,255,0.08); }
+.slide .eyebrow { font-family: 'Manrope', sans-serif; font-weight: 800; color: var(--aba-overlay); letter-spacing: 0.12em; text-transform: uppercase; }
+.slide h1, .slide h2 { font-family: 'Manrope', sans-serif; font-weight: 800; letter-spacing: -0.02em; margin: 0; color: rgba(255,255,255,0.95); }
+.slide .mono { font-family: var(--mono); color: rgba(255,255,255,0.5); }
+/* the generic first draft */
+.plain { background: #f4f4f2; color: #333; border-radius: 10px; overflow: hidden; position: relative; font-family: Arial, sans-serif; border: 1px solid rgba(255,255,255,0.08); }
+

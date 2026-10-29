@@ -4,9 +4,9 @@ When in doubt, open one of these and read the HTML before authoring from scratch
 
 Examples are grouped by mode. See `references/modes/` for the packaging rules each mode follows.
 
-## Social infographic
+## Social graphic
 
-Standalone feed stills (LinkedIn). Self-contained packaging, social aspect presets. See `references/modes/social-infographic.md`.
+Feed stills (LinkedIn). Wordless by default; the examples below other than `youtube-mcp` use the infographic packaging sub-mode. See `references/modes/social-graphic.md`.
 
 ### Landscape (1080×820)
 
@@ -19,7 +19,7 @@ Standalone feed stills (LinkedIn). Self-contained packaging, social aspect prese
   - Footer `@shawhintalebi` centered, 14px JetBrains Mono.
 
 - **`two-types-of-skills`** — two-panel comparison with parallel-card eyebrows + bottom-anchored examples row.
-  Path: `<content-root>/linkedin/2026/AI-education/two-types-of-skills/two-types-of-skills.html`
+  Path: `~/Documents/_stv/_content/_SFC/sfc/2026/ai-education/two-types-of-skills/two-types-of-skills.html`
   - Title at top (Manrope 800, 48px), then two cards in `1fr 1fr` grid.
   - Each card: `TYPE 1` / `TYPE 2` mono eyebrow → display word → one-line descriptor → graphic → `e.g.` footer row separated by a hairline border.
   - Equal-bottom alignment via `.card { min-height: 560px; display: flex; flex-direction: column }` + `.graphic { flex: 1 }` — works when the two graphics are different sizes (left = 3-step list, right = 3+2 logo tile grid).
@@ -27,7 +27,7 @@ Standalone feed stills (LinkedIn). Self-contained packaging, social aspect prese
   - Use when comparing two named *types* or *categories* with examples — the eyebrow carries the "this is one of two" framing.
 
 - **`four-step-framework`** — N-step horizontal progression (4 cards in a row).
-  Path: `<content-root>/linkedin/2026/ai-education/four-step-framework/four-step-framework.html`
+  Path: `~/Documents/_stv/_content/_SFC/sfc/2026/ai-education/four-step-framework/four-step-framework.html`
   - Header is title-first, eyebrow-below (h1 then `4-STEP FRAMEWORK` mono in accent). Inverts the default eyebrow-above order when the title is the main hook and the eyebrow is metadata.
   - Cards in a `1fr 1fr 1fr 1fr` grid with **explicit `height` on the grid** (470px) instead of letting `flex: 1` distribute remaining space — without this the cards float up and leave dead space at the bottom of the canvas.
   - Each card: white bg, 18px radius, 1px hairline border, mono step eyebrow (`STEP 1`) in accent, bold Manrope step label below.
@@ -61,7 +61,14 @@ Standalone feed stills (LinkedIn). Self-contained packaging, social aspect prese
 
 ### Square (1080×1080)
 
-_(none yet — add when one ships.)_
+- **`youtube-mcp`** — wordless two-mark connection graphic (the canonical bare social graphic).
+  Path: `references/examples/youtube-mcp/youtube-mcp.html`
+  - Claude mark and YouTube mark, a dotted Cerulean line, a solid Cerulean disc with a Heroicons link icon at the midpoint. No title, caption, or footer: the LinkedIn post copy carries the hook.
+  - **White panel behind the composition.** A 960×520 `#FFFFFF` card (hairline border, 40px radius) centered on the cream canvas. Without it the composition floated in undifferentiated cream; with it the margin reads as deliberate. Same principle as SKILL.md § "Cream reads as warm only against white."
+  - **Optical weight, not equal pixels.** The Claude starburst is set at 300px and the YouTube slab at 252px; the starburst is visually lighter, so equal boxes made it read smaller.
+  - **Exact-spacing dotted connector.** An SVG `<line>` with `pathLength="5"`, `stroke-dasharray="0 1"`, `stroke-linecap="round"`, `stroke-width="7"` gives six evenly spaced round dots whose endpoints land exactly on the line ends, independent of the line's pixel length. CSS `border: dotted` can't do that.
+  - Flex row (`mark · dots · badge · dots · mark`) centered in the panel, so nothing is absolutely positioned and the composition recenters if a mark is resized.
+  - Chosen out of ~17 explored mockups via the fan-out workflow (SKILL.md § Ideating from scratch).
 
 ### Composite cheatsheet (tall portrait, 1080×~2000)
 
@@ -107,6 +114,18 @@ Figures that live inside a blog post, slide, or doc. Bare diagram, no social pac
   - **Centered summary note** (`.note`, mono, muted) under the right zone states the rule the diagram teaches.
   - Content-fit canvas: `width: 1080px`, no fixed height, rendered tall then trimmed (final ~1080×560).
   - Use to contrast two related structures (categories, before/after, two configurations) where each side is a labeled container of items.
+
+### Before / after workflow contrast
+
+- **`demo-discovery-call`** — the same job done by hand vs. by the agent, as a 50/50 split. Built for a Keynote slide (1920×1080, white, no title of its own beyond the slide's).
+  Path: `references/examples/demo-discovery-call/demo-discovery-call.html`
+  - **The silhouette is the argument.** Left is 17 uniform grey checkbox rows (`height: 44px`, `#F4F6F7` on a hairline border, muted `#69787F`); right is five calm colored blocks. It lands before a word is read. This is the case where text volume is doing *visual* work — see SKILL.md § "Separate text doing visual work from text apologizing for the visual" — so the row count survives compression, and vertical room comes out of padding and type, never out of dropping rows.
+  - **Right column = an ink spine with cards branching off it** at the moment each is produced. `.drops` holds an absolutely-positioned `.rail` (3px) plus a `.railtip` triangle; each `.drop` draws its own connector via `:before` (a 3px bar) and `:after` (a CSS triangle arrowhead), so branches need no SVG and reflow automatically.
+  - **A rotated bracket labels a group without spending a row.** `.bracket .lab { writing-mode: vertical-rl; transform: rotate(180deg) }` beside a 3px bar, sized by a small `getBoundingClientRect` pass to span exactly the cards it names. Because the bracket names the group, the individual cards carry no repeating tag — that pairing is the text-economy principle in practice.
+  - **Component color is consistent with the deck it lives in:** coral = automation/trigger, goldenrod = instructions (SOP + skill chips), cerulean = connectors, forest = records, ink = outputs and the human. Right-edge tags (`UPDATED` / `CREATED` / `DRAFT ONLY`) carry state the color can't.
+  - **The human block closes it.** A dark full-width card ending on what the person still does keeps the claim honest — nothing in the graphic implies the agent acts unsupervised.
+  - Siblings `demo2` / `demo3` swap the coral bolt for a clock plus a mono time chip (scheduled rather than event-triggered) and re-label the bracket for records *read* rather than written; all three are emitted from one generator so they can't drift.
+  - Use for "manual vs. automated", "before vs. after", or any contrast where one side's tedium is the point.
 
 ### Comparison matrix / table
 

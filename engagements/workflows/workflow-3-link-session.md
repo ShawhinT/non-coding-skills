@@ -1,5 +1,9 @@
 # Workflow 3: Link a Session or Call to an Engagement
 
+> **Note on layout:** `## Sessions` and `## Calls` now sit side by side inside a `<columns>` block
+> (Calls left, Sessions right). The headings are unchanged, so appending by heading still works —
+> just keep the new line inside the same `<column>` and preserve the tab indentation.
+
 **Triggers:**
 - A new ABA Trainings page is created for an active client
 - A new ABA Calls page is created for an active client (mid-engagement check-in, etc.)

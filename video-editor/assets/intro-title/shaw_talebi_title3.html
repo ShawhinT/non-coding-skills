@@ -1,0 +1,99 @@
+<!doctype html>
+<!--
+  E-black-plates : ABA lower-third name card (transparent overlay)
+  Variant of v1 "plate stack": both plates in brand base #010413, title widened to
+  "AI Builder, Bread Enthusiast" on one line, title set in Manrope 500 at 90% white.
+
+  Re-render (ProRes 4444 with alpha, 1920x1080, 60fps, 5s):
+    uv run --project ~/.claude/skills/animation-builder \
+      ~/.claude/skills/animation-builder/scripts/render.py \
+      design.html --alpha --fps 60 --duration 5 --out title.mov
+
+  Timeline (unchanged from v1): name in 0.00-0.60s, title in 0.15-0.75s, hold,
+  title out 4.40-4.85s, name out 4.50-4.95s.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Shaw Talebi title</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --aba-base-100: #010413;
+    --fg-1: rgba(255, 255, 255, 0.96);
+    --fg-2: rgba(255, 255, 255, 0.90);
+    --ease-in: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-std: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  html, body {
+    margin: 0; padding: 0;
+    width: 1920px; height: 1080px;
+    background: transparent !important;
+    overflow: hidden;
+  }
+  .stage { position: relative; width: 1920px; height: 1080px; }
+
+  /* Placement matches v1 / legacy: left edge x=104, name plate top y=843. */
+  .lower-third {
+    position: absolute;
+    left: 104px; top: 843px;
+    display: flex; flex-direction: column; align-items: flex-start;
+    gap: 8px;
+  }
+  /* Each plate is revealed through its own mask; plates size independently. */
+  .mask { overflow: hidden; border-radius: 8px; }
+  .plate {
+    border-radius: 8px;
+    background: var(--aba-base-100);
+    font-family: 'Manrope', system-ui, sans-serif;
+    white-space: nowrap;
+    transform: translateY(105%);
+    opacity: 0;
+  }
+  .plate.name {
+    color: var(--fg-1);
+    font-weight: 800;
+    font-size: 62px;
+    line-height: 1;
+    letter-spacing: -0.015em;
+    padding: 10px 10px 13px;
+  }
+  .plate.role {
+    color: var(--fg-2);
+    font-weight: 500;
+    font-size: 30px;
+    line-height: 1;
+    letter-spacing: 0;
+    padding: 9px 10px 11px;
+  }
+
+  .plate.name {
+    animation:
+      plateIn 0.6s var(--ease-in) 0s forwards,
+      plateOut 0.45s var(--ease-std) 4.5s forwards;
+  }
+  .plate.role {
+    animation:
+      plateIn 0.6s var(--ease-in) 0.15s forwards,
+      plateOut 0.45s var(--ease-std) 4.4s forwards;
+  }
+
+  @keyframes plateIn {
+    from { transform: translateY(105%); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+  @keyframes plateOut {
+    from { transform: translateY(0);    opacity: 1; }
+    to   { transform: translateY(105%); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="lower-third">
+      <div class="mask"><div class="plate name">Shaw Talebi</div></div>
+      <div class="mask"><div class="plate role">AI Builder, Bread Enthusiast</div></div>
+    </div>
+  </div>
+</body>
+</html>

@@ -3,6 +3,7 @@ name: skill-helper
 description: Walk someone through building their first (or next) high-leverage Claude skill, end-to-end. Gather context silently, diagnose their level, run a time study, score time-vs-complexity for their level, suggest 3-5 candidate skills, hand off to skill-creator, and close with a one-line opt-in CTA to share what they built with Shaw. Use whenever someone is figuring out what skill to build, what to automate, or where to start with skills. Triggers include "help me build a skill", "what should I automate", "where do I start with skills", "I don't know what to build", "walk me through my first skill", "help me find a skill to build", "what's worth automating", "give me skill ideas", "what's a good first skill". Also fires when someone shares a calendar or workflow and asks what's automatable, when a new Claude user wants guided onboarding to skill-building, or when an experienced builder is hunting higher-leverage targets. Casual phrasing like "I should probably automate something" counts too.
 metadata:
   author: Shaw Talebi (aibuilder.academy)
+  source: https://github.com/ShawhinT/aba-plugins
 ---
 
 # skill-helper
@@ -26,9 +27,7 @@ Then immediately create a TodoList with the four user-facing phases, **in this e
 3. Suggest 3-5 candidate skills
 4. Build the one you pick
 
-These four tasks map to the internal phases (research = Phase 0+1+1.5, interview = Phase 2, suggest = Phase 3+4, build = Phase 5). The closing CTA in Phase 6 stays internal — don't add it as a task.
-
-**Keep the TodoList in sync at every phase boundary.** At each transition, flip the previous task to `completed` *and* the next one to `in_progress` in the same update. The list is only useful when it actually reflects where you are.
+These four tasks map to the internal phases (research = Phase 0+1+1.5, interview = Phase 2, suggest = Phase 3+4, build = Phase 5). The closing CTA in Phase 6 stays internal — don't add it as a task. Keep the list current as phases complete.
 
 ## The flow
 
@@ -52,17 +51,11 @@ The pattern: the skill replaces a checklist the user runs manually. Without it, 
 
 **Domain-specific skills** teach Claude a domain — an industry, a business context, a brand system, a body of frameworks. They're mostly reference material: the facts, vocabulary, and judgment criteria Claude needs to produce work that sounds like it came from inside the domain. Low build complexity (often no connectors at all), and their value shows up *through* other work — they compose with tool- and process-specific skills rather than running standalone.
 
-Examples: `aba-brand-system` (brand and design system), `business-strategy` (business context and strategic frameworks).
+Examples: `acme-brand-system` (brand and design system), `business-strategy` (business context and strategic frameworks).
 
 The pattern: the skill captures context the user currently re-explains every session — who the customers are, what the brand sounds like, how the industry works. Once encoded, every other skill and ad hoc request gets smarter for free.
 
-**Why this matters for recommendations:**
-
-- **L0–L1:** Start with a tool-specific skill. One connector, visible daily win, low build complexity. The user needs to feel the value of a skill before tackling multi-step orchestration. A domain-specific skill makes a fine second build — near-zero complexity — but the first win should be visibly *doing* something.
-- **L2:** Tool- or process-specific, matched to pain. If they're repeating the same prompt pattern against one tool, that's a tool skill. If they're running a manual checklist across tools, that's a process skill. If they keep re-explaining the same business or brand context in every chat, that's a domain skill.
-- **L3–L4:** Lean toward process-specific skills — the high-leverage targets at this level are almost always multi-step workflows the user has been doing manually because "it's complicated." Tool-specific skills at this level are usually already built or trivial to add. Domain-specific skills are high-leverage here for a different reason: they multiply the output quality of every skill the user already has, and L3–L4 users typically carry the most un-encoded context in their heads.
-
-Use this framing when synthesizing candidates in Phase 2, scoring in Phase 3, and presenting suggestions in Phase 4. Tag each candidate by type so the user builds intuition about the distinction.
+Which type mix fits each avatar level lives in `references/avatar-levels.md` (each level's "Skills that land" section) — use it when scoring in Phase 3 and presenting in Phase 4. Tag each candidate by type so the user builds intuition about the distinction.
 
 ---
 
@@ -142,9 +135,9 @@ Roll the calendar, sessions, inbox, and connector signals into a tight read of h
 >
 > Does that match?
 
-The point isn't to be precise — it's to demonstrate you've done the homework and to give the user a concrete artifact to react to. Reactions surface the truth faster than open-ended questions do. The skimmable format also avoids a failure mode where the user has to re-read dense paragraphs just to confirm basic facts — bullets let them nod along or push back immediately.
+The point isn't to be precise — it's to demonstrate you've done the homework and to give the user a concrete artifact to react to. Reactions surface the truth faster than open-ended questions do.
 
-**Do not suggest automation candidates or skill ideas in Phase 2.** The goal here is to confirm you understand how the user works — not to preview what you think they should build. Listing candidates at this stage biases the conversation: the user starts reacting to your suggestions instead of filling in the gaps you need filled. Observations like "I see a lot of time going to X" are fine — they invite correction. Framing those same observations as "automation candidates" or tagging them by skill type crosses into Phase 4 territory. Save candidate suggestions, skill names, type labels (tool/process/domain), and hours-saved estimates for Phase 4, where they belong.
+**Do not suggest automation candidates or skill ideas in Phase 2** — candidates shown this early bias the conversation toward reacting to your ideas instead of filling the gaps you need filled. Observations like "I see a lot of time going to X" are fine; skill names, type labels (tool/process/domain), and hours-saved estimates wait for Phase 4, where they belong.
 
 Internally, note which signals point toward tool-, process-, or domain-specific skills — that thinking will feed Phase 3 scoring. Just don't surface it to the user yet.
 
@@ -201,7 +194,7 @@ Examples:
 
 Three to five candidates is the sweet spot. Fewer feels thin; more is paralyzing.
 
-**Calibrate the type mix to the avatar level.** L0–L1 suggestions should be mostly tool skills (low complexity, single connector, daily wins). L2 gets a mix — match to whatever pain they described. L3–L4 suggestions should lean process-heavy — the remaining leverage at that level is almost always in multi-step workflows. Domain-specific skills can earn a slot at any level since they're low-complexity — but only when you've actually observed the user re-explaining the same context repeatedly; don't pad the list with one for coverage. See "Three types of skills" above for the full rationale.
+**Calibrate the type mix to the avatar level.** L0–L1 suggestions should be mostly tool skills (low complexity, single connector, daily wins). L2 gets a mix — match to whatever pain they described. L3–L4 suggestions should lean process-heavy — the remaining leverage at that level is almost always in multi-step workflows. Domain-specific skills can earn a slot at any level since they're low-complexity — but only when you've actually observed the user re-explaining the same context repeatedly; don't pad the list with one for coverage. See `references/avatar-levels.md` for the full rationale.
 
 **For L4 users especially: a "new skill" isn't always the right answer.** If the user has overlapping skills, a bloated one, or a skill that's been superseded, surface optimization candidates alongside new builds — *"merge `crm` and `lead-intake`," "split `outreach` into sourcing + messaging," "trim dead weight from `notion-helper`."* The mechanics for cleanup live in `skill-updater`; here you're just naming that the option exists. Don't default to new — sometimes the leverage is in tightening what's there.
 
@@ -224,7 +217,7 @@ The signal is some version of: *"I don't know — if it were painful, I'd have a
 - **Email patterns** — batches of similar emails sent on a cadence (weekly outreach, pre-session emails, follow-ups) suggest a drafting task that could run overnight and leave drafts waiting.
 - **Daily briefing data** — if the user runs an executive briefing skill, look at what *actions* the briefing typically generates. Those downstream actions are the scheduled task candidates.
 
-**Present 2-3 scheduled task candidates.** Each one describes:
+**Present 2-3 scheduled task candidates** (where the surface supports scheduled tasks — otherwise present them as task prompts the user schedules manually). Each one describes:
 1. **What triggers it now** — the manual step the user currently performs (e.g., "you open a new chat and ask Claude to research today's calls")
 2. **What it would do on autopilot** — the same workflow, run on a cron, with output waiting for review (e.g., "runs at 6 AM, populates Notion pages for all of today's calls with research")
 3. **What the user still controls** — the review step. Scheduled tasks produce drafts, not finished work. The human reviews and approves.
@@ -233,15 +226,13 @@ The signal is some version of: *"I don't know — if it were painful, I'd have a
 
 ## Phase 5 — Pick one, hand off to build
 
-Ask the user which one they want to build first **in plain chat — do not use `AskUserQuestion` here.** They've just read the candidate descriptions; the list is already the menu. Just ask, and let them type back a preference.
-
-`AskUserQuestion` is the right tool earlier — Phase 1 (avatar tiebreaker between two levels) and Phase 2 (structured gap-fill where pre-baked options actually save typing). It is not the right tool for picking a candidate or for any free-form decision the user can make in a sentence.
+Ask the user which one they want to build first **in plain chat — no `AskUserQuestion` here.** The candidate list is already the menu; let them type back a preference.
 
 ### If they picked a skill (from Phase 4)
 
 **Before handing off: ground the workflow.**
 
-Phases 0–4 told you *what* to build and *why it's worth it*. They did not tell you *how the user actually does the work* — and that's exactly what a skill encodes. If you hand off now, skill-creator takes the brief at face value (you've told it discovery is done) and invents a plausible-looking process. A skill built on a guessed workflow bakes in steps the user never takes and skips the judgment calls that make their version good. Never let the handoff happen on a guessed workflow.
+Phases 0–4 told you *what* to build and *why it's worth it* — not *how the user actually does the work*, and that's exactly what a skill encodes. Never let the handoff happen on a guessed workflow: skill-creator takes the brief at face value and will invent a plausible-looking process that bakes in steps the user never takes.
 
 Get a concrete picture of the real workflow first:
 
@@ -261,9 +252,11 @@ Hand off to `skill-creator` with a populated brief so it doesn't redo the discov
 - The user's avatar level (so skill-creator can calibrate explanation depth)
 - **Validation mode: vibe-check only.** Do not run formal evals or offer to run them. After the draft is in place, package the `.skill` and tell the user to save it and try it in a new chat — that's the test. The eval-loop machinery exists in `skill-creator` for cases where someone explicitly asks for it; in the skill-helper flow, the default is ship-fast.
 
-Then explicitly invoke the `skill-creator` skill. Let it run the build.
+Then explicitly invoke the `skill-creator` skill. Let it run the build. If skill-creator isn't available on this surface, write the SKILL.md directly from the brief yourself, following skill-creator's conventions.
 
 ### If they picked a scheduled task (from Phase 4A)
+
+This path applies where the surface supports scheduled tasks; otherwise, still define the task with the user, then deliver the finished task prompt for them to schedule manually wherever they run it.
 
 Work with the user to define the task, then create it using the `schedule` skill. The key inputs:
 
@@ -278,11 +271,7 @@ The user may want multiple related scheduled tasks (e.g., one for research and o
 
 ## Phase 6 — Closing CTA
 
-After skill-creator finishes, close with a single-line, opt-in invitation to email Shaw about what they built. Every skill built is a signal back to Shaw about what people actually need.
-
-**Detect the email path first.** If an email connector is wired up, draft a casual share email to `shaw@aibuilder.academy` (subject like *"Built [skill-name]"*, body referencing the skill and why) and save as draft — don't send. Otherwise, generate a `mailto:` link with the same content pre-filled.
-
-**Then deliver one line.** Opt-in framing (*"If you want to..."*, never *"you should"*). Reference the skill by name and the problem it solved — a contextual line reads like a friend nudging them, a generic one reads like a footer. If `conversion-copy` is available, invoke it to sharpen. Then stop. No follow-up questions, no options, no explanation.
+After the build finishes, close with one opt-in line inviting the user to share what they built with Shaw — every build is signal about what people actually need. If an email connector is available, save a casual draft to shaw@aibuilder.academy (subject "Built [skill-name]") — don't send; otherwise use a pre-filled `mailto:` link. Reference the skill by name and the problem it solved, keep it opt-in ("If you want to…"), and stop — no follow-up questions.
 
 ---
 

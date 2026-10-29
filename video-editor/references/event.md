@@ -21,6 +21,8 @@ The speaker rarely retakes anything deliberately, but they often self-correct in
 
 **If your kept segments for a chunk exceed ~75% of the chunk runtime and the chunk is not pure demo/screenshare, you are almost certainly under-cutting pacing.** Re-scan for restatements, slide-hunting, and filler clusters before returning. A single "keep everything" segment for a 10-minute chunk is almost always wrong.
 
+Exception: when the source is itself an already-edited cut (a second editorial pass over a rendered final), the filler a first pass removes is already gone, so much higher retention is normal. Absence of cuttable material is not under-cutting — don't force cuts to hit the range. The brief should state the second-pass context so chunk agents apply this exception deliberately.
+
 ## Pipeline parameters for events
 
 Events are single-take live talks — a cadence between voiceover's tight sentence-by-sentence delivery and talking-head's multi-second retake pauses. Preprocess with the default `--silence-gap 0.35` (no override). Assemble with `--transcript` (for interior dead-air tightening) plus:
@@ -59,6 +61,8 @@ Cut the meta-commentary *around* questions, not necessarily the questions themse
 
 When the speaker actually engages with a question, protect the substantive answer.
 
+When a mid-talk answer is being kept, the question read-out is part of the answer, not part of the meta. Trim the housekeeping around it ("I see we've got some questions in the chat", "great question", "I think David had a good answer") but keep the sentence where the speaker reads or restates the question — an answer whose question was trimmed lands as an orphaned non-sequitur, and restoring it later costs a parent-session lookup-and-revalidate pass.
+
 #### Logistics tail — **end-of-talk only**
 
 This rule applies **after the last substantive content**, not anywhere a plug-like phrase appears:
@@ -66,6 +70,8 @@ This rule applies **after the last substantive content**, not anywhere a plug-li
 - Recording and follow-up ("share the recording", "send you the recording", "I'll email")
 - Goodbyes ("that's all I've got", "thanks everyone", "see you next time")
 - End-of-talk plugs and LinkedIn calls ("drop me a note on LinkedIn", "sign up at the link", "link in the chat")
+
+When the brief drops the whole Q&A, the talk loses its recorded ending — the goodbye usually sits after the Q&A, inside this logistics tail. Check the tail for a short clean sign-off line ("thanks for joining… take care") and offer it as a splice-on outro directly after the last content block; ending cold on the final takeaway is the alternative. Surface this choice in the Step 0.5 brief rather than deciding silently.
 
 #### **Mid-talk product pitch — KEEP**
 

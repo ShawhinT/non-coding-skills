@@ -4,9 +4,14 @@ How to turn scraped LinkedIn data into actionable insights. Read this after scra
 
 ## The two numbers that matter
 
-For every post, the headline pair is **impressions** (from the impressions view) and **totalEngagements** (from the engagements view — LinkedIn's all-up metric, includes reactions/comments/reposts/clicks/saves). The ratio `totalEngagements / impressions` is the engagement rate. Use that as the primary performance signal.
+Every post has **impressions** as the denominator, but there are two different numerators and they are not interchangeable:
 
-Reactions and comments are useful as a breakdown but are not the full picture — they leave out clicks and saves, which often dominate. Reposts specifically are not reliable from either dashboard view; if a particular post's repost count matters, visit the post page directly.
+- **API rate = (reactions + comments + shares) / impressions.** From the feed API. Excludes clicks and saves. This is the default and what the recurring split report uses — it's exact, complete, and available for every post.
+- **Dashboard rate = totalEngagements / impressions.** From the engagements view. Includes clicks and saves, so it is always the larger number, and it's capped at the top ~50 posts.
+
+Pick one per analysis and label which it is. Never place the two side by side as if they were the same metric — the dashboard rate will look like an improvement when it's just a wider definition. `SKILL.md` is the source of truth for this distinction.
+
+Reactions and comments alone are a useful breakdown but not the full picture. Reposts specifically are unreliable from either dashboard view; if a particular post's repost count matters, visit the post page directly.
 
 ## Common Analysis Patterns
 
@@ -67,9 +72,11 @@ Posts that curate resources with a specific number hook ("10 YouTube channels th
 
 Milestone posts (moving, birthday recaps, career announcements) get massive reach through reactions and comments — people engage emotionally. These are relationship-builders. They can be top-3 by impressions but their utility for sustained reach is lower than curated lists.
 
-### Base reach is ~5K, breakout needs a trigger
+### Base reach and breakout are separated by a wide gap
 
-Mid-tier posts cluster around 4,000–8,000 impressions. Breaking out above 20K+ requires a viral trigger: a shareable format, an emotional hook, or specific numbers in the opening line. The gap between top performers and the rest is large — there's no "doing slightly better," there's base reach and breakout.
+State this one in ratios, not absolute impression counts — Shaw's baseline moves with audience size and LinkedIn's distribution changes, so any hard number written here goes stale and makes ordinary months read as collapses. Compute the baseline from the current pull instead.
+
+The durable shape: most posts cluster in a narrow band around the median, and breakout posts land an order of magnitude above it (max/median above 10x is routine, and the single top post commonly takes 20–50% of the window's total reach). There's no "doing slightly better" — there's base reach and there's breakout, and they're produced by different mechanisms. Breaking out takes a trigger: a shareable format, an emotional or milestone hook, or a specific falsifiable number in the opening line.
 
 ## Presenting Findings
 
@@ -90,9 +97,9 @@ Lead with the key insight, not the raw data. Shaw wants to know what to do diffe
 
 Avoid vague advice like "post more engaging content" or "try different approaches." Ground everything in the actual data.
 
-## Cross-Referencing with linkedin-voice
+## Cross-Referencing with linkedin-post-writer
 
-When analyzing post performance, reference Shaw's `linkedin-voice` skill principles to connect data patterns to writing strategy:
+When analyzing post performance, reference Shaw's `linkedin-post-writer` skill principles to connect data patterns to writing strategy:
 
 - High-performing hooks → which hook archetypes work best?
 - Promo performance → does "lead with stance, bury the ask" hold up?

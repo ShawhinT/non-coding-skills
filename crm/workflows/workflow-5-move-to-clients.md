@@ -16,6 +16,7 @@ with these fields:
 - **Name** — carry over from lead
 - **Email** — carry over from lead
 - **Source** — carry over from lead
+- **Company** — carry over from lead, and flip that Companies row's `Relationship` to `Client` (the account has now paid; every later person row at that company inherits the label from the company, not from their own status). A lone lead who closes may have no company row yet: the purchase is what earns it, and `engagements` Workflow 1 creates and backfills it when the engagement is logged in Step 5 (a solo operator still gets none)
 - **Status** — set to `Active` if the engagement is starting now, or `Nurturing` if it's already complete
 - **Last Contact?** — carry over from lead
 - **Next Contact** — depends on Status. If `Active`, set to the date of the next scheduled
@@ -65,7 +66,7 @@ The won deal now needs a row in the Engagements DB so the project ledger has a r
 work. Hand off to the `engagements` skill's `workflow-1-create.md`, passing:
 
 - The new Clients (Nurture) page URL (for the `Client` relation)
-- The offer name (canonical option from `engagements/references/pricing-principles.md`)
+- The offer name (canonical option from `engagements/references/offer-pricing.md`)
 - The source (carry over from the lead)
 - Start Date (first scheduled session, or today if kickoff is now)
 - End Date (projected, if known)

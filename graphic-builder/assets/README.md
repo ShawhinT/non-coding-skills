@@ -13,7 +13,7 @@ Format: `filename — source, brand color (if applicable), date added`
 - `stripe.svg` — simpleicons.org, #635BFF, 2026-05-13
 - `jira.svg` — simpleicons.org, #0052CC (Atlassian blue), 2026-05-13
 - `chrome.svg` — simpleicons.org (googlechrome), monochrome single-path (recolor via `currentColor`), 2026-06-24
-- `claude.svg` — simpleicons.org, monochrome single-path (recolor via `currentColor`); complements full-color `claude.png`, 2026-06-24
+- `claude.svg` — simpleicons.org, monochrome single-path (recolor via `currentColor`); complements full-color `claude.png`, 2026-06-24. Claude's own terracotta is `#D97757` — use it when the mark should read as the product's brand, not as a brand-system accent.
 
 ## How to add a new logo
 
@@ -36,3 +36,5 @@ keynote — Wikimedia Commons (Keynote 15.1 application icon), macOS app icon (b
 youtube — Wikimedia Commons (YouTube full-color icon 2017), brand red #FF0000, 2026-05-25
 google-analytics — Wikimedia Commons (Logo Google Analytics), icon mark cropped from wordmark, orange/yellow, 2026-05-25
 google-drive — Wikimedia Commons (Google Drive icon 2020), multicolor, 2026-06-24
+youtube — simpleicons.org #FF0000, single-path mono SVG (pairs with youtube.png full-color raster), 2026-08-19
+- `mcp.svg` — simpleicons.org (modelcontextprotocol), single-path mono (fetched in Cerulean #087CA7; recolor via fill), 2026-09-15

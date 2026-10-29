@@ -86,11 +86,11 @@ Cheers,
 Shaw
 ```
 
-Cap at ~3 bullets, each starting with a verb; skill names lowercase kebab-case and bolded. One CTA still leads — the extra bullets are gives (resources), not competing asks.
+Cap at ~3 bullets, each starting with a verb; format skill names per SKILL.md Voice -> "Exception: skill bullets". One CTA still leads — the extra bullets are gives (resources), not competing asks.
 
 ---
 
 ## Threading and batch
 
-- **Threading:** reply on the existing thread per SKILL.md "Drafting with `create_draft`"; fresh thread when the live thread ends in a reaction per SKILL.md "Gmail emoji reactions break thread replies." Subject: "Call follow-up" for first/standalone calls, "Check-in Follow-up" for subsequent touchpoints in an ongoing engagement.
+- **Threading:** a follow-up after a first or standalone call opens a fresh thread. This covers anything sent off the meeting's follow-up list, not just the recap — a single link or resource promised on the call is still a meeting follow-up and gets its own subject. The scheduling thread's job ended when the call happened, and stacking the recap under Calendly logistics buries the substance the recipient will come back for. Never reply on a thread that ends in a reaction per SKILL.md "Gmail emoji reactions break thread replies." Subject: "Call Follow-up" for first/standalone calls, "Check-in Follow-up" for subsequent touchpoints in an ongoing engagement.
 - **Batch:** see SKILL.md "Batch Outreach Workflow" — one consistent template, present it to Shaw before creating drafts, only customize the name + compliment + status-quo parenthetical.

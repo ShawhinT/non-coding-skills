@@ -1,6 +1,6 @@
 ---
-name: newsletter-writer
-description: Draft newsletters for Shaw's Kit list (The Data Entrepreneurs) in his exact voice and structure. Use this skill whenever Shaw asks to write, draft, edit, or repurpose a newsletter — including phrases like "write a newsletter", "draft a Kit broadcast", "turn this post into a newsletter", "weekly send", "newsletter idea", "make this a newsletter", "the next email to my list", or any reference to writing for his email list. Also trigger when Shaw shares a topic, milestone, framework, observation, or LinkedIn post and asks to "make it a newsletter" or "send it to the list." Even casual phrasing like "what should I send this week" or "I want to write something to my subscribers" should trigger this skill. Covers both content/teaching newsletters and sell newsletters — for deep conversion-focused diagnosis on a sell email, hand off to `conversion-copy` after the draft is in place.
+name: "newsletter-writer"
+description: "Draft newsletters for Shaw's Kit list (The Data Entrepreneurs) in his exact voice and structure. Use this skill whenever Shaw asks to write, draft, edit, or repurpose a newsletter — including phrases like \"write a newsletter\", \"draft a Kit broadcast\", \"turn this post into a newsletter\", \"weekly send\", \"newsletter idea\", \"make this a newsletter\", \"the next email to my list\", or any reference to writing for his email list. Also trigger when Shaw shares a topic, milestone, framework, observation, or LinkedIn post and asks to \"make it a newsletter\" or \"send it to the list.\" Even casual phrasing like \"what should I send this week\" or \"I want to write something to my subscribers\" should trigger this skill. Covers both content/teaching newsletters and sell newsletters — for deep conversion-focused diagnosis on a sell email, hand off to `conversion-copy` after the draft is in place."
 ---
 
 # Newsletter Writer
@@ -15,16 +15,31 @@ Lock these:
 
 - **Mode**: content/teaching, observation, or sell? (Determines the template and the P.S.)
 - **One core idea**: every newsletter has exactly one. If there are two, split it into two emails.
-- **Source material**: post being repurposed, framework being taught, observation being shared, or offer being sold. If Shaw hands over a LinkedIn post, draft, or rough notes, lean on it heavily — his existing language is usually closer to the final voice than anything you'd invent.
+- **Source material**: post being repurposed, framework being taught, observation being shared, or offer being sold. How much you write depends on how finished the source already is (see below).
 - **Length target**: 250–450 words. If you're approaching 500, cut.
 
 If any of the above is unclear, ask before drafting.
+
+## Porting vs. drafting
+
+The single biggest question on any newsletter: is the source already finished copy, or is it raw material? The answer decides how much of the writing is yours.
+
+**Finished copy** — a published LinkedIn post, a draft Shaw wrote out himself — is a **port, not a rewrite**. A port changes the channel, not the copy: every sentence carries over as written, emoji included, because it already passed his bar. Only the parts that belong to the source channel's mechanics (how it opens, how it's shared, how it links, how it closes) become the destination's equivalents, plus the newsletter-only layer: subject, preview, signoff, P.S. Suggested edits beyond that go in chat; Shaw makes them himself.
+
+**Raw material** — notes, an outline, a topic, a transcript, a framework — is yours to expand. That's where the templates and signature moves below do their work.
+
+When the source is a LinkedIn URL (`lnkd.in` or `linkedin.com`), fetching it fails — LinkedIn blocks it. Open it in the browser to pull the post text.
+
+**When the newsletter is an ask on someone else's behalf** — a gig, a role, a partner's event — the facts belong to Shaw, not the archive. A similar past send is a template for structure and voice, never a source for who the client is, what the work involves, or where it is. Pull those from Shaw first. When he doesn't have them yet, say so in the email and make the CTA a reply rather than inventing detail.
 
 ## Voice (non-negotiable)
 
 Shaw's voice is a confident peer-to-peer operator. Smart, no-fluff, declarative. Not coaching, not hype, not corporate.
 
 - **Cold open.** Never "Hey," "Hi friends," or any greeting. Open with the claim, the scene, or the problem.
+
+**Exception: the Expert Network blast.** A short opportunity email to the opted-in expert list opens `Hey {{ subscriber.first_name }},` and closes `Keep building, / Shaw`. It's an ask directed at a person, not content broadcast to a list, and the greeting is what makes it read that way. Cold opens remain the rule everywhere else.
+
 - **One thought per line.** Short paragraphs, often single sentences. Heavy whitespace. The page reads like a stack of statements, not a wall of prose.
 - **Declarative over coaching.** State the thing and move on. No "that's fine," "don't worry," or pep-talk reassurance.
 - **Anti-hype.** Kill landing-page words: unleash, supercharge, transform, empower, leverage, revolutionary, game-changing, cutting-edge, next-gen, seamless, robust, elevate, exceed.
@@ -53,9 +68,19 @@ Three patterns that perform in his archive. Pick whichever fits the mode.
 
 Avoid emojis in subject lines (rare in his archive — they belong in the P.S. or body if anywhere). Avoid all-caps, exclamation marks, urgency theater.
 
-When uncertain between two subject lines, offer both with reasoning rather than pre-selecting.
+**The preview line is half the hook.** Write it paired with the subject, never as an afterthought and never as a restated body line. The subject opens a loop; the preview extends it.
+- *Why Nancy in finance won't use Claude...* / *Your use-case list isn't the problem. Where you started is.*
+- *How I turned 62 client calls into a marketing engine* / *from transcripts I never read to unlimited content ideas*
 
-## Kit tool caveat (subject + preview)
+**Offer a menu, not a pair.** Shaw picks by scanning options. When subject lines are the ask, give a dozen or more grouped by the pattern each one plays. When they ride along with a draft, 2–3 pairs is enough. Flag your top picks with the reason, but never pre-select silently.
+
+## Delivery: format in Notion, never draft in Kit
+
+The deliverable for a newsletter draft is formatted copy on its dated ABN page in Notion (layout in `notion-helper` → `references/abn-capture.md`): the source being repurposed at top, a divider, then a subject/preview block — every subject variant when A/B testing, each written plain with no surrounding quotes — then the body as written.
+
+Never create the broadcast through the Kit connector, even as a convenience: its HTML lands in Kit with broken formatting, so Shaw pastes the copy from Notion into Kit's editor himself and schedules from there. Kit tools are read-only in this skill — stats, past sends, and tags/segments for audience reasoning.
+
+## Kit tool caveats
 
 The Kit `get_broadcast` API doesn't mirror what's actually in the Kit editor: its `preview_text`
 field goes stale (it returned a leftover placeholder that didn't match the real preview), and its
@@ -63,6 +88,10 @@ field goes stale (it returned a leftover placeholder that didn't match the real 
 when capturing a broadcast (e.g. onto its ABN page) or reasoning about what shipped, treat the
 subject lines and preview text **Shaw provides** as the source of truth, not the API fields. The
 broadcast body/content is reliable; the `subject` and `preview_text` metadata are not.
+
+**Audience.** Broadcast targeting accepts tags and segments only — no filtering by a raw email list or signup date. To reach an arbitrary subset, create a temporary tag, apply it, target it, delete it after the send.
+
+Two ways tag reads mislead. `list_subscribers_for_tag` lags writes by minutes and its `total_count` goes stale, so confirm a tagging with `list_tags_for_a_subscriber` on the record itself. It also returns only *active* subscribers, so someone who unsubscribed is indistinguishable from someone never tagged — check with `list_subscribers` (`status: all`) before calling a person missed, and never re-add a `cancelled` one.
 
 ## The two templates
 
@@ -103,9 +132,11 @@ Used when sharing a trend, signal, or pattern from talking to people in the fiel
 
 The roles and contexts are specific. The proof is named, not abstract.
 
-## Signature moves (use at least 2-3 per email)
+## Signature moves (use at least 2-3 per email when you're writing the copy)
 
 These show up across nearly every newsletter in his archive. They're not optional flavor — they ARE the voice.
+
+They apply when you're drafting from scratch or expanding raw material. When you're porting finished copy, the source already made these choices — don't layer new reframes, Pro Tips, or closes on top of lines that already shipped.
 
 **1. The reframe ("Not X, but Y" / "From X → Y")**
 The single highest-leverage move in his writing. Almost every email contains at least one.
@@ -214,15 +245,18 @@ First-pass copy is rarely the best. When drafting:
 This skill is the canonical newsletter skill. Lanes:
 
 - **Deep diagnosis on a sell newsletter** → after drafting, hand off to `conversion-copy` (newsletter channel) for line-by-line filter checks (visualize / falsify / unsignable).
+- **Kit sequences (automations, not broadcasts)** → read `references/nurture-sequences.md` (Soap Opera Sequence for the first 5 post-opt-in emails, Seinfeld emails for the ongoing rhythm). Situational: only when building or auditing an automated sequence behind a lead magnet or opt-in — weekly broadcasts never borrow from it.
 - **Hormozi-style / Mozi Minute newsletters** → still this skill. If Shaw explicitly wants the Mozi Minute structure (one idea + stories + reasons + soft CTA), pull the framework from the Hormozi Content Framework resource in Notion (https://www.notion.so/[page-id]) and apply it here. Most of Shaw's newsletters are not Mozi-style — they're frameworks or observations.
-- **LinkedIn posts (not newsletters)** → `linkedin-voice`.
+- **LinkedIn posts (not newsletters)** → `linkedin-post-writer`.
 - **General email drafts (not list broadcasts)** → `email-helper`.
 - **Long-form sales letter for a paid offer** → `sales-letter-writer`.
 - **Storing a draft on its ABN Notion page** → see `notion-helper` → `references/abn-capture.md` for the page format.
 
-If Shaw asks to repurpose a LinkedIn post into a newsletter, this is the right skill — the source material is a post, but the deliverable is a newsletter, and the deliverable's voice and structure dominate.
+If Shaw asks to repurpose a LinkedIn post into a newsletter, this is the right skill — the source material is a post, but the deliverable is a newsletter. How much of it you rewrite depends on how finished the post already is: see "Porting vs. drafting."
 
-## Worked example: repurposing a LinkedIn post into a Framework email
+## Worked example: expanding a rough LinkedIn post into a Framework email
+
+Note what makes this an expansion rather than a port: the source is four lines of notes, not finished copy. A fully-drafted post gets the treatment in "Porting vs. drafting" instead.
 
 **Source post (raw):**
 > I've delegated 15 hr/wk of busywork to Claude. My approach was surprisingly simple — no coding or new tools needed. It's a 4-step process: (1) Do it once with Claude (2) Distill into skill (3) Test it (4) Improve it.

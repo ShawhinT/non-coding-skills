@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Gmail draft scene</title>
+<link rel="stylesheet" href="../shared/claude-ui.css">
+<link rel="stylesheet" href="../shared/gmail-ui.css">
+<style>
+  /* A Gmail Drafts scene: list + open compose window, a Cc row highlighted at 0.9s.
+     claude-ui.css supplies the caption, cursor and keyframe primitives. */
+  :root { --cap-x: 640px; --cap-b: 70px; }
+</style></head>
+<body class="gmail">
+<div id="g"></div>
+<div class="caption capio" style="--d:0.4s">Dana's on CC now</div>
+<script src="../shared/claude-ui.js"></script>
+<script src="../shared/gmail-ui.js"></script>
+<script>
+  const li = (t, hl = null) => `<li class="${hl != null ? 'gm-li hl' : ''}" style="--h:${hl}s">${t}</li>`;
+  document.getElementById('g').outerHTML = gmail({
+    rows: [{ sub: 'Call Follow-up', snip: 'Hey Marcus, Great chatting this afternoon!', tm: '3:08 PM' }],
+    draft: {
+      to: 'Marcus Reid', cc: 'Dana Whitfield', hlCc: 0.9, subject: 'Call Follow-up',
+      body: `<p>Hey Marcus,</p><p>Great chatting this afternoon!</p><p>Here are the next steps we talked about:</p>
+        <ul>${li(`Here's our <a>pricing one-pager</a> for reference`)}${li("I'll send a sample report by Friday")}</ul>
+        <p>Talk soon,<br>Alex</p>`,
+    },
+    openAt: null,   // a number = row 0 is hovered and the compose window opens at that time (aim the cursor at '#row0 .sub')
+  });
+</script>
+</body></html>

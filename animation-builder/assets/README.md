@@ -29,6 +29,7 @@ When you fetch a logo or icon to use in an animation:
 | `logos/calendly.png` / `.svg` | Wikimedia Commons | Calendly C mark, blue. |
 | `logos/chrome.png` | Wikimedia Commons | Google Chrome browser icon, color. |
 | `logos/claude-color.png` | lobehub icons-static-png (`light/claude-color.png`) | Anthropic Claude sparkle, orange on transparent. Use on light avatar backgrounds for contrast. |
+| `logos/claude-color.svg` | lobehub icons-static-svg (`icons/claude-color.svg`) | Vector Claude sparkle. Prefer this over the PNG at any size above ~48px; the PNG is colormapped and goes jagged when scaled. Also bundled in `templates/claude-ui/`. |
 | `logos/github.png` | Wikimedia Commons | GitHub Octocat / wordmark, black. |
 | `logos/gmail.png` | Wikimedia Commons (`Gmail_icon_(2020).svg`) | Gmail icon, color, 2020 variant. |
 | `logos/google-calendar.png` | Wikimedia Commons (`Google_Calendar_icon_(2020).svg`) | Google Calendar icon, color, 2020 variant (shows current day's number). |

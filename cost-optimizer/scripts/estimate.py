@@ -20,9 +20,14 @@ Validated 2026-07 against a real cached API conversation: total-token error +0.3
 list-cost error +0.7%, cache-cost error <1% after the fixes below.
 
 Usage:
-  python estimate.py transcript.json [--model opus] [--overhead 38000]
+  python estimate.py transcript.json --in-price X --out-price Y
+                                     [--model opus]   (display label only)
+                                     [--overhead 38000]
                                      [--cpt N]        (uniform override; else per-role)
-                                     [--in-price X --out-price Y]
+
+No pricing table is stored here. Fetch the live USD-per-million-token rates from
+https://platform.claude.com/docs/en/about-claude/pricing and pass them via
+--in-price/--out-price (see SKILL.md Step 2).
 """
 
 import argparse, json, math, sys
@@ -59,15 +64,7 @@ CACHE_WRITE = 1.25    # cache CREATION billed at 125% of input price (the write 
                       # Modeling this fixed a ~14% underestimate of cache-adj cost.
 # -----------------------------------------------------------------------------
 
-# Anthropic list prices, USD per million tokens (input, output).
-# As of 2026-07-13. Live prices: https://platform.claude.com/docs/en/about-claude/pricing
-# Sonnet shown at intro rate (through 2026-08-31); rises to (3, 15) after.
-PRICES = {
-    "haiku":  (1.0,  5.0),
-    "sonnet": (2.0, 10.0),
-    "opus":   (5.0, 25.0),
-    "fable":  (10.0, 50.0),
-}
+PRICING_URL = "https://platform.claude.com/docs/en/about-claude/pricing"
 
 
 def toks(chars, role, override=None):
@@ -148,13 +145,14 @@ def main():
     with open(args.transcript) as f:
         data = json.load(f)
 
-    model = (args.model or data.get("model") or "opus").lower()
-    if args.in_price is not None and args.out_price is not None:
-        in_price, out_price = args.in_price, args.out_price
-    else:
-        if model not in PRICES:
-            sys.exit(f"Unknown model '{model}'. Known: {', '.join(PRICES)}")
-        in_price, out_price = PRICES[model]
+    model = (args.model or data.get("model") or "unknown").lower()
+    if args.in_price is None or args.out_price is None:
+        sys.exit(
+            "Missing --in-price/--out-price. This script stores no pricing table — "
+            f"fetch the live rates (USD per million tokens) from {PRICING_URL} "
+            "and pass both flags."
+        )
+    in_price, out_price = args.in_price, args.out_price
 
     r = estimate(data["messages"], in_price, out_price, args.overhead,
                  args.cpt, args.cache_read, args.cache_write)

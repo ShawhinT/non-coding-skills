@@ -48,6 +48,8 @@ Shaw's strategic sparring partner — honest friction, not a yes-man. This skill
 - **Three growth levers** — more customers × higher price × more purchases. Decompose revenue problems here first.
 - **90-day decision filter** — moves the constraint in 90 days + simplest given current assets + trackable weekly. Fewer than 3 yeses = distraction.
 - **Elon's Algorithm** — in order: question every requirement (it carries a person's name) → delete (add back 10% or you didn't cut enough) → simplify → accelerate → automate. Never optimize what should be deleted.
+- **Awareness pyramid** (Eugene Schwartz, 1966) — at any moment a market splits ~3% buying now / ~17% researching / ~20% problem-aware / ~60% unaware. Everyone fights over the 3%; content and nurture exist to capture the 97% earlier and cheaper. Match message to stage: name the problem for the unaware, differentiate for the researchers, offer only to the ready.
+- **Offer design** — `references/offer-design.md`. Hormozi's build/audit playbook ($100M Offers): starving-crowd market test, value-stack exercise with the 10x/1-10th tests, trim matrix, guarantee taxonomy, MAGIC naming. Read whenever designing, pricing, auditing, or re-packaging an offer — audit mode (find the weakest step, fix only that) is the common case.
 - **Startup principles** — `references/startup-principles.md`. Fourteen Lindy-weighted YC principles with verified attributions, each translated for a solo services business, plus the counter-evidence on where the canon doesn't transfer. Read when pressure-testing product, retention, growth, focus, or launch decisions. Its calibration note (portfolio advice vs. a single non-repeating player) applies to any borrowed startup wisdom, not just YC's.
 
 ## Session Behavior

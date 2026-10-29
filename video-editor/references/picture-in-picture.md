@@ -85,12 +85,12 @@ Sequence defaults to **1080p at the main recording's fps** (a 4K main conforms d
 `<adjust-transform>` inside an `<asset-clip>` controls the inset. Getting the units wrong puts the PiP off-screen.
 
 - `scale="sx sy"` — multiplier, `1.0` = 100%. `0.3` = 30%.
-- `position="x y"` — translation of the clip's **center**, in **pixels of the FCP project/preview resolution**, origin at canvas center, **+X right, +Y up** (so *down* is negative Y).
-- Before scale/position, FCP spatially conforms the clip to the canvas (default = Fit). A PiP source matching the canvas resolution (e.g. 1080p slides on a 1080p sequence) conforms 1:1, so `scale` acts on its true pixel size.
+- `position="x y"` — translation of the clip's **center**, origin at canvas center, **+X right, +Y up** (so *down* is negative Y), in units of **percent of the frame height** — on a 1080p canvas, `100` = 1080 px. The FCP Inspector *displays* pixels, but the XML stores this normalized value. Think in pixels, then write `px * 100 / seq_h`. Raw pixels in the XML import without error but land the clip dozens of frame-heights off-screen: the clips are on the timeline, nothing shows (Secure Dallas 2026: `801 336` was invisible, `74.17 31.11` correct).
+- Before scale/position, FCP spatially conforms the clip to the canvas (default = Fit). A PiP source matching the canvas resolution (e.g. 1080p slides on a 1080p sequence) conforms 1:1, so `scale` acts on its true pixel size. A source with a different aspect (e.g. a 540×720 portrait inset) is fit to the canvas *height* first, so compute `scale` against that fitted size.
 
-> **Position pixels are relative to the FCP PROJECT resolution, which is almost always 1080p — NOT the 4K source.** This bit us: a first attempt assumed a larger canvas and the inset landed off-frame. Confirm the project/preview is 1920×1080 (the generator sets the sequence to 1080p by default) and compute positions against 1920×1080. If the project is 4K, every position value must be recomputed against 3840×2160.
+`make_pip_fcpxml.py` takes `--pos-x/--pos-y` in **pixels of the sequence canvas** and converts to the XML units itself, so the corner math below stays in pixels.
 
-**Shaw's confirmed default (1920×1080 project):** bottom-right *quadrant*, flush to the corner — `--scale 0.5 --pos-x 480 --pos-y -275` (the generator's defaults, verified by Shaw in FCP). 50% scale = a 960×540 inset; centering it flush in the corner gives X = 960−480 = **480**, Y = −(540−270) = **−275**.
+**Shaw's default (1920×1080 project):** bottom-right *quadrant*, flush to the corner — `--scale 0.5 --pos-x 480 --pos-y -275` (the generator's defaults). 50% scale = a 960×540 inset; centering it flush in the corner gives X = 960−480 = **480**, Y = −(540−270) = **−275** pixels (written to the XML as `44.4444 -25.463`).
 
 **Corner-placement math** (1920×1080 canvas, center origin):
 
@@ -105,7 +105,7 @@ pos_y = -(H/2 - ph/2 - margin)     # -275   (negative = down)
 # top-right (+,+), top-left (-,+), bottom-left (-,-)
 ```
 
-**4K master caveat:** if you raise `--seq-w/--seq-h` to 3840×2160, `position` is now in 4K pixels — recompute with `W,H = 3840,2160` (same formula → bottom-right quadrant becomes 960 / −540). A 1080p PiP on a 4K sequence conforms *up* to fill first, so `scale` still measures against the 4K canvas. Prefer the 1080p sequence unless a 4K master is explicitly requested.
+**4K master caveat:** if you raise `--seq-w/--seq-h` to 3840×2160, pass `--pos-x/--pos-y` in 4K pixels — recompute with `W,H = 3840,2160` (same formula → bottom-right quadrant becomes 960 / −540; the XML value is unchanged, since it's normalized to frame height). A 1080p PiP on a 4K sequence conforms *up* to fill first, so `scale` still measures against the 4K canvas. Prefer the 1080p sequence unless a 4K master is explicitly requested.
 
 ---
 

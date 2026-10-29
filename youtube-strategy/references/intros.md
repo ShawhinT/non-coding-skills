@@ -59,6 +59,7 @@ Rough number of variants is the lever. Do 3 variants when the angle is well-defi
 
 Hooks fail when the language is invented. They land when it's real. Before drafting line 1 candidates, pull verbatim language from:
 
+0. **Shaw's own past intros** (Notion — `LFC` database; see `notion-helper` for the ID). Read the Intro section of 2-3 recently delivered scripts before drafting. His shipped intros are the ground truth for voice; the patterns in this file are scaffolding for structure.
 1. **ABA Calls** (Notion database) — sales call notes have the actual phrases prospects used. Search for terms like the topic of the video, "scratching the surface", "where to start", "feel behind", "overwhelmed".
 2. **Workshop intake form responses** (Google Drive — `1:1 Claude Workshop - Intake (Responses)`) — the most detailed source. Each response includes how clients describe their actual workflows, time on task, and what they want freed up. Read 5-10 entries before drafting.
 3. **Testimonial form responses** (Google Drive — `1:1 Claude Workshop - Testimonial Form (Responses)`) — post-engagement language; useful for outcome framing.
@@ -73,6 +74,16 @@ Real examples (from one session):
 - [Person] (testimonial): *"stitching outputs together, switching between tools"*
 
 These are the building blocks of line 1.
+
+## Shaw's delivered shape
+
+The Ed pattern above is the structural scaffolding. What Shaw actually ships is narrower, and where the two conflict, his shipped shape wins — it's what his audience already recognizes as him.
+
+- **Line 1 — proof or status quo, stated plainly.** *"Most Founder-CEOs I meet are using Claude."* / *"If you're running a business and drowning, conventional wisdom says to hire someone."*
+- **Line 2 — opens with "But."** A plain contrast, not the "not X, not Y, it's Z" triple beat. *"But they still treat it like a tool instead of an employee."*
+- **Line 3 — literally "In this video, I'm going to…"**, usually naming the contract as a three-part list. He states what the video delivers rather than teasing it.
+
+The consequence worth catching: **line 3 is often his longest line**, so the narrowing rhythm below is Ed's, not his. A poetic closer ("Here's the map") reads as written-by-someone-else on his channel.
 
 ## What line 1 needs to do
 
@@ -96,7 +107,7 @@ These are the building blocks of line 1.
 
 - **~25 words total** across all three lines
 - **Under 10 seconds spoken**
-- **Line 1 is the longest, line 3 is the shortest** (the rhythm narrows)
+- **Line 1 is the longest, line 3 is the shortest** (the rhythm narrows) — Ed's rule, and the one Shaw's delivered intros break; see "Shaw's delivered shape" above
 
 ## Output format
 

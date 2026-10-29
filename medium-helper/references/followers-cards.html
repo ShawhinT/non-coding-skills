@@ -1,0 +1,91 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap');
+  * { box-sizing:border-box; }
+  body { margin:0; width:2000px; height:720px; background:#1b1f23; font-family:Inter,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif; }
+  .wrap { padding:34px 40px 40px; height:100%; display:flex; flex-direction:column; }
+  .title { color:#e9e9e9; font-size:78px; font-weight:700; text-align:center; margin-bottom:34px; line-height:1.05; }
+  .sub { color:#9aa3ad; font-size:18px; text-align:center; margin-bottom:22px; }
+  .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:30px; flex:1; }
+  .col { display:flex; flex-direction:column; }
+  .tag { color:#9aa3ad; font-size:17px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; margin:0 0 12px 4px; }
+  .card { flex:1; border-radius:16px; padding:36px 40px; display:flex; flex-direction:column; justify-content:center; }
+
+  /* YouTube */
+  .yt { background:#0f0f0f; color:#f1f1f1; font-family:Roboto,Inter,Arial,sans-serif; }
+  .yt .row { display:flex; align-items:center; gap:28px; }
+  .yt .avatar { width:130px; height:130px; border-radius:50%; background:url('../assets/avatar.png') center/cover; flex:none; }
+  .yt .name { font-size:36px; font-weight:700; line-height:1.1; margin-bottom:8px; }
+  .yt .meta { font-size:18px; white-space:nowrap; color:#aaa; margin-bottom:6px; }
+  .yt .meta b { color:#f1f1f1; font-weight:500; }
+  .yt .bio { font-size:18px; color:#aaa; margin-bottom:6px; }
+  .yt .link { font-size:18px; color:#3ea6ff; margin-bottom:18px; }
+  .yt .btns { display:flex; gap:10px; }
+  .yt .btn { background:#f1f1f1; color:#0f0f0f; border-radius:999px; padding:10px 20px; font-size:17px; font-weight:500; }
+  .yt .btn.ghost { background:#272727; color:#f1f1f1; }
+
+  /* Medium */
+  .md { background:#ffffff; color:#242424; font-family:Inter,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif; align-items:flex-start; }
+  .md .avatar { width:110px; height:110px; border-radius:50%; background:url('../assets/avatar.png') center/cover; margin-bottom:22px; }
+  .md .name { font-size:26px; font-weight:600; margin-bottom:10px; }
+  .md .followers { font-size:22px; color:#6b6b6b; margin-bottom:12px; }
+  .md .bio { font-size:18px; color:#6b6b6b; margin-bottom:24px; }
+  .md .btns { display:flex; gap:12px; align-items:center; }
+  .md .btn { background:#1a8917; color:#fff; border-radius:999px; padding:11px 24px; font-size:17px; font-weight:500; }
+  .md .mail { width:42px; height:42px; border-radius:50%; background:#1a8917; display:flex; align-items:center; justify-content:center; }
+  .md .mail div { width:18px; height:13px; border:2px solid #fff; border-radius:2px; }
+
+  /* LinkedIn */
+  .li { background:#ffffff; color:#000000e6; font-family:Inter,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif; padding:0; overflow:hidden; justify-content:flex-start; }
+  .li .banner { height:96px; background:linear-gradient(135deg,#2a3f54,#1b2d3f 60%,#0a1a2a); }
+  .li .body { padding:0 36px 36px; }
+  .li .avatar { width:130px; height:130px; border-radius:50%; background:url('../assets/avatar.png') center/cover; border:4px solid #fff; margin-top:-64px; margin-bottom:14px; }
+  .li .name { font-size:30px; font-weight:600; margin-bottom:6px; }
+  .li .headline { font-size:18px; color:#000000e6; margin-bottom:8px; line-height:1.35; }
+  .li .loc { font-size:16px; color:#00000099; margin-bottom:6px; }
+  .li .followers { font-size:17px; color:#0a66c2; font-weight:600; margin-bottom:20px; }
+  .li .btns { display:flex; gap:10px; }
+  .li .btn { background:#0a66c2; color:#fff; border-radius:999px; padding:9px 22px; font-size:17px; font-weight:600; }
+  .li .btn.ghost { background:#fff; color:#0a66c2; border:1.5px solid #0a66c2; }
+</style></head>
+<body><div class="wrap">
+  <div class="title">Audience size at launch</div>
+  <div class="grid">
+
+    <div class="col"><div class="tag">YouTube</div>
+    <div class="card yt"><div class="row">
+      <div class="avatar"></div>
+      <div>
+        <div class="name">Shaw Talebi</div>
+        <div class="meta">@ShawhinTalebi · <b>36.5K subscribers</b> · 106 videos</div>
+        <div class="bio">AI Educator &amp; Entrepreneur | PhD, Physics <b>...more</b></div>
+        <div class="link">[your-site.com] <span style="color:#f1f1f1">and 3 more links</span></div>
+        <div class="btns"><div class="btn">Subscribe</div><div class="btn ghost">Join</div></div>
+      </div>
+    </div></div></div>
+
+    <div class="col"><div class="tag">Medium</div>
+    <div class="card md">
+      <div class="avatar"></div>
+      <div class="name">Shaw Talebi</div>
+      <div class="followers">10K Followers</div>
+      <div class="bio">Data Scientist | PhD, Physics</div>
+      <div class="btns"><div class="btn">Follow</div><div class="mail"><div></div></div></div>
+    </div></div>
+
+    <div class="col"><div class="tag">LinkedIn</div>
+    <div class="card li">
+      <div class="banner"></div>
+      <div class="body">
+        <div class="avatar"></div>
+        <div class="name">Shaw Talebi</div>
+        <div class="headline">AI Educator &amp; Entrepreneur | PhD, Physics</div>
+        <div class="loc">Dallas-Fort Worth Metroplex</div>
+        <div class="followers">7.5K followers · 500+ connections</div>
+        <div class="btns"><div class="btn">Follow</div><div class="btn ghost">Message</div></div>
+      </div>
+    </div></div>
+
+  </div>
+</div></body></html>

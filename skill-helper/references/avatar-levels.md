@@ -90,25 +90,8 @@ The point of the avatar isn't labeling the user — it's calibrating *how you ta
 
 **The L4 plateau — when skill candidates stop landing.**
 
-Some L4 users have genuinely covered their workflow. Every candidate you suggest, they already have a skill for. They'll say some version of *"if it were painful, I'd have already automated it"* or just reject candidates one by one. This isn't a failure of the skill-helper — it's a signal that the user has graduated from skill building.
-
-The unlock at this point is **scheduled tasks**: taking the skills they already have and removing the human from the trigger loop. The user is still manually opening a chat every morning to run `pre-call-research` for today's calls, or triggering `email-helper` five times to draft follow-ups. The skills work perfectly — the bottleneck is that the user is the cron job.
-
-When you hit this wall, pivot to Phase 4A in SKILL.md. Look for repeating session patterns, recurring Notion tasks that trigger the same skill sequence, and email batches that go out on a cadence. The output is 2-3 scheduled task candidates, not skill candidates.
+Some L4 users have genuinely covered their workflow: every candidate you suggest, they already have a skill for. That's not a failure of the skill-helper — it's the signal that the user has graduated from skill building and the remaining leverage is in scheduled tasks (removing them from the trigger loop). The full pivot — trigger signals, where to look for candidates, how to present them — is Phase 4A in SKILL.md.
 
 **What to flag:**
 - Push back if they're building skill #6 in a category where they already have 3. Ask what they're avoiding — and consider whether a merge/split is a better move than another build.
 - Watch for the plateau signal. Don't keep pushing skill ideas when the user is telling you they've already covered the ground. Pivot to scheduled tasks — that's where the remaining leverage lives.
-
----
-
-## When you're between two levels
-
-Ask one question. Examples:
-
-- Between L0 and L1: *"Have you used Claude before this conversation? Even casually?"*
-- Between L1 and L2: *"Any connectors set up — Gmail, Notion, Slack, anything like that?"*
-- Between L2 and L3: *"How many skills have you built so far?"*
-- Between L3 and L4: *"What's the most ambitious skill you've shipped?"*
-
-One question. Don't quiz them.

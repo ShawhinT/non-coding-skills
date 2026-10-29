@@ -34,8 +34,8 @@ is especially prone to entity conflation across long parallel-source reports (e.
 one lead's notes to another, fabricating a Status from an unrelated mention). Opus is the floor
 — don't downshift to Sonnet or Haiku for the read phase.
 
-**A sub-agent that dies is not a sub-agent that reported.** Long parallel reads fail mid-run
-(two of three did on 7/27/26), and a killed agent returns partial prose that reads like a real
+**A sub-agent that dies is not a sub-agent that reported.** Long parallel reads fail mid-run,
+and a killed agent returns partial prose that reads like a real
 report — a few tool calls' worth of findings with no section headers and no closing summary.
 Treat truncated or error-terminated output as *absent*, not as partial data to reconcile: the
 missing part is silent, so proceeding on it produces a sync that looks complete and isn't.
@@ -49,11 +49,20 @@ ends, so the choice is a fresh narrowed dispatch or doing the queries inline in 
 
 Purpose: find every new signal in Gmail since the last sync.
 
-For each non-LinkedIn lead, client, **and active-campaign contact**, run three searches since
-their `Last Contact?` watermark (campaign-contact emails come from the trackers Sub-agent C pulls):
+**`search_threads` is a discovery tool, not a reading tool.** It truncates each thread's
+message list (~5 messages), silently hiding the newest messages on long threads — exactly the
+ones a sync needs. Use it only to enumerate thread IDs, then read the true latest state with
+`get_thread` before concluding "no new activity" or trusting a last-message date. Full details:
+email-helper → Gmail Technical Notes.
+
+For each non-LinkedIn lead, client, **active-campaign contact, and Friends row with a
+`Next Contact` set** (an open thread waiting on a date), run three searches since their
+`Last Contact?` watermark (campaign-contact emails come from the trackers Sub-agent C pulls). A
+Friends row isn't pipeline, but its dates follow the same cadence, and nothing else reads its
+replies back before the date arrives:
 
 1. `from:<email> OR to:<email>` — direct thread activity
-2. `<company domain>` — catches cc'd stakeholders from the same org (e.g., [Person] at [Company]
+2. `<company domain>` — catches cc'd stakeholders from the same org (e.g., [Person 2] at [Company]
    cc'd on the [Lead Name] thread)
 3. Name-based fallback for Calendly: `from:notifications@calendly.com "<first> <last>"` —
    catches bookings where the invitee email differs from the CRM email on file
@@ -74,35 +83,37 @@ and any orphan Calendly bookings that don't match an existing CRM record.
 **Before labeling a Calendly booking an orphan, match it against every known-contact table — Active
 Leads, Clients (Nurture), 🧊 Archived Leads (`collection://[page-id]`), *and*
 the Friends database (`collection://[database-id]`) — by email (then email
-domain for the Friends match), then name.** A Friends match means the booking belongs to someone in
-the non-lead network, not a lead — report it as "matched in Friends" and do not propose a new lead. This mirrors Sub-agent B's ABA Calls orphan rule (step 3): a match in
-Archived Leads means the booking belongs to someone already triaged out (Lost / Disqualified) —
-it is **not** an orphan, so do not propose a new lead for it. Report it as "matched in Archived
-Leads (Lost / Disqualified)" with the archived record's last Notes line so the main agent can
-skip it cleanly. This matters most for brand-new-looking bookings with no ABA Calls page: those
-never reach Sub-agent B, so the global Calendly scan is the *only* place an already-disqualified
-re-booking gets caught.
+domain for Friends), then name.** Apply Sub-agent B's step-3 rule: a Friends or Archived Leads match
+is **not** an orphan — report it as "matched in Friends" / "matched in Archived Leads
+(Lost / Disqualified)" (with the archived record's last Notes line) instead of proposing a new lead.
+Bookings with no ABA Calls page never reach Sub-agent B, so this scan is the *only* place an
+already-disqualified re-booking gets caught.
 
 ### Sub-agent B — ABA Calls + ABA Trainings + Google Calendar Auditor
 
 Purpose: reconcile ABA Calls (sales calls), ABA Trainings (delivery sessions), and Google
-Calendar events against the CRM. See SKILL.md's "Three Databases Show Up During CRM Work"
+Calendar events against the CRM. See SKILL.md's "Four Databases Show Up During CRM Work"
 section for the distinction.
 
 1. Pull all ABA Calls entries from the last ~90 days plus any future-dated entries.
 2. Pull Google Calendar events for the same window using `gcal_list_events`. Match each event
    against ABA Calls and ABA Trainings entries by attendee name. Flag any calendar events that
    have no corresponding Notion page — these are meetings that happened but were never logged.
-   Only flag meetings that look like a lead, client, or sales conversation. Do NOT flag peer,
-   colleague, partner, investor-friend, personal, or informal research/coffee chats — these
-   intentionally have no ABA Calls page. Skip anyone who matches a row in the Friends database
-   (`collection://[database-id]`) by email or email domain — that DB is the
-   source of truth for the non-lead network — friends, affiliates, channels, partners, and
-   subcontractors — who intentionally have no ABA Calls page (see SKILL.md → "The Friends
-   database"); pull its rows up front so you can
-   domain-match against them. For a new ambiguous meeting, lean toward NOT flagging unless there's
-   a clear sales/lead signal — and when one turns out to be a partner or peer, add them to Friends
-   so future syncs skip them. Before flagging a delivered session (a workshop or
+   **Every ABA meeting gets an ABA Calls page** — leads, clients, partners, peers, coffee chats,
+   intros alike — so flag every calendar event with an external attendee that has no matching
+   page. Revenue decides which record the page links to, never whether one exists (same rule as
+   `calendar-helper` → "An ABA event that isn't an offer at all"). The only exclusions are events
+   that aren't ABA's business at all: personal and family plans. A Friends match
+   (`collection://[page-id]`, by email or email domain) doesn't excuse
+   a missing page; it tells you where the new page links (the `Friend` relation instead of a CRM
+   lead). Pull Friends rows up front so you can domain-match. A logged call page is evidence a call was *booked*, not that it
+   happened — the page icon carries the delivery state (⭐ booked, ✅ held, ❌ never happened).
+   Before reading someone's string of call pages as a live, recurring relationship — especially
+   before suggesting a Friends promotion — check the icons, and treat an Archived Leads
+   (`Disqualified`) match as terminal: repeated ❌ no-shows are a reason to leave someone
+   archived, not to promote them. Icons aren't returned by SQL or search queries, only by a
+   per-page fetch, so fetch them just for the pages that drive a decision rather than the whole
+   window. Before flagging a delivered session (a workshop or
    training) as having no CRM record, also check whether its session page is already **linked on an
    existing CRM page** — a teammate's or an assistant's session often sits under the buyer's account
    with a different email domain (e.g. a client's EA at another org attending under his engagement),
@@ -113,7 +124,12 @@ section for the distinction.
    previously triaged out (Lost / Disqualified, batch-archived) — it is **not an orphan**, just
    inactive. Do not flag Archived matches for new-lead creation; note them in the report as
    "matched in Archived Leads" so the main agent can skip them cleanly. Return true orphans (no
-   match in any of the three tables) as `{aba_call → proposed new CRM lead}`. **Only ABA Calls
+   match in any of the three tables) as `{aba_call → proposed new CRM lead}` — but before
+   reporting one, fetch its page body: an explicit **"Intentionally no CRM record"** marker (or
+   an equivalent statement that the relationship lives elsewhere, e.g. on a partner's Friends
+   page) means the absence is deliberate. Report those as "intentional no-CRM (per page
+   marker)", not orphans. Table matching alone can't see this accounting — the page is where
+   it lives, so the check has to read the page. **Only ABA Calls
    orphans trigger new CRM lead creation** — ABA Trainings pages are created by Shaw manually
    (or via Workflow 6) and don't imply a missing lead.
 4. For each CRM lead/client, pull the **full list** of linkable pages from *both* ABA Calls and
@@ -161,7 +177,7 @@ Verbatim means copied directly from the data source — no rounding, no paraphra
 
 Only fire if any lead/client has an upcoming call in the next 7 days.
 
-Rather than duplicating logic, **invoke the `pre-call-research` skill** for each upcoming call.
+Rather than duplicating logic, **invoke the `meeting-prep` skill** for each upcoming call.
 It handles the web + email + CRM research and writes the brief to the call page directly.
 This keeps pre-call research logic in a single canonical home.
 
@@ -172,6 +188,8 @@ Once the four sub-agents return, merge their reports and apply updates in this o
 **Discovery-call bookings route to Workflow 7.** Before working through the steps below, pull
 out any Calendly bookings Sub-agent A surfaced whose event type is a *discovery call* (per the
 Discovery Call SOP — `ABA Intro Call`, `AI Transformation`, `1:1 Claude Workshop (Discovery)`).
+A first call booked by someone with no CRM or Friends record counts too, whatever the event name
+(see Workflow 7 → "Discovery-call event types").
 Each one is handled end-to-end by **Workflow 7 (Discovery Call Intake)**, which orchestrates
 the CRM record, the ABA Calls page and brief, the FU task, and the confirmation email. Run
 Workflow 7 for each, then continue with the steps below for everything else.
@@ -192,8 +210,12 @@ This step covers **non-discovery sales calls only** — discovery-call bookings 
 handled by Workflow 7 (see the routing note above), which creates their ABA Calls entry itself.
 
 For any Gmail signal that references a non-discovery **sales call** (follow-up call, proposal
-review, research chat) where no matching ABA Calls entry exists, create one. Name, Email, Date,
-Source.
+review, research chat) — or the calendar-confirmed next instance of an established recurring
+client series (copy the prior week's page pattern) — where no matching ABA Calls entry exists,
+create one. Set `Name`, `Email`,
+`Date`, and `Call Type` (see the ABA Calls schema in `SKILL.md` for the option list). Also set
+`Company` when the attendee's email domain matches a Companies row, and `CRM` to the person's
+Active Leads or Clients page url — those two are what keep the account view complete.
 
 Do NOT auto-create entries for delivery sessions (1:1 workshops, trainings) — those live in
 the ABA Trainings database and Shaw creates them himself (or Workflow 6 does it on onboarding).
@@ -218,15 +240,14 @@ For each record with new signals, apply **Workflow 2**:
 - Update `Last Contact?` to most recent touchpoint
 - Update `Next Contact` per the cadence rules in `references/follow-up-guidance.md`
 
-For multi-person/company accounts, only the **point person's** touchpoints move `Last Contact?`
-and `Next Contact` — teammate sessions and replies don't advance the account's cadence dates
-(they're captured by their linked session pages). See SKILL.md → "Point-person anchoring
-(multi-person accounts)".
+A row's dates move only on touchpoints with the person named on it. Colleagues at the same
+company who are in the conversation have their own rows (linked through `Company`); session
+participants' reviews and referrals are tracked on their Reviews/Referrals rows. See SKILL.md →
+"Companies, people, and who gets a CRM row".
 
-"Confirmed" means actually happened — calls that took place, emails that were sent. Sub-agent
-A's Gmail signal is the source of truth for sends; drafts created later in step 6 do NOT
-advance `Status`, `Last Contact?`, or `Next Contact`. See "Drafts aren't touchpoints" in
-SKILL.md.
+"Confirmed" means actually happened — calls that took place, emails that were sent. Drafts
+created later in step 6 do NOT advance `Status`, `Last Contact?`, or `Next Contact` — see
+"Drafts aren't touchpoints" in SKILL.md.
 
 ### 4. Refresh ABA Call links in CRM pages
 
@@ -243,13 +264,10 @@ For any lead now at `Closed`, apply **Workflow 5** to move them to Clients (Nurt
 Apply cadence rules from `references/follow-up-guidance.md` to determine *who* needs a follow-up
 and *what* the message should say (FU#1, FU#2, Calendly nudge, etc.).
 
-**Hard gate on every draft.** Before any `create_draft` call in this step, the **email-helper**
-skill must already be invoked in the current turn. This is not "defer to" — it's "stop and
-load." The failure mode this prevents: when step 6 batches several drafts in close succession
-(e.g. one FU per due lead), it's tempting to compose them inline like any other write. That
-produces off-template drafts, missed em-dash rules, and snippet-driven follow-ups. See the
-"When another skill is already running" section in `email-helper/SKILL.md` for the canonical
-composition rule. For LinkedIn-only leads, flag for manual DM (no draft to gate).
+**Hard gate on every draft.** email-helper must be invoked in the current turn before any
+`create_draft` call — see SKILL.md's "Always invoke email-helper" principle and the "When
+another skill is already running" section in `email-helper/SKILL.md`. For LinkedIn-only leads,
+flag for manual DM (no draft to gate).
 
 **Missing follow-up audit:** In addition to cadence-based follow-ups, check whether any
 recent calls or meetings (last 48 hours) are missing a follow-up email. Cross-reference
@@ -258,9 +276,18 @@ Gmail sent mail. **Use the actual session attendee's email** (from the ABA Train
 ABA Calls page) — not the parent client's email — and search broadly:
 `from:shaw@aibuilder.academy to:<attendee-email> after:<call-date>`. Subject patterns vary
 (e.g., "1:1 Claude Workshop Follow-up", "Call Follow-up"); don't constrain on subject or
-you'll miss real follow-ups that used a different template. Batch all missing follow-ups
-into a single prompt at the end of the sync summary under a **"Calls missing follow-up
-emails:"** section. For each, ask Shaw whether to draft one — and if yes, use the
+you'll miss real follow-ups that used a different template.
+
+A follow-up is covered when it's sent, drafted, *or scheduled*. Calls usually spawn a dated
+`FU - <Name>` task in the ABA database whose body links the call page, and the call page's
+own Follow-up notes often set a later check-in on purpose, so an empty sent folder after a
+call can be a plan rather than a miss. Before flagging a call, search ABA for a task
+linking that call page or naming the attendee; if one exists, the follow-up is covered.
+A call with no send and no task is the real gap. Surface it as "create the FU task?" when
+the call page's notes point to a later check-in, and as "draft a follow-up?" otherwise.
+
+Batch all genuine gaps into a single prompt at the end of the sync summary under a
+**"Calls missing follow-up:"** section. When Shaw wants an email drafted, use the
 email-helper skill's call follow-up reference (`references/call-follow-ups.md`).
 
 ### 7. Expansion signal check (clients only)
@@ -278,9 +305,9 @@ Before drafting the three sections below, audit your own tool-call history in th
    without one, redraft it through email-helper and flag the original draft ID in section 2
    as "delete — created without email-helper."
 2. **Pre-call brief discipline.** For every new ABA Calls page created during this sync (most
-   often via Workflow 7), confirm `pre-call-research` was invoked to populate the brief. If a
+   often via Workflow 7), confirm `meeting-prep` was invoked to populate the brief. If a
    page has a placeholder brief, flag it in section 3 ("Calls / sessions") as "needs
-   pre-call-research before the call."
+   meeting-prep before the call."
 
 Close the summary with a one-line `Verification:` footer — either `Verification: clean` or
 `Verification: <N> issues fixed (<short list>)`. The line is non-optional; it makes the audit
@@ -290,6 +317,27 @@ visible in the output rather than buried in the run history.
 
 Report back in three sections, in this order. Drop sections that are empty — don't show an
 empty bucket. Do not include a "quiet / waiting on others" / "looks up to date" section.
+
+**The closer stops at the relationship.** Money state (invoice sent, payment landed, refund),
+contract state (proposal signed, SOW executed), and delivery state (session held, engagement
+wrapped) belong to the `engagements` daily sync, which reads Stripe and the Engagements ledger
+directly rather than inferring them from Gmail. This sync legitimately *sees* those facts while
+scanning threads, and should log the relationship-level ones in CRM Notes — but it must not
+surface them as asks, because the sync that owns them will ask too, and Shaw ends up answering
+the same question in two reports on the same morning.
+
+The test is which row the answer would change: if resolving the question updates a field on the
+**Engagements** row (`Paid Status`, `Status`, a Stripe link) rather than the CRM row, it is not a
+CRM closer item. "Has the invoice cleared?", "did you sign the SOW?", and "did that session
+actually happen?" all fail the test. "Did this outreach go out?", "is this person worth
+pursuing?", and "which record should own this contact?" all pass it.
+
+This generalizes beyond engagements: a signal is not a closer item if a standard operating
+procedure or standing flow already handles it in its normal execution — the pre-call email
+chases intake forms and agendas, the `engagements` sync chases payment and delivery state,
+morning-emails drafts due touches. Noticing something is not the same as owning it. The closer
+is reserved for what falls outside every SOP — that is what makes an item genuinely need Shaw.
+When unsure whether an SOP covers a signal, check the SOPs page before flagging.
 
 ### 1. Follow-ups due today
 

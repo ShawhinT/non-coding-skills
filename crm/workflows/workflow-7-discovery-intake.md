@@ -23,6 +23,12 @@ Calendly books discovery calls under several event names — `ABA Intro Call`, `
 `1:1 Claude Workshop (Discovery)` — and they **all resolve to one call type**. The Discovery
 Call SOP holds the canonical list; treat any of them as a discovery call.
 
+The event name is a hint, not the test. What makes a booking a discovery call is who booked it:
+a first call with someone who is not yet a client or in Friends is a discovery call whatever
+link they used. A new referral handed the generic `30 min` link books under that name, and
+still gets the full intake here — a lead with a call on the calendar and no brief, FU task, or
+confirmation is the gap this workflow exists to close.
+
 ## Step 1 — Confirm the booking
 
 Cross-check two sources so a booking isn't missed or misread:
@@ -45,18 +51,20 @@ Search Active Leads (`collection://[page-id]`) by name:
   from the one on file, keep the CRM email as primary and note the alt in Notes.
 - **Previously-`Lost` lead rebooking** → flip Status off `Lost`, then treat as a fresh
   discovery (Workflow 2 update).
-- **New lead** → apply **Workflow 3** to create the Active Leads record. Source = `ABA Discovery
-  Call` for a direct Calendly booking on aibuilder.academy; carry the real source if it's known
-  to be something else.
+- **New lead** → apply **Workflow 3** to create the Active Leads record, including its
+  `Company` step (link the Companies row when the account has one or this booking earns it
+  one; otherwise leave it blank). Source =
+  `ABA Discovery Call` for a direct Calendly booking on aibuilder.academy; carry the real source
+  if it's known to be something else.
 
 ## Step 3 — Create the ABA Calls page + brief
 
-Invoke the **`pre-call-research`** skill. When invoked from this workflow it creates the ABA
+Invoke the **`meeting-prep`** skill. When invoked from this workflow it creates the ABA
 Calls page, links it bidirectionally with the CRM record, and populates the pre-call brief —
-all without asking Shaw first. Do **not** create the ABA Calls page yourself; pre-call-research
+all without asking Shaw first. Do **not** create the ABA Calls page yourself; meeting-prep
 is the single creator, so it doesn't get made twice.
 
-After pre-call-research returns, log the Calendly question answers in the ABA Calls page body
+After meeting-prep returns, log the Calendly question answers in the ABA Calls page body
 (per the Discovery Call SOP).
 
 ## Step 4 — Create the follow-up task
@@ -77,12 +85,8 @@ only run when Shaw explicitly asks for it.
 ## Step 5 — Draft the confirmation email
 
 **Hard gate.** `email-helper` must be invoked in the current turn *before* the `create_draft`
-call. This is not "defer to" — it's "stop and load." The failure mode this prevents: by the
-time the workflow reaches step 5, the agent has already batched several writes (CRM record,
-ABA Calls page, FU task) and the draft feels like one more parallel write. Composing inline at
-that point produces off-template drafts that miss the SOP question selection, the threading
-mechanics, and Shaw's voice rules. See the "When another skill is already running" section in
-`email-helper/SKILL.md` for the canonical composition rule.
+call — see SKILL.md's "Always invoke email-helper" principle and the "When another skill is
+already running" section in `email-helper/SKILL.md`.
 
 Once email-helper is loaded, its **"Calendly notification threads"** section owns the threading
 mechanics (reply inside the Calendly notification thread, addressed to the invitee's email pulled
@@ -97,6 +101,5 @@ task, and the confirmation email draft link.
 
 ## Note on drafts
 
-The confirmation email is a *draft* until Shaw sends it — don't advance CRM state for the send.
-Step 2's CRM update reflects only the booking itself. See "Drafts aren't touchpoints" in
-SKILL.md; the next Workflow 1 sync picks up the send via Gmail signal.
+The confirmation email is a *draft* until Shaw sends it — step 2's CRM update reflects only the
+booking itself (see "Drafts aren't touchpoints" in SKILL.md).

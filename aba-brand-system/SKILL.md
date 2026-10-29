@@ -1,6 +1,6 @@
 ---
 name: aba-brand-system
-description: AI Builder Academy's brand and design system — colors, typography, voice/tone, components, icons, and copy patterns for aibuilder.academy and any ABA-branded surface (landing pages, decks, one-pagers, social graphics, emails, motion graphics). Use whenever Shaw is designing, mocking up, or reviewing anything that should look or sound like ABA. Triggers: "design a landing page for ABA", "make an ABA mockup", "one-pager for [ABA offer]", "what colors / font does ABA use", "ABA-ify this", "make this on brand", "what's the ABA voice", "design an ABA banner / hero / card / form", "slide template for ABA", "match the ABA homepage", "ABA infographic", "ABA animation", "ABA event / sponsor slide". Also fire on any AI Builder Academy reference when the deliverable is a visual artifact (HTML, slide, image, mockup, SVG, React component, MP4, PNG) or copy that sits on an ABA surface. Casual mentions like "make it look like the ABA site" or "give this an aibuilder.academy feel" count too.
+description: "AI Builder Academy's brand and design system — colors, typography, voice/tone, components, icons, and copy patterns for aibuilder.academy and any ABA-branded surface (landing pages, decks, one-pagers, social graphics, emails, motion graphics). Use whenever Shaw is designing, mocking up, or reviewing anything that should look or sound like ABA. Triggers: \"design a landing page for ABA\", \"make an ABA mockup\", \"one-pager for [ABA offer]\", \"what colors / font does ABA use\", \"ABA-ify this\", \"make this on brand\", \"what's the ABA voice\", \"design an ABA banner / hero / card / form\", \"slide template for ABA\", \"match the ABA homepage\", \"ABA infographic\", \"ABA animation\", \"ABA event / sponsor slide\". Also fire on any AI Builder Academy reference when the deliverable is a visual artifact (HTML, slide, image, mockup, SVG, React component, MP4, PNG) or copy that sits on an ABA surface. Casual mentions like \"make it look like the ABA site\" or \"give this an aibuilder.academy feel\" count too."
 ---
 
 # AI Builder Academy — Brand & Design System
@@ -22,6 +22,7 @@ This file is the **universal core** — colors, type, voice, icons, logos, the a
 | An embedded figure in an ABA blog post, slide, or doc | `references/infographic-composition.md` (same still-scale composition tokens; `graphic-builder`'s embedded-graphic mode strips the social packaging) |
 | A motion-graphic clip (B-roll, intro card, lower-third overlay, MP4 / `.mov`) | `references/animation-motion.md` |
 | An event / sponsor slide (QR + headshot, 16:9, often handed to a partner or exported to PPTX) | `references/event-slide-composition.md` |
+| A printable document for a partner or client (one-pager, reference sheet, handout PDF) | `references/document-composition.md` |
 | Any voice/copy decision | `references/voice-and-tone.md` |
 
 **Same brand, different rhythms.** The website's hero stack (eyebrow → 2-line H1 → subhead → CTA) does not transfer to a 2-second LinkedIn still or a 4-second B-roll clip — the surface-specific files exist to make that clear.
@@ -96,7 +97,7 @@ Full path constants for the icons used on the live site (`arrowRight`, `check`, 
 The dark-variant logo is the default (most ABA surfaces are dark).
 
 - **Wordmark (navbar):** wide PNG at `height: 54px`. The skill's `assets/` folder has reference PNGs (`logo-wide-dark.png`, `logo-wide-light.png`). Wordmark is a web/marketing element — not used as decoration in stills or motion graphics.
-- **Square mark (footer / favicon / app icon / corner stamp on stills):** `assets/logo-square-dark-192.png` and `logo-square-dark-512.png`. Render at 40×40 rounded for footer, 32×32 for chips.
+- **Square mark (footer / favicon / app icon / corner stamp on stills):** `assets/logo-square-dark-192.png` and `logo-square-dark-512.png`. Render at 40×40 rounded for footer, 32×32 for chips. Straight-corner versions (no rounding baked in): `logo-square-dark-512-sharp.png` / `logo-square-dark-192-sharp.png`.
 - **Partner / "taught at" logos** are always rendered with `filter: brightness(0) invert(1); opacity: 0.4` (marquee) or `opacity: 0.7` (taught-at grid). They never appear in native colors.
 
 ### Drop-in CSS
@@ -113,7 +114,7 @@ For any HTML deliverable, paste `references/colors_and_type.css` at the top. It 
 - **Plain working-English.** "Put AI to work" / "install AI across the business" / "hand off this workflow."
 - **Short, declarative sentences.** Two-clause max.
 - **Concrete over abstract.** "$50K and three months of consulting that generated little ROI" beats "frustrating prior experiences."
-- **Sentence case for headings.** "Is this for you?", "Frequently asked questions." Title Case only for proper nouns ("AI Builder Academy", "1:1 Workshop"). Exception: full-bleed chapter/section card titles in YouTube B-roll use Title Case (see `references/animation-motion.md`).
+- **Sentence case for headings.** "Is this for you?", "Frequently asked questions." Title Case only for proper nouns ("AI Builder Academy", "1:1 Workshop"). Exceptions: full-bleed chapter/section card titles in YouTube B-roll (see `references/animation-motion.md`) and a printable document's main title (see `references/document-composition.md`) use Title Case.
 - **CTAs read like the next thing you'd say** + trailing `→`: "Book intro call →", "Let's talk.", "Get in touch →".
 
 ### Never
@@ -150,7 +151,7 @@ If you're about to write any of these, rewrite the element with different struct
 - **Exclamation points** outside small UI states. **Generic CTAs:** "Click here", "Submit", "Learn more".
 - **Emoji on marketing surfaces.** The 🥖 in Shaw's footer signature is the one exception.
 - **Em dashes** anywhere on a designed surface. Use commas, colons, parentheses, or two short lines. Shaw reads em dashes as a tell of AI-generated copy and will flag them on sight. At 60–80px display size they also read as rendering glitches.
-- **Title Case headings.** Sentence case for everything except proper nouns. Exception: YouTube chapter-card titles (see `references/animation-motion.md`).
+- **Title Case headings.** Sentence case for everything except proper nouns. Exceptions: YouTube chapter-card titles and a document's main title (see the references above).
 
 ## The AI-slop check
 

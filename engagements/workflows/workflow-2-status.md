@@ -39,9 +39,9 @@
 1. Fetch the engagement row
 2. Update `Status` to `Delivered`
 3. If `End Date` is blank, set it to the date of the last session
-4. Update the linked Clients (Nurture) row — **but only hand the account off to nurture if this
-   was the client's *last* open engagement.** Before flipping, check the Client relation for other
-   engagements still in `Sold`/`Active`:
+4. Update each linked Clients (Nurture) row — **but only hand a person off to nurture if this
+   was their *last* open engagement.** Before flipping, check that row's `Engagements` for others
+   still in `Sold`/`Active`:
    - **No other open engagements** → set `Status` to `Nurturing` (the client enters the quarterly
      check-in rhythm) and `Next Contact` ~3 months out per CRM follow-up guidance.
    - **Other engagements still open** (a re-up already sold, a concurrent project, near-term
@@ -62,7 +62,8 @@
 1. Fetch the engagement row
 2. Update `Status` to `Refunded`
 3. Update `Paid Status` to `Refunded` (or `Partial` if a partial refund)
-4. Append a dated note to the Notes section: `Refunded $X (M/D). [Reason if known.]`
+4. Append a dated note under the `**Notes**` block inside `## Context`: `Refunded $X (M/D). [Reason if known.]`
+   (Notes lives inside Context, not as its own H2 — don't create a `## Notes` section.)
 5. Update the linked Clients (Nurture) row's `Status` to `Churned` if no other active
    engagements; otherwise leave as-is.
 
@@ -76,7 +77,7 @@
 **Steps:**
 1. Fetch the engagement row
 2. Update `Status` to `On Hold`
-3. Append a dated note to the Notes section: `On hold (M/D). [Reason.]`
+3. Append a dated note under the `**Notes**` block inside `## Context`: `On hold (M/D). [Reason.]`
 4. Update the linked Clients (Nurture) row's `Next Contact` to a re-engagement date (Shaw's
    discretion — typically 30-60 days out)
 

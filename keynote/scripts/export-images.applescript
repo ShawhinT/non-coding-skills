@@ -1,10 +1,11 @@
 -- export-images.applescript
--- Usage: osascript export-images.applescript "/path/to/file.key" "/path/to/output-dir" [--close]
--- Exports all slides as PNG images.
+-- Usage: osascript export-images.applescript "/path/to/file.key" "/path/to/output-dir" [--all-stages] [--close]
+-- Exports all slides as PNG images. --all-stages emits one PNG per build stage
+-- (each animation step), e.g. to rebuild a slide track synced to a talk recording.
 
 on run argv
 	if (count of argv) < 2 then
-		error "Usage: osascript export-images.applescript <keynote-file-path> <output-directory> [--close]"
+		error "Usage: osascript export-images.applescript <keynote-file-path> <output-directory> [--all-stages] [--close]"
 	end if
 
 	set helpers to load script (POSIX file ((do shell script "dirname " & quoted form of (POSIX path of (path to me))) & "/_helpers.scpt"))
@@ -12,6 +13,7 @@ on run argv
 	set filePath to helpers's resolvePath(item 1 of argv)
 	set outputDir to item 2 of argv
 	set closeAfter to helpers's parseCloseFlag(argv)
+	set allStages to (argv contains "--all-stages")
 	helpers's saveIfOpen(filePath)
 
 	do shell script "mkdir -p " & quoted form of outputDir
@@ -25,7 +27,7 @@ on run argv
 		set theDocument to helpers's docForPath(filePath)
 		set docName to name of theDocument
 
-		export theDocument to file outputFolder as slide images with properties {image format:PNG, skipped slides:false}
+		export theDocument to file outputFolder as slide images with properties {image format:PNG, skipped slides:false, all stages:allStages}
 
 		set slideCount to count of slides of theDocument
 

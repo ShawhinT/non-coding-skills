@@ -46,8 +46,11 @@ entry plus the most recent call/session page.
 ## Step 4: Check for duplicates and sample formatting
 
 Before creating, query the target database view to check for likely duplicates and to confirm
-Shaw's current naming/formatting conventions. Use `notion-query-database-view` with the
-database's default (full-scan) view URL:
+Shaw's current naming/formatting conventions. The old `notion-query-database-view` tool is
+deprecated and no longer loads; use `notion-query-data-sources` instead — either in view mode
+(`{"mode": "view", "view_url": ...}`) with the database's default (full-scan) view URL below, or,
+cheaper for a date-targeted duplicate check, a SQL query on the data source filtering
+`date("date:Date:start")` to the relevant range:
 
 | DB | View URL |
 |---|---|
@@ -77,14 +80,14 @@ pages (e.g., a CRM entry AND a recent call), link both.
 Body format (keep it minimal):
 
 ```
-<mention-page url="https://www.notion.so/<call-or-session-page-id>"/>
+<mention url="https://www.notion.so/<call-or-session-page-id>"/>
 ```
 
 Or, if two pages are clearly relevant:
 
 ```
-Call: <mention-page url="https://www.notion.so/<call-page-id>"/>
-CRM: <mention-page url="https://www.notion.so/<crm-page-id>"/>
+Call: <mention url="https://www.notion.so/<call-page-id>"/>
+CRM: <mention url="https://www.notion.so/<crm-page-id>"/>
 ```
 
 Do NOT add agendas, next steps, context sections, or other prose unless Shaw explicitly asks
@@ -94,7 +97,7 @@ for them. The call/session page already has that detail — linking is enough.
 
 Use the data source ID for the target database. Set the icon based on page type:
 
-- **ABA task pages** → `icon: "⭕"`
+- **ABA task pages** → by what the task is: `⭕` generic (default), `✍️` prep/build, `✉️` email to send
 - **Event/training pages** (ABA Calls, ABA Trainings) → `icon: "⭐"`
 - **ABN, LFC, SFC** → omit the icon unless Shaw asks for one
 
@@ -110,14 +113,15 @@ Example for an ABA task:
       "date:Date:start": "2026-04-17",
       "date:Date:is_datetime": 0
     },
-    "content": "<mention-page url=\"https://www.notion.so/[page-id]\"/>"
+    "content": "<mention url=\"https://www.notion.so/[page-id]\"/>"
   }]
 }
 ```
 
-**Icon note**: Use the bare emoji codepoint — `⭕` (U+2B55), `⭐` (U+2B50), `✅` (U+2705).
-Do NOT append a variation selector (U+FE0F) to any of them — Notion's API rejects that as an
-invalid icon URL.
+**Icon note**: Pass each emoji as its canonical form — `⭕` (U+2B55), `⭐` (U+2B50), `✅` (U+2705)
+are bare; `✍️` (U+270D U+FE0F) and `✉️` (U+2709 U+FE0F) carry a variation selector and Notion
+accepts them that way (verified 9/15/26). Don't add a selector to one that lacks it or strip one
+that has it — copy the character as written here.
 
 ## Step 7: Confirm back to Shaw
 

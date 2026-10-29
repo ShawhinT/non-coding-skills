@@ -96,6 +96,19 @@ Array.from(li.querySelectorAll('span')).map(s => s.innerText.trim()).filter(t =>
 
 **Fix:** Use the GraphQL endpoint `voyager/api/graphql?variables=(...)&queryId=voyagerFeedDashProfileUpdates.<hash>`. If it 404s, capture a fresh hash: on `/in/me/recent-activity/all/`, start `read_network_requests` filtered to `graphql`, scroll and click "Show more results" to trigger a real feed request, and copy the live queryId into `window.__QID` before running the scraper.
 
+## Identity: the `ACoAA…` member URN is the key, not the page and not the slug
+
+**Cause:** LinkedIn has been moving identity off both places it used to be readable. Two symptoms, one root:
+
+- `scrape-feed-api.js` returns `missing csrf or profileUrn` — your *own* profile URN is no longer in the recent-activity page HTML, so the regex over `document.documentElement.innerHTML` finds nothing even though you're logged in.
+- A per-person endpoint 403s — `voyagerRelationshipsDashMemberRelationships` (the degree lookup) rejects a vanity slug. It accepts only the opaque `ACoAA…` member URN. Followers already arrive as URNs, so this fails precisely on the slug-keyed rows: engagers and profile viewers, i.e. every genuinely inbound person in a sweep.
+
+**Fix:** resolve the URN, then call. For your own, `/voyager/api/me` returns it. For anyone else, `positionGroups` still accepts either id form and its response carries the person's `ACoAA…` urn, so one call yields the URN and the current position together — resolve it there and key the record on the URN from then on. Both bundled scripts now do this.
+
+Don't reach for the old profile endpoints to bridge the gap: `identity/profiles/<id>` and `identity/profiles/<id>/networkinfo` are **410 Gone**, so a fallback chain built on them fails twice and looks like an auth problem. `positionGroups` under the same path prefix still works, which is what makes the 410s surprising — the prefix surviving is not evidence the endpoint did.
+
+The general lesson for any new Voyager endpoint: assume the URN is the identity key and that a slug is a convenience the endpoint may not honor. Resolve once when you build the work list rather than discovering it mid-batch.
+
 ## Voyager pagination not advancing (same posts repeat)
 
 **Cause:** The endpoint ignores `start` as an offset. Incrementing `start` alone returns the same first page.
@@ -129,3 +142,35 @@ Preview text, not row count, is what actually blows the budget — a row is a ha
 This is the twin of the entry above and they pull in opposite directions: that one tells you to keep the `(async () => {...})()` wrapper, which is correct, but the wrapper alone still yields `{}`.
 
 **Fix:** Await it — `await (async () => { ... })();`. Verified directly: `(async () => 42)()` returns `{}` while `await (async () => 42)()` returns `42`. The bundled `scrape-feed-api.js` now ships with the `await`; keep it when adapting or inlining the script. If you hit a `{}` from a script you've already run, don't re-run it — read the result back out of `window.__feed` / `localStorage.__feedData` first.
+
+## javascript_tool times out at 45s on a long walk
+
+**Cause:** `javascript_tool` is capped around 45 seconds (`CDP sendCommand "Runtime.evaluate" timed out after 45000ms`). Any per-person walk over the Voyager endpoints runs past that long before it finishes: a week of followers (~70 people, a relationship lookup each, plus "show more" waits) or a full enrichment pass (~150 people at ~2.5s each) both take minutes. The timeout kills the *call*, not the page — the script usually keeps running to completion, so re-running it doubles the work and can double-count.
+
+**Fix:** Start long walks **detached** and poll, which is the one case where the un-awaited IIFE above is correct rather than a bug. Accumulate into a global the script owns, flip a done flag at the end, and return a literal immediately:
+
+```js
+window.__out = []; window.__done = false;
+(async () => { /* ... push into window.__out ... */ window.__done = true; })();
+'started'
+```
+
+Then poll from separate calls — `await new Promise(r => setTimeout(r, 35000)); JSON.stringify({done: window.__done, n: window.__out.length})` — until the flag flips. Read the flag and the count together: a count that has stopped moving is indistinguishable from a walk still waiting on a page load. Per-script `limit` parameters (as on `enrich-candidates.js`) chunk around the same cap, but the detached pattern generalizes to any walk, including the ones that page a list and so can't be resumed from an index.
+
+## Chrome connection drops mid-analysis ("Browser connection is unavailable")
+
+**Cause:** The extension connection can drop between calls. Reconnecting hands you a *new tab* with a new ID and a fresh page, so every `window.*` global from the scrape is gone — `window.__feed` included. The natural reflex is to re-navigate and re-run full pagination.
+
+**Fix:** Re-navigate to `/in/me/recent-activity/all/`, then read the rows back from `localStorage.__feedData` before re-scraping. `localStorage` is scoped to the origin, not the tab, so it outlives the drop even though the tab doesn't — re-paginating the feed API is usually wasted work.
+
+The catch: this only helps if the write actually happened. `scrape-feed-api.js` persists to `localStorage.__feedData`, but an inlined or hand-adapted copy of the script easily drops that line while keeping the `window.__feed` assignment — leaving nothing to rehydrate from at exactly the moment you need it. When adapting the script, keep the `localStorage.setItem`; it costs one line and it's the only copy of the data that survives the tab.
+
+## A scrolled list stops growing — and you believe it
+
+**Cause:** LinkedIn lazy-loads its long lists (profile viewers, followers, notifications) as you scroll. Two very different situations produce an identical signal — the item count holding steady across iterations. Either the list is genuinely exhausted, or the loader never fired and the page is sitting on whatever it rendered first. A scrape loop that stops on "count didn't change" cannot tell them apart, so it reports a partial pull as a complete one.
+
+This is worse than a crash, because it yields a plausible number rather than an error. A profile-viewer pull that stalled at 30 entries was reported as "LinkedIn caps the list at 30 and three days"; scrolled properly the same list returned 60 entries across the full seven days, and the missing half contained the most senior people in it. Every downstream conclusion was drawn from the truncated set.
+
+**Fix:** Stop on a *boundary*, not on a plateau. Page until you see an item that is provably outside the window you asked for — an age string older than the range, a date past the cutoff — and treat "the count stopped moving" as a symptom to investigate rather than a terminating condition. If you must stop without reaching a boundary, say so in the output: report it as "the first N I could load," never as the total.
+
+The usual cause of the stall is the scroll itself. `window.scrollTo(...)` and setting `element.scrollTop` move the viewport but do **not** trigger LinkedIn's infinite-scroll loader — it listens for real user scroll events. From `javascript_tool` alone the list will plateau forever. Drive the scrolling from the tool layer instead (`computer` with `action: "scroll"`), and use `javascript_tool` only to harvest what has rendered. Because these lists also virtualize — nodes are unmounted once they leave the viewport — harvest incrementally into an accumulator between scrolls rather than reading the DOM once at the end.

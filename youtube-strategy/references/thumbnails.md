@@ -105,6 +105,39 @@ Each concept:
 ### Step 4 — Rank and recommend
 Pick the top 1-2 to ship first. Strongest concepts usually combine institutional credibility (logos, tickers, masthead framing) with one specific defensible number or one shocking visual paradox.
 
+## Production workflow (research → assets → rounds)
+
+The concept step above decides *what* to say; this is how the images actually get made. It converged in ~5 rounds on a real video, so default to it when Shaw asks to design (not just brainstorm) a thumbnail.
+
+### 1. Research with real images, ranked by outliers
+Look at actual thumbnails, not titles — the visual pattern is the point. YouTube search lazy-loads images, so screenshots come back blank: pull video IDs, channel IDs, and view counts from `ytInitialData` on the results page (browser JS, ~10–15 related queries), then download `i.ytimg.com/vi/<id>/maxresdefault.jpg` (fallback `hqdefault`) and tile them into contact sheets to view. Rank by **views ÷ channel subs** (sub count is in the channel page's `"content":"X subscribers"`), not raw views — raw views mostly measure channel size. Filter tiny samples (≥10K views, ≥1K subs) and note that old videos inflate the ratio. Also pull Shaw's last ~12 thumbnails so concepts stay in-family. Save everything to a `references/` folder next to the work.
+
+### 2. Gather Shaw's own assets first
+The strongest material is usually already on disk:
+- **Frames from the final video** — the real product UI (e.g., his actual cluttered calendar) beats any recreation; ffmpeg a dozen frames from `_YouTube/3-final/<slug>/`.
+- **Pose library** — `_YouTube/thumbnails/gemini-headshots/` and `gemini-gens/` (pointing, holding/presenting a laptop, hands-on-head). A pose that *interacts with* the graphic (pointing at it, holding the screen) consistently beat a plain headshot.
+- **Real logos** — graphic-builder's `assets/logos/` (Claude, Google Calendar, …). Never hand-draw brand marks.
+
+Cut poses out once, centrally (macOS Vision foreground mask — see graphic-builder), and check edges on a magenta background before handing them to agents.
+
+### 3. Build in rounds with parallel agents
+One sub-agent per concept, each in its own folder (`designs/roundN/<concept>/`), each loading graphic-builder, rendering 2–3 variants at 1280x720, and checking them at 320x180 before reporting. After every round, build one labeled side-by-side comparison image so Shaw can pick at a glance. Then iterate on what he picks: remix favorites, merge elements across concepts, and keep earlier rounds untouched so anything can be revisited.
+
+Number every tile on a comparison sheet with one global sequence (#1–#N, left→right, top→bottom) — per-row labels like "v2" or "p1" repeat across rows, and Shaw ends up numbering them himself. When he points back to an earlier version, show the image you think he means before building on it; guessing wrong costs a whole round.
+
+### 4. Lock layout, then explore copy
+Once a layout wins, run a separate copy pass — ~10 options brainstormed, the 3 most *different* rendered (payoff / pain / numbers / pill-label). Copy only uses facts from the video; placeholders like a specific day/time get flagged, not shipped.
+
+### 5. Finish: render it, or hand the photo pass to Shaw
+Photo work is where generated thumbnails fall apart: composited or rescaled photos of Shaw read as "messed up" or soft even when the graphics are crisp, and grafting a body part from one photo onto another doesn't hold up. How the photo relates to the graphic decides the finish:
+- **Simple shot of Shaw to one side** (graphic on the other half) — hand off. Export the graphics only, each element as its own transparent layer at its exact position, and place them into the Canva design Shaw shares, one page per thumbnail (graphic-builder has the layer-export recipe). He drops in the photo and exports.
+- **Photo integrated with the graphic** (UI on the laptop he's holding, a perspective-warped screen, a bubble coming out of the device) — ship the full render; that's hard to rebuild in Canva.
+
+Finals go to `_YouTube/3-final/<slug>/thumbnail-a.png`, `-b`, `-c` as 1280x720 PNGs, matching past folders.
+
+### What has worked visually (use-case / tutorial videos)
+The Jeff Su register: light background, Shaw large, ONE big UI element, minimal words. The real interface shown dimmed so a single green payoff element (e.g., "90 min ✓ All free") pops — that one contrast carries the before→after story. A "note from Claude" chat bubble anchored to the payoff is a strong device; big real logos anchor the tools. When Shaw re-set a headline himself, he used Title Case ("Book Meetings") in a bold rather than black weight. The navy/authority treatment above still fits strategy videos — match the register to the video type.
+
 ## Output format
 
 ### Thumbnails only

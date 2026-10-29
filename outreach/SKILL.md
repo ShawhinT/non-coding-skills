@@ -1,27 +1,49 @@
 ---
-name: outreach
-description: >
-  Run 1:1 outreach campaigns end-to-end — sourcing the list, enriching it, triaging into segments,
-  setting up a Notion tracker, drafting templates, sending, and logging responses. Use this skill
-  whenever Shaw is building a list of people to reach out to, setting up outreach tracking, or
-  crafting the messages themselves. Triggers include: "find people on LinkedIn", "pull my connections",
-  "build a lead list", "enrich this CSV", "look up where these people work", "get company sizes",
-  "set up outreach", "create an outreach table", "add people to the outreach list", "who have I
-  reached out to", "update outreach", "sync the outreach", "who registered",
-  "write me an outreach message", "draft a DM template", or any
-  time Shaw shares a batch of names he's reaching out to. Also casual phrasing like "check my LinkedIn
-  for analytics people", "I texted these 5 people", "what should I say to
-  these people". Covers workshops, events, research calls, partnerships, reshare asks
-  (lead getters), and any 1:1 outreach initiative.
+name: "outreach"
+description: "Run 1:1 outreach campaigns end-to-end — sourcing the list, enriching it, triaging into segments, setting up a Notion tracker, drafting templates, sending, and logging responses. Use this skill whenever Shaw is building a list of people to reach out to, setting up outreach tracking, or crafting the messages themselves. Triggers include: \"find people on LinkedIn\", \"pull my connections\", \"build a lead list\", \"enrich this CSV\", \"get company sizes\", \"clean a Sales Nav lead list\", \"set up outreach\", \"create an outreach table\", \"add people to the outreach list\", \"who have I reached out to\", \"update outreach\", \"sync the outreach\", \"who registered\", \"write me an outreach message\", \"draft a DM template\", or any time Shaw shares a batch of names he's reaching out to. Also casual phrasing like \"check my LinkedIn for analytics people\", \"I texted these 5 people\", \"what should I say to these people\". Covers workshops, events, research calls, partnerships, reshare asks (lead getters), and any 1:1 outreach initiative.\n"
 ---
 
 # Outreach
 
 This skill runs Shaw's outreach campaigns end-to-end. Two halves of the same workflow: **build the list**, then **work the list**. A campaign is a coherent outreach push with a clear audience and goal — a workshop, an event, a research-call batch, a partnership push.
 
+## Which file for which ask
+
+The folders follow the phases of the flow below. **Find the row for the ask and read that file before loading any tool** — it names the source, the browser, and the mechanics; this file carries the principles that apply across all of them.
+
+| The ask | Read |
+|---|---|
+| Planning a campaign, choosing channels, "where should leads come from" | `strategy/acquisition-playbook.md` |
+| Sourcing from Shaw's LinkedIn network by role or title | `sourcing/linkedin-search.md` |
+| Sourcing from a **Sales Navigator search** — filters, keywords, pulling the results | `sales-navigator/search.md` |
+| A saved **Sales Navigator** lead list — extracting it, parsing rows, getting public profile URLs, creating or updating one | `sales-navigator/lead-lists.md` (+ `sales-navigator/api-access.md` for browser and API plumbing) |
+| Auditing a Sales Nav list against the headcount band, or any company-level criterion | `sales-navigator/headcount.md` |
+| Sending connection requests to a Sales Nav list | `sales-navigator/connecting.md` |
+| Who accepted a connection request from a Sales Nav list | `sales-navigator/accepts.md` |
+| Adding company / size to a list; resolving unknowns; sizing the company someone actually leads | `enrichment/company-size.md` (+ `enrichment/batch-agent-prompt.md` for the bulk pass, `enrichment/size-ranges.md` for the buckets) |
+| Building the Notion tracker and campaign page | `campaign/tracker-setup.md` |
+| Per-row scripts, email-vs-DM formats, follow-up templates, Gmail drafts | `campaign/per-prospect-scripting.md` |
+| Syncing a live campaign — replies, registrations, "move it forward" | `sync/outreach-sync.md` |
+| Reviewing a DM campaign's numbers | `sync/linkedin-benchmarks.md` |
+| Setting up or cloning a Luma event page | `events/luma-page-setup.md` |
+| Who registered for a Luma event | `events/luma-guest-list.md` |
+| Post-event attendee follow-up from a Zoom export | `events/event-attendance-reconciliation.md` |
+
+## Browser policy
+
+Two browsers are available and the choice is per task, not a default: the **built-in browser** for Sales Navigator work (each read returns the page title with the data, so a mis-navigation is self-evident rather than silently mislabeled, and its DOM reads stay current where the extension's screenshots lag and its batch calls time out); the **Chrome extension** for LinkedIn search sourcing, profile lookups, and DM sweeps, where Shaw's signed-in session lives. **That split assumes Claude Desktop, whose built-in browser is signed in. In Claude Code the built-in browser is Playwright and is NOT signed into LinkedIn — it redirects to `/sales/login` and returns an empty DOM rather than an error — so every LinkedIn task there, Sales Navigator included, runs in the Chrome extension** (`sales-navigator/api-access.md`, Browser). This is a standing instruction and overrides the app's preferred-browser default. Whichever browser: **one tab, sequentially**. Concurrent tabs have tripped LinkedIn's rate limiting, and parallel agents against the extension crash it (it serves one connection) — parallelism is for web-search agents only. A single sequential agent reliably finishes 10–18 lookups; chain batches of ~15.
+
+## The tracker's fields are CRM-owned
+
+The tracker's `Last Contact`, `Next Contact`, `Status`, and `Notes` are CRM-owned: outreach decides who's in the campaign and which step they're on, `crm` defines what the fields mean and how far out dates go. Read `crm/references/follow-up-guidance.md` before writing any of them, in any phase — not just at send-and-log.
+
 ## General principle: confirm before creating
 
 Before committing to anything structural — a pipeline plan, a tracker schema, a segment scheme, a template direction — use the AskUserQuestion tool to present the plan and get Shaw's sign-off. Assumptions on shape are easy to get wrong and tedious to undo. A quick confirmation saves rework.
+
+## Acquisition strategy layer
+
+Before the pipeline comes the channel question. `strategy/acquisition-playbook.md` holds the strategy frames — the Core Four channel map, Dream 100 (borrowed audiences), owned-vs-rented traffic, and awareness-stage message matching. Read it when planning a new campaign, choosing channels, or diagnosing where leads should come from; it informs Kickoff alignment, not the run itself. For lead magnets, the canonical guidance is Shaw's Notion **Lead Magnet Guidance** page (linked from that file) — don't reinvent it.
 
 ## Pipeline design principles
 
@@ -29,14 +51,14 @@ Every campaign is a sequence of **(enrich → filter) cycles** using progressive
 
 ```
 1. Extract from data you already have (free)
-2. Web search with Haiku agents in parallel (cheap)
-3. Chrome profile lookup (expensive)
+2. Web search with cheap-tier agents in parallel (cheap)
+3. Browser profile lookup (expensive)
 4. Ask the user (most expensive)
 ```
 
 This pattern is fractal:
 - **Pipeline level:** the entire campaign is enrich → filter cycles, cheapest first
-- **Stage level:** within "get company names," first extract from titles (free), then web search the remainder (cheap), then Chrome the unknowns (expensive)
+- **Stage level:** within "get company names," first extract from titles (free), then web search the remainder (cheap), then the browser for the unknowns (expensive)
 - **Decision level:** within "should we include this person," first check automated criteria, then enriched data, then ask Shaw
 
 ### Kickoff alignment (do this FIRST, before any research)
@@ -44,7 +66,7 @@ This pattern is fractal:
 The most important thing to lock at the start of every campaign — get explicit sign-off on all of it:
 
 1. **The wide net.** What's the starting pool — who do we cast for and how (which source, which search terms)? This is the top of the funnel; agree on it before scraping a single name.
-2. **The non-negotiables.** In most campaigns these are **role and company size** — the two axes that actually gate. Everything else (industry, AI-interest, location) is *scored/flexible*, not a hard cut. State the role bar (must own/lead or be budget-authority C-suite — decide explicitly whether hired C-suite counts, or founders/owners only) and the **size band** (e.g. 10–1,000 employees).
+2. **The non-negotiables.** In most campaigns these are **role and company size** — the two axes that actually gate. Everything else (industry, AI-interest, location) is *scored/flexible*, not a hard cut. State the role bar (must own/lead or be budget-authority C-suite — decide explicitly whether hired C-suite counts, or founders/owners only) and the **size band** (e.g. 10–1,000 employees). LinkedIn carries two headcounts per company (declared range and member count) that disagree often; the standing rule is that a lead is in band if *either* one is — don't ask which measure to use (see `sales-navigator/headcount.md`, "Two headcounts").
 3. **The anti-ICP.** Ask *"who looks like a fit but isn't actually a buyer?"* and write it down. This is easy to miss and expensive to discover late — last time the realization that "AI-native builders/teachers are peers, not customers" surfaced mid-run and inverted the entire ranking. Decide exclusions up front.
 4. **The weights.** If scoring, set component weights now (role + size dominate; flexible factors weigh less). Don't let weighting emerge through iteration.
 5. **Seed `disqualified.md` from the CRM — first.** Pull **Clients (Nurture)** and **Active Leads** from the Notion CRM and exclude anyone already a client or in the active pipeline *before* scoring or enriching them. Don't leave CRM dedup to the end.
@@ -52,18 +74,41 @@ The most important thing to lock at the start of every campaign — get explicit
 
 Then classify each criterion by evaluation cost (free / cheap / expensive / manual), sequence cheapest first, and present the pipeline to Shaw before starting.
 
+### A sourced row is a position, not a person
+
+Every attribute derived from a sourced row — employer, headcount, industry,
+seniority, tenure — belongs to whichever *position* matched the filter, and
+people list many at once. Picking the position that best fits the avatar is
+the wrong instinct: the on-avatar-sounding one is usually the volunteer seat,
+the fractional engagement or the side LLC, because that is where the
+impressive title goes. Resolve the **primary** position first, and treat the
+row's company as a claim — headcount especially, which has to be resolved on
+the employer rather than on whatever page the position pointed at, or umbrella
+and product pages report a fraction of the real organization. The position's
+own description also settles what a title means in its industry, which a
+keyword cannot: "Technical Director" runs a camera in broadcast and a
+formulation lab in chemicals.
+
+**Run the anti-ICP as a filter step, not just a kickoff decision.** Vendors,
+agencies, consultancies and firms selling what the offer teaches are cheap to
+identify and expensive to discover late, and they cluster densely enough to
+dominate a list that never checked. A company's own LinkedIn `description`
+usually settles operator-versus-vendor in one call — spend it on every company
+before the list ships.
+
 ### Filtering discipline (when to cut vs. keep)
 
 - **Cut early only on cheap + unambiguous signals.** If role or size is unmistakable from the headline alone — an obvious solopreneur/freelancer/one-person shop, an obvious employee at a mega-corp, a clear non-buyer (IC, student, ex/aspiring founder) — drop them at the free stage; there's no value enriching them.
 - **Keep everything ambiguous or unknown → enrich → filter on facts.** A fuzzy headline, a title that could be founder-or-staff, or a *missing* value is NOT grounds for cutting. Carry them through enrichment and disqualify only once you have the data.
-- **Never filter on a field until it's fully populated.** A missing company size is not "out of band" — it's unknown. Resolve it for everyone (web → Chrome) before applying any size cut. Err toward keeping the unknown until disqualified by real data.
+- **Never filter on a field until it's fully populated.** A missing company size is not "out of band" — it's unknown. Resolve it for everyone (web → browser) before applying any size cut. Err toward keeping the unknown until disqualified by real data.
+- **A deferred cut is still a cut.** When Shaw parks a filter decision for a later phase ("add them all, filter at send time"), resurface it at that phase with the candidates named — inheriting the deferral silently as "everyone" skips a decision he explicitly kept.
 
 ### Scoring & gating (for larger lists)
 
 When a list is big enough to rank rather than hand-pick:
 
 - **Score, don't prematurely disqualify.** Give each prospect a score from weighted components (e.g. role + size + fit). Soft criteria move the score; they don't eliminate.
-- **Gate the *expensive* step on the *cheap* score.** Run the costly enrichment/inspection only on candidates already scoring well on the free/cheap dimensions — so you never spend Chrome time or per-profile lookups on someone who's clearly off-avatar.
+- **Gate the *expensive* step on the *cheap* score.** Run the costly enrichment/inspection only on candidates already scoring well on the free/cheap dimensions — so you never spend browser time or per-profile lookups on someone who's clearly off-avatar.
 - Set weights at requirements time (see Kickoff alignment). Role + size are the non-negotiable axes; flexible factors are scored but never the sole gate.
 
 ### Enrichment efficiency
@@ -71,9 +116,8 @@ When a list is big enough to rank rather than hand-pick:
 - **Deduplicate enrichment targets.** If 5 people work at [Company], look up [Company]'s size once.
 - **Extract before searching.** Titles often contain companies ("PM at Figma"). Parse these before any web search.
 - **Batch web searches** into parallel Haiku agents (~10 per agent), or a Workflow with structured output (agents read the lead file by index range and return validated rows — cleaner aggregation).
-- **Chrome is last resort** — sequential and rate-limited. Reserve for the smallest possible set of unresolved unknowns.
-- **Never run parallel subagents against Chrome.** The extension serves ONE connection; concurrent agents driving separate tabs crash it within a couple of lookups (confirmed 2026-07-06: 4 parallel DM-history agents → extension disconnected, 2 of 4 batches returned nothing). For browser work (DM sweeps, profile/follower checks), use ONE agent working sequentially in ONE tab (~1 min/lookup), chaining batches of ~15. Parallelism is for web-search agents only. A single long-running sequential agent reliably finishes 10–18 lookups.
-- **Finish the field before filtering on it.** When a filter depends on company size, run web search *then* a Chrome cleanup pass on every remaining "unknown" — get to zero unknowns before any size cut. (Don't shortcut Chrome with a second web pass; last run that left 46 unresolved.)
+- **The browser is last resort** — sequential and rate-limited (see Browser policy above). Reserve it for the smallest possible set of unresolved unknowns.
+- **Finish the field before filtering on it.** When a filter depends on company size, run web search *then* a browser cleanup pass on every remaining "unknown" — get to zero unknowns before any size cut. A second web pass is not a substitute for the browser pass.
 - **Validate coherence: size must be for the company they own/lead**, not an employer or client. Watch for (a) pure employees — "GTM @ Stripe" means Stripe is not *their* company; (b) fractional/advisory/consultants — their led company is their own (often solo) practice, not the client they serve; (c) inflated or garbled web-search sizes. Verify role↔company↔size all refer to the same led entity.
 
 ### Manual checkpoints
@@ -129,7 +173,8 @@ Then design the pipeline per the principles above — classify criteria by cost,
 
 ### 2. Build the list
 
-LinkedIn is the default source for cold/warm prospect lists → see **`linkedin-sourcing.md`** for the Chrome-based scraping workflow.
+LinkedIn is the default source for cold/warm prospect lists → **`sourcing/linkedin-search.md`** (Chrome extension).
+For a saved **Sales Navigator lead list** — extracting it, validating headcount, sending connection requests — the `sales-navigator/` folder (built-in browser on Desktop, Chrome extension in Claude Code — see Browser policy): **`sales-navigator/lead-lists.md`** to get the rows out, **`headcount.md`** to validate the band, **`connecting.md`** to work it, **`accepts.md`** to see who connected.
 
 Other sources Shaw uses:
 - CSV imports (past event attendees, conference lists)
@@ -145,17 +190,19 @@ raw/<campaign>_leads_raw.json
 
 ### 3. Enrich (when the pipeline calls for it)
 
-Enrichment runs between sourcing and triage when a filter depends on data you don't have yet. The most common case is company size — see **`lead-enrichment.md`** for the decision tree (1–9 contacts → Chrome direct; 10+ → parallel Haiku agents + Chrome cleanup).
+Enrichment runs between sourcing and triage when a filter depends on data you don't have yet. The most common case is company size — see **`enrichment/company-size.md`** for the decision tree (1–9 contacts → browser direct; 10+ → parallel web-search agents + browser cleanup).
 
-**Resolve the field fully before filtering on it.** For company size: web-search pass, then Chrome cleanup on every "unknown" until none remain — *then* apply the size band. A missing value is not out-of-band; keep unknowns until real data disqualifies them. And validate **coherence** — the company you sized must be the one they own/lead, not an employer or client (see `lead-enrichment.md`).
+**Resolve the field fully before filtering on it.** For company size: web-search pass, then browser cleanup on every "unknown" until none remain — *then* apply the size band. A missing value is not out-of-band; keep unknowns until real data disqualifies them. And validate **coherence** — the company you sized must be the one they own/lead, not an employer or client (see `enrichment/company-size.md`).
 
-Other enrichments follow the same pattern: extract → web search → Chrome → ask.
+Other enrichments follow the same pattern: extract → web search → browser → ask.
+
+**Verify a criterion against the source that defines it.** When a filter was applied by a platform against its own data, re-check it *in that platform*, not in a proxy. Aggregators (Crunchbase, ZoomInfo, PitchBook) measure different populations on different refresh cycles, so a disagreement tells you the two sources differ — not that the filter failed — and their coarse buckets (`101-250`) can't adjudicate a boundary at 200 anyway. Reach for them only where the defining source has no record, and label what comes back as a different measurement. The cheap proxy is only cheap when it answers the same question.
 
 #### Warmth enrichment (before segmenting a warm-network campaign)
 
 For any campaign that segments by relationship proximity, the segment assignment is only as good as the relationship data behind it. Don't guess warmth from headlines — pull it from the actual record:
 
-- **DM-history sweep (LinkedIn).** For each prospect, read the existing DM thread and classify: `they_reached_out` / `replied` (Shaw initiated, they responded) / `ghosted` (Shaw messaged, no reply) / `never_messaged`. This directly drives segment and send-order, surfaces ready-made openers ("great connecting at X", "congrats on the new role"), and flags who to send *last* (prior ghosts). Run it as ONE sequential Chrome agent over ~15 names per batch (see the no-parallel-Chrome rule above), read-only — never touch a compose box.
+- **DM-history sweep (LinkedIn).** For each prospect, read the existing DM thread and classify: `they_reached_out` / `replied` (Shaw initiated, they responded) / `ghosted` (Shaw messaged, no reply) / `never_messaged`. This directly drives segment and send-order, surfaces ready-made openers ("great connecting at X", "congrats on the new role"), and flags who to send *last* (prior ghosts). Run it as one sequential agent in the Chrome extension over ~15 names per batch (Browser policy above), read-only — never touch a compose box.
 - **Cross-check Kit cohort tags.** Query Kit for ABB/cohort tags (`list_tags` → `list_subscribers_for_tag`, match by email/first name) to catch alumni the LinkedIn data won't show. Alumni are the warmest segment (paying past customers) and their alum status overrides soft exclusions — e.g. an ABB alum who'd otherwise be cut as "too technical" stays in. Log that override as a principle in `disqualified.md`.
 - **Met-in-person is Shaw's knowledge.** DM history and tags won't reveal in-person meetings — ask Shaw, and re-segment when he says "I've met X."
 
@@ -163,7 +210,7 @@ For any campaign that segments by relationship proximity, the segment assignment
 
 A recent same-ICP campaign's `FINAL_shortlist` is often the cheapest well for a new one — but **treat it as stale, not verified**. People change jobs and the original scrape had coherence errors, so re-verify role / company / size / location before loading (a fresh parallel web-search pass catches out-of-band sizes, job changes, and scrambled company↔person data). Also re-check inherited enrichment: a prior campaign's `geo` field mislabeled US people as non-US last time — verify geo from the headline/company rather than trusting the inherited value.
 
-#### LinkedIn scraping gotchas (learned 2026-07-06)
+#### LinkedIn scraping gotchas
 
 - **Followers vs connections:** a "Has Following?" check means the **intro card** (name/headline/location block, above About/Activity) shows "X followers". EVERY profile shows a follower count down in the Activity section — that does NOT count. Instruct the agent to read the intro line only, or it returns all-Yes.
 - **Reconstructed URLs 404:** slugs rebuilt from a name can be wrong, especially with accents (`[linkedin-handle]`). Don't write a guessed URL — verify it resolves, or find the real one via 1st-degree people search.
@@ -182,29 +229,31 @@ Apply `disqualified.md` as part of triage. Present the triaged list to Shaw as a
 
 ### 5. Set up the tracker
 
-Once the list is confirmed, build the Notion tracker → see **`tracker-setup.md`** for the inline-database schema, segment legend, and page placement.
+Once the list is confirmed, build the Notion tracker → see **`campaign/tracker-setup.md`** for the inline-database schema, segment legend, and page placement.
 
 ### 6. Draft the scripts
 
 A campaign has a **base script** — usually one core message with a `{Personalization}` **menu** of numbered opener options (e.g. 1 = "it's been a while", 2 = "great catching up at X", 3 = "congrats on the new role", 4 = "this seemed relevant"). Draft the base warmest-segment-first, one at a time, so Shaw can steer.
 
 Then produce a **per-prospect script for every row** — this is the real deliverable, not just one template per segment:
-- Read the prospect's page-body **Context**, pick the **single best-fit menu option verbatim**, and drop the finished script into that row's page body. Shaw fills the specifics (the literal "X", any tweaks) himself — do NOT reword the opener he's going to edit.
+- Read the prospect's page-body **Context** and their live DM/text thread, pick the **single best-fit menu option verbatim**, and drop the finished script into that row's page body. Shaw fills the specifics (the literal "X", any tweaks) himself — do NOT reword the opener he's going to edit.
 - Keep it in a **`plain text` code block** for copy-paste. Don't un-fence it to rich text (Shaw reverts that).
 - Add a one-line italic note above the block recording which option and why.
 
-The details — segment→opener defaults, the **email-vs-DM format split**, the `Medium` column, subject-line register, email-address sourcing, and Gmail draft mechanics — live in **`references/per-prospect-scripting.md`**. Read it before scripting a mixed-channel campaign.
+The details — how the thread picks the opener, the **email-vs-DM format split**, the `Medium` column, subject-line register, email-address sourcing, and Gmail draft mechanics — live in **`campaign/per-prospect-scripting.md`**. Read it before scripting a mixed-channel campaign.
+
+**Shaw's DM register — voice lives here, not in the message skills.** Campaign DMs and every later rung sound like Shaw texting, not like structured conversion copy: about 3 short lines; no-oriented asks ("Opposed to…?"); assertion over hedging ("this is NOT a sales call" beats "no pitch, I promise"); one warm give to close (a P.S., an emoticon) so the message ends by offering rather than defending. Draft any new rung — a follow-up, a variant, a rung the campaign didn't plan — from the campaign's existing scripts' register. `conversion-copy` still supplies general conversion principles and structure, but once a thread exists, a message that breaks register reads as a different (automated) sender.
 
 For writing craft specifically:
 - **Voice, tone, email mechanics (HTML `<div>` spacing, Gmail threading)** → defer to **email-helper**
-- **Message craft — hooks, CTAs, personalization, subject register, reply friction** → defer to **conversion-copy** (specifically `channel-outreach.md`)
+- **Message craft — hooks, CTAs, personalization, subject register, reply friction** → defer to **conversion-copy** for principles and structure (specifically `channel-outreach.md`, which carries named playbooks — the bespoke advice-frame play and the high-volume Uptown method — with a chooser for which fits the campaign); DM voice and register are governed here
 - **Follow-up ladder — proof carried into the first nudge, no re-dropped in-thread links, progressively terser rungs** → defer to **conversion-copy** (`channel-outreach.md`, Follow-ups)
 
-This skill owns the operational side (who, when, which segment, which channel); message skills own the words.
+This skill owns the operational side (who, when, which segment, which channel) and Shaw's DM voice; message skills own conversion principles and structure.
 
 ### 7. Send, log, review
 
-**Syncing a live campaign.** When Shaw asks to check for replies, reconcile registrations, or "move the outreach forward," you're running a *sync*: sweep every reply channel and the conversion source, then advance each contact one step along the campaign's own funnel. The campaign's shape — its funnel stages, its channels, its scripts — is defined by the tracker's Status/Medium options and the page scripts, not hardcoded, so read it before acting. Full sweep→classify→advance loop: `references/outreach-sync.md`.
+**Syncing a live campaign.** When Shaw asks to check for replies, reconcile registrations, or "move the outreach forward," you're running a *sync*: sweep every reply channel and the conversion source, then advance each contact one step along the campaign's own funnel. The campaign's shape — its funnel stages, its channels, its scripts — is defined by the tracker's Status/Medium options and the page scripts, not hardcoded, so read it before acting. Full sweep→classify→advance loop: `sync/outreach-sync.md`.
 
 **When Shaw adds contacts to the tracker,** extract everything inferable from what he provides:
 - Name (required)
@@ -223,16 +272,42 @@ Handle batches in a single `notion-create-pages` call.
 
 **Notes format:** defer to the **CRM skill** — single source of truth. In short: short, comma-separated, date-stamped actions, always append.
 
-**Logging a batch send.** When Shaw says "sent all" (or reports a batch), for every row that went out set:
+**Logging a batch send.** When Shaw says "sent all" (or reports a batch), read the sent messages before writing anything down. A batch of per-row variants is assembled by hand, so what went out is not guaranteed to be what was drafted, and the log inherits any mismatch — the row records a variant nobody received, and the next rung gets drafted from it. One pass over the inbox settles both questions at once: that the batch went, and which version each person got. Then for every row that went out set:
 - **Last Contact** = send date.
 - **Notes** = the ask, using the campaign's own step name — `Ask sent (M/D).` Append replies (`Replied, bringing a friend (7/13).`). Channel lives in the `Medium` column, not Notes; add `via LinkedIn DM` / `via text` in Notes only when one batch mixes channels and it's worth disambiguating.
-- **Next Contact** = the FU1 date, set **uniformly across the whole batch** so they surface together in the CRM sweep. **Read the FU date off the campaign's Promo Calendar** (it already schedules FU1/FU2) rather than inventing one.
+- **Next Contact** = the date of the next planned touchpoint. **Defer to the CRM skill**, which owns this field's semantics and cadence defaults (`crm/references/follow-up-guidance.md`). It is not an FU1 flag: it's a rolling pointer that advances as the sequence progresses, holding FU1 today, FU2 once FU1 goes out, a booked call date, or a re-engagement date. **Read campaign-wide FU dates off the Promo Calendar** rather than inventing them, and set the date uniformly across everyone who got *the same ask* — a single day's send often mixes several scripts, and the batch for follow-up purposes is the ask, not the send date.
+- **An accept schedules the DM — `Next Contact` = the next day.** When someone
+accepts a connection request (or otherwise opens the door without being written to
+yet), Msg 1 goes out tomorrow, so set the date the moment the accept is logged. This
+is the one case where `Next Contact` is set before anything has been sent: elsewhere
+it points at a follow-up to a message already out, here it points at the first one.
+Skip it and the row carries a `Status` and no date, which the CRM sweep
+(`Next Contact <= today`) never surfaces — the warmest lead in the campaign goes cold
+in a view nobody reads. Applies only until Msg 1 actually goes out; after that the
+cadence owns the field. Sales Nav mechanics: `sales-navigator/accepts.md`.
+- **Whether someone gets a date at all is a judgment call, and blank is a legitimate answer.** Per the CRM skill, a blank `Next Contact` is assumed intentional and is never backfilled. Ask what a follow-up would actually say: an ask with something to say yes to (a call, a coffee chat, a favour) earns a nudge, because silence means "not yet." A message that sorts people — a reply-with-a-letter diagnostic, a multiple-choice qualifier — is self-sorting, and nudging just asks the same question twice. Which asks earn a follow-up varies by campaign; confirm the split with Shaw when a batch mixes both.
 
-**One date field on the tracker; mirror later touches, don't add columns.** The tracker holds a single `Next Contact` (the FU1 flag) — resist adding a second date column for FU2 and beyond. Later follow-ups live as dated pages on the campaign's Promo Calendar, and each should also be **mirrored into an ABA task** (`⭕` icon, body = a `<mention-page>` link back to the campaign page) so it actually surfaces in Shaw's daily briefing — Promo Calendar pages don't feed the briefing on their own. See `notion-helper` for the mirror mechanics.
+**The row body carries no send state.** Log the send in the properties above and leave the body's
+rung headings alone — `## M3`, never `## M3 — due 9/15, drafted (not sent)`. Which rungs went out
+is already in `Notes` and `Last Contact`, and a body that also claims it has to be kept in sync by
+hand forever. It won't be: in the Sep 2026 tracker roughly 75 of 106 worked rows still read
+"drafted (not sent)" for messages sent days earlier, because logging updates properties and
+nothing updates the body. That isn't cosmetic — `sync/outreach-sync.md` counts the unsent backlog
+off that exact phrase, so stale headings inflate the backlog and depress the campaign page's
+funnel numbers.
 
-**Draft, never send.** Shaw sends himself and reports back; your job is to prepare Gmail drafts (`create_draft`), then log once he confirms. `create_draft` can't edit an existing draft, so **draft ONE, let Shaw edit it, diff his version, then apply the diff to the rest of the batch** — don't mass-create before he's reviewed one, or a formatting bug multiplies across every draft.
+Two things the body owes in exchange: when the sent wording differed from the draft, replace the
+block with what actually went out (the body is then the only record of it, since `Notes` holds
+dates and not text); and delete a draft the send superseded — a never-to-be-sent M2 sitting under
+a reply is noise that the next drafting pass will read as live.
 
-**Notion bulk-update reality.** The Notion collection API rate-limits hard during batch logging — do ~9–11 property updates per message and expect 429s that need 30–200s waits.
+**The tracker's date and notes fields are CRM-owned** — outreach *sets* them, the CRM skill *defines* them. Where this file and the CRM skill disagree about what a field means, the CRM skill wins.
+
+**One date field on the tracker; mirror later touches, don't add columns.** The tracker holds a single `Next Contact` — resist adding a second date column for FU2 and beyond. The field *advances*: when FU1 goes out it moves to the FU2 date rather than needing a new column. The Promo Calendar holds the campaign-wide schedule of FU rounds; `Next Contact` points at whichever one is next for that person. Each scheduled round should also be **mirrored into an ABA task** (`✉️` icon — it's an email send, body = a `<mention-page>` link back to the campaign page) so it actually surfaces in Shaw's daily briefing — Promo Calendar pages don't feed the briefing on their own. See `notion-helper` for the mirror mechanics.
+
+**Draft, never send.** Shaw sends himself and reports back; your job is to prepare Gmail drafts (`create_draft`), then log once he confirms. `create_draft` can't edit an existing draft, so **draft ONE, let Shaw edit it, diff his version, then apply the diff to the rest of the batch** — don't mass-create before he's reviewed one. The review catches what your own verification structurally cannot: re-reading your drafts confirms they match your intent, never that your intent was right. A wrong subject line, a stale script, or the wrong segment's opener survives every self-check you can run and dies the instant Shaw opens draft #1.
+
+**Notion bulk updates rate-limit.** Pace batch logging per `notion-helper`, which owns connector mechanics.
 
 **Status review:** fetch all entries and summarize as:
 
@@ -249,11 +324,13 @@ Handle batches in a single `notion-create-pages` call.
 
 Cross-reference Gmail when Shaw asks for updates — search each contact's email for new replies not yet logged, then update the tracker.
 
+**Benchmarking campaign health.** For high-volume LinkedIn DM campaigns, compare the funnel (acceptance → reply → positive → meeting) against `sync/linkedin-benchmarks.md` during status reviews — it includes the diagnostic logic for which stage to fix when a number is off. The benchmarks are external (Uptown's) until Shaw's own campaign data replaces them.
+
 **Already-handled activity — check before you draft.** When Shaw says people "replied," his first move is often to answer them live himself. Before drafting a reply, read the actual thread (the LinkedIn DM, or Gmail) to see whether he's already responded. When he has, the deliverable is *logging the exchange* (advance Status — `Replied` / `Registered` / `Share Ask Sent` — and append a Notes line), not a duplicate draft. Reading the thread also tells you what they actually said, which is what makes the log accurate (e.g. "signed up" → Registered; "already doing that, no register" → Replied only).
 
 **Draft replies from the campaign's own templates, not from scratch — even when the reply doesn't fit cleanly.** The campaign page has a reply script for each branch (`No`, `Soft No`, `Registered`, etc.); map the incoming message to the nearest one and run it as the base. A decline that carries a *counter-ask* (they pass but pitch their own thing, propose a swap, offer to help) still runs the `No` template as written, then hinges the closing support-offer line ("any way I can support you") into the counter-ask. Reserve bespoke copy for when no template is close — a fully custom draft is the exception, not the reflex.
 
-**Confirming registrations (event campaigns).** The authoritative "who registered" source is the event's own guest list, not the tracker or Gmail — pull it, match to tracker rows by name tokens, and mark only those not already registered, predrafting the campaign's "Registered" share-ask (the repost ask if `Has Following?` = Yes, the "who else do you know" variation if No; rotate the No-Following variation across rows). Luma-specific pull mechanics — the `?fs=approved` Going filter, getting the `evt-…` id via Manage, and the virtualized-list harvest — live in `references/luma-guest-list.md`; the reconcile-and-advance logic is part of the sync loop in `references/outreach-sync.md`.
+**Confirming registrations (event campaigns).** The authoritative "who registered" source is the event's own guest list, not the tracker or Gmail — pull it, reconcile against the tracker, and mark only those not already registered, predrafting the campaign's "Registered" share-ask (the repost ask if `Has Following?` = Yes, the "who else do you know" variation if No; rotate the No-Following variation across rows). Luma pull mechanics: `events/luma-guest-list.md`; the reconcile-and-advance logic is part of `sync/outreach-sync.md`.
 
 ---
 
@@ -272,7 +349,7 @@ Some campaigns don't ask the prospect to *do* the thing (register, book a call) 
 
 ## Campaign variant: post-event attendee follow-up
 
-After an event the attendee list *is* the lead list — but it has to be built before it can be worked. Process and policy live in the **Post Event** SOP (`sop-helper`); the mechanics live in `references/event-attendance-reconciliation.md`. Read that file before touching a Zoom export.
+After an event the attendee list *is* the lead list — but it has to be built before it can be worked. Process and policy live in the **Post Event** SOP (`sop-helper`); the mechanics live in `events/event-attendance-reconciliation.md`. Read that file before touching a Zoom export.
 
 - **Attendance comes from the Zoom participant log, not Luma.** Luma's `has_joined_event` is wrong in both directions.
 - **The Zoom export usually has no emails** — guests join unauthenticated — so every attendee is matched to a registrant by display name. Budget for it; roughly a third need manual review, and dedupe on the matched registrant rather than the display name.
@@ -287,4 +364,4 @@ After an event the attendee list *is* the lead list — but it has to be built b
 - **CRM skill** — owns Notes format and pipeline-level lead management, including the promotion process. When an outreach contact graduates (books a call, asks about pricing), add them to the CRM and follow the CRM skill's "Promotion to main CRM" rule — the tracker entry becomes a historical breadcrumb (`Added to CRM` status, `Next Contact` cleared) while the main CRM owns ongoing touchpoints.
 - **email-helper** — owns Shaw's voice, Gmail mechanics, reply/intro/decline templates.
 - **conversion-copy** — owns message craft for conversion-focused copy. `channel-outreach.md` specifically covers cold-outreach DMs.
-- **notion-helper** — adjacent; owns ad-hoc Notion creation outside structured campaigns.
+- **notion-helper** — adjacent; owns ad-hoc Notion creation outside structured campaigns, the connector mechanics this file defers to, and the standard for **what a page body may contain** ("Writing page bodies"). Read it before writing any row body, not only when a connector call misbehaves.

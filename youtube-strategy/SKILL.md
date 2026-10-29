@@ -1,7 +1,6 @@
 ---
 name: youtube-strategy
-description: >-
-  Turn a pain point, topic, or rough idea into a compelling YouTube package — title, thumbnail, intro hook, motivation/story, outro, and video description — for Shaw's channel. Use any time Shaw is writing, brainstorming, or iterating on YouTube content. Triggers include "title ideas", "punch up this title", "thumbnail ideas", "design the thumbnail for X", "package this video", "write the intro/hook", "draft the motivation", "write the outro", "iterate on the script", "Ed Lawrence-style intro", "write the (YouTube) description", and casual mentions like "title this for me", "thumbnail this", "I'm making a video about X", or "help me write the open". Do NOT use for LinkedIn posts (use linkedin-voice), newsletters (use newsletter-writer), or sales copy (use conversion-copy or sales-letter-writer) — this skill is specifically for YouTube packaging and scripting.
+description: Turn a pain point, topic, or rough idea into a compelling YouTube package — title, thumbnail, intro hook, motivation/story, outro, video description, and post-publish cards/end screens — for Shaw's channel. Use any time Shaw is writing, brainstorming, or iterating on YouTube content. Triggers include "title ideas", "punch up this title", "thumbnail ideas", "design the thumbnail for X", "package this video", "write the intro/hook", "draft the motivation", "write the outro", "iterate on the script", "Ed Lawrence-style intro", "write the (YouTube) description", "which videos should I add cards for", "set up the end screen", and casual mentions like "title this for me", "thumbnail this", "I'm making a video about X", "what should my next video be", or "help me write the open". Do NOT use for LinkedIn posts (use linkedin-post-writer), newsletters (use newsletter-writer), or sales copy (use conversion-copy or sales-letter-writer) — this skill is specifically for YouTube packaging and scripting.
 ---
 
 # YouTube Strategy
@@ -34,6 +33,7 @@ For sentence-level work — "does this exact phrasing land?" — defer to the vi
 
 Lock the higher-level decisions first. Each level constrains the next.
 
+0. **Topic** — what the video is about; decides how much pull the title can stack (`references/topics.md`)
 1. **Title** — the verbal hook
 2. **Thumbnail** — the visual hook (paired with the title)
 3. **Script:**
@@ -76,11 +76,13 @@ Pull at minimum 3 verbatim phrases before drafting. Quote the source for each ca
 
 | Task | Reference |
 |---|---|
+| Pick or pressure-test a video topic | `references/topics.md` |
 | Generate / sharpen titles | `references/titles.md` |
-| Generate / sharpen thumbnails | `references/thumbnails.md` |
+| Generate / sharpen thumbnails, research competitor thumbnails, or build thumbnail designs | `references/thumbnails.md` |
 | Write or iterate on the intro hook (Ed Lawrence-style) | `references/intros.md` |
 | Write motivation/story section or outro | `references/script-body.md` |
-| Write the video description (CTA, summary, links, chapters) | `references/descriptions.md` |
+| Write the video description (CTA, summary, links, chapters) | `references/descriptions.md` (+ `references/description-examples.md` for voice and structure) |
+| Recommend cards / end screen for a published video | `references/cards.md` (+ the ABA `youtube` skill for channel data) |
 | Sentence-level filter on a single line | `conversion-copy` skill (canonical) |
 
 For paired packaging (title + thumbnail together), load both `titles.md` and `thumbnails.md`. For a full script pass, load `intros.md` and `script-body.md`.

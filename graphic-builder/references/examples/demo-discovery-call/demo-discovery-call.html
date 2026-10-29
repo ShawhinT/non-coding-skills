@@ -1,0 +1,294 @@
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Libre+Franklin:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#12242E;
+    --grey:#93A2AA;
+    --cerulean:#087CA7;
+    --goldenrod:#D19C1D;
+    --forest:#519872;
+    --coral:#EE6352;
+    --rowbg:#F4F6F7;
+    --rowline:#E6EBED;
+    --rowtext:#69787F;
+    --rule:#E3E8EA;
+    --spine:60px;
+    --indent:150px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{width:1920px;height:1080px;background:#FFFFFF;}
+  body{font-family:'Libre Franklin',sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;}
+  .canvas{width:1920px;height:1080px;padding:44px 60px 40px;display:flex;flex-direction:column;position:relative;}
+
+  /* ---------- header ---------- */
+  .head{display:flex;align-items:flex-end;justify-content:space-between;padding-bottom:20px;border-bottom:2px solid var(--ink);}
+  .title{font-family:'Manrope',sans-serif;font-weight:800;font-size:46px;letter-spacing:-0.02em;line-height:1;}
+  .title .dot{color:var(--cerulean);}
+  .sub{font-family:'Libre Franklin',sans-serif;font-size:23px;color:var(--rowtext);margin-top:12px;}
+  .kicker{font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:600;letter-spacing:.14em;color:var(--grey);text-transform:uppercase;padding-bottom:6px;}
+
+  /* ---------- split ---------- */
+  .split{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:0;padding-top:26px;position:relative;}
+  .split:after{content:"";position:absolute;top:14px;bottom:0;left:50%;width:2px;background:var(--rule);}
+  .col{min-width:0;display:flex;flex-direction:column;}
+  .col.left{padding-right:56px;}
+  .col.right{padding-left:56px;}
+
+  .panelhead{display:flex;align-items:baseline;gap:14px;margin-bottom:6px;}
+  .panelhead h2{font-family:'Manrope',sans-serif;font-weight:800;font-size:34px;letter-spacing:-0.015em;}
+  .left .panelhead h2{color:var(--grey);}
+  .panelhead .count{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;}
+  .left .panelhead .count{color:#B4C0C6;}
+  .right .panelhead .count{color:var(--cerulean);}
+  .panelnote{font-size:19px;color:var(--grey);margin-bottom:18px;}
+  .right .panelnote{color:var(--rowtext);margin-bottom:14px;}
+
+  /* ---------- left: the chore list ---------- */
+  .rows{display:flex;flex-direction:column;gap:6px;}
+  .row{display:flex;align-items:center;gap:14px;background:var(--rowbg);border:1px solid var(--rowline);border-radius:5px;height:44px;padding:0 14px;}
+  .row .box{width:14px;height:14px;border:2px solid #C4CED3;border-radius:3px;flex:none;}
+  .row .n{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:#B4C0C6;width:22px;flex:none;}
+  .row .t{font-size:20px;color:var(--rowtext);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+  /* ---------- right: the collapsed flow ---------- */
+  .flow{flex:1;display:flex;flex-direction:column;align-items:stretch;}
+
+  .link{position:relative;height:28px;flex:none;}
+  .link i{position:absolute;left:var(--spine);top:0;bottom:9px;width:3px;transform:translateX(-50%);background:var(--ink);}
+  .link b{position:absolute;left:var(--spine);bottom:0;transform:translateX(-50%);width:0;height:0;
+          border-left:8px solid transparent;border-right:8px solid transparent;border-top:10px solid var(--ink);}
+
+  .card{border:2px solid var(--ink);border-radius:12px;background:#fff;}
+
+  .trigger{display:flex;align-items:center;gap:20px;padding:16px 22px;border:2px solid var(--coral);border-radius:12px;background:#FEF6F5;}
+  .bolt{width:48px;height:48px;border-radius:10px;background:var(--coral);display:flex;align-items:center;justify-content:center;flex:none;}
+  .bolt svg{width:28px;height:28px;color:#fff;}
+  .trigger .txt{flex:1;min-width:0;}
+  .trigger .txt .h{font-family:'Manrope',sans-serif;font-weight:700;font-size:26px;letter-spacing:-0.01em;}
+  .trigger .txt .m{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;letter-spacing:.1em;color:var(--coral);text-transform:uppercase;margin-top:3px;}
+  .logos{display:flex;align-items:center;gap:10px;flex:none;}
+  .logos img{width:32px;height:32px;object-fit:contain;}
+
+  .cowork{padding:12px 22px 14px;}
+  .cwhead{display:flex;align-items:center;gap:13px;}
+  .cwhead img{width:42px;height:42px;object-fit:contain;flex:none;}
+  .cwhead .h{font-family:'Manrope',sans-serif;font-weight:800;font-size:29px;letter-spacing:-0.015em;}
+  .cwhead .role{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;letter-spacing:.1em;color:var(--grey);text-transform:uppercase;margin-top:2px;}
+
+  .seg{margin-top:13px;}
+  .seglab{display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:7px;}
+  .seglab svg{width:16px;height:16px;}
+  .chips{display:flex;flex-wrap:wrap;gap:7px;}
+  .chip{font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:500;color:#8A6510;background:#FBF3E1;border:1.5px solid #E8CE8C;border-radius:7px;padding:6px 11px;}
+  .sop{font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;color:#fff;background:var(--goldenrod);border:1.5px solid var(--goldenrod);border-radius:7px;padding:6px 11px;}
+  .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;}
+  .tile{min-width:0;border:1.5px solid #B4D8E6;background:#F2F9FC;border-radius:9px;padding:6px 6px 5px;display:flex;flex-direction:column;align-items:center;gap:4px;}
+  .tile img{width:28px;height:28px;object-fit:contain;}
+  .tile span{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:var(--cerulean);letter-spacing:.02em;text-align:center;white-space:nowrap;}
+
+  /* ---------- the drop line: records written as they happen ---------- */
+  .drops{position:relative;flex:none;padding:14px 0 16px var(--indent);display:flex;flex-direction:column;gap:11px;}
+  .drops .rail{position:absolute;left:var(--spine);top:0;bottom:10px;width:3px;transform:translateX(-50%);background:var(--ink);}
+  .drops .railtip{position:absolute;left:var(--spine);bottom:0;transform:translateX(-50%);width:0;height:0;
+                  border-left:8px solid transparent;border-right:8px solid transparent;border-top:10px solid var(--ink);}
+
+  .bracket{position:absolute;left:0;width:38px;display:flex;align-items:center;justify-content:center;}
+  .bracket .lab{writing-mode:vertical-rl;transform:rotate(180deg);font-family:'JetBrains Mono',monospace;font-size:14px;
+                font-weight:700;letter-spacing:.2em;color:var(--forest);text-transform:uppercase;white-space:nowrap;}
+  .bracket .bar{position:absolute;right:0;top:0;bottom:0;width:3px;background:var(--forest);border-radius:2px;opacity:.65;}
+
+  .drop{position:relative;display:flex;align-items:center;gap:15px;border-radius:10px;padding:8px 16px;height:60px;}
+  .drop:before{content:"";position:absolute;top:50%;left:calc(-1 * (var(--indent) - var(--spine)));
+               width:calc(var(--indent) - var(--spine) - 11px);height:3px;transform:translateY(-50%);}
+  .drop:after{content:"";position:absolute;top:50%;left:-13px;transform:translateY(-50%);width:0;height:0;
+              border-top:7px solid transparent;border-bottom:7px solid transparent;}
+  .drop.rec{border:2px solid var(--forest);background:#F3F9F5;}
+  .drop.rec:before{background:var(--forest);}
+  .drop.rec:after{border-left:11px solid var(--forest);}
+  .drop.mail{border:2px solid var(--ink);background:#F6F8F9;margin-top:5px;}
+  .drop.mail:before{background:var(--ink);}
+  .drop.mail:after{border-left:11px solid var(--ink);}
+  .drop img{width:30px;height:30px;object-fit:contain;flex:none;}
+  .drop .nm{font-family:'Manrope',sans-serif;font-weight:800;font-size:22px;letter-spacing:-0.01em;width:176px;flex:none;}
+  .drop.rec .nm{color:#2F5E45;}
+  .drop.mail .nm{color:var(--ink);}
+  .drop .ch{font-size:19px;color:#4C5C64;line-height:1.2;min-width:0;}
+  .drop .ch em{font-style:normal;font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:600;color:var(--ink);}
+  .drop .tag{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;letter-spacing:.1em;
+             text-transform:uppercase;flex:none;padding-left:12px;}
+  .drop.rec .tag{color:var(--forest);}
+  .drop.mail .tag{color:var(--coral);}
+
+  .human{display:flex;align-items:center;gap:18px;padding:19px 22px;border:2px solid var(--ink);border-radius:12px;background:var(--ink);}
+  .human .av{width:48px;height:48px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;flex:none;}
+  .human .av svg{width:28px;height:28px;color:var(--ink);}
+  .human .h{font-family:'Manrope',sans-serif;font-weight:800;font-size:26px;color:#fff;letter-spacing:-0.01em;}
+  .human .m{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;letter-spacing:.1em;color:#8FB4C4;text-transform:uppercase;margin-top:3px;}
+</style>
+
+<div class="canvas">
+
+  <div class="head">
+    <div>
+      <div class="title">Demo 1 <span class="dot">·</span> Discovery Call</div>
+    </div>
+  </div>
+
+  <div class="split">
+
+    <!-- ================= LEFT ================= -->
+    <div class="col left">
+      <div class="panelhead">
+        <h2>Without the OS</h2>
+        <div class="count">17 manual steps</div>
+      </div>
+
+      <div class="rows">
+        <div class="row"><div class="box"></div><div class="n">01</div><div class="t">Open the Calendly confirmation email</div></div>
+        <div class="row"><div class="box"></div><div class="n">02</div><div class="t">Check the event landed on the calendar</div></div>
+        <div class="row"><div class="box"></div><div class="n">03</div><div class="t">Search the CRM for the lead by name</div></div>
+        <div class="row"><div class="box"></div><div class="n">04</div><div class="t">Set status to Booked Call (or un-Lost them)</div></div>
+        <div class="row"><div class="box"></div><div class="n">05</div><div class="t">Bump last contact and next contact dates</div></div>
+        <div class="row"><div class="box"></div><div class="n">06</div><div class="t">Append notes to the CRM record</div></div>
+        <div class="row"><div class="box"></div><div class="n">07</div><div class="t">Create the call page in ABA Calls</div></div>
+        <div class="row"><div class="box"></div><div class="n">08</div><div class="t">Link call page and CRM record, both ways</div></div>
+        <div class="row"><div class="box"></div><div class="n">09</div><div class="t">Copy the Calendly answers into the page</div></div>
+        <div class="row"><div class="box"></div><div class="n">10</div><div class="t">Add the FU task, dated call date + 1</div></div>
+        <div class="row"><div class="box"></div><div class="n">11</div><div class="t">Look up the person: role, background</div></div>
+        <div class="row"><div class="box"></div><div class="n">12</div><div class="t">Look up the company: what it does, size</div></div>
+        <div class="row"><div class="box"></div><div class="n">13</div><div class="t">Read back through the email thread</div></div>
+        <div class="row"><div class="box"></div><div class="n">14</div><div class="t">Write the read: the angle to walk in with</div></div>
+        <div class="row"><div class="box"></div><div class="n">15</div><div class="t">Pick 2 email and 3 call questions from the bank</div></div>
+        <div class="row"><div class="box"></div><div class="n">16</div><div class="t">Write the confirmation email from the template</div></div>
+        <div class="row"><div class="box"></div><div class="n">17</div><div class="t">Find the Calendly thread and reply inside it</div></div>
+      </div>
+    </div>
+
+    <!-- ================= RIGHT ================= -->
+    <div class="col right">
+      <div class="panelhead">
+        <h2>With the OS</h2>
+        <div class="count">1 run, 1 review</div>
+      </div>
+
+      <div class="flow">
+
+        <div class="trigger">
+          <div class="bolt">
+            <svg viewBox="0 0 24 24" fill="none"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg>
+          </div>
+          <div class="txt">
+            <div class="h">A lead books a discovery call</div>
+            <div class="m">Event-triggered · nothing scheduled</div>
+          </div>
+          <div class="logos">
+            <img src="assets/calendly.png" alt="">
+            <img src="assets/gmail.png" alt="">
+            <img src="assets/google-calendar.png" alt="">
+          </div>
+        </div>
+
+        <div class="link"><i></i><b></b></div>
+
+        <div class="card cowork">
+          <div class="cwhead">
+            <img src="assets/claude.png" alt="">
+            <div>
+              <div class="h">Cowork</div>
+            </div>
+          </div>
+
+          <div class="seg">
+            <div class="seglab" style="color:var(--goldenrod)">
+              <svg viewBox="0 0 24 24" fill="none"><path stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+              Instructions
+            </div>
+            <div class="chips">
+              <div class="sop">SOP: Discovery Call</div>
+              <div class="chip">crm</div>
+              <div class="chip">notion-helper</div>
+              <div class="chip">calendar-helper</div>
+              <div class="chip">pre-call-research</div>
+              <div class="chip">email-helper</div>
+            </div>
+          </div>
+
+          <div class="seg">
+            <div class="seglab" style="color:var(--cerulean)">
+              <svg viewBox="0 0 24 24" fill="none"><path stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"/></svg>
+              Connectors
+            </div>
+            <div class="tiles">
+              <div class="tile"><img src="assets/notion.png" alt=""><span>Notion</span></div>
+              <div class="tile"><img src="assets/gmail.png" alt=""><span>Gmail</span></div>
+              <div class="tile"><img src="assets/google-calendar.png" alt=""><span>Calendar</span></div>
+              <div class="tile"><img src="assets/chrome-color.png" alt=""><span>Web search</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="drops">
+          <div class="rail"></div>
+          <div class="railtip"></div>
+          <div class="bracket" id="bracket"><div class="bar"></div><div class="lab">3 records</div></div>
+
+          <div class="drop rec">
+            <img src="assets/notion.png" alt="">
+            <div class="nm">CRM</div>
+            <div class="ch">Status <em>&rarr; Booked Call</em>, dates bumped</div>
+            <div class="tag">Updated</div>
+          </div>
+
+          <div class="drop rec">
+            <img src="assets/notion.png" alt="">
+            <div class="nm">ABA Calls</div>
+            <div class="ch">New page, brief filled in</div>
+            <div class="tag">Created</div>
+          </div>
+
+          <div class="drop rec">
+            <img src="assets/notion.png" alt="">
+            <div class="nm">ABA &middot; Tasks</div>
+            <div class="ch"><em>FU - Dana</em>, call day + 1</div>
+            <div class="tag">Created</div>
+          </div>
+
+          <div class="drop mail">
+            <img src="assets/gmail.png" alt="">
+            <div class="nm">Draft reply</div>
+            <div class="ch">In the Calendly thread, not sent</div>
+            <div class="tag">Draft only</div>
+          </div>
+        </div>
+
+        <div class="human">
+          <div class="av">
+            <svg viewBox="0 0 24 24" fill="none"><path stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+          </div>
+          <div>
+            <div class="h">Shaw reads the brief and sends the email</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Size the RECORDS bracket to span exactly the three Notion record cards.
+  (function(){
+    var drops = document.querySelectorAll('.drops .drop');
+    var wrap  = document.querySelector('.drops');
+    var br    = document.getElementById('bracket');
+    if(!drops.length || !br) return;
+    var wr = wrap.getBoundingClientRect();
+    var a  = drops[0].getBoundingClientRect();
+    var c  = drops[2].getBoundingClientRect();
+    br.style.top    = (a.top - wr.top) + 'px';
+    br.style.height = (c.bottom - a.top) + 'px';
+  })();
+</script>
